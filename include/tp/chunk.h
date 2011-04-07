@@ -29,180 +29,72 @@
 #include <tp/types.h>
 
 /*!	\class tpChunk
-	\brief a very simple memory handler
+	\brief a very simple memory chunk handler for naive types
 
-	Wraps up allocating and deleting memory for
-	random access. It can not allocate memory
-	dynamicly.
+	Wraps up allocating and deleting memory for random access. 
 */
 
-template <class T> class tpChunk
-{
+class tpChunk {
 public:
 
-	//! Standard c'tor. (size should be > 0)
-	tpChunk();
-
-	//! Standard c'tor. (size should be > 0)
-	tpChunk(tpUInt size);
+	//! Standard c'tor.
+	tpChunk(tpSizeT size = 0);
 
 	//! Copy c'tor.
-	tpChunk(const tpChunk<T>& origin);
+	tpChunk(const tpChunk& origin);
 
 	//! D'tor.
-	virtual ~tpChunk();
-
-	//! Access memory via index. No range check will be done!
-	T& operator [] (tpUInt index);
-
-	T operator [] (tpUInt index) const;
-
-	// tpChunk<T> operator + (const tpChunk& merge);
-
-	tpChunk<T>& operator += (const tpChunk& merge);
-
-
-	tpChunk<T>& append(const T* mem, tpULong size);
-
+	~tpChunk();
 	
-	//! Get data pointer. You can not write to that pointer!
-	T* getData() const;
+	//! copy data
+	void copy(tpChunk& dest) const;
 
-	//! Get the allocated size. 
-	tpUInt getSize() const;
-
+	//! merge operator
+	tpChunk& operator += (const tpChunk& merge);
+	
+	//! assignment operator
+	tpChunk& operator  = (const tpChunk& assign);
+	
+	//! Get data pointer
+	const void* getData() const { return m_ptr; }
+	
+	//! Get data pointer
+	void* getData() { return m_ptr; }
+	
+	//! set raw data size
+	void setSize(tpSizeT size);
 
 	//! Remove all data
-	tpVoid empty();
+	void empty();
 	
-	//! overwrite all data
-	tpVoid clear(T data);
-
-	//! Allocate data
-	tpVoid allocate(tpUInt size);
-
+	//! typed pointer
+	template <typename T>
+	T* ptr() { return static_cast<T*>(m_ptr); }
 	
-	T* m_data;
-
-	tpUInt m_size;
-};
-
-
-// -----------------------------------------------------------
-
-
-template <class T> inline tpChunk<T>::tpChunk() 
-	: m_data(0),
-	m_size(0)
-{
-}
-
-
-template <class T> inline tpChunk<T>::tpChunk(tpUInt size)
-{
-	m_data = new T[size];
-	m_size = size;
-};
-
-
-template <class T> inline tpChunk<T>::tpChunk(const tpChunk<T>& origin)
-{
-	m_size = 0;
-	m_data = 0;
+	//! typed pointer
+	template <typename T>
+	const T* ptr() const { return static_cast<T*>(m_ptr); }
 	
-	if (origin.m_size)
-	{
-		m_data = new T[origin.getSize()]; 
-		m_size = origin.m_size;
-		memcpy(m_data,origin.m_data,m_size);
-	};
-};
-
-
-
-template <class T> inline tpChunk<T>::~tpChunk()
-{
-	delete [] m_data;
-	m_data = NULL;
-};
-
-template <class T> inline tpUInt tpChunk<T>::getSize() const
-{
-	return m_size;
-};
-
-template <class T> inline T& tpChunk<T>::operator [] (tpUInt index)
-{
-	return m_data[index];
-};
-
-template <class T> inline T tpChunk<T>::operator [] (tpUInt index) const
-{
-	return m_data[index];
-};
-
-template <class T> inline T* tpChunk<T>::getData() const
-{
-	return m_data;
-};
-
-
-template <class T> inline tpVoid tpChunk<T>::empty()
-{
-	delete [] m_data;
-	m_size = 0;
-};
-
-
-template <class T> inline tpVoid tpChunk<T>::clear(T data)
-{
-	for (tpUInt i = 0; i < m_size; ++i) m_data[i] = data;
-};
-
-template <class T> inline tpVoid tpChunk<T>::allocate(tpUInt size)
-{
-	if (m_size) empty();
-	m_data = new T[size];
-	m_size = size;
-};
-
-template <typename T> inline tpChunk<T>& tpChunk<T>::append(const T* mem, tpULong size)
-{
-	T *_new = new T[m_size + size];
-
-	for (tpULong i = 0; i < m_size; ++i) _new[i] = m_data[i];
-	for (tpULong j = 0; j < size; j++) _new[m_size + j] = mem[j];
-
-	delete [] m_data;
-
-	m_data =_new;
-
-	m_size += size;
-
-	return *this;
+	//! get an item
+	template <typename T> 
+	T& at(tpSizeT idx) { return this->ptr<T>()[idx]; }
+	
+	//! get an item
+	template <typename T> 
+	const T& at(tpSizeT idx) const { return this->ptr<T>()[idx]; }
+	
+	
+	template <typename T>
+	void reserve(tpSizeT size) { this->reserve<sizeof(T)>(size); }
+	
+	template <int itemsize>
+	void reserve(tpSizeT size) { setSize(itemsize * size ); }
+	
+protected:
+	
+	void* m_ptr;
 
 };
-
-template <typename T> inline tpChunk<T>& tpChunk<T>::operator += (const tpChunk& merge)
-{
-
-	T *_new = new T[m_size + merge.m_size];
-
-	for (tpULong i = 0; i < m_size; ++i) _new[i] = m_data[i];
-	for (tpULong j = 0; j < merge.m_size; j++) _new[m_size + j] = merge.m_data[j];
-
-	delete [] m_data;
-
-	m_data =_new;
-
-	m_size += merge.m_size;
-
-	return *this;
-};
-
-
-
-
 
 
 

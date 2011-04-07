@@ -14,18 +14,15 @@
 #define TPSTRING_H
 
 
-#include "tp/types.h"
-#include "tp/array.h"
-#include "tp/stringutils.h"
+#include <tp/globals.h>
+#include <tp/types.h>
+#include <tp/chunk.h>
+#include <tp/array.h>
+#include <tp/stringutils.h>
 
-
-typedef tpArray<tpChar> tpCharArray;
 
 const tpInt TP_NOTFOUND = -1;
 
-
-//tpVoid TP_API tpLocale2WChar( const char* str, tpArray<tpWChar>& dst );
-//tpVoid TP_API tpWChar2Locale( const tpWChar* src, tpArray<tpChar>& dst );
 
 class tpStringIterator;
 class tpStringJoin;
@@ -40,17 +37,21 @@ class tpStringJoin;
 class TP_API tpString {
 public:
 	
+	enum {
+		ASCII = 0
+	};
+
 	//! default c'tor
 	tpString();
 	
 	//! copy constructor from plain c-string
-	tpString(const char* str);
+	tpString(const char* str, tpUShort encoding = ASCII);
 	
 	//! copy constructor from wide string
 	tpString(const wchar_t* str);
 	
 	//! copy constructor from buffer without terminating '\0'
-	tpString(const char* str,unsigned int size);
+	tpString(const char* str, unsigned int size, tpUShort encoding = ASCII);
 	
 	//! copy constructor from tpString
 	tpString(const tpString& str);
@@ -62,26 +63,26 @@ public:
     void empty();   
 	
 	//! get the plain c-string
-	const char* c_str() const;
-
-
-#if defined(_UNICODE)
+	const char* c_str() const { m_buffer.ptr<const char>(); }
 	
-	const wchar_t* wc_str() const;
+	//! get the plain c-string
+	char* c_str() { m_buffer.ptr<char>(); }
 	
-	const wchar_t* mb_str() const { return wc_str(); }
-#else
-	const char* mb_str() const { return c_str(); }
-#endif
+	//! get the plain c-string
+	const wchar_t* wc_str() const { m_buffer.ptr<const wchar_t>(); }
+	
+	//! get the plain c-string
+	char* wc_str() { m_buffer.ptr<wchar_t>(); }
+	
 	
 	//! set contents from c-string
     tpString& set(const char* str);
 	
-	//! set contents from c-string
+	//! set contents from wide c-string
 	tpString& set(const wchar_t* str);
 	
 	//! set content from a non-null terminated C string
-	tpString& set(const tpChar* buffer, tpUInt size);
+	tpString& set(const char* buffer, tpSizeT size);
 	
 	tpInt getPascal(char** buffer) const;
 	
@@ -92,9 +93,11 @@ public:
 	tpString& operator = (const char* rs);
 	//! operator = to copy from right side value
 	tpString& operator = (const tpString& rs);
+	
+	/*
 	//! operator = to copy from right side value
 	tpString& operator = (const tpWChar* rs);
-	
+	*/
 	
 	//! operator + to add a string
 	tpString& operator + (const tpString& rs);
@@ -114,6 +117,9 @@ public:
 	
 	//! return string size (not buffer size!)
 	tpSizeT getLength() const;
+	
+	
+#if 0
 	
 	//! returns a hash-value for the string
 	unsigned long getHash() const;
@@ -168,10 +174,12 @@ public:
 	tpArray<tpString> split(const tpString& separator) const;
 	
 	
-	tpChar* operator [] ( tpInt offset ) { return m_stringbuffer.getData() + offset; }
-	const tpChar* operator [] ( tpInt offset ) const { return m_stringbuffer.getData() + offset; }
+	tpChar& operator [] ( tpSizeT idx ) { return m_buffer.ptr<tpChar>[idx]; }
 	
-	tpStringIterator *getBegin(); 
+	//const tpChar& operator [] const ( tpInt idx ) { return m_buffer.ptr<tpChar>[idx]; }
+	
+	
+	//tpStringIterator *getBegin(); 
 	
 	tpString& operator << (const tpString& str);
 	tpString& operator << (int i);
@@ -183,24 +191,23 @@ public:
 	tpString& subst( tpChar c, const tpChar& substc );
 	
 	tpString& removeAfter(const tpChar& end);
-	
-	//tpBool operator == (const tpString& rs);
-	
-	
+
 	tpVoid __verbose_dump() const;
+	
+#endif
 	
 protected:
 	
-	
-	void syncCStr2WStr();
-	void syncWStr2CStr();
-	
-	tpArray<tpChar> m_stringbuffer;
+	tpChunk m_buffer;
+	tpUShort m_itemsize;
+	tpUShort m_encoding;
 	
 };
 
 
 //////////////////////////////////////////////////////////////////////////
+
+#if 0
 
 template <typename T> inline
 tpString tpArrayToString(const tpArray<T>& arr, const tpString& separator = ", ")
@@ -289,6 +296,9 @@ inline tpString operator + (const tpString& ls,const tpString& rs) {
 	return res;
 }
 
+
+/*
+
 template <typename T> 
 class tpStringTokenizerNX
 {
@@ -323,7 +333,9 @@ public:
 		return (0 == local.getLength());
 	}
 };
-
+*/
 //#include <tpStringIO.h>
+
+#endif
 
 #endif

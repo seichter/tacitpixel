@@ -2,15 +2,15 @@
 #define TPSTRINGUTILS_H
 
 
+#include <stdio.h>
 
 template <typename T> 
 unsigned int tpStrLen(const T* str)
 {
 	unsigned int ret = 0;
-	for(; str && *str; str++) {ret++;}
+	for(; str && *str != T(0); str++) { ret++; }
 	return ret;
 }
-
 
 template <typename T> inline int tpStrCmp(const T* str1,const T* str2)
 {

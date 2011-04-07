@@ -10,135 +10,25 @@
  *
  */
 
-#include "tp/string.h"
+#include <tp/string.h>
 
-#include "tp/hash.h"
+#include <tp/hash.h>
 
+#include <string.h>
+#include <stdio.h>
 
-//#include "tpLog.h"
-
-
-//#include "pformat.h"
-
-#define TP_NOTFOUND -1
-
-#if 0
-wchar_t * locale_to_wchar(const char * str)
+tpString::tpString()
 {
-	wchar_t * ptr;
-	size_t s;
-
-	/* first arg == NULL means 'calculate needed space' */
-	s = mbstowcs(NULL, str, 0);
-
-	/* a size of -1 is triggered by an error in encoding; never
-	happen in ISO-8859-* locales, but possible in UTF-8 */
-	if (s == -1)
-		return NULL;
-
-	/* malloc the necessary space */
-	if ((ptr = (wchar_t *)malloc((s + 1) * sizeof(wchar_t))) == NULL)
-		return NULL;
-
-	/* really do it */
-	mbstowcs(ptr, str, s);
-
-	/* ensure NULL-termination */
-	ptr[s] = L'\0';
-
-	/* remember to free() ptr when done */
-	return ptr;
-}
-#endif
-
-#if 0 //defined(ANDROID)
-
-tpVoid tpLocale2WChar( const char* str, tpArray<tpWChar>& dst )
-{
-	tpLogMessage("NO WCHAR SUPPORT");
+	this->empty();
 }
 
-tpVoid tpWChar2Locale( const tpWChar* src, tpArray<tpChar>& dst )
-{
-	tpLogMessage("NO WCHAR SUPPORT");
-}
-
-#else
-
-tpVoid tpLocale2WChar( const char* str, tpArray<tpWChar>& dst )
-{
-	if (str)
-	{
-		size_t s = mbstowcs(0, str, 0);
-		if (s == -1) {
-			return;
-		}
-		
-		dst.resize(s+1);
-		s = mbstowcs(dst.getData(),str,s);
-		dst[s] = 0;
-	}
-}
-
-tpVoid tpWChar2Locale( const tpWChar* src, tpArray<tpChar>& dst )
-{
-	if (src)
-	{
-		size_t s = wcstombs(0, src, 0);
-		if ( s == -1 ) return;
-
-		dst.resize(s + 1);
-		wcstombs(dst.getData(),src,s);
-		dst[s] = L'\0';
-	}
-}
-#endif
-
-//////////////////////////////////////////////////////////////////////////
-
-int __tppformat( int flags , void * dest, int len, const char * fmt, va_list args)
-{
-//	return __pformat(flags, dest, len, fmt, args);
-	return 0;
-}
-
-int __tpvsnprintf( char *buf, size_t length, const char *fmt, va_list argv )
-{
-	
-	register int retval;
-#if 0
-	if( length == (size_t)(0) )
-    /*
-     * No buffer; simply compute and return the size required,
-     * without actually emitting any data.
-     */
-		return __pformat( 0, buf, 0, fmt, argv );
-	
-	/* If we get to here, then we have a buffer...
-	 * Emit data up to the limit of buffer length less one,
-	 * then add the requisite NUL terminator.
-	 */
-	retval = __pformat( 0, buf, --length, fmt, argv );
-	buf[retval < length ? retval : length] = '\0';
-#endif
-	
-	return retval;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-tpString::tpString() : m_stringbuffer(tpArray<tpChar>()), m_wcharcopy(tpArray<tpWChar>())
-{
-	//setlocale(LC_ALL,"");
-}
-
-tpString::tpString(const char* str)
+tpString::tpString(const char* str, tpUShort encoding /* tpString::ASCII */) : m_encoding(encoding)
 {
 	set( str );
 }
 
 
-tpString::tpString(const char* str, unsigned int size)
+tpString::tpString(const char* str, unsigned int size,  tpUShort encoding /* tpString::ASCII */)
 {
 	set( str, size );
 }
@@ -157,35 +47,29 @@ tpString::tpString(const tpString& str)
 //////////////////////////////////////////////////////////////////////////
 
 
-tpString& tpString::set( const tpChar* buffer, tpUInt size )
+tpString& tpString::set( const char* buffer, tpSizeT size )
 {
-	if (size)
-	{
-		m_stringbuffer.copy(buffer,size);
-		m_stringbuffer.add(0);
-		syncCStr2WStr();
-	}
-
 	return *this;
 }
 
 tpString& tpString::set(const char* str)
 {
 	tpUInt len = tpStrLen(str);
-	if (len)
-	{
-		m_stringbuffer.resize(len+1);
-		memcpy(m_stringbuffer.getData(),str,len+1);
-	} else {
-		m_stringbuffer.clear();
-	}
+	
+	m_buffer.reserve<char>(len+1);
+	memcpy(m_buffer.getData(),str,len);
+	m_buffer.at<char>(len) = '\0';
+
 	return *this;
 }
 
 tpString& tpString::set( const wchar_t* str )
 {
-	tpWChar2Locale( str, m_stringbuffer );
-	syncCStr2WStr();
+	tpSizeT len = tpStrLen(str);
+	m_buffer.reserve<wchar_t>(len + 1);
+	memcpy(m_buffer.getData(),str,len * sizeof(wchar_t));
+	m_buffer.at<wchar_t>(len) = L'\0';
+
 	return *this;
 }
 
@@ -193,32 +77,27 @@ tpString& tpString::set( const wchar_t* str )
 
 tpBool tpString::isEmpty() const
 {
-	return ( 0 == m_stringbuffer.getSize() ? true : 0 == getLength() );
+	return ( 0 == getLength() );
 }
 
 void tpString::empty()
 {
-	m_stringbuffer.empty();
-	if (m_stringbuffer.getMaxSize() > 0) m_stringbuffer[0] = '\0';
-	m_wcharcopy.empty();
-	if (m_wcharcopy.getMaxSize() > 0) m_wcharcopy[0] = L'\0';
+	m_buffer.setSize(0);
+	m_buffer.at<long>(0) = 0L;
 }
-
-const char* tpString::c_str() const
-{
-	return m_stringbuffer.isEmpty() ? 0 : m_stringbuffer.getData();
-}
-
 
 tpInt tpString::getPascal( char** buffer ) const
 {
+	
 	int _length = this->getLength();
-
+	
+	#if 0
 	if (*buffer == 0) 
 	{
 		*buffer[0] = (_length > 255) ? 255 : _length;
 		strncpy(buffer[1],c_str(),_length);	
 	}
+	#endif
 	
 	return _length;
 }
@@ -229,15 +108,20 @@ tpString::~tpString()
 }
 
 
-tpSizeT tpString::getLength() const
+tpSizeT 
+tpString::getLength() const
 {
-	return (m_stringbuffer.getSize()) ? tpStrLen(m_stringbuffer.getData()) : 0;
+	tpSizeT lw = tpStrLen(m_buffer.ptr<wchar_t>());
+	tpSizeT lc = tpStrLen(m_buffer.ptr<char>());
+	return (lw > lc) ? lw : lc;
 }
 
 
+#if 0
+
 tpString& tpString::append(const tpString& str)
 {
-	return append(str.c_str());  	
+	return append(str.c_str());
 }
 
 tpString& tpString::removeAfter(const tpChar& end)
@@ -591,7 +475,7 @@ tpBool tpStringTokenizer::hasTokens() const
 }
 
 
-
+#endif
 
 #if defined(__SYMBIAN32__) && defined(__GCCE__)
 #	include <staticlibinit_gcce.h>

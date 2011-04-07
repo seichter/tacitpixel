@@ -22,6 +22,7 @@ tpChunk::setSize(tpSizeT size)
 void 
 tpChunk::empty()
 {
-	dlfree(m_ptr);
+	if (m_ptr) dlfree(m_ptr); 
+	m_ptr = 0L;
 }
 

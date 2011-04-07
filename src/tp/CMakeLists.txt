@@ -1,8 +1,12 @@
+# thirdparty stuff
+
+add_subdirectory(thirdparty)
+
 
 set(tp_include_path ${CMAKE_CURRENT_SOURCE_DIR}/../../include)
 
 
-include_directories(${tp_include_path})
+include_directories(${tp_include_path} thirdparty)
 
 set(tp_hdrs
 	${tp_include_path}/tp/allocator.h
@@ -13,6 +17,7 @@ set(tp_hdrs
 
 set(tp_srcs
 	allocator.cxx
+	chunk.cxx
 	hash.cxx
 	referenced.cxx
 	string.cxx
