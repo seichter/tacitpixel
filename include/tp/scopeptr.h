@@ -77,7 +77,7 @@ public:
 	tpScopePtr<T>& operator=(const tpScopePtr& ref);
 
 
-	tpBool isValid() const;
+	bool isValid() const;
 	
 
 protected:
@@ -143,7 +143,7 @@ template <class T> inline void tpScopePtr<T>::cleanup()
 	if (m_ptr != NULL) delete m_ptr;
 };
 
-template <class T> inline tpBool tpScopePtr<T>::isValid() const
+template <class T> inline bool tpScopePtr<T>::isValid() const
 {
 	return (m_ptr != NULL);
 };

@@ -75,7 +75,7 @@ tpString& tpString::set( const wchar_t* str )
 
 //////////////////////////////////////////////////////////////////////////
 
-tpBool tpString::isEmpty() const
+bool tpString::isEmpty() const
 {
 	return ( 0 == getLength() );
 }
@@ -116,8 +116,65 @@ tpString::getLength() const
 	return (lw > lc) ? lw : lc;
 }
 
+tpString&
+tpString::append(const tpString& other)
+{
+	this->append(other.c_str());
+}
+
+tpString&
+tpString::append(const char* other)
+{
+	tpSizeT input_length = tpStrLen(other);
+	if (input_length)
+	{
+		tpSizeT local_length = getLength();
+
+		input_length++;
+		
+		m_buffer.reserve<char>(local_length + input_length);
+
+		for (tpSizeT i = 0; i < input_length; ++i)
+		{
+			m_buffer.at<char>(i + local_length) = other[i];
+		}
+	}
+	
+	return *this;
+}
+
+tpString&
+tpString::prepend(const char* other)
+{
+	tpString result(other);
+	result.append(*this);
+	*this = result;
+	return *this;
+}
+
+
 
 #if 0
+
+
+long tpString::toLong() const
+{
+	return atol(c_str());
+};
+
+
+float tpString::toFloat() const
+{
+	return (float)atof(c_str());
+}
+
+
+int tpString::toInteger() const
+{
+	return (c_str()) ? atoi(c_str()) : 0;
+}
+
+
 
 tpString& tpString::append(const tpString& str)
 {
@@ -157,7 +214,7 @@ unsigned long tpString::getHash() const
 }
 
 
-int tpString::find(char c,tpBool fromright) const
+int tpString::find(char c,bool fromright) const
 {
 	if ( isEmpty() ) return TP_NOTFOUND;
 	const char* _pc = (fromright) ? tpStrRChr(c_str(),c) : tpStrChr(c_str(),c);
@@ -232,22 +289,6 @@ tpString tpString::between(char leftc, char rightc) const
 	
 };
 
-long tpString::toLong() const
-{
-	return atol(c_str());
-};
-
-
-float tpString::toFloat() const
-{
-	return (float)atof(c_str());
-}
-
-
-int tpString::toInteger() const
-{
-	return (c_str()) ? atoi(c_str()) : 0;
-}
 
 void tpString::format(const char* format,...)
 {
@@ -346,7 +387,7 @@ int tpString::find(const char* sub) const
 }
 
 
-tpBool tpString::contains(const tpString& str) const
+bool tpString::contains(const tpString& str) const
 {
 	return find(str.c_str()) > TP_NOTFOUND;
 };
@@ -413,7 +454,7 @@ void tpString::syncWStr2CStr()
 	tpWChar2Locale( m_wcharcopy.getData(), m_stringbuffer );
 }
 
-//tpBool tpString::operator==( const tpString& rs )
+//bool tpString::operator==( const tpString& rs )
 //{
 //	if (isEmpty() && rs.isEmpty()) return true;
 //	return (0 == tpStrCmp(c_str(),rs.c_str()));
@@ -469,7 +510,7 @@ tpString tpStringTokenizer::nextToken()
 	return _res;
 };
 
-tpBool tpStringTokenizer::hasTokens() const
+bool tpStringTokenizer::hasTokens() const
 {
 	return !m_string.isEmpty();
 }

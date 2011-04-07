@@ -33,7 +33,7 @@ template <typename T> void tpSwap(T& value1,T& value2)
 };
 
 
-template <typename T> inline tpBool tpBetween(const T& value,const T& border1,const T& border2)
+template <typename T> inline bool tpBetween(const T& value,const T& border1,const T& border2)
 {
 	return (border2 > border1) ? ((value < border2) && (value > border1)) :
 		((value > border2) && (value < border1));

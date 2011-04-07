@@ -28,14 +28,14 @@ public:
 	inline tpRefPtr& operator = (const tpRefPtr&);
 	inline tpRefPtr& operator = (T*);
 
-	inline tpBool isValid() const;
+	inline bool isValid() const;
 
 	inline T* operator->() const;
 	inline T& operator *() const;
 
 	inline T* get() const;
 
-	inline tpBool operator == (const tpRefPtr& pr);
+	inline bool operator == (const tpRefPtr& pr);
 
 protected:
 	T* m_ptr;
@@ -43,7 +43,7 @@ protected:
 };
 
 template <class T>
-tpBool tpRefPtr<T>::operator==( const tpRefPtr& pr )
+bool tpRefPtr<T>::operator==( const tpRefPtr& pr )
 {
 	return (m_ptr == pr.m_ptr);
 }
@@ -101,7 +101,7 @@ template <class T> inline tpRefPtr<T>& tpRefPtr<T>::operator = (T* rhs)
 	return *this;
 }
 
-template <class T> inline tpBool tpRefPtr<T>::isValid() const
+template <class T> inline bool tpRefPtr<T>::isValid() const
 {
 	return (m_ptr != 0L);
 }

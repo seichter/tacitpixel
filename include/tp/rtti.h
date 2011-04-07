@@ -38,7 +38,7 @@ public:
 	/*! Check if this class has been inherited from another class
 		\param parent check if this is a child (inherited) class
 	 */
-	inline tpBool isOfType(tpRTTI* query) const
+	inline bool isOfType(tpRTTI* query) const
 	{
 		const tpRTTI* iter = this;
 		while (iter)
@@ -52,7 +52,7 @@ public:
 	/*! Check if it is exacty the same type.
 		\param parent checks if aclass is of exact type
 	 */
-	tpBool operator == (tpRTTI* query) const
+	bool operator == (tpRTTI* query) const
 	{
 		return query->m_hash = this->m_hash;
 	}

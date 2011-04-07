@@ -148,24 +148,24 @@ public:
 	 
 	 Compare two tpArray's for equality.
 	 \param rs array as right-side parameter
-	 \return TRUE if equal, otherwise FALSE
+	 \return TRUE if equal, otherwise false
 	 */
-	tpBool operator==(const tpArray& rs) const;
+	bool operator==(const tpArray& rs) const;
 	
 	/** \brief compare for difference
 	 
 	 Compare two arrays for difference.
 	 \param rs array to compare to
-	 \return TRUE if different, otherwise FALSE
+	 \return TRUE if different, otherwise false
 	 */
-	tpBool operator!=(const tpArray& rs) const;
+	bool operator!=(const tpArray& rs) const;
 	
 	/** \brief check if the array is empty
 	 
 	 Returns true when no items are in the array
-	 \return TRUE if empty, otherwise FALSE
+	 \return TRUE if empty, otherwise false
 	 */
-	tpBool isEmpty() const;
+	bool isEmpty() const;
 	
 	/** \brief empties the array
 	 
@@ -460,20 +460,20 @@ tpVoid tpArray<T>::fill(const T& data)
 }
 
 template <typename T>
-tpBool tpArray<T>::operator==(const tpArray& rs) const
+bool tpArray<T>::operator==(const tpArray& rs) const
 {
-	if (m_size != rs.m_size) return FALSE;
+	if (m_size != rs.m_size) return false;
 	for (tpSizeT i = 0; i < m_size;i++) if (rs.m_data[i] != m_data[i]) return false;
 	return true;
 }
 
-template <typename T> tpBool tpArray<T>::operator!=(const tpArray& rs) const
+template <typename T> bool tpArray<T>::operator!=(const tpArray& rs) const
 {
 	return !operator==(rs);
 }
 
 
-template <typename T> tpBool tpArray<T>::isEmpty() const
+template <typename T> bool tpArray<T>::isEmpty() const
 {
 	return (m_size == 0);
 }

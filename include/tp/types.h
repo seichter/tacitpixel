@@ -13,6 +13,8 @@
 #define _TACITPIXEL_TYPES_H_
 
 
+#include <tp/config.h>
+
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -46,7 +48,7 @@ typedef wchar_t tpWChar;
 
 
 
-
+/*
 #ifdef bool
 	typedef bool tpBool;
 #else
@@ -60,6 +62,8 @@ const tpBool FALSE = (tpBool)0;
 #ifndef TRUE
 const tpBool TRUE = (tpBool)1;
 #endif
+
+*/
 
 // Pointers
 typedef tpChar* tpCharPtr;
@@ -88,6 +92,15 @@ typedef void* tpHandle;
 typedef tpDouble tpReal;
 #elif defined(TP_SINGLE)
 typedef tpFloat tpReal;
+#endif
+
+#if defined(HAVE_STDINT_H)
+#include <stdint.h>
+typedef uint64_t tpUInt64;
+typedef int64_t tpInt64;
+typedef uint32_t tpUInt32;
+typedef int32_t tpInt32;
+
 #endif
 
 

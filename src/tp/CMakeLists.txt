@@ -2,11 +2,24 @@
 
 add_subdirectory(thirdparty)
 
-
 set(tp_include_path ${CMAKE_CURRENT_SOURCE_DIR}/../../include)
 
+include_directories(${tp_include_path} thirdparty ${CMAKE_BINARY_DIR}/include)
 
-include_directories(${tp_include_path} thirdparty)
+include(CheckIncludeFiles)
+
+CHECK_INCLUDE_FILES(stdint.h HAVE_STDINT_H)
+CHECK_INCLUDE_FILES(malloc.h HAVE_MALLOC_H)
+CHECK_INCLUDE_FILES("sys/param.h;sys/mount.h" HAVE_SYS_MOUNT_H)
+CHECK_INCLUDE_FILES("pthread.h" HAVE_PTHREAD_H)
+CHECK_INCLUDE_FILES("dlfcn.h" HAVE_DLFCN_H)
+
+set(CMAKE_SKIP_BUILD_RPATH  FALSE)
+
+configure_file(config.h.in
+	${CMAKE_BINARY_DIR}/include/tp/config.h
+	@ONLY
+	)
 
 set(tp_hdrs
 	${tp_include_path}/tp/allocator.h
@@ -18,14 +31,26 @@ set(tp_hdrs
 set(tp_srcs
 	allocator.cxx
 	chunk.cxx
+	fixed.cxx
 	hash.cxx
+	log.cxx
+	library.cxx
+	mutex.cxx
 	referenced.cxx
 	string.cxx
+	system.cxx
+	thread.cxx
+	timer.cxx
+	version.cxx
 	)
 
-add_library(tacitpixel
+add_library(tacitpixel SHARED
 	${tp_srcs}
 	${tp_hdrs}
+	)
+	
+target_link_libraries(tacitpixel
+	"-framework CoreFoundation"
 	)
 	
 	

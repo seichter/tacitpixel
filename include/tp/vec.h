@@ -12,7 +12,7 @@
 
 #include <tp/math.h>
 
-template <class T,tpUInt N> class tpVec
+template <class T, tpUInt N> class tpVec
 {
 public:
 
@@ -62,10 +62,10 @@ public:
 	tpVec& operator = (const T* rs);
 
 	//! comparison
-	tpBool operator == (const tpVec<T,N>& rs) const;
+	bool operator == (const tpVec<T,N>& rs) const;
 	
 	//! inverted comparison
-	tpBool operator != (const tpVec<T,N>& rs) const;
+	bool operator != (const tpVec<T,N>& rs) const;
 
 	//! normalizes this vector
 	void normalize();
@@ -89,12 +89,12 @@ public:
 	tpVec<T,N>& swapComponent(tpUInt c1,tpUInt c2);
 
 	//template <tpUInt cut> inline 
-	//tpVoid slice(tpVec<T,cut>& front, tpVec<T,N-cut>& back) const
+	//void slice(tpVec<T,cut>& front, tpVec<T,N-cut>& back) const
 	//{
 	//	cu
 	//}
 
-public : 
+protected:
 	T vec[N];
 };
 
@@ -192,14 +192,14 @@ template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::operator = (const T* 
 	return *this;
 }
 
-template <class T,tpUInt N> inline tpBool tpVec<T,N>::operator == (const tpVec<T,N>& rs) const
+template <class T,tpUInt N> inline bool tpVec<T,N>::operator == (const tpVec<T,N>& rs) const
 {
-	if (this == &rs) return TRUE;
-	for (tpUInt i = 0; i < N; i++) if (rs.vec[i] != vec[i]) return FALSE;
-	return TRUE;
+	if (this == &rs) return true;
+	for (tpUInt i = 0; i < N; i++) if (rs.vec[i] != vec[i]) return false;
+	return true;
 }
 
-template <class T,tpUInt N> inline tpBool tpVec<T,N>::operator != (const tpVec<T,N>& rs) const
+template <class T,tpUInt N> inline bool tpVec<T,N>::operator != (const tpVec<T,N>& rs) const
 {
 	return ! operator==(rs);
 }

@@ -86,13 +86,13 @@ public:
 	
 	tpInt getPascal(char** buffer) const;
 	
-	tpString& operator += (const tpString& rs);
-	tpString& operator += (const char* rs);
+	inline tpString& operator += (const tpString& rhs) { append(rhs); return *this; }
+	inline tpString& operator += (const char* rhs) { append(rhs); return *this; }
 	
 	//! operator = to copy from right side value
-	tpString& operator = (const char* rs);
+	tpString& operator = (const char* rs) { set(rs); return *this; }
 	//! operator = to copy from right side value
-	tpString& operator = (const tpString& rs);
+	tpString& operator = (const tpString& rs) { set(rs.c_str()); return *this; }
 	
 	/*
 	//! operator = to copy from right side value
@@ -100,19 +100,22 @@ public:
 	*/
 	
 	//! operator + to add a string
-	tpString& operator + (const tpString& rs);
+	tpString& operator + (const tpString& rs) { append(rs); return *this; }
 	
 	//! operator + to add a string
-	tpString& operator + (const char* rs);
+	tpString& operator + (const char* rs) { append(rs); return *this; }
 	
 	//! check if the string is empty or not initialized
-	tpBool isEmpty() const;
+	bool isEmpty() const;
 	
 	//! append another string
 	tpString& append(const tpString&);
 	
 	//! append another cstr
 	tpString& append(const char* rs);
+
+	//! prepend another cstr
+	tpString& prepend(const char* rs);
 	
 	
 	//! return string size (not buffer size!)
@@ -125,7 +128,7 @@ public:
 	unsigned long getHash() const;
 	
 	
-	int find(char c, tpBool fromright = false) const;
+	int find(char c, bool fromright = false) const;
 	
 	int find(const char* sub) const;
 	
@@ -133,7 +136,7 @@ public:
 	//! 
 	tpString sub(int pos, int length) const;
 	
-	tpBool contains(const tpString& str) const;
+	bool contains(const tpString& str) const;
 	
 	//! get the string after last occurence 
 	tpString afterLast(const char& c) const;
@@ -195,6 +198,10 @@ public:
 	tpVoid __verbose_dump() const;
 	
 #endif
+
+
+	template <typename T>
+	T to() const { return T(0); }
 	
 protected:
 	
@@ -206,6 +213,36 @@ protected:
 
 
 //////////////////////////////////////////////////////////////////////////
+
+
+template<> inline int tpString::to<int>() const
+{ 
+	return atoi(this->c_str()); 
+}
+
+template<> inline long tpString::to<long>() const
+{ 
+	return atol(this->c_str()); 
+}
+
+template<> inline float tpString::to<float>() const
+{ 
+	return atof(this->c_str()); 
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+
+
+inline tpString operator + (const tpString& ls,const tpString& rs) 
+{
+	tpString res = ls;
+	res.append(rs);
+	return res;
+}
+
+
 
 #if 0
 
@@ -231,7 +268,7 @@ public:
 	
 	tpString nextToken();
 	
-	tpBool hasTokens() const;
+	bool hasTokens() const;
 	
 	
 	
@@ -251,13 +288,13 @@ protected:
 
 // -----------------------------------------------------------------
 
-inline tpBool operator == (const tpString& l, const tpString& r)
+inline bool operator == (const tpString& l, const tpString& r)
 {
 	return (0 == tpStrCmp(l.c_str(),r.c_str()));
 }
 
 
-inline tpBool operator != (const tpString& l, const tpString& r) 
+inline bool operator != (const tpString& l, const tpString& r) 
 {
 	return (0 != tpStrCmp(r.c_str(),l.c_str()));
 }
@@ -290,11 +327,6 @@ inline tpString& tpString::operator += (const char* rs)
 
 //////////////////////////////////////////////////////////////////////////
 
-inline tpString operator + (const tpString& ls,const tpString& rs) {
-	tpString res = ls;
-	res.append(rs);
-	return res;
-}
 
 
 /*
@@ -328,7 +360,7 @@ public:
 		return res;
 	}
 	
-	tpBool finished() const 
+	bool finished() const 
 	{
 		return (0 == local.getLength());
 	}
