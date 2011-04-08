@@ -102,7 +102,7 @@ protected:
 
 template <class T,tpUInt N> inline tpVec<T,N>::tpVec()
 {
-	for (tpUInt i = 0; i < N; i++) vec[i] = 0;
+	for (tpUInt i = 0; i < N; i++) vec[i] = T(0);
 };
 
 template <class T,tpUInt N> inline tpVec<T,N>::tpVec(const tpVec& v)
@@ -209,19 +209,19 @@ template <class T,tpUInt N> inline void tpVec<T,N>::normalize()
 	T _length = getLength();
 	if (_length > 0)
 	{
-		for (tpUInt i = 0; i < N; i++) vec[i] /= _length;//vec[i] = T(vec[i] / _length);
+		for (register tpUInt i = 0; i < N; i++) vec[i] /= _length;//vec[i] = T(vec[i] / _length);
 	}
 }
 
 template <class T,tpUInt N> inline T tpVec<T,N>::getLength() const
 {
-	return tpSqrt(getSquareLength());
+	return sqrt(getSquareLength());
 };
 
 template <class T,tpUInt N> inline T tpVec<T,N>::getSquareLength() const
 {
 	T sum = 0;
-	for (tpUInt i = 0; i < N; i++) sum = sum + (vec[i] * vec[i]);
+	for (register tpUInt i = 0; i < N; i++) sum += (vec[i] * vec[i]);
 	return sum;
 };
 
@@ -379,7 +379,7 @@ public:
 
 	tpVec4()
 	{
-		this->vec[0] = this->vec[1] = this->vec[2] = this->vec[3] = (T)0;
+		this->vec[0] = this->vec[1] = this->vec[2] = this->vec[3] = T(0);
 	}
 
 	tpVec4(const tpVec3<T>& rv,T pad = T(0)) 
