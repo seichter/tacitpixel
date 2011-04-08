@@ -17,7 +17,14 @@
 	// Unknown platform
 #endif
 
+#include <stddef.h>
 #include <stdio.h>
+#include <string.h>
+
+#if defined(HAVE_TIME_H)
+#include <time.h>
+#endif
+
 
 tpUByte tpSystem::getEndian() const
 {
@@ -159,7 +166,7 @@ tpString tpSystem::getExecutablePath(bool removeExecName)
 	if (removeExecName)
 	{
 		int offset = result.find('/',true);
-		*result[offset] = 0;
+		result.c_str()[offset] = '\0';
 	}
 
 #endif

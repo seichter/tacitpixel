@@ -120,6 +120,11 @@ public:
 	
 	//! return string size (not buffer size!)
 	tpSizeT getLength() const;
+
+
+	//! find a single character
+	int find(char c, bool fromright = false) const;
+
 	
 	
 #if 0
@@ -128,7 +133,6 @@ public:
 	unsigned long getHash() const;
 	
 	
-	int find(char c, bool fromright = false) const;
 	
 	int find(const char* sub) const;
 	

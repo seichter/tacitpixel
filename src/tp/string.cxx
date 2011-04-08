@@ -83,7 +83,7 @@ bool tpString::isEmpty() const
 void tpString::empty()
 {
 	m_buffer.setSize(0);
-	m_buffer.at<long>(0) = 0L;
+	//m_buffer.at<char>(0) = '\0';
 }
 
 tpInt tpString::getPascal( char** buffer ) const
@@ -152,6 +152,14 @@ tpString::prepend(const char* other)
 	return *this;
 }
 
+int 
+tpString::find(char c,bool fromright) const
+{
+	if ( isEmpty() ) return -1;
+	const char* _pc = (fromright) ? tpStrRChr(c_str(),c) : tpStrChr(c_str(),c);
+	return (_pc) ? _pc - (const char*)c_str() : -1;
+}
+
 
 
 #if 0
@@ -214,12 +222,6 @@ unsigned long tpString::getHash() const
 }
 
 
-int tpString::find(char c,bool fromright) const
-{
-	if ( isEmpty() ) return TP_NOTFOUND;
-	const char* _pc = (fromright) ? tpStrRChr(c_str(),c) : tpStrChr(c_str(),c);
-	return (_pc) ? _pc - (const char*)c_str() : TP_NOTFOUND;
-};
 
 
 tpString tpString::afterLast(const char& c) const
