@@ -25,8 +25,7 @@
 #include <tp/math.h>
 
 
-typedef tpLong tpFixedType; //<! type definition for internal fixed point rep
-
+/*
 #define TP_INT_TO_FIXED(x)         ((x) << 16)
 #define TP_DOUBLE_TO_FIXED(x)      ((tpLong)(x * 65536.0 + 0.5))
 #define TP_FIXED_TO_INT(x)         ((x) >> 16)
@@ -40,7 +39,7 @@ typedef tpLong tpFixedType; //<! type definition for internal fixed point rep
 #define TP_FIXED_ROOT2      74804L
 #define TP_FIXED_ROOT3     113512L
 #define TP_FIXED_GOLDEN    106039L
-
+*/
 
 template <typename T>
 class tpFixed {
@@ -80,7 +79,6 @@ public:
 	tpFixed<T>& div(const tpFixed<T>& r) { m = ((tpInt64)m << r._bits_half) / r.m;  return *this; }
 	tpFixed<T>& add(const tpFixed<T>& r) { m += r.m; return *this; }
 	tpFixed<T>& sub(const tpFixed<T>& r) { m -= r.m; return *this; }
-	tpFixed<T>& sqrt() {set(tpSqrt(getFloat())); return *this; }
 	
 
 	tpFixed<T>& operator  = (const tpFixed<T>& rhv) { this->m = rhv.m; return *this; }
@@ -96,12 +94,6 @@ public:
 	T& getX() { return m; }
 	const T& getX() const { return m; }
 	void setX(const T& val) { m = val; }
-	
-	
-	//int operator = (const tpFixed<T>& rhv) { return getInt(); }
-	
-	//bool operator < (const int& rhv) { return (m < tpFixed<T>(rhv).m); }
-	
 	
 };
 
@@ -132,10 +124,10 @@ tpFixed<T> operator / (const tpFixed<T>& nom, const tpFixed<T>& den)
 }
 
 
-// math overload
+// math overload (expensive versions)
 template<typename T> inline tpFixed<T> sqrt(const tpFixed<T>& in)
 {
-	tpFixed<T> res(in); res.sqrt(); return res; 
+	tpFixed<T> res(sqrt(in.getFloat())); return res; 
 }
 
 template<typename T> inline tpFixed<T> acos(const tpFixed<T>& in)

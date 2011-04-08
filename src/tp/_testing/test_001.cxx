@@ -2,6 +2,9 @@
 #include <tp/library.h>
 #include <tp/system.h>
 
+#include <tp/refptr.h>
+#include <tp/image.h>
+
 int main(int argc, char* argv[])
 {
 	
@@ -10,6 +13,10 @@ int main(int argc, char* argv[])
 	tpLogMessage("Resource Path: %s",tpSystem::get()->getResourcePath().c_str());
 	tpLogMessage("CWD: %s",tpSystem::get()->getCWD().c_str());
 	
+	
+	tpRefPtr<tpImage> image = new tpImage();
+	
+	image->allocate(320,240,TP_RGB888);
 	
 	return 0;
 }

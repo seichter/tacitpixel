@@ -37,7 +37,18 @@ template <typename T> inline bool tpBetween(const T& value,const T& border1,cons
 {
 	return (border2 > border1) ? ((value < border2) && (value > border1)) :
 		((value > border2) && (value < border1));
-};
+}
 
+template <typename T> inline T nextPowerOfTwo(T v)
+{
+	v--;
+	v |= v >> 1;
+	v |= v >> 2;
+	v |= v >> 4;
+	v |= v >> 8;
+	v |= v >> 16;
+	++v;
+	return v;
+}
 
 #endif

@@ -32,8 +32,8 @@ set(tp_hdrs
 set(tp_srcs
 	allocator.cxx
 	chunk.cxx
-	fixed.cxx
 	hash.cxx
+	image.cxx
 	log.cxx
 	library.cxx
 	mutex.cxx

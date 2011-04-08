@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
 	fix32.div(tpFixed32(2)).sub(tpFixed32(10));
 	tpLogMessage("Fixed > float / 2 (186.018 / 2 - 10)  %d = %f",fix32.getX(),fix32.getFloat());
 	
-	fix32.set(25); fix32.sqrt();
+	fix32.set(25); fix32 = sqrt(fix32);
 	tpLogMessage("Fixed > sqrt 25  %d = %f",fix32.getX(),fix32.getDouble());
 	
 	

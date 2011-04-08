@@ -35,37 +35,32 @@
 */
 
 class tpChunk {
+	
+	//! Copy c'tor.
+	tpChunk(const tpChunk& origin) {};
+	
+	//! assignment
+	tpChunk& operator = (const tpChunk& rhs) {}
+	
 public:
 
 	//! Standard c'tor.
-	tpChunk(tpSizeT size = 0);
-
-	//! Copy c'tor.
-	tpChunk(const tpChunk& origin);
+	explicit tpChunk(tpSizeT size = 0);
 
 	//! D'tor.
-	~tpChunk();
+	virtual ~tpChunk();
 	
-	//! copy data
-	void copy(tpChunk& dest) const;
+	//! set raw data size
+	virtual void setSize(tpSizeT size);
 
-	//! merge operator
-	tpChunk& operator += (const tpChunk& merge);
-	
-	//! assignment operator
-	tpChunk& operator  = (const tpChunk& assign);
-	
+	//! Remove all data
+	virtual void empty();
+		
 	//! Get data pointer
 	const void* getData() const { return m_ptr; }
 	
 	//! Get data pointer
 	void* getData() { return m_ptr; }
-	
-	//! set raw data size
-	void setSize(tpSizeT size);
-
-	//! Remove all data
-	void empty();
 	
 	//! typed pointer
 	template <typename T>
@@ -96,6 +91,20 @@ protected:
 
 };
 
+class tpSizedChunk : public tpChunk {
+public: 
+
+	virtual void setSize(tpSizeT size);
+
+	virtual tpSizeT getSize() const { return m_size; }
+	
+	virtual void empty();
+
+protected:
+
+	tpSizeT m_size;
+	
+};
 
 
 #endif

@@ -26,3 +26,16 @@ tpChunk::empty()
 	m_ptr = 0L;
 }
 
+void 
+tpSizedChunk::setSize(tpSizeT size)
+{
+	tpChunk::setSize(size);
+	if (m_ptr) m_size = size;
+}
+
+void 
+tpSizedChunk::empty()
+{
+	tpChunk::empty();
+	m_size = 0;
+}
