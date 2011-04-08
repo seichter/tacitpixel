@@ -50,10 +50,11 @@ add_library(tacitpixel SHARED
 	${tp_hdrs}
 	)
 
-
-#target_link_libraries(tacitpixel
-#	"-framework CoreFoundation"
-#	)
+if(APPLE)
+	target_link_libraries(tacitpixel
+		"-framework CoreFoundation"
+		)
+endif()
 
 target_link_libraries(tacitpixel
 	pthread dl

@@ -82,8 +82,7 @@ bool tpString::isEmpty() const
 
 void tpString::empty()
 {
-	m_buffer.setSize(0);
-	//m_buffer.at<char>(0) = '\0';
+	m_buffer.empty();
 }
 
 tpInt tpString::getPascal( char** buffer ) const
