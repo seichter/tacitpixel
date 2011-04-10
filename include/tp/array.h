@@ -5,6 +5,8 @@
 #include <tp/types.h>
 #include <tp/utils.h>
 
+#include <cstdio>
+
 /*!
  \class tpArray
  \brief a dynamic array 
@@ -77,9 +79,14 @@ public:
 	/** \brief removes an item
 	 
 	 Removes an item from the array.
-	 \param index is the index in the array
+	 \param index is the pointer to the object to remove
+	 
 	 */
-	void remove(tpSizeT index);
+	T* erase(T* iter);
+	
+	
+	//! erase the item at pos
+	T* erase(tpSizeT pos);
 	
 	/** \brief removes one item from the end
 	 
@@ -178,7 +185,7 @@ public:
 	 Get the current capacity of the array. This value
 	 is dynamic.
 	 */
-	tpSizeT getMaxSize() const;
+	tpSizeT getCapacity() const;
 	
 	/** \brief resizes the array to optimal size
 	 
@@ -242,6 +249,12 @@ public:
 	tpArray<T>& insert( const T* ins, tpSizeT pos, tpUInt length );
 	
 	
+	T* begin();
+	const T* begin() const;
+
+	T* end();
+	const T* end() const;
+
 private:
 	
 	//! data pointer
@@ -266,10 +279,10 @@ tpVoid tpArray<T>::copy( const T* orig, tpUInt length, tpUInt pos )
 template <typename T>
 tpVoid tpArray<T>::clear()
 {
-	//if (m_data) free(m_data);
 	if (m_data) delete [] m_data;
 	m_data = (T*)0L;
 	m_size = m_maxsize = 0;
+	printf("Array::%s\n",__FUNCTION__);
 }
 
 template <typename T>
@@ -350,21 +363,40 @@ template <typename T> tpArray<T>& tpArray<T>::add(const T& item)
 	return *this;
 }
 
-
-template <typename T> void tpArray<T>::remove(tpSizeT index)
+template <typename T> const T* 
+tpArray<T>::begin() const 
 {
-	if (index >= m_size) return;
-	
-	if (index < m_size - 1) memcpy(m_data+index,m_data+index+1,(m_size-index)*sizeof(T));
+	return m_data;
+}
+
+template <typename T> T* 
+tpArray<T>::begin() 
+{
+	return m_data;
+}
+
+template <typename T> const T* 
+tpArray<T>::end() const 
+{
+	return m_data + m_size;
+}
+
+template <typename T> T* 
+tpArray<T>::end() 
+{
+	return m_data + m_size;
+}
+
+
+template <typename T> T* tpArray<T>::erase(T* iter)
+{
+	for (T* i = iter; i != end() - 1; i++)
+	{
+		*i = *(i + 1);
+	}
 	--m_size;
-	
-};
-//
-//template <typename T> void tpArray<T>::remove(const T& value)
-//{
-//	tpLong idx = this->find(value);
-//	this->remove(idx);
-//};
+	return iter;
+}
 
 
 template <typename T> tpSizeT tpArray<T>::find(const T& value) const
@@ -372,7 +404,7 @@ template <typename T> tpSizeT tpArray<T>::find(const T& value) const
 	
     for (tpSizeT i = 0; i < m_size; ++i) if (value == m_data[i]) return i;
     
-    return -1;
+    return static_cast<tpSizeT>(-1);
 	
 };
 
@@ -483,7 +515,7 @@ template <typename T> void tpArray<T>::empty()
 	m_size = 0;
 }
 
-template <typename T> tpSizeT tpArray<T>::getMaxSize() const
+template <typename T> tpSizeT tpArray<T>::getCapacity() const
 {
 	return m_maxsize;
 };

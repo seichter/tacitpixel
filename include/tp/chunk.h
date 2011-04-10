@@ -40,7 +40,7 @@ class tpChunk {
 	tpChunk(const tpChunk& origin) {};
 	
 	//! assignment
-	tpChunk& operator = (const tpChunk& rhs) {}
+	tpChunk& operator = (const tpChunk& rhs) { return *this; }
 	
 public:
 
@@ -99,6 +99,8 @@ public:
 	virtual tpSizeT getSize() const { return m_size; }
 	
 	virtual void empty();
+	
+	void copy(const void* ptr, tpSizeT size);
 
 protected:
 

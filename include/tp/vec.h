@@ -17,6 +17,8 @@ template <class T, tpUInt N> class tpVec
 public:
 
 	typedef T value_type;
+	
+	const static tpUInt dimensions = N;
 
 	//! c'tor initializes all to 0
 	tpVec();
@@ -42,7 +44,6 @@ public:
 	tpVec& operator -= (const tpVec& v);
 	//! add to the vector
 	tpVec& operator += (const tpVec& v);
-	
 
 	//! copy data from other representations
 	void set(const tpVec& v);
@@ -85,6 +86,10 @@ public:
 	//! return the component at position i
 	T& operator [] (const tpUInt& i);
 	
+	//! return the component at position i
+	const T& operator [] (const tpUInt& i) const;
+
+	
 	//! swap components in the vector
 	tpVec<T,N>& swapComponent(tpUInt c1,tpUInt c2);
 
@@ -113,11 +118,6 @@ template <class T,tpUInt N> inline tpVec<T,N>::tpVec(const tpVec& v)
 
 template <class T,tpUInt N> inline tpVec<T,N>::~tpVec() 
 {
-};
-
-template <class T,tpUInt N> inline tpUInt tpVec<T,N>::dimension() const
-{
-	return N;
 };
 
 template <class T,tpUInt N> inline const T* tpVec<T,N>::getData() const 
@@ -419,8 +419,8 @@ typedef tpVec4<tpInt> tpVec4i;
 
 
 // Quaternion
-template <typename T> class tpQuat : public tpVec<T,4>
-{
+template <typename T> 
+class tpQuat : public tpVec<T,4> {
 public:
 
 	tpVec3<T> rotate( const tpVec3<T>& v )
@@ -429,7 +429,9 @@ public:
 
 		
 	}
-
 };
+
+
+
 
 #endif

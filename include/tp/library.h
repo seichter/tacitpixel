@@ -64,7 +64,7 @@ public:
 	 * \param funcName name of the function/symbol
 	 * \return address if successful, otherwise 0x0
 	 */
-	void* getAddress(const tpString& funcName);
+	void* getAddress(const tpString& funcName) const;
 
 	/**
 	 * Convienience function for checking if the library

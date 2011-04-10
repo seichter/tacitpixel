@@ -35,7 +35,10 @@ public:
 
 	inline T* get() const;
 
-	inline bool operator == (const tpRefPtr& pr);
+	inline bool operator == (const tpRefPtr& pr) const;
+	inline bool operator == (const T* pr) const;
+	
+	
 
 protected:
 	T* m_ptr;
@@ -43,11 +46,16 @@ protected:
 };
 
 template <class T>
-bool tpRefPtr<T>::operator==( const tpRefPtr& pr )
+bool tpRefPtr<T>::operator==( const tpRefPtr& pr ) const
 {
 	return (m_ptr == pr.m_ptr);
 }
 
+template <class T>
+bool tpRefPtr<T>::operator==( const T* pr ) const
+{
+	return (m_ptr == pr);
+}
 
 template <class T> tpRefPtr<T>::tpRefPtr()
 	: m_ptr(0L)

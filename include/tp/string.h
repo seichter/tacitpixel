@@ -47,9 +47,6 @@ public:
 	//! copy constructor from plain c-string
 	tpString(const char* str, tpUShort encoding = ASCII);
 	
-	//! copy constructor from wide string
-	tpString(const wchar_t* str);
-	
 	//! copy constructor from buffer without terminating '\0'
 	tpString(const char* str, unsigned int size, tpUShort encoding = ASCII);
 	
@@ -63,26 +60,16 @@ public:
     void empty();   
 	
 	//! get the plain c-string
-	const char* c_str() const { m_buffer.ptr<const char>(); }
+	const char* c_str() const { return m_buffer.ptr<const char>(); }
 	
 	//! get the plain c-string
-	char* c_str() { m_buffer.ptr<char>(); }
-	
-	//! get the plain c-string
-	const wchar_t* wc_str() const { m_buffer.ptr<const wchar_t>(); }
-	
-	//! get the plain c-string
-	char* wc_str() { m_buffer.ptr<wchar_t>(); }
-	
+	char* c_str() { return m_buffer.ptr<char>(); }
 	
 	//! set contents from c-string
-    tpString& set(const char* str);
-	
-	//! set contents from wide c-string
-	tpString& set(const wchar_t* str);
+    tpString& set(const char* str, tpUByte encoding = ASCII);
 	
 	//! set content from a non-null terminated C string
-	tpString& set(const char* buffer, tpSizeT size);
+	tpString& set(const char* buffer, tpSizeT size, tpUByte encoding = ASCII);
 	
 	tpInt getPascal(char** buffer) const;
 	
@@ -117,14 +104,24 @@ public:
 	//! prepend another cstr
 	tpString& prepend(const char* rs);
 	
-	
 	//! return string size (not buffer size!)
 	tpSizeT getLength() const;
 
-
 	//! find a single character
-	int find(char c, bool fromright = false) const;
+	int find(const char& c, bool fromright = false) const;
 
+	//! sets this character to 0 in order to remove everything behind
+	tpString& removeFrom(const char& c, bool fromright = false);
+	
+	//! for guessing encoding
+	static bool isUTF8(const char* str);
+	
+	
+	template <typename T>
+	T& operator [] ( tpSizeT idx ) { return m_buffer.ptr<T>[idx]; }
+	
+	template <typename T>
+	const T& operator [] ( tpSizeT idx ) const { return m_buffer.ptr<T>[idx]; }
 	
 	
 #if 0
@@ -197,7 +194,6 @@ public:
 	
 	tpString& subst( tpChar c, const tpChar& substc );
 	
-	tpString& removeAfter(const tpChar& end);
 
 	tpVoid __verbose_dump() const;
 	
@@ -208,9 +204,12 @@ public:
 	T to() const { return T(0); }
 	
 protected:
+
+	tpString& _assign(const char* str, tpUByte encoding = ASCII);
+	tpString& _append(const char* str, tpUByte encoding = ASCII);
+	tpString& _truncate(tpSizeT pos);
 	
 	tpChunk m_buffer;
-	tpUShort m_itemsize;
 	tpUShort m_encoding;
 	
 };

@@ -31,7 +31,6 @@ enum tpPixelFormat {
 	TP_YUV420
 };
 
-
 class TP_API tpImage : public tpReferenced {
 
 	tpSizedChunk m_data;
@@ -43,6 +42,8 @@ class TP_API tpImage : public tpReferenced {
 	tpUInt m_changecount;
 
 public:
+	
+	TP_TYPE_DECLARE;
 	
 	tpImage();
 
@@ -65,10 +66,20 @@ protected:
 };
 
 
-//
-struct tpImageOperator {
-	virtual bool operator()(const tpImage* in, tpImage* out) = 0;
+//!
+struct TP_API tpImageOperator {
+	
+	enum {
+		Null = 0x0,
+		SwapRedBlue
+	};
+	
+	virtual void operator()(tpImage& in) = 0;
+	
+	static tpImageOperator* create(tpUByte op);
+	
 };
+
 
 
 #endif

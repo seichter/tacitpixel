@@ -44,11 +44,11 @@ typedef void (*tpLogFunc)(const char* cstr);
 class TP_API tpLog {
 public:
 
-	void log(tpLogLevelType logtype, const char* buf, int endline = 1);
+	void log(tpUShort logtype, const char* buf, int endline = 1);
 
-	void printf(tpUInt logtype, const char* szString, ... );
+	void printf(tpUShort logtype, const char* szString, ... );
 
-	void setLevel(tpUInt level) {m_level = level;}
+	void setLevel(tpUShort level) {m_level = level;}
 	tpUInt getLevel() const { return m_level; }
 
 	static tpLog& get();
@@ -60,9 +60,10 @@ protected:
 	tpLog();
 	virtual ~tpLog();
 
+	tpUInt	m_level;
 	tpLogFunc m_func;
 
-	tpUInt	m_level;
+	
 };
 
 //! logs a normal message aka. notification
@@ -75,7 +76,7 @@ TP_API void tpLogNotify(const char* szFormat, ...);
 TP_API void tpLogProgress(const char* szFormat, ...);
 
 //! set the global notification level
-TP_API void tpSetGlobalNotifyLevel(tpUInt level);
+TP_API void tpSetGlobalNotifyLevel(tpUShort level);
 
 
 

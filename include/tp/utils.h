@@ -25,13 +25,20 @@ template <typename T> inline const T& tpBounce(const T& val,const T& min,const T
 };
 
 
-template <typename T> void tpSwap(T& value1,T& value2)
+template <typename T> inline void tpSwap(T& value1,T& value2)
 {
 	T _temp = value1;
 	value1 = value2;
 	value2 = _temp;
-};
-
+}
+/*
+template <> void inline tpSwap(char& x, char& y)
+{
+	x = x ^ y;
+	y = x ^ y;
+	x = x ^ y;
+}
+*/
 
 template <typename T> inline bool tpBetween(const T& value,const T& border1,const T& border2)
 {

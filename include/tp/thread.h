@@ -71,7 +71,7 @@ public:
 	void stop();
 
 	//! check if the thread is running
-	bool isRunning();
+	bool isRunning() const { return m_run; }
 
 	//! the task needs to be put in here!
 	virtual void onRun() = 0;
