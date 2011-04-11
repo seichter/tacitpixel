@@ -85,7 +85,7 @@ public:
 	tpFixed<T>& operator *= (const tpFixed<T>& rhv) { return mul(rhv); }
 	tpFixed<T>& operator /= (const tpFixed<T>& rhv) { return div(rhv); }
 	tpFixed<T>& operator += (const tpFixed<T>& rhv) { return add(rhv); }
-	tpFixed<T>& operator -= (const tpFixed<T>& rhv) { return add(rhv); }
+	tpFixed<T>& operator -= (const tpFixed<T>& rhv) { return sub(rhv); }
 	
 	bool operator < (const tpFixed<T>& rhv) { return (m < rhv.m); }
 	bool operator > (const tpFixed<T>& rhv) { return (m > rhv.m); }

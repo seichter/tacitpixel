@@ -2,6 +2,10 @@
 #include <tp/image.h>
 #include <tp/log.h>
 
+#include <tp/utils.h>
+
+#include <algorithm>
+
 
 inline static tpUShort tpGetBitsPerPixel(const tpUByte& format)
 {
@@ -51,9 +55,88 @@ tpImage::allocate(unsigned int w, unsigned int h, tpUByte pixelformat )
 	tpLogMessage("%s - %dx%d (%d bytes)",__FUNCTION__,m_width,m_height,m_data.getSize());
 }
 
+struct tpImageOperatorNull {
+	
+	void impl1(tpImage& img) { tpLogMessage(__FUNCTION__); }
+	void impl8(tpImage& img) { tpLogMessage(__FUNCTION__); }
+	
+};
 
 
+struct tpImageOpRGB2BGR {
+	
+	void impl1(tpImage& img) 
+	{
+		char* p = static_cast<char*>(img.getData());
+		for (tpSizeT i = 0; i < img.getDataSize(); i+= 3)
+		{
+			tpSwap(p[i],p[i+2]);
+		}
+	}
+	
+	void impl8(tpImage& img) 
+	{
+		char* p = static_cast<char*>(img.getData());
+		for (tpSizeT i = 0; i < img.getDataSize(); i+= 24)
+		{
+			tpSwap(p[i+ 0],p[i+ 2]);
+			tpSwap(p[i+ 3],p[i+ 5]);
+			tpSwap(p[i+ 6],p[i+ 8]);
+			tpSwap(p[i+ 9],p[i+11]); 
+			tpSwap(p[i+12],p[i+14]);
+			tpSwap(p[i+15],p[i+17]);
+			tpSwap(p[i+18],p[i+20]);
+			tpSwap(p[i+21],p[i+23]);
+		}
+	}	
+};
 
+
+template <typename T> struct tpImageOperatorImpl : tpImageOperator {
+	
+	T* m;
+	
+	void (T::*_impl1)(tpImage& img);
+	void (T::*_impl8)(tpImage& img);
+	
+	
+	
+	
+	tpImageOperatorImpl(T* pObj, void (T::*impl1)(tpImage& img), void (T::*impl8)(tpImage& img) ) 
+	: m(pObj), _impl1(impl1), _impl8(impl8)
+	{
+		if (0 == _impl8) _impl8 = _impl1;
+	}
+	
+	void operator()(tpImage& img) 
+	{
+		(img.getDataSize() % 8 == 0) ? (*m.*_impl8)(img) : (*m.*_impl1)(img);
+	}
+	
+};
+
+
+tpImageOperator* 
+tpImageOperator::create(tpUByte op)
+{
+	tpImageOperatorNull nullop;
+	tpImageOpRGB2BGR swapredblue;
+	tpImageOperator* ret = 0L;
+	
+	switch (op) {
+		case tpImageOperator::Null:
+			ret = new tpImageOperatorImpl<tpImageOperatorNull>(&nullop,&tpImageOperatorNull::impl1,&tpImageOperatorNull::impl8);
+			break;
+		case tpImageOperator::SwapRedBlue:
+			ret = new tpImageOperatorImpl<tpImageOpRGB2BGR>(&swapredblue,&tpImageOpRGB2BGR::impl1,&tpImageOpRGB2BGR::impl8); 
+	}
+	
+	
+	return ret;
+}
+
+
+TP_TYPE_REGISTER(tpImage,tpReferenced,Image);
 
 
 

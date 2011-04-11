@@ -154,7 +154,7 @@ tpLog::tpLog() :
 tpLog::~tpLog() {
 }
 
-void tpLog::log(tpLogLevelType logtype, const char* buf, int endline)
+void tpLog::log(tpUShort logtype, const char* buf, int endline)
 {
 	if (logtype > m_level) return;
 	
@@ -167,7 +167,7 @@ void tpLog::log(tpLogLevelType logtype, const char* buf, int endline)
 	}
 }
 
-void tpLog::printf(tpUInt logtype, const char* szFormat, ...) 
+void tpLog::printf(tpUShort logtype, const char* szFormat, ...) 
 {
 
 	if (logtype >= m_level) return;

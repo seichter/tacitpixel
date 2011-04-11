@@ -1,10 +1,10 @@
 # thirdparty stuff
 
-add_subdirectory(thirdparty)
+add_subdirectory(_thirdparty)
 
 set(tp_include_path ${CMAKE_CURRENT_SOURCE_DIR}/../../include)
 
-include_directories(${tp_include_path} thirdparty ${CMAKE_BINARY_DIR}/include)
+include_directories(${tp_include_path} _thirdparty ${CMAKE_BINARY_DIR}/include)
 
 include(CheckIncludeFiles)
 
@@ -25,10 +25,29 @@ configure_file(config.h.in
 set(tp_hdrs
 	${tp_include_path}/tp/allocator.h
 	${tp_include_path}/tp/array.h
+	${tp_include_path}/tp/chunk.h
+	${tp_include_path}/tp/field.h
 	${tp_include_path}/tp/globals.h
+	${tp_include_path}/tp/hash.h
+	${tp_include_path}/tp/image.h
+	${tp_include_path}/tp/log.h
+	${tp_include_path}/tp/list.h	
+	${tp_include_path}/tp/library.h
+	${tp_include_path}/tp/map.h
+	${tp_include_path}/tp/math.h
+	${tp_include_path}/tp/matrix.h
+	${tp_include_path}/tp/mutex.h
+	${tp_include_path}/tp/referenced.h
+	${tp_include_path}/tp/stack.h
+	${tp_include_path}/tp/string.h
+	${tp_include_path}/tp/system.h
+	${tp_include_path}/tp/thread.h
+	${tp_include_path}/tp/timer.h
 	${tp_include_path}/tp/types.h
+	${tp_include_path}/tp/version.h
 	)
 
+	
 set(tp_srcs
 	allocator.cxx
 	chunk.cxx
@@ -45,9 +64,27 @@ set(tp_srcs
 	version.cxx
 	)
 
+
+#
+# Scenegraph
+#
+set(tp_hdrs_sg
+	${tp_include_path}/tp/node.h
+	${tp_include_path}/tp/object.h
+	${tp_include_path}/tp/traverser.h
+	)
+	
+set(tp_srcs_sg
+	node.cxx
+	object.cxx
+	traverser.cxx
+	)
+
 add_library(tacitpixel SHARED
 	${tp_srcs}
 	${tp_hdrs}
+	${tp_hdrs_sg}
+	${tp_srcs_sg}
 	)
 
 if(APPLE)

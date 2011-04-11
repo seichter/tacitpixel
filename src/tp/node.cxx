@@ -46,32 +46,45 @@ tpObject* tpNode::clone()
 }
 
 
-tpVoid tpNode::traverse( tpTraverser* traverse, tpContext& context )
+void 
+tpNode::traverse(tpTraverser& traverser)
 {
-//	context.push(this);
-//	traverse->preAction(this,context);
-//	doActions(m_actions,&context);
-//	traverse->postAction(this,context);
-//	context.pop();
+	traverser.push(this);
+	for (tpArray<tpRefPtr<tpNode> >::iterator iter = m_children.begin();
+		 iter != m_children.end();
+		 ++iter)
+	{
+		(*iter).get()->traverse(traverser);
+	}	
+	traverser.pop(this);
 }
 
+
 //! add a child node
-void 
+tpNode* 
 tpNode::addChild(tpNode* node)
 {
-	m_children.add(node);
-	node->m_parents.add(this);
+	if (node)
+	{
+		m_children.add(node);
+		node->m_parents.add(this);
+	}
+	return node;
 }
 
 //! remove child node
-void 
+tpNode* 
 tpNode::removeChild(tpNode* node)
 {
-	tpSizeT idx_c = m_children.find(node);
-	tpSizeT idx_p = node->m_parents.find(this);
-	
-	m_children.erase(m_children.begin() + idx_c);
-	node->m_parents.erase(node->m_parents.begin() + idx_p);
+	if (node)
+	{
+		tpSizeT idx_c = m_children.find(node);
+		tpSizeT idx_p = node->m_parents.find(this);
+		
+		m_children.erase(m_children.begin() + idx_c);
+		node->m_parents.erase(node->m_parents.begin() + idx_p);
+	}
+	return node;
 }
 
 //! set child node

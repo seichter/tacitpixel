@@ -5,12 +5,12 @@
 template <typename T> inline const T& tpMax(const T& value1,const T& value2)
 {
 	return (value1 > value2) ? value1 : value2;
-};
+}
 
 template <typename T> inline const T& tpMin(const T& value1,const T& value2)
 {
 	return (value1 < value2) ? value1 : value2;
-};
+}
 
 template <typename T> inline const T& tpClamp(const T& value,const T& min,const T& max)
 {
@@ -46,7 +46,7 @@ template <typename T> inline bool tpBetween(const T& value,const T& border1,cons
 		((value > border2) && (value < border1));
 }
 
-template <typename T> inline T nextPowerOfTwo(T v)
+template <typename T> inline T tpNextPowerOfTwo(T v)
 {
 	v--;
 	v |= v >> 1;
@@ -57,5 +57,6 @@ template <typename T> inline T nextPowerOfTwo(T v)
 	++v;
 	return v;
 }
+
 
 #endif

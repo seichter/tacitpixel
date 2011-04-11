@@ -35,6 +35,7 @@ enum tpFieldState
 
 class tpFieldConnector;
 
+
 /*!
 	\class tpField
 	\brief is a generic property of scenegraph nodes
@@ -53,10 +54,11 @@ public:
 
 	//! get a name
 	const tpString& getName() const { return m_name; }
-	 
+	
+
 protected:
 	
-	tpString			m_name;
+	tpString	m_name;
 };
 
 
@@ -77,7 +79,7 @@ template <class T> class tpSingleField : public tpField
 	tpSingleField(const tpSingleField& field) {}
 	
 public:
-	
+		
 	//! initial c'tor
 	tpSingleField(T& val,const tpString& name = "noname") : tpField(name),  m_value(val) {}
 
@@ -91,7 +93,8 @@ public:
 	tpSingleField& operator = (const tpSingleField<T>&);
 		
 protected:
-	T& m_value;	
+	
+	T& m_value;
 };
 
 

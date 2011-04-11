@@ -147,7 +147,7 @@ bool tpLibrary::open( const tpString& file )
 
 }
 
-void* tpLibrary::getAddress( const tpString& funcName )
+void* tpLibrary::getAddress( const tpString& funcName ) const
 {
 	void* address(0L);
 

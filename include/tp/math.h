@@ -38,6 +38,10 @@ template <class T> inline T tpSqrt(const T& in)
 	return ::sqrt(in);
 }
 
-
+template <class T> inline 
+bool isPowerOfTwo( const T& v )
+{
+	return v && !(v & (v - 1));
+}
 
 #endif

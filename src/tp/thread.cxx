@@ -95,28 +95,19 @@ void tpThread::start()
 void tpThread::stop()
 {
 	m_run = false;
-};
-
+}
 
 
 void tpThread::onStop()
 {
-};
+}
 
-
-
-bool tpThread::isRunning()
-{
-	return m_run;
-};
 
 /* static */
 void tpThread::doRun(void* userdata)
 {
-	tpThread* t = (tpThread*)userdata;
-	if (t) t->onRun();
-	// if (t) t->doStop();
-};
+	static_cast<tpThread*>(userdata)->onRun();
+}
 
 void tpThread::doStop()
 {

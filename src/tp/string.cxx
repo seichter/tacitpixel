@@ -16,7 +16,12 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <tp/log.h>
 
+
+//
+// C'tors
+//
 tpString::tpString()
 {
 	this->empty();
@@ -24,20 +29,15 @@ tpString::tpString()
 
 tpString::tpString(const char* str, tpUShort encoding /* tpString::ASCII */) : m_encoding(encoding)
 {
-	set( str );
+	set( str, encoding, encoding );
 }
 
 
 tpString::tpString(const char* str, unsigned int size,  tpUShort encoding /* tpString::ASCII */)
 {
-	set( str, size );
+	set( str, size, encoding );
 }
 
-
-tpString::tpString(const wchar_t* str)
-{
-	set( str );
-}
 
 tpString::tpString(const tpString& str)
 {
@@ -46,32 +46,72 @@ tpString::tpString(const tpString& str)
 
 //////////////////////////////////////////////////////////////////////////
 
-
-tpString& tpString::set( const char* buffer, tpSizeT size )
+tpString& tpString::set( const char* buffer, tpSizeT size, tpUByte encoding )
 {
+	_assign(buffer);
+	_truncate(size);
+	
 	return *this;
 }
 
-tpString& tpString::set(const char* str)
+tpString& tpString::set( const char* str, tpUByte encoding )
+{
+	_assign(str);
+	
+	return *this;
+}
+
+
+tpString& 
+tpString::_assign(const char* str, tpUByte encoding /* = ASCII*/)
 {
 	tpUInt len = tpStrLen(str);
+
+	if (len)
+	{	
+		m_buffer.reserve<char>(len + 1);
+		memcpy(m_buffer.getData(),str,len + 1);
+	} else {
+		empty();
+	}
+
 	
-	m_buffer.reserve<char>(len+1);
-	memcpy(m_buffer.getData(),str,len);
-	m_buffer.at<char>(len) = '\0';
-
 	return *this;
 }
 
-tpString& tpString::set( const wchar_t* str )
+tpString& 
+tpString::_append(const char* str, tpUByte encoding /* = ASCII */)
 {
-	tpSizeT len = tpStrLen(str);
-	m_buffer.reserve<wchar_t>(len + 1);
-	memcpy(m_buffer.getData(),str,len * sizeof(wchar_t));
-	m_buffer.at<wchar_t>(len) = L'\0';
-
+	tpSizeT input_length = tpStrLen(str);
+	
+	if (input_length)
+	{
+		tpSizeT local_length = getLength();
+		
+		input_length++;
+		
+		m_buffer.reserve<char>(local_length + input_length);
+		
+		for (tpSizeT i = 0; i < input_length; ++i)
+		{
+			m_buffer.at<char>(i + local_length) = str[i];
+		}
+	}
+	
 	return *this;
 }
+
+tpString& tpString::_truncate(tpSizeT pos)
+{
+	if (pos && pos > getLength())
+	{
+		m_buffer.at<char>(pos) = '\0';
+	}
+	
+	return *this;
+}
+
+
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -110,36 +150,19 @@ tpString::~tpString()
 tpSizeT 
 tpString::getLength() const
 {
-	tpSizeT lw = tpStrLen(m_buffer.ptr<wchar_t>());
-	tpSizeT lc = tpStrLen(m_buffer.ptr<char>());
-	return (lw > lc) ? lw : lc;
+	return tpStrLen(m_buffer.ptr<char>());
 }
 
 tpString&
 tpString::append(const tpString& other)
 {
-	this->append(other.c_str());
+	return _append( other.c_str(), other.m_encoding );
 }
 
 tpString&
 tpString::append(const char* other)
 {
-	tpSizeT input_length = tpStrLen(other);
-	if (input_length)
-	{
-		tpSizeT local_length = getLength();
-
-		input_length++;
-		
-		m_buffer.reserve<char>(local_length + input_length);
-
-		for (tpSizeT i = 0; i < input_length; ++i)
-		{
-			m_buffer.at<char>(i + local_length) = other[i];
-		}
-	}
-	
-	return *this;
+	return _append( other);
 }
 
 tpString&
@@ -152,13 +175,102 @@ tpString::prepend(const char* other)
 }
 
 int 
-tpString::find(char c,bool fromright) const
+tpString::find(const char& c, bool fromright) const
 {
 	if ( isEmpty() ) return -1;
 	const char* _pc = (fromright) ? tpStrRChr(c_str(),c) : tpStrChr(c_str(),c);
 	return (_pc) ? _pc - (const char*)c_str() : -1;
 }
 
+tpString& tpString::removeFrom(const char& end, bool fromright)
+{
+	int idx = find(end,fromright);
+	if (idx >= 0) {
+		 this[idx] = '\0';
+	}
+	return *this;
+}
+
+
+bool 
+tpString::isUTF8(const char* str)
+{
+    if(!str)
+        return 0;
+	
+    const unsigned char * bytes = (const unsigned char *)str;
+    while(*bytes)
+    {
+        if(     (// ASCII
+				 bytes[0] == 0x09 ||
+				 bytes[0] == 0x0A ||
+				 bytes[0] == 0x0D ||
+				 (0x20 <= bytes[0] && bytes[0] <= 0x7E)
+				 )
+		   ) {
+			bytes += 1;
+			continue;
+        }
+		
+        if(     (// non-overlong 2-byte
+				 (0xC2 <= bytes[0] && bytes[0] <= 0xDF) &&
+				 (0x80 <= bytes[1] && bytes[1] <= 0xBF)
+				 )
+		   ) {
+			bytes += 2;
+			continue;
+        }
+		
+        if((// excluding overlongs
+				 bytes[0] == 0xE0 &&
+				 (0xA0 <= bytes[1] && bytes[1] <= 0xBF) &&
+				 (0x80 <= bytes[2] && bytes[2] <= 0xBF)
+				 ) ||
+		   (// straight 3-byte
+			((0xE1 <= bytes[0] && bytes[0] <= 0xEC) ||
+			 bytes[0] == 0xEE ||
+			 bytes[0] == 0xEF) &&
+			(0x80 <= bytes[1] && bytes[1] <= 0xBF) &&
+			(0x80 <= bytes[2] && bytes[2] <= 0xBF)
+			) ||
+		   (// excluding surrogates
+			bytes[0] == 0xED &&
+			(0x80 <= bytes[1] && bytes[1] <= 0x9F) &&
+			(0x80 <= bytes[2] && bytes[2] <= 0xBF)
+			)
+		   ) {
+			bytes += 3;
+			continue;
+        }
+		
+		if((// planes 1-3
+			bytes[0] == 0xF0 &&
+			(0x90 <= bytes[1] && bytes[1] <= 0xBF) &&
+			(0x80 <= bytes[2] && bytes[2] <= 0xBF) &&
+			(0x80 <= bytes[3] && bytes[3] <= 0xBF)
+				 ) ||
+		   (// planes 4-15
+			(0xF1 <= bytes[0] && bytes[0] <= 0xF3) &&
+			(0x80 <= bytes[1] && bytes[1] <= 0xBF) &&
+			(0x80 <= bytes[2] && bytes[2] <= 0xBF) &&
+			(0x80 <= bytes[3] && bytes[3] <= 0xBF)
+			) ||
+		   (// plane 16
+			bytes[0] == 0xF4 &&
+			(0x80 <= bytes[1] && bytes[1] <= 0x8F) &&
+			(0x80 <= bytes[2] && bytes[2] <= 0xBF) &&
+			(0x80 <= bytes[3] && bytes[3] <= 0xBF)
+			)
+		   ) {
+			bytes += 4;
+			continue;
+        }
+		
+        return 0;
+    }
+	
+    return 1;
+}
 
 
 #if 0

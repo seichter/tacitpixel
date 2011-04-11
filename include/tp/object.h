@@ -70,8 +70,8 @@ public:
 	//! return the name
 	const tpString& getName() const { return m_name; }
 	
-	//! field system
-	tpFields& getFields() { return m_fields; }
+	//! field system get a copy
+	tpFields getFields() { return m_fields; }
 	
 	//! const ret field system
 	const tpFields& getFields() const { return m_fields; }

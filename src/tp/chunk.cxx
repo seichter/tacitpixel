@@ -2,6 +2,7 @@
 
 #include <dlmalloc/malloc.h>
 
+#include <string.h>
 
 tpChunk::tpChunk(tpSizeT size) : m_ptr(0)
 {
@@ -31,6 +32,13 @@ tpSizedChunk::setSize(tpSizeT size)
 {
 	tpChunk::setSize(size);
 	if (m_ptr) m_size = size;
+}
+
+void 
+tpSizedChunk::copy(const void* ptr, tpSizeT size)
+{
+	tpChunk::setSize(size);
+	memcpy(m_ptr,ptr,size);
 }
 
 void 

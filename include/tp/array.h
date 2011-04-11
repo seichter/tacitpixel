@@ -1,11 +1,8 @@
 #ifndef TPARRAY_H
 #define TPARRAY_H
 
-
 #include <tp/types.h>
 #include <tp/utils.h>
-
-#include <cstdio>
 
 /*!
  \class tpArray
@@ -21,6 +18,12 @@ template <typename T> class tpArray {
 public:
 	
 	typedef T element_type;
+	typedef T* iterator;
+	typedef const T* const_iterator;
+	
+	static const tpUInt element_size = sizeof(T);
+	static const tpUInt max_capacity = sizeof(tpUInt);
+	
 	
 	/** \brief c'tor (standard size is 30)
 	 
@@ -401,12 +404,9 @@ template <typename T> T* tpArray<T>::erase(T* iter)
 
 template <typename T> tpSizeT tpArray<T>::find(const T& value) const
 {
-	
     for (tpSizeT i = 0; i < m_size; ++i) if (value == m_data[i]) return i;
-    
-    return static_cast<tpSizeT>(-1);
-	
-};
+    return static_cast<tpSizeT>(-1);	
+}
 
 template <typename T> tpArray<T> tpArray<T>::operator+(const tpArray& merge)
 {

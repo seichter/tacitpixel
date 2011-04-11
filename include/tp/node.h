@@ -19,22 +19,20 @@
 #include <tp/referenced.h>
 #include <tp/object.h>
 #include <tp/refptr.h>
-
-class tpContext;
-class tpTraverser;
+#include <tp/traverser.h>
 
 
-/*
 class TP_API tpRenderObject : public tpReferenced {
 public:
 
 	tpRenderObject() {};
 
-	virtual tpVoid onEvent(tpContext& context) {};
-	virtual tpVoid onCull(tpContext& context) {};
-	virtual tpVoid onUpdate(tpContext& context) {};
-	virtual tpVoid onDraw(tpContext& context) {};
-
+	/*
+	virtual void onEvent(tpContext& context) {};
+	virtual void onCull(tpContext& context) {};
+	virtual void onUpdate(tpContext& context) {};
+	virtual void onDraw(tpContext& context) {};
+	*/
 
 	tpVoid setNestedRenderObject( tpRenderObject* robj ) { m_nested = robj; }
 	tpRenderObject* getNestedRenderObject() const { return m_nested.get(); }
@@ -45,6 +43,9 @@ protected:
 
 	virtual ~tpRenderObject() {};
 };
+
+
+/*
 
 enum tpTraverseFlags
 {
@@ -82,7 +83,7 @@ protected:
 */
  
  
-class tpGroup;
+//class tpGroup;
 
 
 /*!
@@ -105,13 +106,13 @@ public:
 	virtual tpObject* clone();
 
 	//! traversing interface
-	virtual void traverse(tpTraverser* traverse, tpContext& context);
+	void traverse(tpTraverser& traverser);
 	
 	//! add a child node
-	void addChild(tpNode* node);
+	tpNode* addChild(tpNode* node);
 	
 	//! remove child node
-	void removeChild(tpNode* node);
+	tpNode* removeChild(tpNode* node);
 	
 	//! set child node
 	bool setChild(tpSizeT idx,tpNode* node);
@@ -134,13 +135,30 @@ public:
 		return static_cast<tpSizeT>(-1);
 	}
 	
+	//! get parent list
+	const tpArray<tpNode*>& getParents() const { return m_parents; }
+	
+	//! get copy of parent list
+	tpArray<tpNode*> getParents() { return m_parents; }
+	
+	//! get count of parent nodes
+	tpSizeT getParentsCount() const { return m_parents.getSize(); }
+	
+	//! check if this node has any parent > root
+	bool hasParents() const { return (getParentsCount() > 0); }
+	
+	//! check if this node has any child nodes > leaf
+	bool hasChildren() const { return (getChildCount() > 0); }
+	
 	
 protected:
 
     virtual ~tpNode();
 
-	tpArray<tpNode*> m_parents;
 	tpArray< tpRefPtr<tpNode> > m_children;
+
+	tpArray<tpNode*> m_parents;
+	tpArray<tpNode*> m_nodepath;	
 
 };
 

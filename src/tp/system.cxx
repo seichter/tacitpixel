@@ -94,20 +94,23 @@ tpSystem::getPluginPath()
 	
 	
 #if defined(__APPLE__)
-	CFURLRef bundleURL;
-	CFStringRef pathStr;
-	CFBundleRef mainBundle = CFBundleGetMainBundle();
+
+	result = getExecutablePath(true);
 	
-	bundleURL = CFBundleCopyBuiltInPlugInsURL(mainBundle);
-	pathStr = CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
+	CFBundleRef mainBundle = CFBundleGetMainBundle();
+	CFURLRef bundleURL = CFBundleCopyBuiltInPlugInsURL(mainBundle);
+	CFStringRef pathStr = CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
+	
 	CFStringGetCString(pathStr, path, MAXPATHLEN, kCFStringEncodingASCII);
+	
+	printf("--- %s --- '%s'\n",path,result.c_str());
 	
 	result.set(&path[0]);
 	
 	CFRelease(pathStr);
 	CFRelease(bundleURL);
 	
-	result = getExecutablePath(true) + tpPathSep+ result;
+	
 	
 #elif defined(_WIN32) || defined(_WIN64) || defined(_WIN32_WCE)
 	
@@ -135,18 +138,16 @@ tpString tpSystem::getExecutablePath(bool removeExecName)
 	CFStringRef pathStr;
 	CFBundleRef mainBundle = CFBundleGetMainBundle();
 
-	bundleURL = CFBundleCopyBundleURL(mainBundle);
-	//bundleURL = CFBundleCopyResourceURL(mainBundle);
+	bundleURL = CFBundleCopyExecutableURL(mainBundle);
 	pathStr = CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
-	CFStringGetCString(pathStr, path, MAXPATHLEN, kCFStringEncodingASCII);
-	
+ 	CFStringGetCString(pathStr, path, MAXPATHLEN, kCFStringEncodingASCII);
+
 	result.set(&path[0]);
 	
 	CFRelease(pathStr);
 	CFRelease(bundleURL);
 	
 #elif defined(_WIN32) || defined(_WIN64) || defined(_WIN32_WCE)
-
 	static TCHAR lpFname[MAXPATHLEN];
 	DWORD ret = GetModuleFileName( NULL, &lpFname[0], MAXPATHLEN );
 
@@ -195,7 +196,7 @@ tpString tpSystem::findFile( const tpString& filename )
 
 	tpString res;
 
-	for (int i = 0; i < m_filesearchpaths.getSize(); i++)
+	for (tpSizeT i = 0; i < m_filesearchpaths.getSize(); i++)
 	{
 		res = m_filesearchpaths[i];
 		res.append( tpPathSep );

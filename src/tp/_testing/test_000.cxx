@@ -8,54 +8,77 @@
 #include <tp/string.h>
 #include <tp/fixed.h>
 #include <tp/log.h>
+#include <tp/node.h>
+#include <tp/matrix.h>
 
-#include <stdio.h>
+
+
+class tpTestObject : public tpNode {
+public:
+	tpTestObject() { tpLogMessage("Constructor"); }
+protected:
+	~tpTestObject() { tpLogMessage("Destructor"); }
+};
+
 
 int main(int argc, char* argv[])
 {
 	
+	// Chunk
 	tpChunk chunk;
 	chunk.reserve<float>(2);
 	
 	chunk.at<float>(0) = 23.5f;
-	printf("23.5f = %3.1ff\n",chunk.at<float>(0));
+	tpLogMessage("23.5f = %3.1ff",chunk.at<float>(0));
 	
 	chunk.at<float>(1) = 50.0f;
-	printf("50.0f = %3.1ff = %3.1ff\n",chunk.at<float>(1),chunk.ptr<float>()[1]);
+	tpLogMessage("50.0f = %3.1ff = %3.1ff",chunk.at<float>(1),chunk.ptr<float>()[1]);
+	
+	
+	
+	// Array
+	tpArray<int> iv;
+	iv.add(10);
+	iv.add(20);
+	
+	tpLogMessage("Array > size, capacity, element_size, max_capacity (%d,%d,%d,%d)",iv.getSize(),iv.getCapacity(),iv.element_size,iv.max_capacity);
+	
+	return 0;
+	
 	
 	tpString hello("hello");
-	printf("hello = %s (%d)\n",hello.c_str(),hello.getLength());
+	tpLogMessage("hello = %s (%d)",hello.c_str(),hello.getLength());
 	
 	hello.empty();
-	printf("hello = '%s' (%d) (empty)\n",hello.c_str(),hello.getLength());
+	tpLogMessage("hello = '%s' (%d) (empty)",hello.c_str(),hello.getLength());
 	
 	hello.append("hello");
-	printf("hello = '%s' (%d) (append hello)\n",hello.c_str(),hello.getLength());
+	tpLogMessage("hello = '%s' (%d) (append hello)",hello.c_str(),hello.getLength());
 	
 	hello.append(" world");
-	printf("hello = '%s' (%d) (append ' world')\n",hello.c_str(),hello.getLength());
+	tpLogMessage("hello = '%s' (%d) (append ' world')",hello.c_str(),hello.getLength());
 	
 	hello.prepend("this ");
-	printf("hello = '%s' (%d) (prepend 'this ')\n",hello.c_str(),hello.getLength());
+	tpLogMessage("hello = '%s' (%d) (prepend 'this ')",hello.c_str(),hello.getLength());
 	
 	tpString nothing;
-	printf("nothing = '%s' (%d)\n",nothing.c_str(),nothing.getLength());
+	tpLogMessage("nothing = '%s' (%d)",nothing.c_str(),nothing.getLength());
 	
 	
-	printf("sizeof(char)(%d) != sizeof(wchar_t)(%d)\n",sizeof(char),sizeof(wchar_t));
+//	printf("sizeof(char)(%d) != sizeof(wchar_t)(%d)",sizeof(char),sizeof(wchar_t));
 	
-	tpString hello_wide(L"hello wide");
-	printf("hello wide = '%ls' (%d)\n",hello_wide.c_str(),hello_wide.getLength());
+//	tpString hello_wide(L"hello wide");
+//	printf("hello wide = '%ls' (%d)",hello_wide.c_str(),hello_wide.getLength());
 	
 	tpString number("45.2344f");
-	printf("number: %d %3.3f\n",number.to<int>(),number.to<float>());
+	printf("number: %d %3.3f",number.to<int>(),number.to<float>());
 	
 	tpVec4<float> vec4;
 	
 	tpFixed32 fix32; 
 	fix32.set(56.0);
 	
-	tpLogMessage("Aligns: %d %d %d\n",fix32._bits,fix32._bits_half,fix32._bits_half_val);
+	tpLogMessage("Aligns: %d %d %d",fix32._bits,fix32._bits_half,fix32._bits_half_val);
 	
 	tpLogMessage("Fixed > Double %d = %3.3lf",fix32.getX(),fix32.getDouble());
 	tpLogMessage("Fixed > Float %d = %3.3f",fix32.getX(),fix32.getFloat());
@@ -84,18 +107,32 @@ int main(int argc, char* argv[])
 		acos(fix32).getFloat(),cos(fix32).getFloat(),asin(fix32).getFloat(),sin(fix32).getFloat());
 	
 	
-	tpVec4<tpFixed32> vecx4;
-	tpVec3<tpFixed32> vecx3;
-	tpVec2<tpFixed32> vecx2(tpFixed32(3),tpFixed32(5));
+	tpVec4<tpFloat> vec4f;
+	tpVec4<tpFixed32> vec4x;
+	tpVec3<tpFixed32> vec3x;
+	tpVec2<tpFixed32> vec2x(tpFixed32(3),tpFixed32(5));
 	
-	tpLogMessage("Vec2<Fixed> > float squared length (34.0,5.83)  %f %f",vecx2.getSquareLength().getFloat(),vecx2.getLength().getFloat());
+	tpLogMessage("Vec2<Fixed> > float squared length (34.0,5.83)  %f %f",vec2x.getSquareLength().getFloat(),vec2x.getLength().getFloat());
 	
-	vecx2.normalize();
+	tpLogMessage("Sizeof vec4<float>, vec4<fixed> %d=%d",sizeof(tpVec4<tpFloat>),sizeof(tpVec4<tpFixed32>));
+	
+	vec2x.normalize();
 	
 	tpArray<int> i;
 	i.add(10);
 	
 	tpRefPtr<tpReferenced> r(new tpReferenced());
+	
+	tpMat<4,4,float> m44f;
+	tpMat<4,4,tpFixed32> m44x;
+	
+	m44f.invert();
+	//m44x.invert();
+	
+	
+	getchar();
+	
+	
 	
 	return 0;
 }
