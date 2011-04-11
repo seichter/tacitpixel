@@ -18,6 +18,8 @@
 #include <tp/types.h>
 #include <tp/string.h>
 #include <tp/array.h>
+#include <tp/referenced.h>
+#include <tp/refptr.h>
 
 
 #ifdef _MSC_VER
@@ -43,26 +45,25 @@ class tpFieldConnector;
 	
 */
 
-class tpField {
+class tpField : public tpReferenced {
 public:
 
 	//! standard c'tor
-	tpField(const tpString& name = "unnamed") : m_name(name) {}
-
-	//! d'tor
-	virtual ~tpField() {}
+	tpField(const tpString& name = "unnamed") : tpReferenced(), m_name(name) {}
 
 	//! get a name
 	const tpString& getName() const { return m_name; }
-	
 
 protected:
+	
+	//! d'tor
+	virtual ~tpField() {}
 	
 	tpString	m_name;
 };
 
 
-typedef tpArray<tpField*> tpFields;
+typedef tpArray< tpRefPtr<tpField> > tpFields;
 
 
 /*!

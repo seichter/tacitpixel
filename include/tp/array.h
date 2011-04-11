@@ -213,32 +213,32 @@ public:
 	 * 
 	 * \param newsize 
 	 */
-	tpVoid reserve(tpSizeT newsize);
+	void reserve(tpSizeT newsize);
 	
 	/**
 	 * Resize the array fit to the new size.
 	 * 
 	 * \param newsize  
 	 */
-	tpVoid resize(tpSizeT newsize);
+	void resize(tpSizeT newsize);
 	
 	/**
 	 *	Set all items
 	 *
 	 * \param data 
 	 */
-	tpVoid fill(const T& data);
+	void fill(const T& data);
 	
 	/**
 	 *	
 	 */
-	tpVoid preallocate(tpSizeT newsize, const T& data);
+	void preallocate(tpSizeT newsize, const T& data);
 	
 	tpArray& clone(tpArray<T>& l);
 	
-	tpVoid clear();
+	void clear();
 	
-	tpVoid copy( const T* orig, tpUInt size, tpUInt pos = 0 );
+	void copy( const T* orig, tpUInt size, tpUInt pos = 0 );
 	
 	tpArray<T>& append( const tpArray<T>& rs );
 	
@@ -252,11 +252,16 @@ public:
 	tpArray<T>& insert( const T* ins, tpSizeT pos, tpUInt length );
 	
 	
-	T* begin();
-	const T* begin() const;
-
-	T* end();
-	const T* end() const;
+	T* begin() { return m_data; }
+	const T* begin() const { return m_data; }
+	T* end() { return m_data + m_size; }
+	const T* end() const { return m_data + m_size; }
+	
+	T& front() { return *begin(); }
+	const T& front() const { return *begin(); }
+	
+	T& back() { return *(end() - 1); }
+	const T& back() const { return *(end() - 1); }
 
 private:
 	
@@ -271,7 +276,7 @@ private:
 };
 
 template <typename T>
-tpVoid tpArray<T>::copy( const T* orig, tpUInt length, tpUInt pos )
+void tpArray<T>::copy( const T* orig, tpUInt length, tpUInt pos )
 {
 	resize(length);
 	for (tpSizeT i = 0; i < length; i++ ) { m_data[i] = orig[i + pos]; }
@@ -280,12 +285,11 @@ tpVoid tpArray<T>::copy( const T* orig, tpUInt length, tpUInt pos )
 
 
 template <typename T>
-tpVoid tpArray<T>::clear()
+void tpArray<T>::clear()
 {
 	if (m_data) delete [] m_data;
 	m_data = (T*)0L;
 	m_size = m_maxsize = 0;
-	printf("Array::%s\n",__FUNCTION__);
 }
 
 template <typename T>
@@ -364,30 +368,6 @@ template <typename T> tpArray<T>& tpArray<T>::add(const T& item)
 	m_data[m_size] = item;
 	++m_size;
 	return *this;
-}
-
-template <typename T> const T* 
-tpArray<T>::begin() const 
-{
-	return m_data;
-}
-
-template <typename T> T* 
-tpArray<T>::begin() 
-{
-	return m_data;
-}
-
-template <typename T> const T* 
-tpArray<T>::end() const 
-{
-	return m_data + m_size;
-}
-
-template <typename T> T* 
-tpArray<T>::end() 
-{
-	return m_data + m_size;
 }
 
 
@@ -481,7 +461,7 @@ template <typename T> void tpArray<T>::resize(tpSizeT newsize)
 
 
 template <typename T> 
-tpVoid tpArray<T>::fill(const T& data)
+void tpArray<T>::fill(const T& data)
 {
 	T* ptr = m_data;
 	for (tpSizeT i = 0; i < m_size; ++i)
@@ -532,7 +512,7 @@ template <typename T> tpArray<T>& tpArray<T>::operator << (const T& value)
 }
 
 template <typename T>
-tpVoid tpArray<T>::preallocate( tpSizeT newsize, const T& data )
+void tpArray<T>::preallocate( tpSizeT newsize, const T& data )
 {
 	resize(newsize);
 	fill(data);

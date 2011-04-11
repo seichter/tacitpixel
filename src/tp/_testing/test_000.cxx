@@ -10,7 +10,7 @@
 #include <tp/log.h>
 #include <tp/node.h>
 #include <tp/matrix.h>
-
+#include <tp/map.h>
 
 
 class tpTestObject : public tpNode {
@@ -35,13 +35,29 @@ int main(int argc, char* argv[])
 	tpLogMessage("50.0f = %3.1ff = %3.1ff",chunk.at<float>(1),chunk.ptr<float>()[1]);
 	
 	
-	
 	// Array
 	tpArray<int> iv;
 	iv.add(10);
 	iv.add(20);
 	
 	tpLogMessage("Array > size, capacity, element_size, max_capacity (%d,%d,%d,%d)",iv.getSize(),iv.getCapacity(),iv.element_size,iv.max_capacity);
+
+
+	// Map
+	tpPair<int,tpString> num_pair;
+	
+	tpMap<int,tpString> numbers;
+	
+	numbers.add(1,"one");
+	numbers.add(2,"two");
+	numbers.add(3,"three");
+	numbers.add(4,"four");
+	
+	for(tpMap<int,tpString>::iterator iter = numbers.begin(); iter != numbers.end(); ++iter)
+	{
+		tpLogMessage("%d = %s",(*iter).getKey(), (*iter).getValue().c_str());
+	}
+	
 	
 	return 0;
 	

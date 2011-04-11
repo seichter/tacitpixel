@@ -242,8 +242,7 @@ tpSystem::getTime() const
 	char buffer[80];
 	
 	strftime (buffer,80,"%X %x",timeinfo);
- 
-	
+
 	tpString res(buffer);
 	
 	return res;
