@@ -80,6 +80,4 @@ struct TP_API tpImageOperator {
 	
 };
 
-
-
 #endif

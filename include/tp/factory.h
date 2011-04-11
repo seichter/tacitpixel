@@ -1,71 +1,100 @@
-
-
 #ifndef TPFACTORY_H
 #define TPFACTORY_H
 
 #include <tp/globals.h>
 #include <tp/map.h>
 
+/*!
+
+\class tpFactory
+\brief simple helper template for abstract factories
+
+This is mostly used internally for all module based 
+registries. The usage is rather simple. In order to 
+create a factory for nodes of type tpMyNode only one
+line of statically initialized instance is necessary.
+Please note the usage of the template parameters for 
+the base and derived classes:
+
+\code
+
+class tpMyNode : public tpNode {
+public:
+	tpMyNode() : tpNode("MyNode!") {};
+};
+
+static tpFactory<tpNode>::Registry<tpMyNode,200> gs_mynodefactory;
+
+\endcode
+*/
 template <typename T>
 class tpFactory {
 
 	struct Base
 	{
-		virtual T* _create() { return 0L; } 
+		virtual T* _create() = 0;
 	};
-
-	typedef typename tpMap< int, Base* > map_type;
-	typedef typename map_type::iterator map_type_iterator;
 	
-	map_type _instantiators;
+	typedef tpMap< int, Base* > FactoryMap;
+	FactoryMap _instantiators;
 	
-	// make singleton
+	//! C'tor private make singleton
 	tpFactory() {};
-	tpFactory(const factory<T>& other) {}
+	//! copy C'tor private make singleton
+	tpFactory(const tpFactory<T>& other) {}
+	//! Assignment operator make singleton
 	tpFactory& operator = (const tpFactory<T>& rhs) {}
 	
 public:
 	
+	//! get an instance of the factory
 	static 
-	tpFactory<T>& instance()
+	tpFactory<T>& get()
 	{
 		static tpFactory<T> gs_instance;
 		return gs_instance;
 	}
 	
+	//! create an object from type
 	T* 
 	create(int type_id) 
 	{
-		map_type_iterator mit = _instantiators.find(type_id);
+		typename FactoryMap::iterator mit = _instantiators.find(type_id);
 		if (mit != _instantiators.end()) 
 		{
-			return mit->second->_create();
+			return mit->getValue()->_create();
 		} 
-		return 0L;
+		return T(0L);
 	}
 	
-	void 
-	add(Base* h, int type_id) { _instantiators[type_id] = h; }
+	//! only used internally - adding a new factory
+	void add(Base* h, int type_id) { _instantiators.add(type_id,h); }
 
-	void 
-	remove(Base* h) 
+	//! removing a factory
+	void remove(Base* h) 
 	{
-		for (map_type_iterator mit = _instantiators.begin(); mit != _instantiators.end(); mit++)
+		for (typename FactoryMap::iterator iter = _instantiators.begin();
+			iter != _instantiators.end();
+			++iter)
 		{
-			if (mit->second == h) { _instantiators.erase(mit); return; }
+			if ((*iter).getValue() == h) { 
+				_instantiators.erase(iter);
+				return;
+			}
 		}
 	}
 	
+	//! get number of factories registered
 	int 
-	size() const { return _instantiators.size(); }
+	getSize() const { return _instantiators.getSize(); }
 	
-	// helper construct for registering implementations
+	//! helper construct for registering implementations
 	template <typename N,int type_id>
 	struct Registry : Base {
-		Registry() { tpFactory<T>::instance().add(this,type_id); }
-		~Registry() { tpFactory<T>::instance().remove(this); }
+		Registry() { tpFactory<T>::get().add(this,type_id); }
+		~Registry() { tpFactory<T>::get().remove(this); }
 		
-		T* _create() { return new N; }
+		virtual T* _create() { return new N; }
 	};
 	
 };

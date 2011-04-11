@@ -3,8 +3,8 @@
 #include <tp/log.h>
 
 #include <tp/utils.h>
+//#include <tp/factory.h>
 
-#include <algorithm>
 
 
 inline static tpUShort tpGetBitsPerPixel(const tpUByte& format)
@@ -139,6 +139,14 @@ tpImageOperator::create(tpUByte op)
 TP_TYPE_REGISTER(tpImage,tpReferenced,Image);
 
 
+struct tpImageLoader {};
+
+/*
+class tpImageManager : public tpFactory<tpImageLoader>
+{
+	
+};
+*/
 
 
 #if 0

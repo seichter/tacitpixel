@@ -38,6 +38,8 @@ set(tp_hdrs
 	${tp_include_path}/tp/matrix.h
 	${tp_include_path}/tp/mutex.h
 	${tp_include_path}/tp/referenced.h
+	${tp_include_path}/tp/rs232.h	
+	${tp_include_path}/tp/socket.h	
 	${tp_include_path}/tp/stack.h
 	${tp_include_path}/tp/string.h
 	${tp_include_path}/tp/system.h
@@ -57,6 +59,8 @@ set(tp_srcs
 	library.cxx
 	mutex.cxx
 	referenced.cxx
+	rs232.cxx
+	socket.cxx
 	string.cxx
 	system.cxx
 	thread.cxx
