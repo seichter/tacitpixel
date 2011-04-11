@@ -80,12 +80,14 @@ public:
 	tpFixed<T>& add(const tpFixed<T>& r) { m += r.m; return *this; }
 	tpFixed<T>& sub(const tpFixed<T>& r) { m -= r.m; return *this; }
 	
-
 	tpFixed<T>& operator  = (const tpFixed<T>& rhv) { this->m = rhv.m; return *this; }
-	tpFixed<T>& operator *= (const tpFixed<T>& rhv) { return mul(rhv); }
+	
+	tpFixed<T>& operator *= (const tpFixed<T>& rhv) { return mul(rhv); }	
 	tpFixed<T>& operator /= (const tpFixed<T>& rhv) { return div(rhv); }
 	tpFixed<T>& operator += (const tpFixed<T>& rhv) { return add(rhv); }
 	tpFixed<T>& operator -= (const tpFixed<T>& rhv) { return sub(rhv); }
+	
+	tpFixed<T> operator - () const { tpFixed<T> r; r.m = -this->m; return m; }
 	
 	bool operator < (const tpFixed<T>& rhv) { return (m < rhv.m); }
 	bool operator > (const tpFixed<T>& rhv) { return (m > rhv.m); }
@@ -104,6 +106,13 @@ tpFixed<T> operator * (const tpFixed<T>& a, const tpFixed<T>& b)
 {
 	tpFixed<T> res(a); res *= b; return res;
 }
+
+template <typename T, typename Tb> 
+tpFixed<T> operator * (const tpFixed<T>& a, const Tb& b) 
+{
+	tpFixed<T> res(a); res *= tpFixed<T>(b); return res;
+}
+
 
 template <typename T> 
 tpFixed<T> operator + (const tpFixed<T>& a, const tpFixed<T>& b) 

@@ -127,7 +127,7 @@ int main(int argc, char* argv[])
 	tpMat<4,4,tpFixed32> m44x;
 	
 	m44f.invert();
-	//m44x.invert();
+	m44x.invert();
 	
 	
 	getchar();

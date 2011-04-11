@@ -953,7 +953,7 @@ public:
 				short sgn = ( (r+j)%2) ? -1 : 1;
 				tpMat<R-1,C-1,T> minor;
 				this->getMinor(minor,r,j);
-				b(r,j) = sgn * minor.getDeterminant();
+				b(r,j) = minor.getDeterminant() * sgn;
 			}
 		}
 		b.transpose();
@@ -1157,26 +1157,18 @@ public:
 	}
 };
 
-template <> class tpMat11x : public tpMat<1,1,tpFixed32>
+
+template <>
+float tpMat<1,1,float>::getDeterminant() const 
 {
-public:
+	return this->m[0];
+}
 
-	tpFixed32 getDeterminant() const
-	{
-		return this->m[0];
-	}
-};
-
-template <> class tpMat11f : public tpMatX<1,1,float>
+template <>
+tpFixed32 tpMat<1,1,tpFixed32>::getDeterminant() const 
 {
-public:
-
-	float getDeterminant() const
-	{
-		return this->m[0];
-	}
-};
-
+	return this->m[0];
+}
 
 
 
