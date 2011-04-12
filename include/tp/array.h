@@ -381,6 +381,13 @@ template <typename T> T* tpArray<T>::erase(T* iter)
 	return iter;
 }
 
+template <typename T> T* tpArray<T>::erase(tpSizeT pos)
+{
+	T* iter = begin() + pos;
+	erase(iter);
+	return iter;
+}
+
 
 template <typename T> tpSizeT tpArray<T>::find(const T& value) const
 {

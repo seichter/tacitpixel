@@ -84,10 +84,10 @@ public:
 	tpVec<T,N> operator* (T scale) const;
 
 	//! return the component at position i
-	T& operator [] (const tpUInt& i);
+	T& operator [] (const tpUInt& i) { return vec[i]; }
 	
 	//! return the component at position i
-	const T& operator [] (const tpUInt& i) const;
+	const T& operator [] (const tpUInt& i) const { return vec[i]; }
 
 	
 	//! swap components in the vector
@@ -238,10 +238,6 @@ template <class T,tpUInt N> inline tpVec<T,N> tpVec<T,N>::operator* (T scale) co
 	return v;
 };
 
-template <class T,tpUInt N> inline T& tpVec<T,N>::operator [] (const tpUInt& i)
-{
-	return vec[i];
-};
 
 
 template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::swapComponent(tpUInt c1,tpUInt c2) 

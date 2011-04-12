@@ -15,13 +15,13 @@
 
 tpTransform::tpTransform(const tpString& name) : tpNode(name)
 {
-	m_fields.add(new tpSingleField< tpMat44r > (m_matrix,"matrix"));
+	m_fields.add(new tpRefField< tpMat44r > (m_matrix,"matrix"));
 }
 
 tpTransform::tpTransform(const tpTransform& transform) : tpNode(transform)
 {
 	m_matrix = transform.m_matrix;
-	m_fields.add(new tpSingleField< tpMat44r > (m_matrix,"matrix"));
+	m_fields.add(new tpRefField< tpMat44r > (m_matrix,"matrix"));
 }
 
 

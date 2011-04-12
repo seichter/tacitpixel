@@ -11,7 +11,7 @@
 #include <tp/node.h>
 #include <tp/matrix.h>
 #include <tp/map.h>
-
+#include <tp/file.h>
 
 class tpTestObject : public tpNode {
 public:
@@ -148,6 +148,14 @@ int main(int argc, char* argv[])
 	
 	m44f.setTranslation(3.3f,3.3f,3.3f);
 
+	// file IO
+
+	tpFile io;
+	if (io.open("hello.txt","w+"))
+	{
+		io.write("hello world\n",13);
+		tpLogMessage("File > wrote %d bytes",io.getCount());
+	}
 	
 	
 	getchar();

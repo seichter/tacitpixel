@@ -27,16 +27,18 @@ set(tp_hdrs
 	${tp_include_path}/tp/array.h
 	${tp_include_path}/tp/chunk.h
 	${tp_include_path}/tp/field.h
+	${tp_include_path}/tp/file.h	
 	${tp_include_path}/tp/globals.h
 	${tp_include_path}/tp/hash.h
 	${tp_include_path}/tp/image.h
+	${tp_include_path}/tp/io.h
 	${tp_include_path}/tp/log.h
 	${tp_include_path}/tp/list.h	
 	${tp_include_path}/tp/library.h
 	${tp_include_path}/tp/map.h
 	${tp_include_path}/tp/math.h
 	${tp_include_path}/tp/matrix.h
-	${tp_include_path}/tp/mat.h
+	${tp_include_path}/tp/mat.h	
 	${tp_include_path}/tp/mutex.h
 	${tp_include_path}/tp/quat.h	
 	${tp_include_path}/tp/referenced.h
@@ -55,6 +57,7 @@ set(tp_hdrs
 set(tp_srcs
 	allocator.cxx
 	chunk.cxx
+	file.cxx
 	hash.cxx
 	image.cxx
 	log.cxx
@@ -75,15 +78,23 @@ set(tp_srcs
 # Scenegraph
 #
 set(tp_hdrs_sg
+	${tp_include_path}/tp/material.h
+	${tp_include_path}/tp/mesh.h
 	${tp_include_path}/tp/node.h
 	${tp_include_path}/tp/object.h
+	${tp_include_path}/tp/renderable.h
+	${tp_include_path}/tp/texture.h
 	${tp_include_path}/tp/transform.h
 	${tp_include_path}/tp/traverser.h
 	)
 	
 set(tp_srcs_sg
+	material.cxx
+	mesh.cxx
 	node.cxx
 	object.cxx
+	renderable.cxx
+	texture.cxx
 	transform.cxx
 	traverser.cxx
 	)

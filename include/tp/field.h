@@ -71,18 +71,18 @@ typedef tpArray< tpRefPtr<tpField> > tpFields;
 */
 
 
-template <class T> class tpSingleField : public tpField 
+template <class T> class tpRefField : public tpField 
 {
 	//! c'tor
-	tpSingleField() {};
+	tpRefField() {};
 	
 	//! copy c'tor
-	tpSingleField(const tpSingleField& field) {}
+	tpRefField(const tpRefField& field) {}
 	
 public:
 		
 	//! initial c'tor
-	tpSingleField(T& val,const tpString& name = "noname") : tpField(name),  m_value(val) {}
+	tpRefField(T& val,const tpString& name = "noname") : tpField(name),  m_value(val) {}
 
 	//! return stored value
 	const T& getValue() const;
@@ -91,7 +91,7 @@ public:
 	void setValue(const T& val);
 	
 	//! assign values of other fields an dirty this one
-	tpSingleField& operator = (const tpSingleField<T>&);
+	tpRefField& operator = (const tpRefField<T>&);
 		
 protected:
 	
@@ -99,6 +99,33 @@ protected:
 };
 
 
+
+template <class T> class tpRefPtrField : public tpField 
+{
+	//! c'tor
+	tpRefPtrField() {};
+
+	//! copy c'tor
+	tpRefPtrField(const tpRefField& field) {}
+
+public:
+
+	//! initial c'tor
+	tpRefPtrField(T& val,const tpString& name = "noname") : tpField(name),  m_value(val) {}
+
+	//! return stored value
+	const T& getValue() const;
+
+	//! set value
+	void setValue(const T& val);
+
+	//! assign values of other fields an dirty this one
+	tpRefPtrField& operator = (const tpRefPtrField<T>&);
+
+protected:
+
+	tpRefPtr m_value;
+};
 
 #if 0
 

@@ -16,12 +16,12 @@
 
 tpObject::tpObject(const tpString& name) : tpReferenced(), m_name(name)
 {
-	m_fields.add(new tpSingleField<tpString>(m_name,"name"));
+	m_fields.add(new tpRefField<tpString>(m_name,"name"));
 }
 
 tpObject::tpObject(const tpObject& obj) : tpReferenced()
 {
-	m_fields.add(new tpSingleField<tpString>(m_name,"name"));
+	m_fields.add(new tpRefField<tpString>(m_name,"name"));
 
 	m_name = obj.m_name;
 }
