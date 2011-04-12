@@ -7,7 +7,7 @@
 
 class tpNode;
 
-class tpTraverser : public tpReferenced {
+class TP_API tpTraverser : public tpReferenced {
 public:
 	
 	enum {

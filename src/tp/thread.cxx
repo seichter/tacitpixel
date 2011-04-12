@@ -64,9 +64,8 @@ extern "C" void *tpPThreadDispatch(void *arg)
 #endif
 
 tpThread::tpThread()
-	: m_run(false)
+: m_run(false), m_thread(0L)
 {
-
 }
 
 tpThread::~tpThread()
@@ -79,11 +78,13 @@ void tpThread::start()
 {
     
 	m_run = true;
-#if defined(WIN32)
-	LPDWORD _threadid(0);
+#if defined(_WIN32)
 	//_beginthreadex(0, 0, tpWin32ThreadDispatch, this, 0, &_threadid);
 	// _beginthread(tpThreadDispatch, 0, this);
-	CreateThread( 0, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(tpWin32ThreadDispatch), this,0,_threadid);
+	CreateThread( 0, 0, 
+		reinterpret_cast<LPTHREAD_START_ROUTINE>(tpWin32ThreadDispatch), 
+		this,0,static_cast<LPDWORD>(m_thread));
+
 #elif defined(HAVE_PTHREAD_H)
 	pthread_t _thread;
 	pthread_create(&_thread,NULL,tpPThreadDispatch,(void*)this);

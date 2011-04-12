@@ -103,6 +103,9 @@ public:
 
 	//! prepend another cstr
 	tpString& prepend(const char* rs);
+
+	//! truncate the string at position pos
+	tpString& truncate(tpSizeT pos);
 	
 	//! return string size (not buffer size!)
 	tpSizeT getLength() const;
@@ -230,7 +233,7 @@ template<> inline long tpString::to<long>() const
 
 template<> inline float tpString::to<float>() const
 { 
-	return atof(this->c_str()); 
+	return static_cast<float>(atof(this->c_str())); 
 }
 
 

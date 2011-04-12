@@ -7,6 +7,7 @@
 #include <tp/image.h>
 #include <tp/timer.h>
 #include <tp/node.h>
+#include <tp/transform.h>
 
 
 class tpLogTraverser : public tpTraverser {
@@ -20,6 +21,30 @@ public:
 	
 	
 };
+
+class tpMatTraverser : public tpTraverser {
+public:
+
+	tpMatTraverser() : tpTraverser() {}
+
+	void push(tpNode* node) 
+	{ 
+		tpLogMessage("push node: %s",node->getName().c_str()); 
+		// 
+		if (node->getType()->isOfType(tpTransform::getTypeInfo())) 
+		{
+			tpLogMessage("Transform of name '%s'",node->getName().c_str());
+		}
+	}
+
+	void pop(tpNode* node) 
+	{ 
+		tpLogMessage("pop node: %s",node->getName().c_str()); 
+	}
+
+
+};
+
 
 
 int main(int argc, char* argv[])
@@ -58,12 +83,13 @@ int main(int argc, char* argv[])
 	
 	// traverser
 	obj->addChild(new tpNode("Child 1"));
-	obj->addChild(new tpNode("Child 2"))->addChild(new tpNode("Child of Child 2"));
+	obj->addChild(new tpNode("Child 2"))->addChild(new tpNode("Child of Child 2"))->addChild(new tpTransform("A transform"));
 	
 	
 	tpRefPtr<tpLogTraverser> logtraverser = new tpLogTraverser();
+	tpRefPtr<tpMatTraverser> mattraverser = new tpMatTraverser();
 	
-	obj->traverse(*logtraverser);
+	obj->traverse(*mattraverser);
 	
 	
 	return 0;

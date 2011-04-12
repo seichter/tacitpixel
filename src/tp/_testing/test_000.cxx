@@ -59,9 +59,6 @@ int main(int argc, char* argv[])
 	}
 	
 	
-	return 0;
-	
-	
 	tpString hello("hello");
 	tpLogMessage("hello = %s (%d)",hello.c_str(),hello.getLength());
 	
@@ -139,11 +136,18 @@ int main(int argc, char* argv[])
 	
 	tpRefPtr<tpReferenced> r(new tpReferenced());
 	
-	tpMat<4,4,float> m44f;
-	tpMat<4,4,tpFixed32> m44x;
+	tpMat44<float> m44f;
+	tpMat44<tpFixed32> m44x;
 	
+	m44f.setIdentity();
+	m44x.setIdentity();
+
 	m44f.invert();
 	m44x.invert();
+
+	
+	m44f.setTranslation(3.3f,3.3f,3.3f);
+
 	
 	
 	getchar();

@@ -27,6 +27,7 @@
 
 
 #include <tp/types.h>
+#include <tp/globals.h>
 
 /*!	\class tpChunk
 	\brief a very simple memory chunk handler for naive types
@@ -34,7 +35,7 @@
 	Wraps up allocating and deleting memory for random access. 
 */
 
-class tpChunk {
+class TP_API tpChunk {
 	
 	//! Copy c'tor.
 	tpChunk(const tpChunk& origin) {};
@@ -91,7 +92,7 @@ protected:
 
 };
 
-class tpSizedChunk : public tpChunk {
+class TP_API tpSizedChunk : public tpChunk {
 public: 
 
 	virtual void setSize(tpSizeT size);

@@ -41,7 +41,7 @@ bool tpLibrary::close()
 {
 	bool result(false);
 #if defined(WIN32)
-	result = FreeLibrary(static_cast<HMODULE>(m_handle));
+	result = static_cast<bool>(FreeLibrary(static_cast<HMODULE>(m_handle)));
 #elif defined(__unix) || defined(__APPLE__)
 	//result = (0 == dlclose(m_handle));
 	
@@ -90,7 +90,7 @@ bool tpLibrary::open( const tpString& file )
 	tpString actual_name = file; 
 
 #if defined(WIN32) || defined(WINCE)
-	m_handle = ::LoadLibrary(actual_name.mb_str());
+	m_handle = ::LoadLibraryA(actual_name.c_str());
 
 //#if defined(WIN32)
 //	if (m_handle) 
@@ -153,7 +153,7 @@ void* tpLibrary::getAddress( const tpString& funcName ) const
 
 	if (m_handle) {
 #if defined(WIN32)|| defined(WINCE)
-		address = ::GetProcAddress(static_cast<HMODULE>(m_handle),funcName.mb_str());
+		address = ::GetProcAddress(static_cast<HMODULE>(m_handle),funcName.c_str());
 #elif defined(__unix) || defined(__APPLE__)
 		address = dlsym(m_handle,funcName.c_str());
 #endif

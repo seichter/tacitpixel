@@ -10,6 +10,8 @@
 class TP_API tpReferenced { 
 public:
 
+	TP_TYPE_DECLARE;
+
 	tpReferenced();
 
 	inline tpReferenced& operator = (const tpReferenced&);
@@ -19,7 +21,6 @@ public:
 
 	tpSizeT getReferenceCount() const;
 
-	TP_TYPE_DECLARE;
 
 protected:
 

@@ -20,6 +20,7 @@
 #include <tp/object.h>
 #include <tp/refptr.h>
 #include <tp/traverser.h>
+#include <tp/matrix.h>
 
 
 class TP_API tpRenderObject : public tpReferenced {
@@ -158,8 +159,9 @@ protected:
 	tpArray< tpRefPtr<tpNode> > m_children;
 
 	tpArray<tpNode*> m_parents;
-	tpArray<tpNode*> m_nodepath;	
 
+	tpArray<tpNode*> m_nodepath;
+	tpArray<tpMat44r*> m_matrices;
 };
 
 

@@ -54,10 +54,10 @@ public:
 	 */
 	bool operator == (tpRTTI* query) const
 	{
-		return query->m_hash = this->m_hash;
+		return (query->m_hash == this->m_hash);
 	}
 	
-	const tpULong& getHash() const { return m_hash; }
+	const tpULong& getTypeID() const { return m_hash; }
 
 protected:
 	tpULong  m_hash;

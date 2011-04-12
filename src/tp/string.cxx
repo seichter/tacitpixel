@@ -50,7 +50,6 @@ tpString& tpString::set( const char* buffer, tpSizeT size, tpUByte encoding )
 {
 	_assign(buffer);
 	_truncate(size);
-	
 	return *this;
 }
 
@@ -101,7 +100,8 @@ tpString::_append(const char* str, tpUByte encoding /* = ASCII */)
 	return *this;
 }
 
-tpString& tpString::_truncate(tpSizeT pos)
+tpString& 
+tpString::_truncate(tpSizeT pos)
 {
 	if (pos && pos > getLength())
 	{
@@ -111,6 +111,11 @@ tpString& tpString::_truncate(tpSizeT pos)
 	return *this;
 }
 
+tpString& 
+tpString::truncate( tpSizeT pos )
+{
+	return this->_truncate(pos);
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -566,6 +571,8 @@ void tpString::syncWStr2CStr()
 {
 	tpWChar2Locale( m_wcharcopy.getData(), m_stringbuffer );
 }
+
+
 
 //bool tpString::operator==( const tpString& rs )
 //{

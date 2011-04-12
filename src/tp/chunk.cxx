@@ -1,6 +1,10 @@
-#include <tp/chunk.h>
+#define USE_DL_PREFIX 1
 
 #include <dlmalloc/malloc.h>
+
+
+#include <tp/chunk.h>
+
 
 #include <string.h>
 

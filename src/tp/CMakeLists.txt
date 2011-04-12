@@ -36,7 +36,9 @@ set(tp_hdrs
 	${tp_include_path}/tp/map.h
 	${tp_include_path}/tp/math.h
 	${tp_include_path}/tp/matrix.h
+	${tp_include_path}/tp/mat.h
 	${tp_include_path}/tp/mutex.h
+	${tp_include_path}/tp/quat.h	
 	${tp_include_path}/tp/referenced.h
 	${tp_include_path}/tp/rs232.h	
 	${tp_include_path}/tp/socket.h	
@@ -75,12 +77,14 @@ set(tp_srcs
 set(tp_hdrs_sg
 	${tp_include_path}/tp/node.h
 	${tp_include_path}/tp/object.h
+	${tp_include_path}/tp/transform.h
 	${tp_include_path}/tp/traverser.h
 	)
 	
 set(tp_srcs_sg
 	node.cxx
 	object.cxx
+	transform.cxx
 	traverser.cxx
 	)
 
@@ -90,6 +94,13 @@ add_library(tacitpixel SHARED
 	${tp_hdrs_sg}
 	${tp_srcs_sg}
 	)
+	
+set_target_properties(tacitpixel
+	PROPERTIES
+	COMPILE_DEFINITIONS TP_BUILD_LIBRARY=1
+	)
+
+target_link_libraries(tacitpixel dlmalloc)
 
 if(APPLE)
 	target_link_libraries(tacitpixel
@@ -97,9 +108,18 @@ if(APPLE)
 		)
 endif()
 
-target_link_libraries(tacitpixel
-	pthread dl
-	)
-	
-	
+if (UNIX)
+	target_link_libraries(tacitpixel
+		pthread dl
+		)
+endif()
+
+
+if (WIN32)
+	target_link_libraries(tacitpixel
+		wsock32
+		)
+endif()
+
+
 add_subdirectory(_testing)

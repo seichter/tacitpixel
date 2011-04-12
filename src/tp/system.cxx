@@ -156,7 +156,7 @@ tpString tpSystem::getExecutablePath(bool removeExecName)
 	if (removeExecName)
 	{
 		int offset = result.find('\\',true);
-		*result[offset] = 0;
+		result.truncate(offset);
 	}
 
 #else
@@ -204,8 +204,7 @@ tpString tpSystem::findFile( const tpString& filename )
 		//tpLogNotify("%s - file %s",__FUNCTION__,path.c_str());
 		//getchar();
 		FILE* f = fopen(res.c_str(),"rb");
-		if (f) 
-		{
+		if (f) {
 			fclose(f); 
 			break;
 		} else res = "";
