@@ -56,6 +56,8 @@ public:
 	{
 		return query->m_hash = this->m_hash;
 	}
+	
+	const tpULong& getHash() const { return m_hash; }
 
 protected:
 	tpULong  m_hash;

@@ -8,10 +8,15 @@
 class tpNode;
 
 class tpTraverser : public tpReferenced {
-public:	
+public:
+	
+	enum {
+		E_PUSH,
+		E_POP
+	};
 
 	tpTraverser();
-	
+
 	virtual void push(tpNode* node) = 0;
 	virtual void pop(tpNode* node) = 0;
 	
