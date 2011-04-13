@@ -220,7 +220,7 @@ public:
 	 * 
 	 * \param newsize  
 	 */
-	void resize(tpSizeT newsize);
+	void resize(tpSizeT newsize, T v = T());
 	
 	/**
 	 *	Set all items
@@ -460,9 +460,11 @@ template <typename T> void tpArray<T>::reserve(tpSizeT maxsize)
 	}
 }
 
-template <typename T> void tpArray<T>::resize(tpSizeT newsize)
+template <typename T> 
+void tpArray<T>::resize(tpSizeT newsize, T v = T())
 {
 	reserve(newsize);
+	//\todo implement fill (should only set the overlapping part)
 	m_size = newsize;
 }
 

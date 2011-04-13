@@ -150,11 +150,27 @@ int main(int argc, char* argv[])
 
 	// file IO
 
-	tpFile io;
-	if (io.open("hello.txt","w+"))
+	tpFile io_W;
+	if (io_W.open("hello.txt","w"))
 	{
-		io.write("hello world\n",13);
-		tpLogMessage("File > wrote %d bytes",io.getCount());
+		tpString hello_world_io("Hello World IO");
+		io_W.write(hello_world_io.c_str(),hello_world_io.getLength());
+		tpLogMessage("File > wrote %d bytes",io_W.getCount());
+	}
+
+	tpFile io_R;
+	if (io_R.open("hello.txt","rb"))
+	{
+		io_R.seek(0,tpIO::kSeekEnd);
+		tpSizeT io_R_size = io_R.tell();
+		io_R.rewind();
+		tpLogMessage("size > %d",io_R_size);
+
+		tpArray<tpChar> buffer;
+		buffer.resize(13);
+		tpSizeT rb = io_R.read(buffer.getData(),buffer.getSize()).getCount();
+
+		tpLogMessage("data > (%d) %s",rb,buffer.getData());
 	}
 	
 	

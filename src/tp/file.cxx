@@ -3,6 +3,7 @@
 #include "tp/file.h"
 #include "tp/log.h"
 
+//! macro to cast the file pointer
 #define _F(h) static_cast<FILE*>(h)
 
 tpFile::tpFile() : m_handle(0L)
@@ -38,23 +39,34 @@ void tpFile::sync()
 
 
 tpFile& 
-tpFile::seek( tpSizeT pos )
+tpFile::seek( tpSizeT pos, tpUByte rel )
 {
-	m_gcount = fseek(_F(m_handle),pos,SEEK_SET);
+	m_gcount = fseek(_F(m_handle),pos,rel);
+
+	if (feof(_F(m_handle))) m_state |= kEOF;
+
 	return *this;
 }
 
 tpFile& 
 tpFile::read(char* buffer,tpSizeT buffersize)
 {
-	m_gcount = fread(buffer,1,buffersize,_F(m_handle));
+	m_gcount = fread(buffer,sizeof(char),buffersize,_F(m_handle));
+	if (getCount() != buffersize)
+	{
+		if (feof(_F(m_handle))) m_state |= kEOF;
+	}
 	return *this;
 }
 
 tpFile& 
 tpFile::write(const char* buffer, tpSizeT buffersize)
 {
-	m_gcount = fwrite(buffer,1,buffersize,_F(m_handle));
+	m_gcount = fwrite(buffer,sizeof(char),buffersize,_F(m_handle));
+	if (getCount() != buffersize)
+	{
+		if (feof(_F(m_handle))) m_state |= kEOF;
+	}
 	return *this;
 }
 

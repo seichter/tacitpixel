@@ -13,6 +13,7 @@
  */
 class TP_API tpFile : public tpIO {
 public:
+
 	tpFile();
 
 	tpFile(const tpFile& file);
@@ -59,20 +60,38 @@ public:
 	 */
 	tpFile& write(const char* buffer,tpSizeT buffer_size);
 
-	tpFile& seek(tpSizeT pos);
+	/**
+	 * Seek implementation. Moves the input pointer in the file
+	 * 
+	 * \param pos (tpSizeT) position 
+	 * \param rel (tpUByte) offset to where to seek from
+	 * \return (tpFile&) returns *this 
+	 */
+	tpFile& seek(tpSizeT pos,tpUByte rel = kSeekSet);
+
+	/**
+	 * Get the current read/write pointer position
+	 * 
+	 * \return (tpSizeT) value of the pointer position
+	 */
 	tpSizeT tell() const;
 
-	bool isOpen() const; 
-
-	tpUInt getSize() const;
-
+	/**
+	 * Return the bytecount of the last read/write operation
+	 * 
+	 * \return (tpSizeT) value of last read write operation
+	 */
 	tpSizeT getCount() const { return m_gcount; }
+
 
 	//void operator << (const tpString& str);
 	//void operator << (tpInt i);
 
 	//void operator << (const tpMemory<tpChar>&);
 	//void operator >> (tpMemory<tpChar>&);
+
+	void setHandle(void* handle) { m_handle = handle; }
+	const void* getHandle() const { return m_handle; }
 
 protected :
 
