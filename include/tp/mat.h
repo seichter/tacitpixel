@@ -29,6 +29,9 @@ public:
 	bool isSquare() const { return C == R; }
 
 	void setValue(T val) { for (int i = 0; i < R*C; ++i) m[i] = val; }
+	
+	
+	
 
 	tpMat<R,C,T>& 
 	setIdentity()
@@ -205,8 +208,8 @@ template <typename T> class tpMat44 : public tpMat<4,4,T>
 {
 public:
 
-	tpMat44&
-	tpMat44::translate(const T& v1,const T& v2,const T& v3)
+	tpMat44<T>&
+	translate(const T& v1,const T& v2,const T& v3)
 	{
 		this->m[12] += v1;
 		this->m[13] += v2;
@@ -215,13 +218,19 @@ public:
 		return *this;
 	}
 
-	tpMat44&
-	tpMat44::setTranslation(const T& v1,const T& v2,const T& v3)
+	tpMat44<T>&
+	setTranslation(const T& v1,const T& v2,const T& v3)
 	{
 		this->m[12] = v1;
 		this->m[13] = v2;
 		this->m[14] = v3;
 		return *this;
+	}
+	
+	tpVec3<T>
+	getTranslation() const
+	{
+		return tpVec3<T>(this->m[12],this->m[13],this->m[14]);
 	}
 
 	tpMat44<T>&
@@ -257,17 +266,17 @@ public:
 		tpVec<T,3> _vCos = vec * (1 - _fCos);
 		tpVec<T,3> _vSin = vec * (T)sin(_radiant);
 
-		this->m[0]= (T) ((vec.vec[0] * _vCos.vec[0]) + _fCos);
-		this->m[4]= (T) ((vec.vec[0] * _vCos.vec[1]) - _vSin.vec[2]);
-		this->m[8]= (T) ((vec.vec[0] * _vCos.vec[2]) + _vSin.vec[1]);
+		this->m[0]= (T) ((vec[0] * _vCos[0]) + _fCos);
+		this->m[4]= (T) ((vec[0] * _vCos[1]) - _vSin[2]);
+		this->m[8]= (T) ((vec[0] * _vCos[2]) + _vSin[1]);
 
-		this->m[1]= (T) ((vec.vec[1] * _vCos.vec[0]) + _vSin.vec[2]);
-		this->m[5]= (T) ((vec.vec[1] * _vCos.vec[1]) + _fCos);
-		this->m[9]= (T) ((vec.vec[1] * _vCos.vec[2]) - _vSin.vec[0]);
+		this->m[1]= (T) ((vec[1] * _vCos[0]) + _vSin[2]);
+		this->m[5]= (T) ((vec[1] * _vCos[1]) + _fCos);
+		this->m[9]= (T) ((vec[1] * _vCos[2]) - _vSin[0]);
 
-		this->m[2]= (T)  ((vec.vec[2] * _vCos.vec[0]) - _vSin.vec[1]);
-		this->m[6]= (T)  ((vec.vec[2] * _vCos.vec[1]) + _vSin.vec[0]);
-		this->m[10]= (T) ((vec.vec[2] * _vCos.vec[2]) + _fCos);
+		this->m[2]= (T)  ((vec[2] * _vCos[0]) - _vSin[1]);
+		this->m[6]= (T)  ((vec[2] * _vCos[1]) + _vSin[0]);
+		this->m[10]= (T) ((vec[2] * _vCos[2]) + _fCos);
 
 		this->m[3] = this->m[7] = this->m[11] = T(0);
 
@@ -383,6 +392,163 @@ public:
 
 		return *this;
 	}
+	
+	tpMat44
+	getInverse() const
+	{
+		tpMat44<T> result(*this); result.invert(); return result;
+	}
+	
+	
+	
+	tpMat44&
+	setFrustum(T Left,T Right,T Bottom,T Top, T Near, T Far)
+	{
+
+		this->m[ 0] = (T) 2	* Near/(Right-Left);
+		this->m[ 4] = (T) 0;
+		this->m[ 8] = (T) (Right+Left)/(Right-Left);
+		this->m[12] = (T) 0;
+
+		this->m[ 1] = (T) 0;
+		this->m[ 5] = (T) 2 * Near/(Top-Bottom);	
+		this->m[ 9] = (T) (Top+Bottom)/(Top-Bottom);
+		this->m[13] = (T) 0;
+
+		this->m[ 2] = (T) 0;
+		this->m[ 6] = (T) 0;
+		this->m[10] = (T) -(Far+Near)/(Far-Near);
+		this->m[14] = (T) -(2*Far*Near)/(Far-Near);
+
+		this->m[ 3] = (T) 0;
+		this->m[ 7] = (T) 0;	
+		this->m[11] = (T) -1;
+		this->m[15] = (T) 0;
+
+		return *this;
+	};
+
+	tpMat44&
+	setOrtho(T Left,T Right,T Bottom,T Top, T Near, T Far)
+	{
+
+		this->m[ 0] = (T) 2	* (Right-Left);
+		this->m[ 4] = (T) 0;
+		this->m[ 8] = (T) 0;
+		this->m[12] = (T) -(Right + Left)/(Right - Left);
+
+		this->m[ 1] = (T) 0;
+		this->m[ 5] = (T) 2 / (Top-Bottom);	
+		this->m[ 9] = (T) 0;
+		this->m[13] = (T) -(Top + Bottom)/(Top - Bottom);
+
+		this->m[ 2] = (T) 0;
+		this->m[ 6] = (T) 0;
+		this->m[10] = (T) - 2 / (Far - Near);
+		this->m[14] = (T) -(Far + Near) / (Far - Near);
+
+		this->m[ 3] = (T) 0;
+		this->m[ 7] = (T) 0;	
+		this->m[11] = (T) 0;
+		this->m[15] = (T) 1;
+
+		return *this;
+	};
+
+
+	tpMat44&
+	setPerspective(T FovY, T Aspect, T Near, T Far) {
+
+		T xmin, xmax, ymin, ymax;
+		ymax = Near * (T)tan( FovY * TP_PI / T(360) );
+		ymin = -ymax;
+		xmin = ymin * Aspect;
+		xmax = ymax * Aspect;
+
+		return setFrustum( xmin, xmax, ymin, ymax, Near, Far );
+	}
+	
+	
+	tpMat44&
+	operator *= (const tpMat44<T>& rs)
+	{
+		register int r;
+		register int c;
+		register int t = 4;
+
+		tpMat44<T> ret;
+
+		for (register tpUByte k = 0; k < 16; k++ ) {
+			r = k % t;
+			c = (tpUInt)(k / t);
+			ret.m[k] = (T)0;
+			for (int i = 0;i < t; i++)
+				ret.m[k] += this->m[r+(i*t)] * rs.m[(c*t)+i];
+		}
+		*this = ret;
+		return *this;
+	};
+	
+	
+	tpMat44&
+	lookAt(const tpVec3<T>& eye, 
+											const tpVec3<T>& target, 
+											const tpVec3<T>& up)
+	{
+		tpVec3<T> L = target;
+
+		L -= eye;
+
+		L.normalize();
+
+		tpVec3<T> S = L.cross(up);
+		S.normalize();
+
+		tpVec3<T> Ud = S.cross(L);
+
+		/*
+		 this->m[0] = S[0];
+		 this->m[1] = S[1];
+		 this->m[2] = S[2];
+		 this->m[3] = (T)0;
+
+		 this->m[4] = Ud[0];
+		 this->m[5] = Ud[1];
+		 this->m[6] = Ud[2];
+		 this->m[7] = (T) 0;
+
+		 this->m[8] = -L[0];
+		 this->m[9] = -L[1];
+		 this->m[10] = -L[2];	
+		 this->m[11] = (T) 0;
+		 */
+
+		this->m[0] = S[0];
+		this->m[4] = S[1];
+		this->m[8] = S[2];
+		this->m[3] = (T)0;
+
+		this->m[1] = Ud[0];
+		this->m[5] = Ud[1];
+		this->m[9] = Ud[2];
+		this->m[7] = (T) 0;
+
+		this->m[2] = -L[0];
+		this->m[6] = -L[1];
+		this->m[10] = -L[2];
+		this->m[14] = (T) 0;
+
+		this->m[12] = -eye[0];
+		this->m[13] = -eye[1];
+		this->m[14] = -eye[2];
+
+		this->m[15] = 1;
+
+		return *this;
+	};
+	
+	
+	
 };
 
 

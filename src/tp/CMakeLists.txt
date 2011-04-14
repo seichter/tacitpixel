@@ -31,6 +31,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/globals.h
 	${tp_include_path}/tp/hash.h
 	${tp_include_path}/tp/image.h
+	${tp_include_path}/tp/imageop.h
 	${tp_include_path}/tp/io.h
 	${tp_include_path}/tp/log.h
 	${tp_include_path}/tp/list.h	
@@ -39,6 +40,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/math.h
 	${tp_include_path}/tp/matrix.h
 	${tp_include_path}/tp/mat.h	
+	${tp_include_path}/tp/module.h
 	${tp_include_path}/tp/mutex.h
 	${tp_include_path}/tp/quat.h	
 	${tp_include_path}/tp/referenced.h
@@ -60,8 +62,10 @@ set(tp_srcs
 	file.cxx
 	hash.cxx
 	image.cxx
+	imageop.cxx
 	log.cxx
 	library.cxx
+	module.cxx
 	mutex.cxx
 	referenced.cxx
 	rs232.cxx
@@ -71,6 +75,15 @@ set(tp_srcs
 	thread.cxx
 	timer.cxx
 	version.cxx
+	)
+	
+#
+# Image handlers
+# 
+list(APPEND tp_srcs
+	_modules/image/bmp/bmp_handler.cxx
+	_modules/image/jpg/jpg_handler.cxx
+	_modules/image/ppm/ppm_handler.cxx
 	)
 
 
@@ -83,17 +96,22 @@ set(tp_hdrs_sg
 	${tp_include_path}/tp/node.h
 	${tp_include_path}/tp/object.h
 	${tp_include_path}/tp/renderable.h
+	${tp_include_path}/tp/renderer.h
+	${tp_include_path}/tp/rendersurface.h
 	${tp_include_path}/tp/texture.h
 	${tp_include_path}/tp/transform.h
 	${tp_include_path}/tp/traverser.h
 	)
 	
 set(tp_srcs_sg
+	camera.cxx
 	material.cxx
 	mesh.cxx
 	node.cxx
 	object.cxx
 	renderable.cxx
+	renderer.cxx
+	rendersurface.cxx
 	texture.cxx
 	transform.cxx
 	traverser.cxx
@@ -111,7 +129,7 @@ set_target_properties(tacitpixel
 	COMPILE_DEFINITIONS TP_BUILD_LIBRARY=1
 	)
 
-target_link_libraries(tacitpixel dlmalloc)
+target_link_libraries(tacitpixel dlmalloc jpeg)
 
 if(APPLE)
 	target_link_libraries(tacitpixel

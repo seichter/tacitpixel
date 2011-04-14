@@ -15,7 +15,7 @@
 #include "tp/node.h"
 
 
-tpMesh::tpMesh(const tpString& name,tpUInt meshtype)
+tpMesh::tpMesh(const tpString& name,tpUByte meshtype)
 	: tpNode(name) ,
 	m_meshtype(meshtype)
 {
@@ -169,6 +169,7 @@ tpUInt tpMesh::getNormalsCount() const {
 tpMesh::~tpMesh()
 {
 }
+
 
 TP_TYPE_REGISTER(tpMesh,tpNode,Mesh);
 

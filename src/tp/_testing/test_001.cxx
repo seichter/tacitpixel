@@ -5,6 +5,7 @@
 #include <tp/refptr.h>
 #include <tp/scopeptr.h>
 #include <tp/image.h>
+#include <tp/imageop.h>
 #include <tp/timer.h>
 #include <tp/node.h>
 #include <tp/transform.h>
@@ -54,23 +55,7 @@ int main(int argc, char* argv[])
 	tpLogMessage("Executable Path: %s",tpSystem::get()->getExecutablePath().c_str());
 	tpLogMessage("Resource Path: %s",tpSystem::get()->getResourcePath().c_str());
 	tpLogMessage("CWD: %s",tpSystem::get()->getCWD().c_str());
-	
-	tpRefPtr<tpImage> image = new tpImage();
-	
-	image->allocate(320,240,TP_RGB888);
-	
-	tpScopePtr<tpImageOperator> op = tpImageOperator::create(tpImageOperator::SwapRedBlue);
 		
-	tpTimer t;
-	for (int i = 0; i < 10; i++)
-	{
-		(*op)(*image.get());
-	}
-
-	// 
-	tpLogMessage("Access: %3.0lfms",t.getElapsed(TP_TIME_MILLISEC));
-	
-	
 	// field system
 	
 	tpRefPtr<tpNode> obj = new tpNode("My Root Node");

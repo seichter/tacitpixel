@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "tp/file.h"
-#include "tp/log.h"
+//#include "tp/log.h"
 
 //! macro to cast the file pointer
 #define _F(h) static_cast<FILE*>(h)
@@ -21,7 +21,7 @@ tpFile::~tpFile()
 
 bool tpFile::open(const tpString& uri, const tpString& mode)
 {
-	m_handle = fopen(uri.c_str(),mode.c_str());
+	m_handle = _F(fopen(uri.c_str(),mode.c_str()));
 	return (m_handle != 0L);
 }
 
@@ -29,6 +29,7 @@ bool tpFile::open(const tpString& uri, const tpString& mode)
 bool tpFile::close()
 {
 	fclose(_F(m_handle));
+	m_handle = 0L;
 	return true;
 }
 
@@ -41,10 +42,8 @@ void tpFile::sync()
 tpFile& 
 tpFile::seek( tpSizeT pos, tpUByte rel )
 {
-	m_gcount = fseek(_F(m_handle),pos,rel);
-
-	if (feof(_F(m_handle))) m_state |= kEOF;
-
+	// set bad bit if seek fails - and good if return == 0
+	clear( fseek(_F(m_handle),pos,rel) ? kBad : kGood ); 
 	return *this;
 }
 

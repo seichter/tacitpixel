@@ -33,7 +33,7 @@ public:
 		\param name name of the class
 		\param parent parent class of this one, NULL if it is a base class
 	 */
-	explicit tpRTTI(const tpChar* name,tpRTTI* parent) : m_hash(tpAdler32((tpUChar*)name,tpStrLen(name))), m_parent(parent) {}
+	explicit tpRTTI(const tpChar* name,tpRTTI* parent) : m_hash(tpAdler32((tpUChar*)name,tpStrLen(name))), m_parent(parent), m_name(name) {}
 	
 	/*! Check if this class has been inherited from another class
 		\param parent check if this is a child (inherited) class
@@ -57,12 +57,14 @@ public:
 		return (query->m_hash == this->m_hash);
 	}
 	
+	const char* getName() const { return m_name; }
+	
 	const tpULong& getTypeID() const { return m_hash; }
 
 protected:
 	tpULong  m_hash;
 	tpRTTI*  m_parent;
-	
+	const char* m_name;
 };
 
 #define TP_TYPE_DECLARE \

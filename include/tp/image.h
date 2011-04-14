@@ -16,6 +16,7 @@
 #include <tp/globals.h>
 #include <tp/referenced.h>
 #include <tp/chunk.h>
+#include <tp/string.h>
 
 
 enum tpPixelFormat {
@@ -49,8 +50,10 @@ public:
 
 	unsigned int getWidth() const { return m_width; }
 	unsigned int getHeight() const { return m_height; }
+	tpUByte getPixelFormat() const { return m_pixelformat; }
 
 	void allocate(unsigned int w, unsigned int h, tpUByte pixelformat = TP_RGB888);
+	void copy(const void* data);
 	
 	bool isValid() const { return (m_data.getSize() && m_width && m_height); } 
 
@@ -60,24 +63,39 @@ public:
 	
 	tpUInt getChangeCount() const { return m_changecount; }
 	void dirty() { ++m_changecount; }
-
+	
+	static tpImage* read(const tpString& name);
+	
+	bool write(const tpString& name) const;
+	
 protected:
 	virtual ~tpImage();
 };
 
 
-//!
-struct TP_API tpImageOperator {
-	
-	enum {
-		Null = 0x0,
-		SwapRedBlue
-	};
-	
-	virtual void operator()(tpImage& in) = 0;
-	
-	static tpImageOperator* create(tpUByte op);
-	
+
+enum tpImageFactoryCapability {
+	TP_IMAGE_CAN_READ = 0x0,
+	TP_IMAGE_CAN_WRITE
 };
+
+class TP_API tpImageHandler : public tpReferenced {
+public:
+
+	TP_TYPE_DECLARE;
+
+	tpImageHandler();
+
+	virtual bool getCapability(tpUInt capability,const tpString& name) { return false; }
+
+	virtual tpImage* read(const tpString& name) { return 0; };
+	virtual bool write(const tpImage* img, const tpString& name) { return false; } 
+	
+protected:
+	
+	virtual ~tpImageHandler();
+
+};
+
 
 #endif

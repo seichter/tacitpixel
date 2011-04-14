@@ -30,7 +30,7 @@ public:
 	 Constructor of the array.
 	 \param size initial size of the array (default = 30)
 	 */
-	explicit tpArray(tpSizeT size = 0);
+	tpArray();
 	
 	/** \brief copy c'tor
 	 
@@ -227,8 +227,10 @@ public:
 	 *
 	 * \param data 
 	 */
-	void fill(const T& data);
+	void assign(tpSizeT n, const T& data);
 	
+	void assign(T* first, T* last);
+
 	/**
 	 *	
 	 */
@@ -288,7 +290,7 @@ template <typename T>
 void tpArray<T>::clear()
 {
 	if (m_data) delete [] m_data;
-	m_data = (T*)0L;
+	m_data = 0;
 	m_size = m_maxsize = 0;
 }
 
@@ -322,12 +324,10 @@ tpArray<T>& tpArray<T>::clone( tpArray<T>& l )
 
 //-----------------------------------------------------------------------------
 
-template <typename T> tpArray<T>::tpArray( tpSizeT size )
-: m_data(0), m_size(0), m_maxsize(size)
-{
-	reserve( size );
-}
 
+template <typename T> tpArray<T>::tpArray() : m_data(0), m_size(0), m_maxsize(0)
+{
+}
 
 template <typename T> tpArray<T>::tpArray(const tpArray& origin)
 : m_data(0), m_size(0), m_maxsize(0)
@@ -346,26 +346,28 @@ template <typename T> const T& tpArray<T>::operator [] (tpSizeT index) const
 }
 
 
-template <typename T> tpArray<T>& tpArray<T>::operator = (const tpArray& origin)
+template <typename T> tpArray<T>& tpArray<T>::operator = (const tpArray& rhs)
 {
-	if (this == &origin) return *this;
-	
-	reserve(origin.m_size);
-	
-	for (tpSizeT i = 0; i < origin.m_size;++i)
+	if (this != &rhs)
 	{
-		m_data[i] = origin[i];
+		reserve(rhs.getSize());
+		const T* rhs_iter = rhs.begin();
+		T* this_iter = this->begin();
+		while( this_iter != this->end() && 
+		  	rhs_iter != rhs.end() )
+		{
+			*this_iter = *rhs_iter;
+			this_iter++; rhs_iter++;
+		}
 	}
-	m_size = origin.m_size;
-	
 	return *this;
-	
 }
 
 template <typename T> tpArray<T>& tpArray<T>::add(const T& item)
 {
-	grow();
-	m_data[m_size] = item;
+	tpSizeT end_pos = m_size;
+	if (getSize() == getCapacity()) grow();
+	m_data[end_pos] = item;
 	++m_size;
 	return *this;
 }
@@ -434,34 +436,25 @@ template <typename T> const tpSizeT& tpArray<T>::getSize() const
 	return m_size;
 }
 
-template <typename T> void tpArray<T>::grow()
-{
-	reserve( 2 * m_maxsize + 1 );	
-}
 
-template <typename T> void tpArray<T>::reserve(tpSizeT maxsize)
+template <typename T> void tpArray<T>::reserve(tpSizeT n)
 {
-	if ( maxsize )
-	{
-		T* _tmp = new T[maxsize];
-		for(tpSizeT i = 0; i < tpMin(m_size,maxsize); i++)
-		{
-			_tmp[i] = m_data[i];
-		}
-		
-		delete [] m_data;
-		
-		m_data = _tmp;
-		m_maxsize = maxsize;
-		m_size = tpMin(m_size,maxsize);
-		
-	} else {
-		clear();
+	if ( n > getCapacity() ) {
+		T* tmp = new T[n];
+		for(iterator i = begin(); i != end();)  *tmp++ = *i++;
+		if (m_data) delete [] m_data;
+		m_data = tmp;
+		m_maxsize = n;
 	}
 }
 
+template <typename T> void tpArray<T>::grow()
+{
+	reserve( getSize() ? getSize() * 2 : 8 );	
+}
+
 template <typename T> 
-void tpArray<T>::resize(tpSizeT newsize, T v = T())
+void tpArray<T>::resize(tpSizeT newsize, T v /*= T()*/)
 {
 	reserve(newsize);
 	//\todo implement fill (should only set the overlapping part)
@@ -470,15 +463,20 @@ void tpArray<T>::resize(tpSizeT newsize, T v = T())
 
 
 template <typename T> 
-void tpArray<T>::fill(const T& data)
+void tpArray<T>::assign(tpSizeT n, const T& data)
 {
-	T* ptr = m_data;
-	for (tpSizeT i = 0; i < m_size; ++i)
-	{
-		*ptr = data;
-		ptr++;
-	}
+	resize(n);
+	iterator iter = begin();
+	for (tpSizeT i = 0; i < n; ++i) { *iter = data; ++iter; }
 }
+
+template <typename T> 
+void tpArray<T>::assign(T* first, T* last)
+{
+	T* ptr = first;
+	while(ptr != last) { m_data.add(*ptr); ptr++; }
+}
+
 
 template <typename T>
 bool tpArray<T>::operator==(const tpArray& rs) const
@@ -516,7 +514,7 @@ template <typename T> void tpArray<T>::optimize()
 
 template <typename T> tpArray<T>& tpArray<T>::operator << (const T& value) 
 {
-	this->add(value);
+	add(value);
 	return *this;
 }
 

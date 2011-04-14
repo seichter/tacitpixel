@@ -101,7 +101,7 @@ public:
 	
 	virtual void empty();
 	
-	void copy(const void* ptr, tpSizeT size);
+	void copy(const void* ptr);
 
 protected:
 

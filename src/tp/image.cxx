@@ -3,7 +3,9 @@
 #include <tp/log.h>
 
 #include <tp/utils.h>
-//#include <tp/factory.h>
+#include <tp/factory.h>
+#include <tp/module.h>
+#include <tp/system.h>
 
 
 
@@ -50,96 +52,115 @@ tpImage::allocate(unsigned int w, unsigned int h, tpUByte pixelformat )
 	{
 		m_width = w;
 		m_height = h;
+		m_pixelformat = pixelformat;
 	}
-	
-	tpLogMessage("%s - %dx%d (%d bytes)",__FUNCTION__,m_width,m_height,m_data.getSize());
 }
 
-struct tpImageOperatorNull {
-	
-	void impl1(tpImage& img) { tpLogMessage(__FUNCTION__); }
-	void impl8(tpImage& img) { tpLogMessage(__FUNCTION__); }
-	
-};
-
-
-struct tpImageOpRGB2BGR {
-	
-	void impl1(tpImage& img) 
-	{
-		char* p = static_cast<char*>(img.getData());
-		for (tpSizeT i = 0; i < img.getDataSize(); i+= 3)
-		{
-			tpSwap(p[i],p[i+2]);
-		}
-	}
-	
-	void impl8(tpImage& img) 
-	{
-		char* p = static_cast<char*>(img.getData());
-		for (tpSizeT i = 0; i < img.getDataSize(); i+= 24)
-		{
-			tpSwap(p[i+ 0],p[i+ 2]);
-			tpSwap(p[i+ 3],p[i+ 5]);
-			tpSwap(p[i+ 6],p[i+ 8]);
-			tpSwap(p[i+ 9],p[i+11]); 
-			tpSwap(p[i+12],p[i+14]);
-			tpSwap(p[i+15],p[i+17]);
-			tpSwap(p[i+18],p[i+20]);
-			tpSwap(p[i+21],p[i+23]);
-		}
-	}	
-};
-
-
-template <typename T> struct tpImageOperatorImpl : tpImageOperator {
-	
-	T* m;
-	
-	void (T::*_impl1)(tpImage& img);
-	void (T::*_impl8)(tpImage& img);
-	
-	
-	
-	
-	tpImageOperatorImpl(T* pObj, void (T::*impl1)(tpImage& img), void (T::*impl8)(tpImage& img) ) 
-	: m(pObj), _impl1(impl1), _impl8(impl8)
-	{
-		if (0 == _impl8) _impl8 = _impl1;
-	}
-	
-	void operator()(tpImage& img) 
-	{
-		(img.getDataSize() % 8 == 0) ? (*m.*_impl8)(img) : (*m.*_impl1)(img);
-	}
-	
-};
-
-
-tpImageOperator* 
-tpImageOperator::create(tpUByte op)
+void 
+tpImage::copy(const void* data)
 {
-	tpImageOperatorNull nullop;
-	tpImageOpRGB2BGR swapredblue;
-	tpImageOperator* ret = 0L;
-	
-	switch (op) {
-		case tpImageOperator::Null:
-			ret = new tpImageOperatorImpl<tpImageOperatorNull>(&nullop,&tpImageOperatorNull::impl1,&tpImageOperatorNull::impl8);
-			break;
-		case tpImageOperator::SwapRedBlue:
-			ret = new tpImageOperatorImpl<tpImageOpRGB2BGR>(&swapredblue,&tpImageOpRGB2BGR::impl1,&tpImageOpRGB2BGR::impl8); 
-	}
-	
-	
-	return ret;
+	m_data.copy(data);
 }
+
+tpImageHandler::tpImageHandler() : tpReferenced()
+{
+
+}
+
+tpImageHandler::~tpImageHandler()
+{
+}
+
+//
+// Global Image Cache
+// 
+//tpRefCache<tpImage> g_imagecache;
+
+tpImage* 
+tpImage::read( const tpString& name )
+{
+	tpImage* result(0);
+
+	const tpModuleList& ml = tpModuleManager::get()->getModules();
+
+	for (tpSizeT i = 0; i < ml.getSize(); i++)
+	{
+		const tpRefPtr<tpReferenced>& item = ml[i];
+
+		if (item->getType()->isOfType(tpImageHandler::getTypeInfo()))
+		{
+			//tpLogNotify("%s found %s",__FUNCTION__,item->getType()->getName().c_str());
+
+			tpRefPtr<tpImageHandler> nf = static_cast<tpImageHandler*>(item.get());
+
+			if (nf.isValid() && nf->getCapability(TP_IMAGE_CAN_READ,name))
+			{
+
+				tpString filename = tpSystem::get()->findFile(name);
+
+				//result = reinterpret_cast<tpImage*>(g_imagecache.retrieve(filename));
+
+				if (!result)
+				{
+
+					//tpLogNotify("%s using %s",__FUNCTION__,item->getType()->getName().c_str());
+
+					result = nf->read(filename);
+
+					if (result && result->isValid()) {
+						//result->setFileName(filename);
+						//g_imagecache.add(filename,result);
+
+					}
+
+					//tpLogNotify("%s - 0x%x",__FUNCTION__,result);
+				} else {
+
+					//tpLogNotify("%s cached '%s' (0x%x)",__FUNCTION__,filename.c_str(),result);
+
+				}
+			}
+		}
+	}
+
+	return result;
+
+}
+
+bool 
+tpImage::write( const tpString& name ) const
+{
+	bool result(false);
+
+	const tpModuleList& ml = tpModuleManager::get()->getModules();
+
+	for (tpSizeT i = 0; i < ml.getSize(); i++)
+	{
+		const tpRefPtr<tpReferenced>& item = ml[i];
+
+		if (item->getType()->isOfType(tpImageHandler::getTypeInfo()))
+		{
+			//tpLogNotify("%s found %s",__FUNCTION__,item->getType()->getName());
+
+			tpRefPtr<tpImageHandler> nf = static_cast<tpImageHandler*>(item.get());
+
+			if (nf.isValid() && nf->getCapability(TP_IMAGE_CAN_WRITE,name))
+			{
+				return nf->write(this,name);
+			}
+		}
+	}
+
+	return result;
+
+}
+
 
 
 TP_TYPE_REGISTER(tpImage,tpReferenced,Image);
+TP_TYPE_REGISTER(tpImageHandler,tpReferenced,ImageHandler);
 
 
-struct tpImageLoader {};
 
 /*
 class tpImageManager : public tpFactory<tpImageLoader>
@@ -543,87 +564,7 @@ tpBool tpImage::isValid() const
 
 
 
-//
-// Global Image Cache
-// 
-tpRefCache<tpImage> g_imagecache;
 
-tpImage* tpImage::load( const tpString& name )
-{
-	tpImage* result(0);
-
-	const tpModuleList& ml = tpModuleManager::get()->getModules();
-
-	for (tpSizeT i = 0; i < ml.getSize(); i++)
-	{
-		const tpRefPtr<tpReference>& item = ml[i];
-
-		if (item->getType()->isOfType(tpImageFactory::getTypeInfo()))
-		{
-			//tpLogNotify("%s found %s",__FUNCTION__,item->getType()->getName().c_str());
-
-			tpImageFactory* nf = reinterpret_cast<tpImageFactory*>(item.get());
-
-			if (nf && nf->getCapability(TP_IMAGE_CAN_READ,name))
-			{
-
-				tpString filename = tpSystem::get()->findFile(name);
-
-				result = reinterpret_cast<tpImage*>(g_imagecache.retrieve(filename));
-
-				if (!result)
-				{
-
-					//tpLogNotify("%s using %s",__FUNCTION__,item->getType()->getName().c_str());
-
-					result = nf->read(filename);
-
-					if (result && result->isValid()) {
-						result->setFileName(filename);
-						g_imagecache.add(filename,result);
-
-					}
-
-					//tpLogNotify("%s - 0x%x",__FUNCTION__,result);
-				} else {
-
-					//tpLogNotify("%s cached '%s' (0x%x)",__FUNCTION__,filename.c_str(),result);
-
-				}
-			}
-		}
-	}
-
-	return result;
-
-}
-
-tpBool tpImage::save( const tpString& name, const tpImage* img )
-{
-	tpBool result(FALSE);
-
-	const tpModuleList& ml = tpModuleManager::get()->getModules();
-
-	for (tpSizeT i = 0; i < ml.getSize(); i++)
-	{
-		const tpRefPtr<tpReference>& item = ml[i];
-
-		if (item->getType()->isOfType(tpImageFactory::getTypeInfo()))
-		{
-			tpLogNotify("%s found %s",__FUNCTION__,item->getType()->getName().c_str());
-
-			tpImageFactory* nf = reinterpret_cast<tpImageFactory*>(item.get());
-
-			if (nf && nf->getCapability(TP_IMAGE_CAN_WRITE,name))
-			{
-				return nf->write(img,name);
-			}
-		}
-	}
-
-	return result;
-
-}
 
 
 /*
@@ -740,15 +681,6 @@ tpBool tpImageManager::save(const tpString& filename,tpImage* img)
 
 #endif
 
-
-tpImageFactory::tpImageFactory()
-{
-
-}
-
-tpImageFactory::~tpImageFactory()
-{
-}
 
 //////////////////////////////////////////////////////////////////////////
 

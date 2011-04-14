@@ -156,10 +156,12 @@ int main(int argc, char* argv[])
 		tpString hello_world_io("Hello World IO");
 		io_W.write(hello_world_io.c_str(),hello_world_io.getLength());
 		tpLogMessage("File > wrote %d bytes",io_W.getCount());
+		
+		io_W.close();
 	}
 
 	tpFile io_R;
-	if (io_R.open("hello.txt","rb"))
+	if (io_R.open("hello.txt","r"))
 	{
 		io_R.seek(0,tpIO::kSeekEnd);
 		tpSizeT io_R_size = io_R.tell();

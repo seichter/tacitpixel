@@ -100,4 +100,63 @@ public:
 };
 
 
+template <typename T>
+class tpTypedRegistry {
+	//! C'tor private make singleton
+	tpTypedRegistry() {};
+	//! copy C'tor private make singleton
+	tpTypedRegistry(const tpTypedRegistry<T>& other) {}
+	//! Assignment operator make singleton
+	tpTypedRegistry& operator = (const tpTypedRegistry<T>& rhs) {}
+
+protected:
+	
+	friend class Helper;
+	
+	typedef tpArray< T* > RegistryList;
+	RegistryList m_registry;
+	
+public:
+	
+	//! get an instance of the factory
+	static 
+	tpTypedRegistry<T>& get()
+	{
+		static tpTypedRegistry<T> gs_instance;
+		return gs_instance;
+	}
+	
+	//! only used internally - adding a new factory
+	void add(T* h) { m_registry.add(h); }
+
+	//! removing a factory
+	void remove(T* h) 
+	{
+		for (typename RegistryList::iterator iter = m_registry.begin();
+			iter != m_registry.end();
+			++iter)
+		{
+			if ((*iter).getValue() == h) { 
+				m_registry.erase(iter);
+				return;
+			}
+		}
+	}
+	
+	const tpArray<T*>& getInstances() const { return m_registry; }
+	tpArray<T*>& getInstances() { return m_registry; }
+	
+	//! get number of factories registered
+	int 
+	getSize() const { return m_registry.getSize(); }
+	
+	//! helper construct for registering implementations
+	template <typename Derived>
+	struct Helper {
+		Helper() { tpTypedRegistry<T>::get().add(this); }
+		~Helper() { tpTypedRegistry<T>::get().remove(this); }
+	};
+	
+};
+
 #endif

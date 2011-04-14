@@ -21,12 +21,6 @@
  *	
  */
 enum tpMeshType {
-	TP_MESH_TRIANGLES		= 0x0004,
-	TP_MESH_TRIANGLE_STRIP,
-	TP_MESH_TRIANGLE_FAN,
-	TP_MESH_QUADS,
-	TP_MESH_QUAD_STRIP,
-	TP_MESH_POLYGON
 };
 
 typedef tpArray<tpDouble> tpArrayd;
@@ -40,16 +34,29 @@ typedef tpArray<tpReal> tpArrayr;
 	This node can hold primitive triangle geometries and
 	furthermore, can generate normals and color vertices
 */
-class TP_API tpMesh : public tpNode
-{
+class TP_API tpMesh : public tpNode {
 public:
 
 	TP_TYPE_DECLARE;
+	
+	enum {
+		kPoints,
+		kLines,
+		kLineStrip,
+		kLineLoop,
+		kTriangles = 0x0004,
+		kTriangleStrip,
+		kTriangleFan,
+		kQuads,
+		kQuadStrip,
+		kPolygon
+	};
+	
 
 	/*! c'tor
 		\param name name of the name
 	 */
-	tpMesh(const tpString& name, tpUInt meshtype = TP_MESH_TRIANGLES);
+	tpMesh(const tpString& name, tpUByte meshtype = kTriangles);
 
 	/*! copy c'tor
 		\param mesh mesh to copy
@@ -107,9 +114,10 @@ protected:
 
 	virtual ~tpMesh();
 
-	tpUInt	m_meshtype;
+	tpUByte	m_meshtype;
 
 	void calcNormals();
+	
 	tpArray<tpReal> m_vertices;
 	tpArray<tpReal> m_normals;
 	tpArray<tpReal> m_texcoords;

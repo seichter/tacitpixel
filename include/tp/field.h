@@ -106,12 +106,12 @@ template <class T> class tpRefPtrField : public tpField
 	tpRefPtrField() {};
 
 	//! copy c'tor
-	tpRefPtrField(const tpRefField& field) {}
+	tpRefPtrField(const tpRefPtrField& field) {}
 
 public:
 
 	//! initial c'tor
-	tpRefPtrField(T& val,const tpString& name = "noname") : tpField(name),  m_value(val) {}
+	tpRefPtrField(T* val,const tpString& name = "noname") : tpField(name),  m_value(val) {}
 
 	//! return stored value
 	const T& getValue() const;
@@ -124,7 +124,7 @@ public:
 
 protected:
 
-	tpRefPtr m_value;
+	tpRefPtr<T> m_value;
 };
 
 #if 0

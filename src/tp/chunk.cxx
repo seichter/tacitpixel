@@ -39,10 +39,9 @@ tpSizedChunk::setSize(tpSizeT size)
 }
 
 void 
-tpSizedChunk::copy(const void* ptr, tpSizeT size)
+tpSizedChunk::copy(const void* ptr)
 {
-	tpChunk::setSize(size);
-	memcpy(m_ptr,ptr,size);
+	memcpy(m_ptr,ptr,getSize());
 }
 
 void 

@@ -167,8 +167,6 @@ public:
 	//! set from raw data (integer array)
 	void setFromRaw(const tpInt* raw);
 	
-	void dump(const tpUInt& level = TP_LOG_NOTIFY);
-	
 public:
 	T mat[16];
 private:
@@ -778,6 +776,7 @@ tpMatrix<T>& tpMatrix<T>::setPerspective(T FovY, T Aspect, T Near, T Far) {
 	return setFrustum( xmin, xmax, ymin, ymax, Near, Far );
 }
 
+#if 0
 template <class T> inline void tpMatrix<T>::dump(const tpUInt& level /*= TP_LOG_NOTIFY*/)
 {
 	tpLog::get().printf(level,"%3.2f\t%3.2f\t%3.2f\t%3.2f",
@@ -793,6 +792,7 @@ template <class T> inline void tpMatrix<T>::dump(const tpUInt& level /*= TP_LOG_
 						mat[12],mat[13],mat[14],mat[15]);
 	
 }
+#endif
 
 template <class T> inline void tpMatrix<T>::setEuler(const T& yaw, 
 													 const T& pitch,

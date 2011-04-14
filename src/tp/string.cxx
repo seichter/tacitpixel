@@ -277,6 +277,25 @@ tpString::isUTF8(const char* str)
     return 1;
 }
 
+int tpString::find(const char* sub) const
+{
+	const char *pf = tpStrStr(c_str(),(char*)sub);
+	return (pf) ? pf - (const char*)c_str() : TP_NOTFOUND;
+}
+
+
+tpString tpString::afterLast(const char& c) const
+{
+	tpString _ret;
+	int _pos = find(c,true);
+
+	if (TP_NOTFOUND == _pos) return *this;
+
+	_ret = (const char*)c_str() + _pos + 1;
+
+	return _ret;
+};
+
 
 #if 0
 
@@ -340,17 +359,7 @@ unsigned long tpString::getHash() const
 
 
 
-tpString tpString::afterLast(const char& c) const
-{
-	tpString _ret;
-	int _pos = find(c,TRUE);
 
-	if (TP_NOTFOUND == _pos) return *this;
-
-	_ret = (const char*)c_str() + _pos + 1;
-
-	return _ret;
-};
 
 tpString tpString::afterFirst(const char& c) const
 {

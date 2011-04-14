@@ -127,14 +127,20 @@ public:
 	const T& operator [] ( tpSizeT idx ) const { return m_buffer.ptr<T>[idx]; }
 	
 	
+	//! get the string after last occurence 
+	tpString afterLast(const char& c) const;
+	
+	//! find a sub string
+	int find(const char* sub) const;
+	
+	
+	
 #if 0
 	
 	//! returns a hash-value for the string
 	unsigned long getHash() const;
 	
 	
-	
-	int find(const char* sub) const;
 	
 	
 	//! 
@@ -248,6 +254,18 @@ inline tpString operator + (const tpString& ls,const tpString& rs)
 	return res;
 }
 
+inline bool operator == (const tpString& l, const tpString& r)
+{
+	return (0 == tpStrCmp(l.c_str(),r.c_str()));
+}
+
+
+inline bool operator != (const tpString& l, const tpString& r) 
+{
+	return (0 != tpStrCmp(r.c_str(),l.c_str()));
+}
+
+
 
 
 #if 0
@@ -294,16 +312,6 @@ protected:
 
 // -----------------------------------------------------------------
 
-inline bool operator == (const tpString& l, const tpString& r)
-{
-	return (0 == tpStrCmp(l.c_str(),r.c_str()));
-}
-
-
-inline bool operator != (const tpString& l, const tpString& r) 
-{
-	return (0 != tpStrCmp(r.c_str(),l.c_str()));
-}
 
 inline tpString& tpString::operator + (const tpString& rs)
 {
