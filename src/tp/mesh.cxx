@@ -28,12 +28,12 @@ tpMesh::tpMesh(const tpMesh& geo)
 	m_vertices = geo.m_vertices;
 	m_normals = geo.m_normals;
 	m_texcoords = geo.m_texcoords;
-};
+}
 
 tpObject* tpMesh::clone()
 {
 	return new tpMesh(*this);
-};
+}
 
 tpUInt tpMesh::getMeshType() const
 {
