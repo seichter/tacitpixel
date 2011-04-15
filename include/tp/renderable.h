@@ -21,7 +21,6 @@ class TP_API tpRenderable : public tpNode
 {
 public:
 
-
 	TP_TYPE_DECLARE;
 
 	//! c'tor

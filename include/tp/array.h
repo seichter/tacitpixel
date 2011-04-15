@@ -474,7 +474,7 @@ template <typename T>
 void tpArray<T>::assign(T* first, T* last)
 {
 	T* ptr = first;
-	while(ptr != last) { m_data.add(*ptr); ptr++; }
+	while (ptr != last) {this->m_data.add(*ptr); ptr++; }
 }
 
 

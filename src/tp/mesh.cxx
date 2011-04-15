@@ -16,13 +16,13 @@
 
 
 tpMesh::tpMesh(const tpString& name,tpUByte meshtype)
-	: tpNode(name) ,
+	: tpRenderable(name) ,
 	m_meshtype(meshtype)
 {
 }
 
 tpMesh::tpMesh(const tpMesh& geo)
-	: tpNode(geo),
+	: tpRenderable(geo),
 	m_meshtype(geo.m_meshtype)
 {
 	m_vertices = geo.m_vertices;
@@ -40,39 +40,27 @@ tpUInt tpMesh::getMeshType() const
 	return this->m_meshtype;
 }
 
-tpVoid tpMesh::setMeshType(tpUInt meshtype)
+void tpMesh::setMeshType(tpUInt meshtype)
 {
 	this->m_meshtype = (tpMeshType)meshtype;
 }
 
-tpVoid tpMesh::addVertex( tpReal x, tpReal y, tpReal z ) {
-	m_vertices.add(x);
-	m_vertices.add(y);
-	m_vertices.add(z);
-}
-
-tpVoid tpMesh::addVertex(const tpVec3r& vec)
+void 
+tpMesh::addVertex(const tpVec3<tpReal>& pos, const tpVec3<tpReal>& normal, const tpVec2<tpReal>& tcoord)
 {
-	return addVertex(vec[0],vec[1],vec[2]);
+	m_vertices.add(pos[0]).add(pos[1]).add(pos[2]);
+	m_normals.add(normal[0]).add(normal[1]).add(normal[2]);
+	m_texcoords.add(tcoord[0]).add(tcoord[1]);
 }
 
-tpVoid tpMesh::addNormal(tpReal x,tpReal y,tpReal z) {
-	m_normals.add(x);m_normals.add(y);m_normals.add(z);
-}
 
-tpVoid tpMesh::addNormal(const tpVec3r& vec) {
-	addNormal(vec[0],vec[1],vec[2]);
-}
-
-tpVoid tpMesh::addTexCoord(tpReal u, tpReal v) {
-	m_texcoords.add(u); m_texcoords.add(v);
-}
-
-void tpMesh::removeVertex( tpUInt id ) {
+void 
+tpMesh::removeVertex( tpUInt id ) {
 	m_vertices.erase(id);
 }
 
-void tpMesh::scale(const tpVec3r& scale)
+void 
+tpMesh::scale(const tpVec3r& scale)
 {
 	tpReal* v_ptr = m_vertices.getData();
 	for (tpSizeT v_len = getVertexCount(); v_len; v_len--)
@@ -83,7 +71,8 @@ void tpMesh::scale(const tpVec3r& scale)
 	}
 }
 
-void tpMesh::getAABB(tpVec3r& aabb_min,tpVec3r& aabb_max)
+void 
+tpMesh::getAABB(tpVec3r& aabb_min,tpVec3r& aabb_max)
 {
 
 	tpReal* v_ptr = m_vertices.getData();
@@ -121,7 +110,7 @@ tpVec3r tpGetNormal(const tpArray<tpReal>& vertices)
 {
 	tpVec3r normal(0,1,0);
 	
-	/* minimum of 3x3 vertices needed */
+	/* minimum of 3 vertices needed */
 	if (vertices.getSize() > 8) {
 
 		tpVec3r a(vertices[0],vertices[1],vertices[2]);
@@ -142,7 +131,7 @@ tpVec3r tpGetNormal(const tpArray<tpReal>& vertices)
 };
 
 
-tpVoid tpMesh::flipNormals() 
+void tpMesh::flipNormals() 
 {
 	tpReal *n_ptr = m_normals.getData();
 

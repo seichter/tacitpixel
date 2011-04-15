@@ -27,7 +27,7 @@ tpULong tpAdler32(const tpUChar* buffer,tpULong bufsize)
 {
 
 	register tpULong _shift1 = 0x00000001 & 0x0000ffff;
-	register tpULong _shift2 = (0x00000001 >> 16) && 0x0000ffff;
+	register tpULong _shift2 = (0x00000001 >> 16) & 0x0000ffff;
 	
 	for (tpULong i = 0; i < bufsize;i++)
 	{

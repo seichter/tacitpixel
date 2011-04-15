@@ -114,7 +114,7 @@ tpImage* tpImageFactoryBMP::read( const tpString& name )
 	if (_res != buffersize) 
 	{
 		fclose(_file);
-		return false;
+		return 0;
 	};
 
 	for (tpUInt i = 0; i < buffersize; i += 3)

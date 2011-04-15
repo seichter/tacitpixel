@@ -14,7 +14,7 @@
 #define TPMESH_H
 
 
-#include <tp/node.h>
+#include <tp/renderable.h>
 
 /**
  * Mesh types are mapping to the enums in OpenGL
@@ -34,7 +34,7 @@ typedef tpArray<tpReal> tpArrayr;
 	This node can hold primitive triangle geometries and
 	furthermore, can generate normals and color vertices
 */
-class TP_API tpMesh : public tpNode {
+class TP_API tpMesh : public tpRenderable {
 public:
 
 	TP_TYPE_DECLARE;
@@ -69,21 +69,8 @@ public:
 	 */
 	virtual tpObject* clone();
 
-	/*! add a vertex with a vector
-	 */
-	tpVoid addVertex(const tpVec3r&);
-	//! add a vertex with single components
-	tpVoid addVertex(tpReal x,tpReal y,tpReal z);
-
-	//! add a normal
-	tpVoid addNormal(const tpVec3r&);
-	//! add a normal with single components
-	tpVoid addNormal(tpReal x,tpReal y,tpReal z);
+	void addVertex(const tpVec3<tpReal>& pos, const tpVec3<tpReal>& normal, const tpVec2<tpReal>& tcoord);
 	    
-
-	//! add a texture coordinate
-	tpVoid addTexCoord(tpReal u, tpReal v);
-
 	//! remove a vertex
 	void removeVertex(tpUInt id);
 	
@@ -100,16 +87,14 @@ public:
 
 	tpUInt getMeshType() const;
 
-	tpVoid setMeshType(tpUInt meshtype);
+	void setMeshType(tpUInt meshtype);
 
 	void scale(const tpVec3r& scale);
 
 	void getAABB(tpVec3r& aabb_min,tpVec3r& aabb_max);
 
-	tpVoid flipNormals();
+	void flipNormals();
 
-
-  
 protected:
 
 	virtual ~tpMesh();
