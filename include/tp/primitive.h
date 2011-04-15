@@ -34,17 +34,17 @@ typedef tpArray<tpReal> tpArrayr;
 	This node can hold primitive triangle geometries and
 	furthermore, can generate normals and color vertices
 */
-class TP_API tpMesh : public tpRenderable {
+class TP_API tpPrimitive : public tpRenderable {
 public:
 
 	TP_TYPE_DECLARE;
 	
 	enum {
-		kPoints,
+		kPoints = 0x0000,
 		kLines,
 		kLineStrip,
 		kLineLoop,
-		kTriangles = 0x0004,
+		kTriangles,
 		kTriangleStrip,
 		kTriangleFan,
 		kQuads,
@@ -52,24 +52,26 @@ public:
 		kPolygon
 	};
 	
-
 	/*! c'tor
 		\param name name of the name
 	 */
-	tpMesh(const tpString& name, tpUByte meshtype = kTriangles);
+	tpPrimitive(tpUByte meshtype = kTriangles);
 
 	/*! copy c'tor
 		\param mesh mesh to copy
 		\param mode mode for copying
 	 */ 
-	tpMesh(const tpMesh& mesh);
+	tpPrimitive(const tpPrimitive& mesh);
 
 	/*! cloning interface
 		\param mode mode to clone the mesh
 	 */
 	virtual tpObject* clone();
 
-	void addVertex(const tpVec3<tpReal>& pos, const tpVec3<tpReal>& normal, const tpVec2<tpReal>& tcoord);
+	void addVertex(const tpVec3<tpReal>& pos, 
+		const tpVec3<tpReal>& normal = tpVec3r(0,0,1), 
+		const tpVec2<tpReal>& tcoord = tpVec2r(0,1),
+		const tpVec4<tpReal>& color = tpVec4r(1,1,1,1));
 	    
 	//! remove a vertex
 	void removeVertex(tpUInt id);
@@ -81,13 +83,14 @@ public:
 	//! returns the tex corods of that mesh
 	const tpArray<tpReal>& getTexCoords() const;
 
+	const tpArray<tpReal>& getColors() const { return m_colors; }
+
 	tpUInt getVertexCount() const;
 	tpUInt getNormalsCount() const;
 	tpUInt getTexCoordsCount() const;
 
-	tpUInt getMeshType() const;
-
-	void setMeshType(tpUInt meshtype);
+	tpUInt getPrimitiveType() const;
+	void setPrimitiveType(tpUInt meshtype);
 
 	void scale(const tpVec3r& scale);
 
@@ -95,17 +98,20 @@ public:
 
 	void flipNormals();
 
+	//tpArray<tpReal>& attribute(tpUByte a) {}
+
 protected:
 
-	virtual ~tpMesh();
+	virtual ~tpPrimitive();
 
-	tpUByte	m_meshtype;
+	tpUByte	m_primitivetype;
 
 	void calcNormals();
 	
 	tpArray<tpReal> m_vertices;
 	tpArray<tpReal> m_normals;
 	tpArray<tpReal> m_texcoords;
+	tpArray<tpReal> m_colors;
 };
 
 

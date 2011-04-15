@@ -151,17 +151,19 @@ public:
 	//! check if this node has any child nodes > leaf
 	bool hasChildren() const { return (getChildCount() > 0); }
 	
-	
 protected:
+
 
     virtual ~tpNode();
 
 	tpArray< tpRefPtr<tpNode> > m_children;
-
 	tpArray<tpNode*> m_parents;
 
 	tpArray<tpNode*> m_nodepath;
 	tpArray<tpMat44r*> m_matrices;
+
+
+	tpRefPtr<tpRenderObject> m_renderobject;
 };
 
 

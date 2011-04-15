@@ -156,6 +156,10 @@ tpRenderSurface::tpRenderSurface( tpRenderSurfaceTraits* traits ) : m_done(false
 
 tpRenderSurface::~tpRenderSurface()
 {
+	m_camera = 0;
+	m_renderer = 0;
+	m_root = 0;
+	m_mouseadapter = 0;
 }
 
 tpString tpRenderSurface::getName() const

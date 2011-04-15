@@ -66,7 +66,7 @@ bool tpLibrary::close()
 tpString tpLibrary::getModuleName() const {
 
 	tpString result;
-#if defined(WIN32) || defined(WINCE)
+#if defined(_WIN32) || defined(_WIN32_WCE)
 	if (m_handle) {
 
 		LPTSTR name = (LPTSTR)malloc(sizeof(LPTSTR) * MAX_PATH);

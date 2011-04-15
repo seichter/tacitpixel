@@ -17,33 +17,48 @@
 
 #include <tp/renderer.h>
 #include <tp/camera.h>
+#include <tp/primitive.h>
 
 class tpGLFixedFunctionTraverser : public tpGLTraverser {
 
 public:
 
-	tpGLFixedFunctionTraverser();
+	tpGLFixedFunctionTraverser() : tpGLTraverser() {
+	}
 
 	void operator()(tpNode* node,tpCamera* camera)
 	{
+
+		tpGL::Enable(tpGL::LIGHTING);
+		tpGL::Enable(tpGL::NORMALIZE);
+		tpGL::Enable(tpGL::AUTO_NORMAL);
+		tpGL::Enable(tpGL::LIGHT0);
+
+		tpGL::Enable(tpGL::DEPTH_TEST);
+
+		TP_REPORT_GLERROR();
+
+		// deal with the camera
 		if (camera)
 		{
 
 			tpGL::Viewport(camera->getViewport()[0],camera->getViewport()[1],camera->getViewport()[2],camera->getViewport()[3]);
-			tpLogMessage("%s - %d,%d - %dx%d",__FUNCTION__,camera->getViewport()[0],camera->getViewport()[1],camera->getViewport()[2],camera->getViewport()[3]);
+			//tpLogMessage("%s - %d,%d - %dx%d",__FUNCTION__,camera->getViewport()[0],camera->getViewport()[1],camera->getViewport()[2],camera->getViewport()[3]);
 
 			TP_REPORT_GLERROR();
 
-			tpUByte glclearflag(0);
+			tpUInt glclearflag(0);
 			if (camera->hasClearFlag(tpCamera::kClearColor))
 			{
 				tpGL::ClearColor( camera->getClearColor()[0],camera->getClearColor()[1],camera->getClearColor()[2],camera->getClearColor()[3] );
-				glclearflag |= tpGL::COLOR_BUFFER_BIT;
+				glclearflag += tpGL::COLOR_BUFFER_BIT;
 			}
 			if (camera->hasClearFlag(tpCamera::kClearDepth))
 			{
-				glclearflag |= tpGL::DEPTH_BUFFER_BIT;
+				glclearflag += tpGL::DEPTH_BUFFER_BIT;
 			}
+
+			if (glclearflag) tpGL::Clear(glclearflag);
 
 			tpGL::MatrixMode(tpGL::PROJECTION);
 			tpGL::LoadMatrixf(camera->getProjection().data());
@@ -54,7 +69,58 @@ public:
 			TP_REPORT_GLERROR();
 		}
 
+		// now apply all stuff regarding the nodes
 		if (node) node->traverse(*this);
+	}
+
+	void push(tpNode* node)
+	{
+		if(node->getType() == tpPrimitive::getTypeInfo())
+		{
+			this->pushMesh(static_cast<tpPrimitive*>(node));
+		}
+	}
+
+	void pop(tpNode* node)
+	{
+	}
+
+	void pushMesh(tpPrimitive* prim)
+	{
+		tpGL::EnableClientState(tpGL::VERTEX_ARRAY);
+		tpGL::VertexPointer(3,tpGL::FLOAT,0,prim->getVertices().getData());
+
+		if (prim->getNormals().getSize()) 
+		{
+			tpLogNotify("%s %d normals",__FUNCTION__,prim->getNormals().getSize());
+			tpGL::EnableClientState(tpGL::NORMAL_ARRAY);
+			tpGL::NormalPointer(tpGL::FLOAT,0,prim->getNormals().getData());
+		}
+
+		if (prim->getTexCoords().getSize()) 
+		{
+			//tpLogNotify("%s %d texcoords",__FUNCTION__,mesh->getTexCoords().getSize());
+			tpGL::EnableClientState(tpGL::TEXTURE_COORD_ARRAY);
+			//float tex[] = {0,0, 0,1, 1,0, 1,1};
+			tpGL::TexCoordPointer(2, tpGL::FLOAT, 0, prim->getTexCoords().getData());
+		}
+
+		tpGL::DrawArrays(prim->getPrimitiveType(),0,prim->getVertexCount());
+
+		tpGL::DisableClientState(tpGL::VERTEX_ARRAY);
+
+		if (prim->getNormals().getSize()) 
+		{
+			tpGL::DisableClientState(tpGL::NORMAL_ARRAY);
+		}
+
+		if (prim->getTexCoords().getSize()) 
+		{
+			tpGL::DisableClientState(tpGL::TEXTURE_COORD_ARRAY);
+		}
+
+		TP_REPORT_GLERROR();
+
 	}
 };
 
@@ -66,7 +132,7 @@ tpGLRenderer::tpGLRenderer() : tpRenderer()
 {
 	if (!tpGL::get().isValid()) tpGL::get().load();
 
-
+	m_traverser = new tpGLFixedFunctionTraverser();
 }
 
 tpGLRenderer::~tpGLRenderer() 
@@ -78,7 +144,7 @@ tpUInt tpGLRenderer::implementsBackend() const { return tpRenderer::kOpenGL; }
 
 void tpGLRenderer::operator()(tpNode* node, tpCamera* camera)
 {
-	//(*m_traverser)(node,camera);
+	if (m_traverser.isValid()) (*m_traverser)(node,camera);
 #if 0
 	tpTimer t;
 
@@ -836,9 +902,9 @@ tpVoid tpGLTraverser::preAction( tpNode* node, tpContext& context )
 	}
 
 
-	if (node->isOfType(tpMesh::getTypeInfo())) 
+	if (node->isOfType(tpPrimitive::getTypeInfo())) 
 	{
-		tpMesh* mesh = static_cast<tpMesh*>(node);
+		tpPrimitive* mesh = static_cast<tpPrimitive*>(node);
 
 		tpRenderObject* robj = mesh->getRenderObject();
 

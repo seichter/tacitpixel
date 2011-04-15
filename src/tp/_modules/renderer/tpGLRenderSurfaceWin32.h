@@ -45,8 +45,6 @@ public:
 
 protected:
 
-	tpRefPtr<tpMouseAdapter> m_mouseadapter;
-
 	virtual ~tpGLRenderSurfaceWin32();
 
 	tpGLRenderSurfaceWin32 &operator= (const tpGLRenderSurfaceWin32 &) { return *this; }

@@ -352,6 +352,7 @@ public:
 
 typedef tpVec2<tpDouble> tpVec2d;
 typedef tpVec2<tpFloat> tpVec2f;
+typedef tpVec2<tpReal> tpVec2r;
 typedef tpVec2<tpInt> tpVec2i;
 
 
@@ -426,8 +427,6 @@ public:
 		
 	}
 };
-
-
 
 
 #endif

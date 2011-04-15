@@ -47,6 +47,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/quat.h	
 	${tp_include_path}/tp/referenced.h
 	${tp_include_path}/tp/rs232.h	
+	${tp_include_path}/tp/rtti.h	
 	${tp_include_path}/tp/socket.h	
 	${tp_include_path}/tp/stack.h
 	${tp_include_path}/tp/string.h
@@ -83,9 +84,9 @@ set(tp_srcs
 # Image handlers
 # 
 list(APPEND tp_srcs
-	_modules/image/bmp/bmp_handler.cxx
-	_modules/image/jpg/jpg_handler.cxx
-	_modules/image/ppm/ppm_handler.cxx
+#	_modules/image/bmp/bmp_handler.cxx
+#	_modules/image/jpg/jpg_handler.cxx
+#	_modules/image/ppm/ppm_handler.cxx
 	)
 
 
@@ -95,9 +96,9 @@ list(APPEND tp_srcs
 set(tp_hdrs_sg
 	${tp_include_path}/tp/camera.h
 	${tp_include_path}/tp/material.h
-	${tp_include_path}/tp/mesh.h
 	${tp_include_path}/tp/node.h
 	${tp_include_path}/tp/object.h
+	${tp_include_path}/tp/primitive.h
 	${tp_include_path}/tp/renderable.h
 	${tp_include_path}/tp/renderer.h
 	${tp_include_path}/tp/rendersurface.h
@@ -109,9 +110,9 @@ set(tp_hdrs_sg
 set(tp_srcs_sg
 	camera.cxx
 	material.cxx
-	mesh.cxx
 	node.cxx
 	object.cxx
+	primitive.cxx
 	renderable.cxx
 	renderer.cxx
 	rendersurface.cxx

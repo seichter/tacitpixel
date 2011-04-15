@@ -49,6 +49,9 @@ public:
 		return false;
 	}
 
+	template <typename T> 
+	bool isOfType(const T* q) const { this->getType() == q->getTypeInfo(); }
+
 	/*! Check if it is exacty the same type.
 		\param parent checks if aclass is of exact type
 	 */
@@ -59,7 +62,7 @@ public:
 	
 	const char* getName() const { return m_name; }
 	
-	const tpULong& getTypeID() const { return m_hash; }
+	const tpULong& getID() const { return m_hash; }
 
 protected:
 	tpULong  m_hash;
@@ -72,15 +75,10 @@ protected:
 	static tpRTTI *getTypeInfo() { return &ms_type;} \
 	virtual tpRTTI *getType() const { return this->getTypeInfo(); } 
 
-
-
 #define TP_TYPE_REGISTER(type,parent_type,class_name) \
 	tpRTTI type::ms_type(#class_name,&parent_type::ms_type)
 
 #define TP_TYPE_REGISTER_BASE(type,class_name) \
 	tpRTTI type::ms_type(#class_name,0L)
-
-
-
 
 #endif

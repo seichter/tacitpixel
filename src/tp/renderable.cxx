@@ -12,8 +12,8 @@
 #include "tp/renderable.h"
 
 tpRenderable::tpRenderable(const tpString& name)
-	: tpNode(name),
-	m_material(tpDefaultMaterial)
+	: tpNode(name)
+//	, m_material(tpDefaultMaterial)
 {
 	//m_fields.add(new tpSingleField<tpMaterial>(m_material.get(),"material"));
 	//m_fields.add(new tpSingleField<tpTexture>(m_texture,"texture"));

@@ -9,58 +9,63 @@
  * included with this distribution, and on the technotecture.com website.
  *
  */
-#include "tp/mesh.h"           
+#include "tp/primitive.h"           
 #include "tp/math.h"
 #include "tp/log.h"
 #include "tp/node.h"
 
 
-tpMesh::tpMesh(const tpString& name,tpUByte meshtype)
-	: tpRenderable(name) ,
-	m_meshtype(meshtype)
+tpPrimitive::tpPrimitive(tpUByte meshtype)
+	: tpRenderable() ,
+	m_primitivetype(meshtype)
 {
 }
 
-tpMesh::tpMesh(const tpMesh& geo)
+tpPrimitive::tpPrimitive(const tpPrimitive& geo)
 	: tpRenderable(geo),
-	m_meshtype(geo.m_meshtype)
+	m_primitivetype(geo.m_primitivetype)
 {
 	m_vertices = geo.m_vertices;
 	m_normals = geo.m_normals;
 	m_texcoords = geo.m_texcoords;
+	m_colors = geo.m_colors;
 }
 
-tpObject* tpMesh::clone()
+tpObject* tpPrimitive::clone()
 {
-	return new tpMesh(*this);
+	return new tpPrimitive(*this);
 }
 
-tpUInt tpMesh::getMeshType() const
+tpUInt tpPrimitive::getPrimitiveType() const
 {
-	return this->m_meshtype;
+	return this->m_primitivetype;
 }
 
-void tpMesh::setMeshType(tpUInt meshtype)
+void tpPrimitive::setPrimitiveType(tpUInt meshtype)
 {
-	this->m_meshtype = (tpMeshType)meshtype;
+	this->m_primitivetype = (tpMeshType)meshtype;
 }
 
 void 
-tpMesh::addVertex(const tpVec3<tpReal>& pos, const tpVec3<tpReal>& normal, const tpVec2<tpReal>& tcoord)
+tpPrimitive::addVertex(const tpVec3<tpReal>& pos, 
+					   const tpVec3<tpReal>& normal, 
+					   const tpVec2<tpReal>& tcoord,
+					   const tpVec4<tpReal>& color)
 {
 	m_vertices.add(pos[0]).add(pos[1]).add(pos[2]);
 	m_normals.add(normal[0]).add(normal[1]).add(normal[2]);
 	m_texcoords.add(tcoord[0]).add(tcoord[1]);
+	m_colors.add(color[0]).add(color[1]).add(color[2]).add(color[3]);
 }
 
 
 void 
-tpMesh::removeVertex( tpUInt id ) {
+tpPrimitive::removeVertex( tpUInt id ) {
 	m_vertices.erase(id);
 }
 
 void 
-tpMesh::scale(const tpVec3r& scale)
+tpPrimitive::scale(const tpVec3r& scale)
 {
 	tpReal* v_ptr = m_vertices.getData();
 	for (tpSizeT v_len = getVertexCount(); v_len; v_len--)
@@ -72,7 +77,7 @@ tpMesh::scale(const tpVec3r& scale)
 }
 
 void 
-tpMesh::getAABB(tpVec3r& aabb_min,tpVec3r& aabb_max)
+tpPrimitive::getAABB(tpVec3r& aabb_min,tpVec3r& aabb_max)
 {
 
 	tpReal* v_ptr = m_vertices.getData();
@@ -93,15 +98,15 @@ tpMesh::getAABB(tpVec3r& aabb_min,tpVec3r& aabb_max)
 	}
 }
 
-const tpArray<tpReal>& tpMesh::getVertices() const {
+const tpArray<tpReal>& tpPrimitive::getVertices() const {
 	return m_vertices;
 }
 
-const tpArray<tpReal>& tpMesh::getNormals() const {
+const tpArray<tpReal>& tpPrimitive::getNormals() const {
 	return m_normals;
 }
 
-const tpArray<tpReal>& tpMesh::getTexCoords() const {
+const tpArray<tpReal>& tpPrimitive::getTexCoords() const {
 	return m_texcoords;
 }
 
@@ -131,7 +136,7 @@ tpVec3r tpGetNormal(const tpArray<tpReal>& vertices)
 };
 
 
-void tpMesh::flipNormals() 
+void tpPrimitive::flipNormals() 
 {
 	tpReal *n_ptr = m_normals.getData();
 
@@ -143,22 +148,22 @@ void tpMesh::flipNormals()
 }
 
 
-tpUInt tpMesh::getVertexCount() const {
+tpUInt tpPrimitive::getVertexCount() const {
 	return m_vertices.getSize() / 3;
 }
 
-tpUInt tpMesh::getTexCoordsCount() const {
+tpUInt tpPrimitive::getTexCoordsCount() const {
 	return m_texcoords.getSize() / 2;
 }
 
-tpUInt tpMesh::getNormalsCount() const {
+tpUInt tpPrimitive::getNormalsCount() const {
 	return m_normals.getSize() / 3;
 }
 
-tpMesh::~tpMesh()
+tpPrimitive::~tpPrimitive()
 {
 }
 
 
-TP_TYPE_REGISTER(tpMesh,tpNode,Mesh);
+TP_TYPE_REGISTER(tpPrimitive,tpNode,Mesh);
 

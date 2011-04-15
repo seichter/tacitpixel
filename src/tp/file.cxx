@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 #include "tp/file.h"
-//#include "tp/log.h"
 
 //! macro to cast the file pointer
 #define _F(h) static_cast<FILE*>(h)
@@ -28,7 +27,7 @@ bool tpFile::open(const tpString& uri, const tpString& mode)
 
 bool tpFile::close()
 {
-	fclose(_F(m_handle));
+	if (m_handle) fclose(_F(m_handle));
 	m_handle = 0L;
 	return true;
 }
