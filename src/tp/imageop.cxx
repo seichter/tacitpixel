@@ -111,6 +111,9 @@ struct tpToGrayOp : tpImageOperator {
 tpImageOperator& 
 tpImageOperator::o(tpUByte op)
 {
+	static tpToGrayOp gs_togray;
+	static tpImageOperator gs_null;
+
 	switch (op) {
 //		case tpImageOperatorManager::kNull:
 //			ret = new tpImageOperatorByteAligned<tpImageOperatorNull>(&nullop,&tpImageOperatorNull::impl1,&tpImageOperatorNull::impl8);
@@ -119,13 +122,11 @@ tpImageOperator::o(tpUByte op)
 //			ret = new tpImageOperatorByteAligned<tpImageOpRGB2BGR>(&swapredblue,&tpImageOpRGB2BGR::impl1,&tpImageOpRGB2BGR::impl8);
 //			break;
 		case tpImageOperator::kGrey : 
-			static tpToGrayOp gs_togray;
 			return gs_togray;
 			break;
 		default:
 			break;
 	}
 	
-	static tpImageOperator gs_null;
 	return gs_null;
 }

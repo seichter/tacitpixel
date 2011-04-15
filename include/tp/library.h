@@ -19,8 +19,8 @@
 #include <tp/string.h>
 #include <tp/referenced.h>
 
+//
 
-typedef tpArray<tpString> tpLibrarySearchPaths;
 
 class TP_API tpLibrary : public tpReferenced {
 

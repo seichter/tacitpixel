@@ -18,14 +18,7 @@
 
 class tpCamera;
 
-//////////////////////////////////////////////////////////////////////////
 
-enum tpRendererType {
-	TP_RENDERER_DEFAULT = 0x00,
-	TP_RENDERER_OPENGL	= 0x01,
-	TP_RENDERER_DIRECTX	= 0x02,
-	TP_RENDERER_FAKE	= 0xFF
-};
 
 /**
  * \class tpRenderer 
@@ -36,21 +29,25 @@ enum tpRendererType {
 class TP_API tpRenderer : public tpReferenced {
 public:
 
+	enum {
+		kNull = 0,
+		kOpenGL,
+		kDirectX
+	};
+
 	TP_TYPE_DECLARE;
 
 	tpRenderer();
 
 	tpRenderer(const tpRenderer& r);
 
-	virtual tpVoid apply( tpNode*, tpCamera* camera ) = 0;
+	virtual void operator()( tpNode* node, tpCamera* camera ) = 0;
 
 	virtual tpUInt implementsBackend() const = 0;
 
 	static tpRenderer* create(tpUInt backend);	
 
 protected:
-
-	tpRefPtr<tpTraverser> m_traverser;
 
 	virtual ~tpRenderer();
 };

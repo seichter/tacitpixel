@@ -18,11 +18,7 @@ enum {
 	TP_SYS_BIGENDIAN
 };
 
-typedef tpArray<tpString> tpFilePathList;
-
 class TP_API tpSystem : public tpReferenced {
-
-	tpFilePathList m_filesearchpaths;
 
 	tpSystem();
 
@@ -43,8 +39,6 @@ public:
 	void getDisplaySize(tpInt* w, tpInt* h);
 
 	tpString findFile(const tpString& filename);
-	
-	tpFilePathList& getFileSearchPaths();
 	
 	tpString getTime() const;
 

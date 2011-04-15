@@ -172,13 +172,11 @@ int main(int argc, char* argv[])
 		buffer.resize(13);
 		tpSizeT rb = io_R.read(buffer.getData(),buffer.getSize()).getCount();
 
-		tpLogMessage("data > (%d) %s",rb,buffer.getData());
+		//stpLogMessage("data > (%d) %s",rb,buffer.getData());
 	}
 	
 	
-	getchar();
-	
-	
+
 	
 	return 0;
 }

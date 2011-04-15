@@ -47,9 +47,6 @@ public:
 	//! copy constructor from plain c-string
 	tpString(const char* str, tpUShort encoding = ASCII);
 	
-	//! copy constructor from buffer without terminating '\0'
-	tpString(const char* str, unsigned int size, tpUShort encoding = ASCII);
-	
 	//! copy constructor from tpString
 	tpString(const tpString& str);
 	
@@ -121,10 +118,10 @@ public:
 	
 	
 	template <typename T>
-	T& operator [] ( tpSizeT idx ) { return m_buffer.ptr<T>[idx]; }
+	T& operator [] ( tpSizeT idx ) { return m_buffer.ptr<T>()[idx]; }
 	
 	template <typename T>
-	const T& operator [] ( tpSizeT idx ) const { return m_buffer.ptr<T>[idx]; }
+	const T& operator [] ( tpSizeT idx ) const { return m_buffer.ptr<T>()[idx]; }
 	
 	
 	//! get the string after last occurence 
@@ -133,6 +130,9 @@ public:
 	//! find a sub string
 	int find(const char* sub) const;
 	
+
+	tpString& subst( const tpChar& c, const tpChar& substc );
+
 	
 	
 #if 0
@@ -201,7 +201,6 @@ public:
 	tpString& operator << (double r);
 	tpString& operator << (const char c);
 	
-	tpString& subst( tpChar c, const tpChar& substc );
 	
 
 	tpVoid __verbose_dump() const;
@@ -266,6 +265,7 @@ inline bool operator != (const tpString& l, const tpString& r)
 }
 
 
+TP_API tpString tpStringFormat(const tpString& format, ... );
 
 
 #if 0

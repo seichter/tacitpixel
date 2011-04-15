@@ -4,25 +4,35 @@
 #include <tp/log.h>
 #include <tp/image.h>
 #include <tp/imageop.h>
+#include <tp/library.h>
+#include <tp/module.h>
+#include <tp/rendersurface.h>
+#include <tp/camera.h>
 
 int main(int argc, char* argv[])
 {
 	
-	tpRefPtr<tpImage> img = tpImage::read(argv[1]);
-	
-	if (img.isValid())
+	tpRefPtr<tpLibrary> gllib = tpLibrary::load("tacit_gl");
+
+	tpRefPtr<tpRenderSurface> rendersurface = tpRenderSurface::create();
+
+	tpRefPtr<tpCamera> camera = new tpCamera;
+	camera->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
+	camera->setClearColor(tpVec4f(0.1f,0.1f,0.1f,1.0f));
+
+	if (rendersurface.isValid())
 	{
-		tpLogMessage("Image read %dx%d",img->getWidth(),img->getHeight());
-		tpLogMessage("Image write %d", img->write("lena_converted.jpg"));
-		
-		tpRefPtr<tpImage> grey = new tpImage();
-		grey->allocate(img->getWidth(),img->getHeight(),TP_GREY8);
-		
-		tpImageOperator::o(tpImageOperator::kGrey)(img.get(),grey.get());
-		tpLogMessage("Image write (grey) %d", grey->write("lena_grey.jpg"));
-		
-		
+
+		rendersurface->show(true);
+
+		rendersurface->setCamera(camera.get());
+
+		while (rendersurface->isDone() == false) {
+			rendersurface->frame();
+		}
 	}
+
+	tpModuleManager::get(true);
 	
 	return 0;
 }

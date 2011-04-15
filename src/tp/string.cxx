@@ -11,13 +11,12 @@
  */
 
 #include <tp/string.h>
-
 #include <tp/hash.h>
+#include <tp/log.h>
 
 #include <string.h>
 #include <stdio.h>
-#include <tp/log.h>
-
+#include <stdarg.h>
 
 //
 // C'tors
@@ -31,13 +30,6 @@ tpString::tpString(const char* str, tpUShort encoding /* tpString::ASCII */) : m
 {
 	set( str, encoding, encoding );
 }
-
-
-tpString::tpString(const char* str, unsigned int size,  tpUShort encoding /* tpString::ASCII */)
-{
-	set( str, size, encoding );
-}
-
 
 tpString::tpString(const tpString& str)
 {
@@ -119,6 +111,17 @@ tpString::truncate( tpSizeT pos )
 
 
 //////////////////////////////////////////////////////////////////////////
+
+tpString& tpString::subst( const tpChar& c, const tpChar& substc )
+{
+	tpChar* cptr =  m_buffer.ptr<tpChar>();
+	for (tpSizeT i = 0; i < getLength();i++)
+	{
+		if (*cptr == c) *cptr = substc; cptr++;
+	}
+
+	return *this;
+}
 
 bool tpString::isEmpty() const
 {
@@ -548,16 +551,8 @@ const wchar_t* tpString::wc_str() const
 	//return 0;
 }
 
-tpString& tpString::subst( tpChar c, const tpChar& substc )
-{
-	tpChar* cptr = m_stringbuffer.getData();
-	for (tpSizeT i = 0; i < getLength();i++)
-	{
-		if (*cptr == c) *cptr = substc; cptr++;
-	}
 
-	return *this;
-}
+
 
 tpVoid tpString::__verbose_dump() const
 {
@@ -651,3 +646,25 @@ bool tpStringTokenizer::hasTokens() const
 #	include <staticlibinit_gcce.h>
 #endif
 
+
+TP_API tpString tpStringFormat( const tpString& format, ... )
+{
+
+	va_list argptr;
+	va_start(argptr, format);
+
+	tpArray<char> buffer;
+	buffer.resize(1024);
+
+#ifndef _WIN32
+	vsnprintf(&_buf[0],TP_MAXBUFSIZE,format, argptr);
+#elif (__SYMBIAN32__)
+	snprintf(&_buf[0],TP_MAXBUFSIZE,format, argptr);
+#else	
+	_vsnprintf(&buffer[0],buffer.getSize(),format.c_str(),argptr);
+#endif
+	va_end(argptr);
+
+	return tpString(buffer.getData());
+
+}

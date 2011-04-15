@@ -11,7 +11,7 @@
  */
 
 #include <tp/referenced.h>
-
+#include <tp/log.h>
 
 tpReferenced::tpReferenced()
 	: m_refcount(0)
@@ -22,7 +22,7 @@ tpReferenced::~tpReferenced()
 {
 	if (m_refcount > 0)
 	{
-		//tpLogError("%s goes out of scope with %d references dangling",__FUNCTION__,m_refcount);
+		tpLogError("%s goes out of scope with %d references dangling",__FUNCTION__,m_refcount);
 	}	
 }
 

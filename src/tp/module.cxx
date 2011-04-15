@@ -23,9 +23,7 @@ tpModuleManager::~tpModuleManager()
 
 tpModuleManager* tpModuleManager::get( bool destroy )
 {
-	static tpRefPtr<tpModuleManager> s_modulemanager;
-	if (!s_modulemanager.isValid()) s_modulemanager = new tpModuleManager();
-	if (destroy) s_modulemanager = 0;
+	static tpRefPtr<tpModuleManager> s_modulemanager( (destroy) ? 0L : new tpModuleManager() );
 
 	return s_modulemanager.get();
 } 
@@ -38,8 +36,12 @@ tpVoid tpModuleManager::add( tpReferenced* module )
 
 tpVoid tpModuleManager::remove( tpReferenced* module )
 {
-	
-	//m_modules.remove(module);
+	// we need to find the module and delete our own
+	// reference to it. This forces the module 
+	// to be deleted in the correct context
+	tpSizeT idx = m_modules.find(module);
+	m_modules[idx] = 0;
+	m_modules.erase(idx);
 }
 
 

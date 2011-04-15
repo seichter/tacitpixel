@@ -30,8 +30,6 @@ public:
 
 	void setValue(T val) { for (int i = 0; i < R*C; ++i) m[i] = val; }
 	
-	
-	
 
 	tpMat<R,C,T>& 
 	setIdentity()

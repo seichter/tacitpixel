@@ -117,15 +117,15 @@ tpRenderSurface* tpRenderSurface::create( tpRenderSurfaceTraits* traits /* =0 */
 	tpRenderSurface* surface(0);
 	tpRenderSurfaceFactory* surface_factory(0);
 
+	tpLogNotify("%d modules",tpModuleManager::get()->getModules().getSize());
+
 	const tpModuleList& modules = tpModuleManager::get()->getModules();
 
-	for (tpUInt i = 0; i < modules.getSize(); i++)
-	{		
-		tpRefPtr<tpReferenced> item = modules[i];
-
-		if (item->getType()->isOfType(tpRenderSurfaceFactory::getTypeInfo())) 
+	for (tpModuleList::const_iterator iter = modules.begin(); iter != modules.end(); ++iter)
+	{
+		if ((*iter)->getType()->isOfType(tpRenderSurfaceFactory::getTypeInfo())) 
 		{
-			surface_factory = reinterpret_cast<tpRenderSurfaceFactory*>(item.get());
+			surface_factory = static_cast<tpRenderSurfaceFactory*>(iter->get());
 		}
 	}
 
@@ -202,10 +202,7 @@ void tpRenderSurface::frame()
 {	
 	if (this->makeCurrent() && !m_done && this->getRenderer())
 	{
-		this->getRenderer()->apply(m_root.get(),m_camera.get());
-
-		//tpLogNotify("%s - %d",__FUNCTION__,this->swapBuffers());
-		
+		(*this->getRenderer())(m_root.get(),m_camera.get());
 		this->swapBuffers();
 	}
 }

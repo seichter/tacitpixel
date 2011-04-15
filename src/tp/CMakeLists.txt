@@ -2,6 +2,8 @@
 
 add_subdirectory(_thirdparty)
 
+set(tp_name tacit)
+
 set(tp_include_path ${CMAKE_CURRENT_SOURCE_DIR}/../../include)
 
 include_directories(${tp_include_path} _thirdparty ${CMAKE_BINARY_DIR}/include)
@@ -91,6 +93,7 @@ list(APPEND tp_srcs
 # Scenegraph
 #
 set(tp_hdrs_sg
+	${tp_include_path}/tp/camera.h
 	${tp_include_path}/tp/material.h
 	${tp_include_path}/tp/mesh.h
 	${tp_include_path}/tp/node.h
@@ -117,38 +120,41 @@ set(tp_srcs_sg
 	traverser.cxx
 	)
 
-add_library(tacitpixel SHARED
+add_library(${tp_name} SHARED
 	${tp_srcs}
 	${tp_hdrs}
 	${tp_hdrs_sg}
 	${tp_srcs_sg}
 	)
 	
-set_target_properties(tacitpixel
+set_target_properties(${tp_name}
 	PROPERTIES
 	COMPILE_DEFINITIONS TP_BUILD_LIBRARY=1
 	)
 
-target_link_libraries(tacitpixel dlmalloc jpeg)
+target_link_libraries(${tp_name} dlmalloc jpeg)
 
 if(APPLE)
-	target_link_libraries(tacitpixel
+	target_link_libraries(${tp_name}
 		"-framework CoreFoundation"
 		)
 endif()
 
 if (UNIX)
-	target_link_libraries(tacitpixel
+	target_link_libraries(${tp_name}
 		pthread dl
 		)
 endif()
 
 
 if (WIN32)
-	target_link_libraries(tacitpixel
+	target_link_libraries(${tp_name}
 		wsock32
 		)
 endif()
+
+add_subdirectory(_modules)
+
 
 
 add_subdirectory(_testing)

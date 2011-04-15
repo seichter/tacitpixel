@@ -199,7 +199,7 @@ public:
 
 TP_TYPE_REGISTER(tpImageFactoryJPEG,tpImageHandler,ImageFactoryJPEG);
 
-TP_MODULE_HOOK(ImageJPEG)
+//TP_MODULE_HOOK(ImageJPEG)
 
 tpModuleInitializer<tpImageFactoryJPEG> g_imagefactory_jpeg;
 

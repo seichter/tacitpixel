@@ -50,9 +50,9 @@ public:
 template <class T> class tpModuleInitializer {
 public:
 
-	tpModuleInitializer() 
+	tpModuleInitializer() : m_module(0)
 	{
-		m_module = new T; 
+		m_module = new T;
 		tpModuleManager::get()->add(m_module.get());
 	}
 

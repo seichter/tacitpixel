@@ -32,7 +32,7 @@
 #endif
 
 
-#include "tpTypes.h"
+#include <tp/types.h>
 
 /*!
 	\class tpListItem
@@ -117,8 +117,8 @@ public:
 	void operator = (const tpListIterator& rhs);
 
 
-	tpBool operator == (const tpListIterator& rhs) const;
-	tpBool operator != (const tpListIterator& rhs) const;
+	bool operator == (const tpListIterator& rhs) const;
+	bool operator != (const tpListIterator& rhs) const;
 
 	T& operator->();
 
@@ -169,7 +169,7 @@ public:
 	void purge();
 
 	//! check if the item is part of the list
-	tpBool contains(const T& item);
+	bool contains(const T& item);
 	//! find item (returns -1 if it is not a member)
 	tpLong find(const T& item) const;
 
@@ -292,13 +292,13 @@ inline T& tpListIterator<T>::operator *() const
 
 
 template <class T>
-inline tpBool tpListIterator<T>::operator == (const tpListIterator<T>& rhs) const
+inline bool tpListIterator<T>::operator == (const tpListIterator<T>& rhs) const
 {
 	return m_current == rhs.m_current;
 }
 
 template <class T>
-inline tpBool tpListIterator<T>::operator != (const tpListIterator<T>& rhs) const
+inline bool tpListIterator<T>::operator != (const tpListIterator<T>& rhs) const
 {
 	return m_current != rhs.m_current;
 }
@@ -374,7 +374,7 @@ template <class T> inline tpListItem<T>* tpList<T>::remove(const T& item)
 
 
 
-template <class T> inline tpVoid tpList<T>::purge()
+template <class T> inline void tpList<T>::purge()
 {
 	tpListItem<T>* _l = head;
 	while (_l != NULL)
@@ -414,7 +414,7 @@ template <class T> inline void tpList<T>::empty()
 }
 	
 
-template <class T> inline tpBool tpList<T>::contains(const T& item)
+template <class T> inline bool tpList<T>::contains(const T& item)
 {
 	tpListItem<T>* _l = head;
 	while (_l != NULL)

@@ -289,8 +289,7 @@ void tpArray<T>::copy( const T* orig, tpUInt length, tpUInt pos )
 template <typename T>
 void tpArray<T>::clear()
 {
-	if (m_data) delete [] m_data;
-	m_data = 0;
+	delete [] m_data;
 	m_size = m_maxsize = 0;
 }
 
@@ -521,8 +520,7 @@ template <typename T> tpArray<T>& tpArray<T>::operator << (const T& value)
 template <typename T>
 void tpArray<T>::preallocate( tpSizeT newsize, const T& data )
 {
-	resize(newsize);
-	fill(data);
+	assign(newsize,data);
 }
 
 template <typename T>

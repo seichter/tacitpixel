@@ -189,6 +189,8 @@ void tpSystem::getDisplaySize( tpInt* w, tpInt* h )
 #endif
 }
 
+static tpArray<tpString> gs_filesearchpaths;
+
 tpString tpSystem::findFile( const tpString& filename )
 {
 	//tpLogNotify("%s - %d",__FUNCTION__,m_filesearchpaths.getSize());
@@ -196,9 +198,9 @@ tpString tpSystem::findFile( const tpString& filename )
 
 	tpString res;
 
-	for (tpSizeT i = 0; i < m_filesearchpaths.getSize(); i++)
+	for (tpSizeT i = 0; i < gs_filesearchpaths.getSize(); i++)
 	{
-		res = m_filesearchpaths[i];
+		res = gs_filesearchpaths[i];
 		res.append( tpPathSep );
 		res.append( filename );
 		//tpLogNotify("%s - file %s",__FUNCTION__,path.c_str());
@@ -215,17 +217,11 @@ tpString tpSystem::findFile( const tpString& filename )
 	return res;
 }
 
-
-tpFilePathList& tpSystem::getFileSearchPaths()
-{
-	return m_filesearchpaths;
-}
-
 tpSystem::tpSystem()
 {
-	m_filesearchpaths.add(getExecutablePath(true));
-	m_filesearchpaths.add(getCWD());
-	m_filesearchpaths.add("");
+	gs_filesearchpaths.add(getExecutablePath(true))
+		.add(getCWD())
+		.add("");
 }
 
 

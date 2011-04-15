@@ -41,7 +41,7 @@ bool tpLibrary::close()
 {
 	bool result(false);
 #if defined(WIN32)
-	result = static_cast<bool>(FreeLibrary(static_cast<HMODULE>(m_handle)));
+	result = (TRUE == FreeLibrary(static_cast<HMODULE>(m_handle)));
 #elif defined(__unix) || defined(__APPLE__)
 	//result = (0 == dlclose(m_handle));
 	
@@ -164,6 +164,9 @@ void* tpLibrary::getAddress( const tpString& funcName ) const
 
 	return address;
 }
+
+
+static tpArray<tpString> gs_libsearchpaths;
 
 tpLibrary* tpLibrary::load( const tpString& name )
 {
