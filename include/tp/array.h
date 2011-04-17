@@ -3,7 +3,8 @@
 
 #include <tp/types.h>
 #include <tp/utils.h>
-
+//#include <tp/log.h>
+//#include <typeinfo>
 /*!
  \class tpArray
  \brief a dynamic array 
@@ -236,11 +237,11 @@ public:
 	 */
 	void preallocate(tpSizeT newsize, const T& data);
 	
-	tpArray& clone(tpArray<T>& l);
+	//tpArray& clone(tpArray<T>& l);
 	
-	void clear();
+	void release();
 	
-	void copy( const T* orig, tpUInt size, tpUInt pos = 0 );
+	void copy( const T* orig, tpSizeT size, tpSizeT pos = 0 );
 	
 	tpArray<T>& append( const tpArray<T>& rs );
 	
@@ -274,7 +275,7 @@ private:
 	tpSizeT m_size;
 	
 	//! current allocated size
-	tpSizeT m_maxsize;
+	tpSizeT m_capacity;
 };
 
 template <typename T>
@@ -287,10 +288,12 @@ void tpArray<T>::copy( const T* orig, tpUInt length, tpUInt pos )
 
 
 template <typename T>
-void tpArray<T>::clear()
+void tpArray<T>::release()
 {
-	delete [] m_data;
-	m_size = m_maxsize = 0;
+	//tpLogNotify("release 0x%x size:%d capacity:%d (0x%x) element size: %d '%s'",this,m_size,m_capacity,&m_data[0],sizeof(T),typeid(T).name());
+	if (m_data) { delete [] m_data; m_data = 0; }
+	//tpLogNotify("release 0x%x size:%d capacity:%d (0x%x)",this,m_size,m_capacity,&m_data[0]);
+	m_size = m_capacity = 0;
 }
 
 template <typename T>
@@ -299,37 +302,28 @@ void tpArray<T>::removeEnd()
 	if (m_size) m_size--;
 }
 
-template <typename T>
-tpArray<T>& tpArray<T>::clone( tpArray<T>& l )
-{
-	if (l.getSize() != getSize())
-	{
-		resize(l.getSize());
-		
-		T* src = l.m_data;
-		T* dest = m_data;
-		
-		for (tpSizeT i = 0; i < l.m_size;++i)
-		{
-			*dest = *src;
-			++dest;
-			++src;
-		};
-	}
-	
-	return *this;
-}
+//template <typename T>
+//void tpArray<T>::copy( tpArray<T>& l ) const
+//{
+//	if (&l != this)
+//	{
+//		l.resize(getSize());
+//		for ( tpSizeT i = 0; i < m_size; ++i ) l.m_data[i] = m_data[i];
+//	}
+//	
+//	return *this;
+//}
 
 
 //-----------------------------------------------------------------------------
 
 
-template <typename T> tpArray<T>::tpArray() : m_data(0), m_size(0), m_maxsize(0)
+template <typename T> tpArray<T>::tpArray() : m_data(0), m_size(0), m_capacity(0)
 {
 }
 
 template <typename T> tpArray<T>::tpArray(const tpArray& origin)
-: m_data(0), m_size(0), m_maxsize(0)
+: m_data(0), m_size(0), m_capacity(0)
 {
 	*this = origin;
 }
@@ -362,7 +356,8 @@ template <typename T> tpArray<T>& tpArray<T>::operator = (const tpArray& rhs)
 	return *this;
 }
 
-template <typename T> tpArray<T>& tpArray<T>::add(const T& item)
+template <typename T> 
+tpArray<T>& tpArray<T>::add(const T& item)
 {
 	tpSizeT end_pos = m_size;
 	if (getSize() == getCapacity()) grow();
@@ -372,7 +367,8 @@ template <typename T> tpArray<T>& tpArray<T>::add(const T& item)
 }
 
 
-template <typename T> T* tpArray<T>::erase(T* iter)
+template <typename T> 
+T* tpArray<T>::erase(T* iter)
 {
 	for (T* i = iter; i != end() - 1; i++)
 	{
@@ -416,7 +412,7 @@ template <typename T> T& tpArray<T>::operator+=(const T& item)
 
 template <typename T> tpArray<T>::~tpArray()
 {
-	clear();
+	this->release();
 }
 
 
@@ -436,15 +432,19 @@ template <typename T> const tpSizeT& tpArray<T>::getSize() const
 }
 
 
-template <typename T> void tpArray<T>::reserve(tpSizeT n)
+template <typename T> 
+void tpArray<T>::reserve(tpSizeT n)
 {
-	if ( n > getCapacity() ) {
+	//tpLogNotify("reserve 0x%x (%d) data: 0x%x",this,n,m_data);
+	if ( n > getCapacity() ) 
+	{
 		T* tmp = new T[n];
-		for(iterator i = begin(); i != end();)  *tmp++ = *i++;
-		if (m_data) delete [] m_data;
+		for(tpSizeT i = 0; i < m_size;++i) tmp[i] = m_data[i];
+		delete [] m_data; m_data = 0;
 		m_data = tmp;
-		m_maxsize = n;
+		m_capacity = n;
 	}
+	//tpLogNotify("reserve 0x%x (%d) data: 0x%x",this,n,m_data);
 }
 
 template <typename T> void tpArray<T>::grow()
@@ -503,7 +503,7 @@ template <typename T> void tpArray<T>::empty()
 
 template <typename T> tpSizeT tpArray<T>::getCapacity() const
 {
-	return m_maxsize;
+	return m_capacity;
 };
 
 template <typename T> void tpArray<T>::optimize()

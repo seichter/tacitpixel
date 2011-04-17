@@ -22,14 +22,21 @@
 class TP_API tpTransform : public tpNode {
 public:
 
-	TP_TYPE_DECLARE
+	TP_TYPE_DECLARE;
 
-	tpTransform(const tpString& name);
+	enum {
+		kRelative = 0x0,
+		kAbsolute
+	};
+
+	tpTransform(const tpString& name = "transform");
 	tpTransform(const tpTransform& transform);
 
-	const tpMat44<tpReal>& getMatrix() const { return m_matrix; }
-	tpMat44<tpReal>& getMatrix() { return m_matrix; }
+	const tpMat44r& getMatrix() const { return m_matrix; }
+	tpMat44r& getMatrix() { return m_matrix; }
 
+	tpUByte getScope() const { return m_scope; }
+	void setScope(tpUByte val) { m_scope = val; }
 
 
 	/*
@@ -57,7 +64,7 @@ public:
 	*/
 
 protected:
-
+	tpUByte m_scope;
 	tpMat44r m_matrix;
 
 };

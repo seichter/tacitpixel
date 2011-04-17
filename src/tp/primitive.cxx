@@ -23,18 +23,27 @@ tpPrimitive::tpPrimitive(tpUByte meshtype)
 
 tpPrimitive::tpPrimitive(const tpPrimitive& geo)
 	: tpRenderable(geo),
-	m_primitivetype(geo.m_primitivetype)
+	m_primitivetype(geo.m_primitivetype),
+	m_vertices(geo.m_vertices)
 {
-	m_vertices = geo.m_vertices;
 	m_normals = geo.m_normals;
 	m_texcoords = geo.m_texcoords;
 	m_colors = geo.m_colors;
 }
 
+
+tpPrimitive::~tpPrimitive()
+{
+}
+
+
 tpObject* tpPrimitive::clone()
 {
 	return new tpPrimitive(*this);
 }
+
+
+//////////////////////////////////////////////////////////////////////////
 
 tpUInt tpPrimitive::getPrimitiveType() const
 {
@@ -43,7 +52,7 @@ tpUInt tpPrimitive::getPrimitiveType() const
 
 void tpPrimitive::setPrimitiveType(tpUInt meshtype)
 {
-	this->m_primitivetype = (tpMeshType)meshtype;
+	this->m_primitivetype = meshtype;
 }
 
 void 
@@ -160,10 +169,33 @@ tpUInt tpPrimitive::getNormalsCount() const {
 	return m_normals.getSize() / 3;
 }
 
-tpPrimitive::~tpPrimitive()
+
+TP_TYPE_REGISTER(tpPrimitive,tpNode,Primitive);
+
+
+//////////////////////////////////////////////////////////////////////////
+
+tpPrimitiveFactory* tpPrimitiveFactory::get( bool destroy )
 {
+	static tpRefPtr<tpPrimitiveFactory> gs_primfactory( (destroy) ? 0L : new tpPrimitiveFactory() );
+	return gs_primfactory.get();
 }
 
+tpPrimitive* tpPrimitiveFactory::create( tpUShort primitive_type )
+{
+	tpPrimitive *res(0);
+	switch (primitive_type)
+	{
+	case kAxis:
+		res = new tpPrimitive(tpPrimitive::kLines);
+		res->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(1,0,0,1));
+		res->addVertex(tpVec3r(1,0,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(1,0,0,1));
+		res->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,1,0,1));
+		res->addVertex(tpVec3r(0,1,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,1,0,1));
+		res->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,0,1,1));
+		res->addVertex(tpVec3r(0,0,1),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,0,1,1));
+	}
 
-TP_TYPE_REGISTER(tpPrimitive,tpNode,Mesh);
 
+	return res;
+}

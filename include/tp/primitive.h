@@ -82,7 +82,7 @@ public:
 	const tpArray<tpReal>& getNormals() const;
 	//! returns the tex corods of that mesh
 	const tpArray<tpReal>& getTexCoords() const;
-
+	//! returns color array
 	const tpArray<tpReal>& getColors() const { return m_colors; }
 
 	tpUInt getVertexCount() const;
@@ -98,7 +98,6 @@ public:
 
 	void flipNormals();
 
-	//tpArray<tpReal>& attribute(tpUByte a) {}
 
 protected:
 
@@ -114,6 +113,21 @@ protected:
 	tpArray<tpReal> m_colors;
 };
 
+
+class TP_API tpPrimitiveFactory : public tpReferenced {
+public:
+
+	enum {
+		kPlane,
+		kSphere,
+		kAxis,
+		kTeapot
+	};
+
+	static tpPrimitiveFactory* get(bool destroy = false);
+
+	tpPrimitive* create(tpUShort primitive_type);
+};
 
 
 #endif

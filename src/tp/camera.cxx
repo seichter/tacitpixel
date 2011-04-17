@@ -21,7 +21,20 @@ tpCamera::tpCamera() : tpReferenced()
 void tpCamera::setViewLookAt( const tpVec3r& eye, const tpVec3r& target, const tpVec3r& up )
 {
 	m_view.lookAt(eye,target,up);
-	m_view.invert();
+}
+
+void tpCamera::setProjectionPerspective( const tpReal& fov, const tpReal& aspect, const tpReal& n, const tpReal& f )
+{
+	m_projection.setPerspective(fov,aspect,n,f);
+	m_projection.transpose();
+	m_projection.invert();
+}
+
+void tpCamera::setProjectionFrustum( const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f )
+{
+	m_projection.setFrustum(l,r,b,t,n,f);
+	m_projection.transpose();
+	m_projection.invert();
 }
 
 TP_TYPE_REGISTER(tpCamera,tpReferenced,Camera);

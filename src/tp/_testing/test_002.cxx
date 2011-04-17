@@ -9,6 +9,7 @@
 #include <tp/rendersurface.h>
 #include <tp/camera.h>
 #include <tp/primitive.h>
+#include <tp/transform.h>
 
 
 
@@ -17,23 +18,38 @@ int main(int argc, char* argv[])
 	
 	tpRefPtr<tpLibrary> gllib = tpLibrary::load("tacit_gl");
 
-	tpRefPtr<tpRenderSurface> rendersurface = tpRenderSurface::create();
+	tpRefPtr<tpPrimitive> p = 
+		tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kAxis);
+
+	//new tpPrimitive(tpPrimitive::kTriangleStrip);
+	//p->addVertex(tpVec3r(1,1,0),tpVec3r(0,0,1),tpVec2f(0.f,0.f));
+	//p->addVertex(tpVec3r(0,1,0),tpVec3r(0,0,1),tpVec2f(0.f,0.f),tpVec4r(0,1,0,1));
+	//p->addVertex(tpVec3r(1,0,0),tpVec3r(0,0,1),tpVec2f(0.f,0.f),tpVec4r(1,0,0,1));
+	//p->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2f(0.f,0.f));
+
+	tpRefPtr<tpNode> root = new tpNode();
+
+	tpRefPtr<tpTransform> t = new tpTransform();
+	t->getMatrix().setIdentity();
+	t->getMatrix().translate(1.0,1.0,0);
+	t->addChild(p.get());
+
+	root->addChild(p.get());
+	root->addChild(t.get());
+
+	tpRenderSurfaceTraits traits;
+	traits.setSize(640,480).setPosition(10,10);
+
+	tpRefPtr<tpRenderSurface> rendersurface = tpRenderSurface::create(&traits);
 
 	tpRefPtr<tpCamera> camera = new tpCamera;
 
-	camera->setProjectionPerspective(30.0f,1.3f,1,1000);
-	camera->setViewLookAt(tpVec3r(0,0,0),tpVec3r(0,0,-25),tpVec3r(0,1,0));
+	camera->setProjectionPerspective(45.0f,1.3f,0.1f,1000.0f);
+	camera->setViewLookAt(tpVec3r(0,0,1),tpVec3r(0,0,0),tpVec3r(0,1,0));
 
 	camera->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
 	camera->setClearColor(tpVec4f(0.5f,0.5f,0.9f,1.0f));
-	camera->setViewport(tpVec4i(0,0,320,240));
-
-	//tpRefPtr<tpPrimitive> p = new tpPrimitive(tpPrimitive::kLines);
-
-	//p->addVertex(tpVec3r(1,1,0),tpVec3r(0,0,1),tpVec2f(0.f,0.f));
-	//p->addVertex(tpVec3r(0,1,0),tpVec3r(0,0,1),tpVec2f(0.f,0.f));
-	//p->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2f(0.f,0.f));
-
+	camera->setViewport(tpVec4i(0,0,640,480));
 	
 	if (rendersurface.isValid())
 	{
@@ -41,7 +57,7 @@ int main(int argc, char* argv[])
 		rendersurface->show(true);
 
 		rendersurface->setCamera(camera.get());
-		rendersurface->setSceneNode(new tpNode());
+		rendersurface->setSceneNode(root.get());
 
 		while (rendersurface->isDone() == false) {
 			rendersurface->frame();

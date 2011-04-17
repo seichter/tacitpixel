@@ -13,15 +13,17 @@
 #include <tp/transform.h>
 
 
-tpTransform::tpTransform(const tpString& name) : tpNode(name)
+tpTransform::tpTransform(const tpString& name) : tpNode(name), m_scope(kRelative)
 {
-	m_fields.add(new tpRefField< tpMat44r > (m_matrix,"matrix"));
+	m_fields.add(new tpRefField< tpMat44r >(m_matrix,"matrix"));
+	m_fields.add(new tpRefField< tpUByte >(m_scope,"scope"));
 }
 
-tpTransform::tpTransform(const tpTransform& transform) : tpNode(transform)
+tpTransform::tpTransform(const tpTransform& transform) : tpNode(transform), m_scope(kRelative)
 {
 	m_matrix = transform.m_matrix;
 	m_fields.add(new tpRefField< tpMat44r > (m_matrix,"matrix"));
+	m_fields.add(new tpRefField< tpUByte >(m_scope,"scope"));
 }
 
 

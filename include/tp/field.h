@@ -22,11 +22,6 @@
 #include <tp/refptr.h>
 
 
-#ifdef _MSC_VER
-#pragma warning( disable: 4251 )
-#pragma warning( disable: 4275 )
-#endif
-
 enum tpFieldState
 {
     TP_FIELD_UNCHANGED = 0,
@@ -73,26 +68,24 @@ typedef tpArray< tpRefPtr<tpField> > tpFields;
 
 template <class T> class tpRefField : public tpField 
 {
-	//! c'tor
-	tpRefField() {};
-	
-	//! copy c'tor
-	tpRefField(const tpRefField& field) {}
-	
 public:
-		
-	//! initial c'tor
-	tpRefField(T& val,const tpString& name = "noname") : tpField(name),  m_value(val) {}
+
+	//! c'tor
+	tpRefField(T& val,const tpString& name) : tpField(name), m_value(val) {}
+
+	//! copy c'tor
+	tpRefField(const tpRefField& field) { *this = field; }
+
+	//! assignment operator
+	tpRefField<T>& operator = (const tpRefField<T>& rhs) { m_name = rhs.getName(); m_value = rhs.getValue(); }
+
 
 	//! return stored value
 	const T& getValue() const;
 	
 	//! set value
 	void setValue(const T& val);
-	
-	//! assign values of other fields an dirty this one
-	tpRefField& operator = (const tpRefField<T>&);
-		
+
 protected:
 	
 	T& m_value;

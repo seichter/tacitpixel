@@ -18,23 +18,30 @@
 #include <tp/renderer.h>
 #include <tp/camera.h>
 #include <tp/primitive.h>
+#include <tp/transform.h>
 
 class tpGLFixedFunctionTraverser : public tpGLTraverser {
-
 public:
+
+	//tpStack<tpMat44r> mvs;
 
 	tpGLFixedFunctionTraverser() : tpGLTraverser() {
 	}
 
 	void operator()(tpNode* node,tpCamera* camera)
 	{
+		tpGL::Enable(tpGL::COLOR_MATERIAL);
 
-		tpGL::Enable(tpGL::LIGHTING);
 		tpGL::Enable(tpGL::NORMALIZE);
 		tpGL::Enable(tpGL::AUTO_NORMAL);
+
+		tpGL::Enable(tpGL::LIGHTING);
 		tpGL::Enable(tpGL::LIGHT0);
 
 		tpGL::Enable(tpGL::DEPTH_TEST);
+
+		tpGL::Enable(tpGL::LINE_SMOOTH);
+		tpGL::Enable(tpGL::SMOOTH);
 
 		TP_REPORT_GLERROR();
 
@@ -59,13 +66,14 @@ public:
 			}
 
 			if (glclearflag) tpGL::Clear(glclearflag);
+			TP_REPORT_GLERROR();
 
 			tpGL::MatrixMode(tpGL::PROJECTION);
 			tpGL::LoadMatrixf(camera->getProjection().data());
+			TP_REPORT_GLERROR();
 
 			tpGL::MatrixMode(tpGL::MODELVIEW);
 			tpGL::LoadMatrixf(camera->getView().data());
-
 			TP_REPORT_GLERROR();
 		}
 
@@ -73,37 +81,51 @@ public:
 		if (node) node->traverse(*this);
 	}
 
+
+	//template <typename Base, typename Derived>
+	//Derived* tpCast(Base* b) { return (Base->getType() == Derived::getTypeInfo()) ? static_cast<Derived>(b) : 0L; }
+
+	//template <typename Base, typename Derived>
+	//Derived* tpCastCall(Base* b) { return (Base->getType() == Derived::getTypeInfo()) ? static_cast<Derived>(b) : 0L; }
+
 	void push(tpNode* node)
 	{
-		if(node->getType() == tpPrimitive::getTypeInfo())
-		{
-			this->pushMesh(static_cast<tpPrimitive*>(node));
-		}
+		if(node->getType() == tpPrimitive::getTypeInfo()) this->pushPrimitive(static_cast<tpPrimitive*>(node));
+		if(node->getType() == tpTransform::getTypeInfo()) this->pushTransform(static_cast<tpTransform*>(node));
 	}
 
 	void pop(tpNode* node)
 	{
 	}
 
-	void pushMesh(tpPrimitive* prim)
+	void pushPrimitive(tpPrimitive* prim)
 	{
 		tpGL::EnableClientState(tpGL::VERTEX_ARRAY);
 		tpGL::VertexPointer(3,tpGL::FLOAT,0,prim->getVertices().getData());
 
 		if (prim->getNormals().getSize()) 
 		{
-			tpLogNotify("%s %d normals",__FUNCTION__,prim->getNormals().getSize());
-			tpGL::EnableClientState(tpGL::NORMAL_ARRAY);
-			tpGL::NormalPointer(tpGL::FLOAT,0,prim->getNormals().getData());
+			//tpLogNotify("%s %d normals",__FUNCTION__,prim->getNormals().getSize());
+			//tpGL::EnableClientState(tpGL::NORMAL_ARRAY);
+			//tpGL::NormalPointer(tpGL::FLOAT, 0, prim->getNormals().getData());
 		}
 
 		if (prim->getTexCoords().getSize()) 
 		{
 			//tpLogNotify("%s %d texcoords",__FUNCTION__,mesh->getTexCoords().getSize());
-			tpGL::EnableClientState(tpGL::TEXTURE_COORD_ARRAY);
 			//float tex[] = {0,0, 0,1, 1,0, 1,1};
+			tpGL::EnableClientState(tpGL::TEXTURE_COORD_ARRAY);
 			tpGL::TexCoordPointer(2, tpGL::FLOAT, 0, prim->getTexCoords().getData());
 		}
+
+		if (prim->getColors().getSize()) 
+		{
+			//tpLogNotify("%s %d color",__FUNCTION__,prim->getColors().getSize());
+			//float tex[] = {0,0, 0,1, 1,0, 1,1};
+			tpGL::EnableClientState(tpGL::COLOR_ARRAY);
+			tpGL::ColorPointer(4, tpGL::FLOAT, 0, prim->getColors().getData());
+		}
+
 
 		tpGL::DrawArrays(prim->getPrimitiveType(),0,prim->getVertexCount());
 
@@ -119,8 +141,18 @@ public:
 			tpGL::DisableClientState(tpGL::TEXTURE_COORD_ARRAY);
 		}
 
+		if (prim->getColors().getSize()) 
+		{
+			tpGL::DisableClientState(tpGL::COLOR_ARRAY);
+		}
+
 		TP_REPORT_GLERROR();
 
+	}
+
+	void pushTransform(tpTransform* trans)
+	{
+		tpGL::MultMatrixf(trans->getMatrix().data());
 	}
 };
 

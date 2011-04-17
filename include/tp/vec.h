@@ -103,17 +103,26 @@ protected:
 	T vec[N];
 };
 
+// Operators
+
+template <class T,tpUInt N>
+tpVec<T,N> inline operator - (const tpVec<T,N>& l, const tpVec<T,N>& r)
+{
+	tpVec<T,N> res(l); res -= r; return res;
+}
+
+
 // Vec -----------------------------------------------------------------------------------------
 
 template <class T,tpUInt N> inline tpVec<T,N>::tpVec()
 {
 	for (tpUInt i = 0; i < N; i++) vec[i] = T(0);
-};
+}
 
 template <class T,tpUInt N> inline tpVec<T,N>::tpVec(const tpVec& v)
 {
 	for (tpUInt i = 0; i < N; i++) this->vec[i] = v.vec[i];
-};
+}
 
 
 template <class T,tpUInt N> inline tpVec<T,N>::~tpVec() 
@@ -258,62 +267,19 @@ template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::swapComponent(tpUInt 
 template <class T> class tpVec3 : public tpVec<T,3>
 {
 public:
-	tpVec3();
-	tpVec3(T c1, T c2, T c3);
 
-	void set(T c1, T c2, T c3);
+	tpVec3() { this->vec[0] = T(); this->vec[1] = T(); this->vec[2] = T(); }
 
+	tpVec3(const tpVec& in) { this->vec[0] = in[0]; this->vec[1] = in[1]; this->vec[2] = in[2]; }
 
-	tpVec3 operator - (const tpVec3<T>& rs);
+	tpVec3(T c1, T c2, T c3) {this->vec[0] = c1; this->vec[1] = c2; this->vec[2] = c3;}
 
-	tpVec3 operator + (const tpVec3<T>& rs);
-
+	void set(T c1, T c2, T c3) { this->vec[0] = c1; this->vec[1] = c2; this->vec[2] = c3; }
 
 	tpVec3 cross(const tpVec3&) const;
 };
 
 // Vec3 Implementation
-
-template <class T> inline tpVec3<T>::tpVec3()
-{
-	this->vec[0] = this->vec[1] = this->vec[2] = (T)0;
-};
-
-
-template <class T> inline tpVec3<T>::tpVec3(T c1, T c2, T c3)
-{
-	this->vec[0] = c1; this->vec[1] = c2; this->vec[2] = c3;
-};
-
-
-
-template <class T> inline void tpVec3<T>::set(T c1, T c2, T c3)
-{
-	this->vec[0] = c1; this->vec[1] = c2; this->vec[2] = c3;
-};
-
-
-template <class T> inline tpVec3<T> tpVec3<T>::operator - (const tpVec3<T>& rs)
-{
-	tpVec3<T> out;
-
-	out.vec[0] = this->vec[0] - rs.vec[0];
-	out.vec[1] = this->vec[1] - rs.vec[1];
-	out.vec[2] = this->vec[2] - rs.vec[2];
-
-	return out;
-};
-
-template <class T> inline tpVec3<T> tpVec3<T>::operator + (const tpVec3<T>& rs)
-{
-	tpVec3<T> out;
-
-	out.vec[0] = this->vec[0] + rs.vec[0];
-	out.vec[1] = this->vec[1] + rs.vec[1];
-	out.vec[2] = this->vec[2] + rs.vec[2];
-
-	return out;
-};
 
 template <class T> inline tpVec3<T> tpVec3<T>::cross(const tpVec3<T>& vec2) const
 {
@@ -322,7 +288,7 @@ template <class T> inline tpVec3<T> tpVec3<T>::cross(const tpVec3<T>& vec2) cons
 	T _v3 = this->vec[0] * vec2.vec[1] - vec2.vec[0] * this->vec[1];
 
 	return tpVec3<T>(_v1,_v2,_v3);
-};
+}
 
 
 

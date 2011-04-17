@@ -172,6 +172,7 @@ public:
 	tpVec2i getSize() const;
 	tpRenderSurfaceTraits& setSize(tpVec2i val);	
 	tpRenderSurfaceTraits& setSize(tpInt width, tpInt height);
+
 	tpRenderSurfaceTraits& setDefaultSize();
 	//tpRenderSurfaceTraits& setBitPerPixel(tpUInt val);
 	//tpRenderSurfaceTraits& setAntiAlias(bool val);

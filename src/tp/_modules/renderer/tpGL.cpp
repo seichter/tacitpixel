@@ -86,6 +86,7 @@ tpRefPtr<tpLibrary> tpGL::mg_ogl = 0;
 /*static*/ void	   (TP_CALLBACK * tpGL::NormalPointer)(GLenum,GLsizei,const GLvoid*) = 0;
 /*static*/ void	   (TP_CALLBACK * tpGL::TexCoordPointer)(GLint,GLenum,GLsizei,const GLvoid*) = 0;
 /*static*/ void	   (TP_CALLBACK * tpGL::VertexPointer)(GLint,GLenum,GLsizei,const GLvoid*) = 0;
+/*static*/ void	   (TP_CALLBACK * tpGL::ColorPointer)(GLint,GLenum,GLsizei,const GLvoid*) = 0;
 /*static*/ void	   (TP_CALLBACK * tpGL::DrawElements)(GLenum,GLsizei,GLenum,const GLvoid*) = 0;
 /*static*/ void	   (TP_CALLBACK * tpGL::DrawArrays)(GLenum,GLint,GLsizei) = 0;
 
@@ -751,6 +752,7 @@ void tpGL::loadOGL()
 		tpGL::NormalPointer = reinterpret_cast<void(TP_CALLBACK *)(GLenum,GLsizei,const GLvoid*)>(tpGL::mg_ogl->getAddress("glNormalPointer"));
 		tpGL::TexCoordPointer = reinterpret_cast<void(TP_CALLBACK *)(GLint,GLenum,GLsizei,const GLvoid*)>(tpGL::mg_ogl->getAddress("glTexCoordPointer"));
 		tpGL::VertexPointer = reinterpret_cast<void(TP_CALLBACK *)(GLint,GLenum,GLsizei,const GLvoid*)>(tpGL::mg_ogl->getAddress("glVertexPointer"));
+		tpGL::ColorPointer = reinterpret_cast<void(TP_CALLBACK *)(GLint,GLenum,GLsizei,const GLvoid*)>(tpGL::mg_ogl->getAddress("glColorPointer"));
 		tpGL::DrawElements = reinterpret_cast<void(TP_CALLBACK *)(GLenum,GLsizei,GLenum,const GLvoid*)>(tpGL::mg_ogl->getAddress("glDrawElements"));
 		tpGL::DrawArrays = reinterpret_cast<void(TP_CALLBACK *)(GLenum,GLint,GLsizei)>(tpGL::mg_ogl->getAddress("glDrawArrays"));
 

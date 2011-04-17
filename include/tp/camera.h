@@ -15,7 +15,6 @@
 
 
 #include <tp/referenced.h>
-#include <tp/thread.h>
 #include <tp/mat.h>
 #include <tp/vec.h>
 
@@ -58,13 +57,9 @@ public:
 		m_projection.setOrtho(l,r,b,t,n,f); 
 	}
 
-	void setProjectionFrustum(const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f ) { 
-		m_projection.setFrustum(l,r,b,t,n,f);
-	}
+	void setProjectionFrustum(const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f );
 
-	void setProjectionPerspective(const tpReal& fov, const tpReal& aspect, const tpReal& n, const tpReal& f ) { 
-		m_projection.setPerspective(fov,aspect,n,f);
-	}
+	void setProjectionPerspective(const tpReal& fov, const tpReal& aspect, const tpReal& n, const tpReal& f );
 
 	const tpMat44r& getView() const { return m_view; }
 	void setView(const tpMat44r& val) { m_view = val; }

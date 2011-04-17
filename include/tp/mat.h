@@ -113,7 +113,7 @@ public:
 
 	const T& operator()(tpUInt r,tpUInt c) const;
 
-	void _print();
+	void _print() const;
 
 	tpMat<R,C,T>& operator = (const tpMat<R,C,T>& rhs) { for (tpUInt i = 0; i < R*C; i++) {m[i] = rhs.m[i];} return *this; }
 
@@ -134,8 +134,9 @@ protected:
 //}
 
 
+
 template <tpUInt R, tpUInt C,typename T>
-void tpMat<R,C,T>::_print()
+void tpMat<R,C,T>::_print() const
 {
 	printf("tpMat %dx%d\n",R,C);
 	for (int r=0;r < R;r++)
@@ -144,7 +145,6 @@ void tpMat<R,C,T>::_print()
 		{
 			printf("%3.5f ",(*this)(r,c));
 		}
-
 		printf("\n");
 	}
 	//	printf("determinant: %3.f\n",getDeterminant());
@@ -202,7 +202,8 @@ T tpMat<R,C,T>::getDeterminant() const
 //
 // Mat 4x4
 //
-template <typename T> class tpMat44 : public tpMat<4,4,T>
+template <typename T> 
+class tpMat44 : public tpMat<4,4,T>
 {
 public:
 
@@ -402,7 +403,7 @@ public:
 	tpMat44&
 	setFrustum(T Left,T Right,T Bottom,T Top, T Near, T Far)
 	{
-
+		// set column-wise
 		this->m[ 0] = (T) 2	* Near/(Right-Left);
 		this->m[ 4] = (T) 0;
 		this->m[ 8] = (T) (Right+Left)/(Right-Left);
@@ -416,7 +417,7 @@ public:
 		this->m[ 2] = (T) 0;
 		this->m[ 6] = (T) 0;
 		this->m[10] = (T) -(Far+Near)/(Far-Near);
-		this->m[14] = (T) -(2*Far*Near)/(Far-Near);
+		this->m[14] = (T) -	2*Far*Near	/ Far-Near;
 
 		this->m[ 3] = (T) 0;
 		this->m[ 7] = (T) 0;	
@@ -489,20 +490,14 @@ public:
 	
 	
 	tpMat44&
-	lookAt(const tpVec3<T>& eye, 
-											const tpVec3<T>& target, 
-											const tpVec3<T>& up)
+	lookAt(const tpVec3<T>& eye, const tpVec3<T>& target, const tpVec3<T>& up)
 	{
-		tpVec3<T> L = target;
-
-		L -= eye;
-
+		tpVec3<T> L( target - eye );
 		L.normalize();
-
 		tpVec3<T> S = L.cross(up);
 		S.normalize();
-
 		tpVec3<T> Ud = S.cross(L);
+		Ud.normalize();
 
 		/*
 		 this->m[0] = S[0];
@@ -521,29 +516,29 @@ public:
 		 this->m[11] = (T) 0;
 		 */
 
-		this->m[0] = S[0];
-		this->m[4] = S[1];
-		this->m[8] = S[2];
-		this->m[3] = (T)0;
+		this->m[ 0] = S[0];
+		this->m[ 4] = S[1];
+		this->m[ 8] = S[2];
+		this->m[ 3] = T(0);
 
-		this->m[1] = Ud[0];
-		this->m[5] = Ud[1];
-		this->m[9] = Ud[2];
-		this->m[7] = (T) 0;
+		this->m[ 1] = Ud[0];
+		this->m[ 5] = Ud[1];
+		this->m[ 9] = Ud[2];
+		this->m[ 7] = T(0);
 
-		this->m[2] = -L[0];
-		this->m[6] = -L[1];
+		this->m[ 2] = -L[0];
+		this->m[ 6] = -L[1];
 		this->m[10] = -L[2];
-		this->m[14] = (T) 0;
+		this->m[14] = T(0);
 
 		this->m[12] = -eye[0];
 		this->m[13] = -eye[1];
 		this->m[14] = -eye[2];
 
-		this->m[15] = 1;
+		this->m[15] = T(1);
 
 		return *this;
-	};
+	}
 	
 	
 	
@@ -568,6 +563,7 @@ tpFixed32 tpMat<1,1,tpFixed32>::getDeterminant() const
 }
 
 
+//////////////////////////////////////////////////////////////////////////
 
 // predefined matricies
 typedef tpMat44<tpFloat> tpMat44f;
@@ -575,6 +571,26 @@ typedef tpMat44<tpDouble> tpMat44d;
 typedef tpMat44<tpReal> tpMat44r;
 typedef tpMat44<tpFixed32> tpMat44x;
 
+
+
+
+//
+//tpString inline
+//operator << (tpString& ostr, const tpMat44r& m)
+//{
+//	ostr += tpStringFormat(
+//		"%3.3f\t%3.3f\t%3.3f\t%3.3f\n"
+//		"%3.3f\t%3.3f\t%3.3f\t%3.3f\n"
+//		"%3.3f\t%3.3f\t%3.3f\t%3.3f\n"
+//		"%3.3f\t%3.3f\t%3.3f\t%3.3f",
+//		m(0,0),m(0,1),m(0,2),m(0,3),
+//		m(1,0),m(1,1),m(1,2),m(1,3),
+//		m(2,0),m(2,1),m(2,2),m(2,3),
+//		m(3,0),m(3,1),m(3,2),m(3,3)
+//		);
+//	return ostr;
+//}
+//
 
 
 #endif

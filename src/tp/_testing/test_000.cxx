@@ -43,6 +43,9 @@ int main(int argc, char* argv[])
 	tpLogMessage("Array > size, capacity, element_size, max_capacity (%d,%d,%d,%d)",iv.getSize(),iv.getCapacity(),iv.element_size,iv.max_capacity);
 
 
+
+	return 0;
+
 	// Map
 	tpPair<int,tpString> num_pair;
 	

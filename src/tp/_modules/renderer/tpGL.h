@@ -557,6 +557,7 @@ public:
 	static void	   (TP_CALLBACK *  NormalPointer)(GLenum,GLsizei,const GLvoid*);
 	static void	   (TP_CALLBACK *  TexCoordPointer)(GLint,GLenum,GLsizei,const GLvoid*);
 	static void	   (TP_CALLBACK *  VertexPointer)(GLint,GLenum,GLsizei,const GLvoid*);
+	static void	   (TP_CALLBACK *  ColorPointer)(GLint,GLenum,GLsizei,const GLvoid*);
 	static void	   (TP_CALLBACK *  DrawElements)(GLenum,GLsizei,GLenum,const GLvoid*);
 	static void	   (TP_CALLBACK *  DrawArrays)(GLenum,GLint,GLsizei);
 
