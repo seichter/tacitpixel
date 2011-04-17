@@ -41,8 +41,8 @@ public:
 	//! 
 	tpMaterial& operator = (const tpMaterial&);
 
-	void setShininess(const tpFloat&);
-	tpFloat getShininess() const;
+	void setShininess(const tpFloat& v) { m_shininess = v; } 
+	const tpFloat& getShininess() const {return m_shininess; }
 
 	void setTransparency(const tpFloat& v) { m_transparency = v; } 
 	const tpFloat& getTransparency() const { return m_transparency; }

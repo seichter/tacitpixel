@@ -40,8 +40,8 @@ public:
 
 		tpGL::Enable(tpGL::DEPTH_TEST);
 
-		tpGL::Enable(tpGL::LINE_SMOOTH);
-		tpGL::Enable(tpGL::SMOOTH);
+		//tpGL::Enable(tpGL::LINE_SMOOTH);
+		//tpGL::Enable(tpGL::SMOOTH);
 
 		TP_REPORT_GLERROR();
 
