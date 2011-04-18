@@ -17,6 +17,7 @@
 #include <tp/system.h>
 #include <tp/primitive.h>
 #include <tp/log.h>
+#include <tp/version.h>
 
 // include OBJ loader
 #include "glm.h"
@@ -29,7 +30,6 @@ tpNode* tpOBJ(const tpString& filename)
 	GLMgroup* group(0);
 	GLMtriangle* triangle(0);
 	GLMmodel* model = glmReadOBJ((char*)filename.c_str());
-
 
 	// the loader needs to set the working directory 
 	if (!model) 
@@ -165,33 +165,27 @@ tpNode* tpOBJ(const tpString& filename)
 
 };
 
-/*
-
-class tpNodeFactoryOBJ : public tpNodeFactory {
+class tpOBJHandler : public tpNodeHandler {
 public:
 
 	TP_TYPE_DECLARE;
 
-	tpNodeFactoryOBJ() : tpNodeFactory() 
+	tpOBJHandler() : tpNodeHandler() 
 	{
-		tpLogNotify("Twisted Pairs OBJ loader 1.0");
+		tpLogNotify("%s OBJ model file support",tpGetVersionString());
 	}
 
-	~tpNodeFactoryOBJ() 
+	~tpOBJHandler() 
 	{
 	}
 
-	tpBool getCapabilities(tpUInt capability, const tpString& name)
+	tpUByte getCapabilities(const tpString& name)
 	{
-		switch (capability)
-		{
-		case TP_NODE_CAN_READ:
-			return name.afterLast('.') == "obj";
-			break;
-
+		tpString extension = name.afterLast('.');
+		if (extension == "obj") {
+			return kRead;
 		}
-
-		return false;
+		return 0;
 	}
 
 	tpNode* read(const tpString& name) 
@@ -203,10 +197,9 @@ public:
 
 };
 
-*/
 
-//TP_TYPE_REGISTER(tpNodeFactoryOBJ,tpNodeFactory,NodeFactoryOBJ);
-//
+TP_TYPE_REGISTER(tpOBJHandler,tpNodeHandler,NodeHandler_OBJ);
+
 //TP_MODULE_HOOK(NodeOBJ)
-//
-//tpModuleInitializer<tpNodeFactoryOBJ> g_nodefactory_obj;
+
+tpModuleInitializer<tpOBJHandler> g_nodefactory_obj;

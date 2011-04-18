@@ -12,6 +12,7 @@
 
 #include <tp/node.h>
 #include <tp/log.h>
+#include <tp/module.h>
 
 template <class T> class tpRenderInterface
 {
@@ -123,9 +124,7 @@ tpVoid tpNode::setTraverseFlags(tpUInt flags) {
 TP_TYPE_REGISTER(tpNode,tpObject,Node);
 
 
-#if 0
-
-tpNode* tpNode::load(const tpString& file)
+tpNode* tpNode::read(const tpString& file)
 {
 	tpNode* result(0);
 
@@ -133,37 +132,30 @@ tpNode* tpNode::load(const tpString& file)
 
 	const tpModuleList& ml = tpModuleManager::get()->getModules();
 	
-	// add the path to the list
-	tpFilePathList& fpl = tpSystem::get()->getFileSearchPaths();
-	tpString relpath = file.beforeLast(*tpPathSep[0]);
-	fpl.add(relpath);
+	//// add the path to the list
+	//tpFilePathList& fpl = tpSystem::get()->getFileSearchPaths();
+	//tpString relpath = file.beforeLast(*tpPathSep[0]);
+	//fpl.add(relpath);
 
 	
 
-	for (int i = 0; i < ml.getSize(); i++)
+	for (tpSizeT i = 0; i < ml.getSize(); i++)
 	{
-		const tpRefPtr<tpReference>& item = ml[i];
+		tpRefPtr<tpReferenced> item = ml[i];
 
-		if (item->getType()->isOfType(tpNodeFactory::getTypeInfo()))
+		if (item->getType()->isOfType(tpNodeHandler::getTypeInfo()))
 		{
 			//tpLogNotify("%s found %s",__FUNCTION__,item->getType()->getName().c_str());
 
-			tpNodeFactory* nf = reinterpret_cast<tpNodeFactory*>(item.get());
+			tpNodeHandler* nf = reinterpret_cast<tpNodeHandler*>(item.get());
 
-			if (nf && nf->getCapabilities(TP_NODE_CAN_READ,file)) 
+			if (nf && (tpNodeHandler::kRead & nf->getCapabilities(file))) 
 			{
 				result = nf->read(file);
 
-			} else {
-				//tpLogNotify("%s '%s' can't read %s",__FUNCTION__,
-				//	item->getType()->getName().c_str(),
-				//	file.c_str());
 			}
 		}
 	}
-	
-	// remove the relative path from the list
-	fpl.pop();
 	
 	return result;
 
@@ -172,18 +164,16 @@ tpNode* tpNode::load(const tpString& file)
 
 //////////////////////////////////////////////////////////////////////////
 
-tpNodeFactory::tpNodeFactory() : tpReference()
+tpNodeHandler::tpNodeHandler() : tpReferenced()
 {
 
 }
 
-tpNodeFactory::~tpNodeFactory()
+tpNodeHandler::~tpNodeHandler()
 {
 }
 
-TP_TYPE_REGISTER(tpNodeFactory,tpReference,NodeFactory);
-
-#endif
+TP_TYPE_REGISTER(tpNodeHandler,tpReferenced,NodeHandler);
 
 
 

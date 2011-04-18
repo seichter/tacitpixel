@@ -58,30 +58,32 @@ enum tpTraverseFlags
 
 //////////////////////////////////////////////////////////////////////////
 
-enum tpNodeFactoryCapabilities {
-	TP_NODE_CAN_READ = 0x0,
-	TP_NODE_CAN_WRITE
-};
+*/
 
-
-class TP_API tpNodeFactory : public tpReferenced {
+class TP_API tpNodeHandler : public tpReferenced {
 public:
 
 	TP_TYPE_DECLARE;
 
-	tpNodeFactory();
+	enum {
+		kNone  = 0,
+		kRead  = (1 << 1),
+		kWrite = (1 << 2)
+	};
 
-	virtual tpBool getCapabilities(tpUInt capability, const tpString& name) { return false; }
+	tpNodeHandler();
+
+	virtual tpUByte getCapabilities(const tpString& name) = 0;
 
 	virtual tpNode* read(const tpString& name) { return 0; }
-	virtual tpBool write(tpNode* node, const tpString& name) { return false; }
+	virtual bool write(const tpNode* node, const tpString& name) { return false; }
 
 protected:
 
-	~tpNodeFactory();
+	~tpNodeHandler();
 };
 
-*/
+
  
  
 //class tpGroup;
@@ -150,12 +152,16 @@ public:
 	
 	//! check if this node has any child nodes > leaf
 	bool hasChildren() const { return (getChildCount() > 0); }
+
+
+	//! read a node from a file
+	static tpNode* read(const tpString& file);
+
 	
 protected:
 
 
     virtual ~tpNode();
-
 	tpArray< tpRefPtr<tpNode> > m_children;
 	tpArray<tpNode*> m_parents;
 
