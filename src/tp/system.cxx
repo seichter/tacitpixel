@@ -118,7 +118,7 @@ tpSystem::getPluginPath()
 
 #else
 
-	result = getExecutablePath(true) + tpPathSep + tpString("..") + tpPathSep + tpString("lib");
+	result = getExecutablePath(true) + tpString("/../") + tpString("lib");
 	
 #endif
 	

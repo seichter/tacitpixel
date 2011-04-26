@@ -419,11 +419,11 @@ template <class T> inline bool tpList<T>::contains(const T& item)
 	tpListItem<T>* _l = head;
 	while (_l != NULL)
 	{
-		if (_l->value == item) return TRUE; 
+		if (_l->value == item) return true; 
 		_l = _l->next;
 	};
 	
-	return FALSE;
+	return false;
 };
 
 

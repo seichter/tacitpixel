@@ -425,12 +425,14 @@ bool tpGLRenderSurfaceX11::show(bool doShow) {
 
 }
 
-bool tpGLRenderSurfaceX11::makeCurrent()
+bool 
+tpGLRenderSurfaceX11::makeCurrent()
 {
+//!\TODO: clear this mess up!
 	if (tpGL::eglMakeCurrent) {
-		return tpGL::eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context) == TRUE ? true : false;
+		return tpGL::eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context) != false ? true : false;
 	} else if (tpGL::glXMakeCurrent) {
-		return tpGL::glXMakeCurrent(dpy,win,cx) == TRUE ? true : false;
+		return tpGL::glXMakeCurrent(dpy,win,cx) == true ? true : false;
 	}
 
 	return false;
