@@ -103,7 +103,7 @@ tpNode* tpOBJ(const tpString& filename)
 			}
 
 
-			if (model->nummaterials)
+			if (group->material)
 			{
 				GLMmaterial* material;
 
@@ -127,6 +127,15 @@ tpNode* tpOBJ(const tpString& filename)
 
 				mesh->setMaterial(mat);
 				
+				tpLogNotify("%s %3.3f %3.3f %3.3f %3.3f",
+						__FUNCTION__,
+						material->ambient[0],material->ambient[1],material->ambient[2],material->ambient[3]);
+
+				tpLogNotify("%s %3.3f %3.3f %3.3f %3.3f",
+						__FUNCTION__,
+						material->diffuse[0],material->diffuse[1],material->diffuse[2],material->diffuse[3]);
+
+
 				if (material->texturename)
 				{
 					tpTexture* texture = new tpTexture;
@@ -140,18 +149,20 @@ tpNode* tpOBJ(const tpString& filename)
 					tpLogNotify("%s - added texture '%s'",__FUNCTION__,img);
 				}
 
-				tpLogNotify("%s - added material",__FUNCTION__);
+				tpLogNotify("%s - added material '%s'\n",
+						__FUNCTION__,mat->getName().c_str()
+						);
 				
 			};
 	
 			
 			root->addChild(mesh);
-
-			//mesh->dump();
-		};
+		}
 
 		group = group->next;
-	};
+	}
+
+	//exit(0);
 
 	glmDelete(model);
 

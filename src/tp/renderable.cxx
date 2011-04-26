@@ -39,7 +39,7 @@ tpObject* tpRenderable::clone()
 
 tpMaterial* tpRenderable::getMaterial()
 {
-	return m_material.get();
+	return (m_material.isValid() ? m_material.get() : tpDefaultMaterial);
 }
 
 

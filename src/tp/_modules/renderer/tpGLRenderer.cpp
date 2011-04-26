@@ -40,6 +40,9 @@ public:
 
 		tpGL::Enable(tpGL::DEPTH_TEST);
 
+		tpGL::glFrontFace(tpGL::CCW);
+		tpGL::Disable(tpGL::CULL_FACE);
+
 		//tpGL::Enable(tpGL::LINE_SMOOTH);
 		//tpGL::Enable(tpGL::SMOOTH);
 
@@ -100,17 +103,22 @@ public:
 
 	void pushPrimitive(tpPrimitive* prim)
 	{
+
+		if (prim->getMaterial()) pushMaterial(prim->getMaterial());
+
+		TP_REPORT_GLERROR();
+
 		tpGL::EnableClientState(tpGL::VERTEX_ARRAY);
-		tpGL::VertexPointer(3,tpGL::FLOAT,0,prim->getVertices().getData());
+		tpGL::VertexPointer(3, tpGL::FLOAT, 0, prim->getVertices().getData());
 
 		if (prim->getNormals().getSize()) 
 		{
 			//tpLogNotify("%s %d normals",__FUNCTION__,prim->getNormals().getSize());
-			//tpGL::EnableClientState(tpGL::NORMAL_ARRAY);
-			//tpGL::NormalPointer(tpGL::FLOAT, 0, prim->getNormals().getData());
+			tpGL::EnableClientState(tpGL::NORMAL_ARRAY);
+			tpGL::NormalPointer(tpGL::FLOAT, 0, prim->getNormals().getData());
 		}
 
-		if (prim->getTexCoords().getSize()) 
+		if (prim->getTexCoords().getSize())
 		{
 			//tpLogNotify("%s %d texcoords",__FUNCTION__,mesh->getTexCoords().getSize());
 			//float tex[] = {0,0, 0,1, 1,0, 1,1};
@@ -118,7 +126,7 @@ public:
 			tpGL::TexCoordPointer(2, tpGL::FLOAT, 0, prim->getTexCoords().getData());
 		}
 
-		if (prim->getColors().getSize()) 
+		if (prim->getColors().getSize())
 		{
 			//tpLogNotify("%s %d color",__FUNCTION__,prim->getColors().getSize());
 			//float tex[] = {0,0, 0,1, 1,0, 1,1};
@@ -136,18 +144,24 @@ public:
 			tpGL::DisableClientState(tpGL::NORMAL_ARRAY);
 		}
 
-		if (prim->getTexCoords().getSize()) 
+		if (prim->getTexCoords().getSize())
 		{
 			tpGL::DisableClientState(tpGL::TEXTURE_COORD_ARRAY);
 		}
 
-		if (prim->getColors().getSize()) 
+		if (prim->getColors().getSize())
 		{
 			tpGL::DisableClientState(tpGL::COLOR_ARRAY);
 		}
 
 		TP_REPORT_GLERROR();
+	}
 
+	void pushMaterial(tpMaterial* mat) {
+		tpGL::Materialfv(tpGL::FRONT,tpGL::AMBIENT,mat->getAmbientColor().getData());
+		tpGL::Materialfv(tpGL::FRONT,tpGL::DIFFUSE,mat->getDiffuseColor().getData());
+		tpGL::Materialfv(tpGL::FRONT,tpGL::EMISSION,mat->getEmissiveColor().getData());
+		tpGL::Materialfv(tpGL::FRONT,tpGL::SPECULAR,mat->getSpecularColor().getData());
 	}
 
 	void pushTransform(tpTransform* trans)

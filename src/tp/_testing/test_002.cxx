@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 {
 	
 	tpRefPtr<tpLibrary> mod_gl = tpLibrary::load("tacit_gl");
-	tpRefPtr<tpLibrary> mod_3ds = tpLibrary::load("tacit_3ds");
+	//tpRefPtr<tpLibrary> mod_3ds = tpLibrary::load("tacit_3ds");
 	tpRefPtr<tpLibrary> mod_obj = tpLibrary::load("tacit_obj");
 	
 
@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 
 	tpRefPtr<tpTransform> t = new tpTransform();
 	t->getMatrix().setIdentity();
-	t->getMatrix().translate(-2.0,1.0,0);
+	t->getMatrix().translate(-2.0,1.0,-2.0);
 	
 	t->addChild(p.get());
 
