@@ -201,7 +201,7 @@ tpString tpSystem::findFile( const tpString& filename )
 	for (tpSizeT i = 0; i < gs_filesearchpaths.getSize(); i++)
 	{
 		res = gs_filesearchpaths[i];
-		res.append( tpPathSep );
+		res.append( tpSlash() );
 		res.append( filename );
 		//tpLogNotify("%s - file %s",__FUNCTION__,path.c_str());
 		//getchar();
@@ -224,7 +224,6 @@ tpSystem::tpSystem()
 		.add("");
 }
 
-
 tpString
 tpSystem::getTime() const
 {
@@ -242,4 +241,15 @@ tpSystem::getTime() const
 	
 	return res;
 	
+}
+
+
+tpString
+tpSlash()
+{
+#if defined(_WIN32)
+	return tpString("\\");
+#else
+	return tpString("/");
+#endif
 }

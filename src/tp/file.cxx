@@ -2,6 +2,8 @@
 
 #include "tp/file.h"
 
+#if defined(HAVE_STDIO_H)
+
 //! macro to cast the file pointer
 #define _F(h) static_cast<FILE*>(h)
 
@@ -72,3 +74,5 @@ tpSizeT tpFile::tell() const
 {
 	return ftell(_F(m_handle));
 }
+
+#endif

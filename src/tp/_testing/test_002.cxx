@@ -16,10 +16,16 @@
 int main(int argc, char* argv[])
 {
 	
-	tpRefPtr<tpLibrary> gllib = tpLibrary::load("tacit_gl");
+	tpRefPtr<tpLibrary> mod_gl = tpLibrary::load("tacit_gl");
+	tpRefPtr<tpLibrary> mod_3ds = tpLibrary::load("tacit_3ds");
+	tpRefPtr<tpLibrary> mod_obj = tpLibrary::load("tacit_obj");
+	
 
 	tpRefPtr<tpPrimitive> p = 
 		tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kAxis);
+		
+	tpRefPtr<tpNode> n = tpNode::read(argv[1]);
+		
 
 	//new tpPrimitive(tpPrimitive::kTriangleStrip);
 	//p->addVertex(tpVec3r(1,1,0),tpVec3r(0,0,1),tpVec2f(0.f,0.f));
@@ -31,12 +37,15 @@ int main(int argc, char* argv[])
 
 	tpRefPtr<tpTransform> t = new tpTransform();
 	t->getMatrix().setIdentity();
-	t->getMatrix().translate(1.0,1.0,0);
+	t->getMatrix().translate(-2.0,1.0,0);
+	
 	t->addChild(p.get());
+
+	t->addChild(n.get());
 
 	root->addChild(p.get());
 	root->addChild(t.get());
-
+	
 	tpRenderSurfaceTraits traits;
 	traits.setSize(640,480).setPosition(10,10);
 
@@ -45,7 +54,7 @@ int main(int argc, char* argv[])
 	tpRefPtr<tpCamera> camera = new tpCamera;
 
 	camera->setProjectionPerspective(45.0f,1.3f,0.1f,1000.0f);
-	camera->setViewLookAt(tpVec3r(0,0,1),tpVec3r(0,0,0),tpVec3r(0,1,0));
+	camera->setViewLookAt(tpVec3r(0,1,1),tpVec3r(0,0,0),tpVec3r(0,1,0));
 
 	camera->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
 	camera->setClearColor(tpVec4f(0.5f,0.5f,0.9f,1.0f));

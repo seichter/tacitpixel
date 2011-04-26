@@ -34,7 +34,6 @@ protected:
 	virtual ~tpModuleManager();
 
 	tpModuleList m_modules;
-	
 
 public:
 

@@ -13,6 +13,7 @@
 #ifndef TPGLRENDERSURFACEX11_H
 #define TPGLRENDERSURFACEX11_H
 
+
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
@@ -26,11 +27,12 @@
 //#include <GL/glext.h>
 #endif
 
-#include "tpRenderSurface.h"
 
-#include "tpRTTI.h"
-#include "tpLog.h"
 #include "tpGL.h"
+
+#include <tp/rendersurface.h>
+#include <tp/log.h>
+
 
 class tpGLRenderSurfaceX11 : public tpRenderSurface {
 public:
@@ -43,8 +45,8 @@ public:
 
 	tpString getString(tpUInt glenum);
 
-	tpBool makeCurrent();
-	tpBool swapBuffers();
+	bool makeCurrent();
+	bool swapBuffers();
 
 	virtual tpVoid frame();
 
@@ -69,7 +71,7 @@ protected:
 	void doCreateGLX(XVisualInfo*);
 
 	void doKill();
-	tpBool show(tpBool doShow);
+	bool show(bool doShow);
 
 	void setCaption(const tpString& caption);
 

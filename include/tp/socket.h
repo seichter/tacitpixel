@@ -29,6 +29,7 @@
 #include <tp/types.h>
 #include <tp/referenced.h>
 #include <tp/string.h>
+#include <tp/io.h>
 
 #if defined(WIN32) || defined(WINCE)
 	#include <winsock.h>
@@ -74,11 +75,15 @@ enum tpSocketState
 	\brief a generic socket to wrap UDP and TCP sockets
 	\author Hartmut Seichter
 */
-class TP_API tpSocket : public tpReferenced
-{
+class TP_API tpSocket : public tpReferenced {
 public:
 
 	TP_TYPE_DECLARE;
+
+	enum {
+		kTCP = 0x0,
+		kUDP
+	};
 
 	//! default c'tor
 	tpSocket();
@@ -109,9 +114,6 @@ protected:
 	bool bind();
 
 	sockaddr_in m_sockaddr;
-
-	// tpString m_remoteaddress;
-
 	int m_socketdesc;
 
 	tpUInt m_timeout;
@@ -210,7 +212,7 @@ public:
 	void setMulticastTTL(unsigned int TTL);
 
 	//! set broadcast
-	void setBroadCast(const tpString&,unsigned int);
+	void setBroadcast(const tpString&,unsigned int);
 
 
 	//! join a multicast group

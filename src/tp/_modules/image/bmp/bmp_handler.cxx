@@ -17,26 +17,26 @@
 #include <tp/version.h>
 
 
-class tpImageFactoryBMP : public tpImageHandler {
+class tpImageHandler_BMP : public tpImageHandler {
 public:
 
 	TP_TYPE_DECLARE;
 
 	bool getCapability(tpUInt capability,const tpString& name);
 
-	tpImageFactoryBMP();
+	tpImageHandler_BMP();
 
 	virtual tpImage* read(const tpString& name);
 };
 
 //////////////////////////////////////////////////////////////////////////
 
-tpImageFactoryBMP::tpImageFactoryBMP() : tpImageHandler()
+tpImageHandler_BMP::tpImageHandler_BMP() : tpImageHandler()
 {
 	tpLogNotify("%s BMP image support",tpGetVersionString());
 }
 
-bool tpImageFactoryBMP::getCapability( tpUInt capability,const tpString& name )
+bool tpImageHandler_BMP::getCapability( tpUInt capability,const tpString& name )
 {
 	switch (capability)
 	{
@@ -49,7 +49,7 @@ bool tpImageFactoryBMP::getCapability( tpUInt capability,const tpString& name )
 	return false;
 }
 
-tpImage* tpImageFactoryBMP::read( const tpString& name )
+tpImage* tpImageHandler_BMP::read( const tpString& name )
 {
 	tpUInt _uival;
 	tpUShort _usval;
@@ -136,9 +136,9 @@ tpImage* tpImageFactoryBMP::read( const tpString& name )
 }
 
 
-TP_TYPE_REGISTER(tpImageFactoryBMP,tpImageHandler,ImageFactoryBMP);
+TP_TYPE_REGISTER(tpImageHandler_BMP,tpImageHandler,ImageFactoryBMP);
 
 TP_MODULE_HOOK(ImageBMP)
 
-tpModuleInitializer<tpImageFactoryBMP> g_imagefactory_bmp;
+tpModuleInitializer<tpImageHandler_BMP> g_imagefactory_bmp;
 

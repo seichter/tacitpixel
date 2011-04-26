@@ -131,13 +131,6 @@ tpNode* tpNode::read(const tpString& file)
 	if (file.isEmpty()) return 0;
 
 	const tpModuleList& ml = tpModuleManager::get()->getModules();
-	
-	//// add the path to the list
-	//tpFilePathList& fpl = tpSystem::get()->getFileSearchPaths();
-	//tpString relpath = file.beforeLast(*tpPathSep[0]);
-	//fpl.add(relpath);
-
-	
 
 	for (tpSizeT i = 0; i < ml.getSize(); i++)
 	{

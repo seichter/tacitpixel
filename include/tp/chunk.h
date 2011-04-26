@@ -22,8 +22,8 @@
 
 */
 
-#ifndef TPCHUNK_H
-#define TPCHUNK_H
+#ifndef TP_CHUNK_H
+#define TP_CHUNK_H
 
 
 #include <tp/types.h>
@@ -95,12 +95,35 @@ protected:
 class TP_API tpSizedChunk : public tpChunk {
 public: 
 
+	/**
+	 * Set size of memory chunk. Please be aware
+	 * that the chunk always will be resized, even
+	 * if it will be small than the previous size.
+	 *
+	 * @param size new size of chunk
+	 */
 	virtual void setSize(tpSizeT size);
 
+	/**
+	 * Returns size of the chunk
+	 *
+	 * @return size of the memory chunk
+	 */
 	virtual tpSizeT getSize() const { return m_size; }
 	
+	/**
+	 * Clears and frees the memory of the memory chunk
+	 */
 	virtual void empty();
 	
+	/**
+	 * Copies the content of another memory pointer
+	 * into the memory chunk. The routine expects the
+	 * user to have the size of the chunk set correctly.
+	 * Hence, only getSize() bytes are copied.
+	 *
+	 * @param ptr pointer to memory to be copied from
+	 */
 	void copy(const void* ptr);
 
 protected:

@@ -1,3 +1,9 @@
+/*
+ * This file is part of tacit pixel
+ *
+ * (c) Copyrights 1999-2011 Hartmut Seichter
+ *
+ */
 #ifndef TP_QUAT_H
 #define TP_QUAT_H
 
@@ -26,7 +32,7 @@ public:
 		 
 		 T w4 = T(4.0) * this->w();
 		 this->x() = (m(2,1) - m(1,2)) / w4 ;
-		 this->y() = (m(0,2) - m(2,0) / w4 ;
+		 this->y() = (m(0,2) - m(2,0)) / w4 ;
 		 this->z() = (m(1,0) - m(0,1)) / w4 ;
 	 }
 

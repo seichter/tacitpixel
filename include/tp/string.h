@@ -124,9 +124,18 @@ public:
 	const T& operator [] ( tpSizeT idx ) const { return m_buffer.ptr<T>()[idx]; }
 	
 	
-	//! get the string after last occurence 
+	//! get the string after last occurence of c
 	tpString afterLast(const char& c) const;
-	
+
+	//! get the string after first occurence of c
+	tpString afterFirst(const char& c) const;
+
+	//! get string before first occurrence of c
+	tpString beforeFirst(const char& c) const;
+
+	//! get string before last occurence of c
+	tpString beforeLast(const char& c) const;
+
 	//! find a sub string
 	int find(const char* sub) const;
 	

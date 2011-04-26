@@ -10,7 +10,7 @@
  *
  */
 
-#include "tpModule.h"
+#include <tp/module.h>
 
 #import "tpGLRenderSurfaceCocoa.h"
 
@@ -117,7 +117,7 @@ tpGLRenderSurfaceCocoa::tpGLRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 	
 }
 
-tpBool tpGLRenderSurfaceCocoa::makeCurrent() 
+bool tpGLRenderSurfaceCocoa::makeCurrent() 
 {
 
 	[oglcontext makeCurrentContext];
@@ -138,7 +138,7 @@ tpBool tpGLRenderSurfaceCocoa::makeCurrent()
 	return true;
 }
 
-tpBool tpGLRenderSurfaceCocoa::swapBuffers() 
+bool tpGLRenderSurfaceCocoa::swapBuffers() 
 {	
 	[oglcontext flushBuffer];
 	[oglcontext update];
@@ -154,7 +154,7 @@ tpString tpGLRenderSurfaceCocoa::getString(tpUInt glenum)
 	return result;
 }
 
-tpBool tpGLRenderSurfaceCocoa::show(tpBool doShow) 
+bool tpGLRenderSurfaceCocoa::show(bool doShow) 
 {
 	[window setIsVisible:(BOOL)doShow];
 

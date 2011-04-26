@@ -13,12 +13,12 @@
 #ifndef TPGLRENDERSURFACECOCOA_H
 #define TPGLRENDERSURFACECOCOA_H
 
+#include <Cocoa/Cocoa.h>
 
 #include "tpGLRenderer.h"
-#include "tpRenderer.h"
-#include "tpRenderSurface.h"
 
-#include <Cocoa/Cocoa.h>
+#include <tp/rendersurface.h>
+#include <tp/log.h>
 
 
 class tpGLRenderSurfaceCocoa : public tpRenderSurface {
@@ -28,12 +28,12 @@ public:
 	
 	tpGLRenderSurfaceCocoa( tpRenderSurfaceTraits* traits );
 	
-	virtual tpBool makeCurrent();
-	virtual tpBool swapBuffers();
+	virtual bool makeCurrent();
+	virtual bool swapBuffers();
 	
 	virtual tpString getString(tpUInt glenum);
 	
-	virtual tpBool show(tpBool doShow);	
+	virtual bool show(bool doShow);	
 	
 	
 	tpVoid setCaption(const tpString& caption);
@@ -50,8 +50,8 @@ protected:
 	
 	NSAutoreleasePool *pool;
 	NSWindow *window;
-	NSOpenGLContext* oglcontext;
-	NSObject* delegate;
+	NSOpenGLContext *oglcontext;
+	NSObject *delegate;
 	
 	virtual ~tpGLRenderSurfaceCocoa();
 	

@@ -36,12 +36,15 @@ tpNode* tpOBJ(const tpString& filename)
 	{
 		tpLogError("tpOBJSceneLoader::getScene(%s) : can not load this file!",
 			filename.c_str());
-		return NULL;
+		return 0L;
 	}
 
 
+	// regenerate the model structure
 	glmUnitize(model);
 	glmFacetNormals(model);
+	glmVertexNormals(model,90);
+	glmLinearTexture(model);
 
 	tpNode* root = new tpNode();
 
@@ -49,66 +52,57 @@ tpNode* tpOBJ(const tpString& filename)
 	
 	while (group)
 	{
-		tpLogNotify("%s found group",__FUNCTION__);
+		//tpLogNotify("%s found group",__FUNCTION__);
 
 		if (group->numtriangles > 0)
 		{
 			tpPrimitive* mesh = new tpPrimitive(tpPrimitive::kTriangles);
 			
-			tpLogMessage("%s found %d triangles",__FUNCTION__,group->numtriangles);
+			//tpLogNotify("%s found %d triangles (%s)",__FUNCTION__,group->numtriangles,group->name);
 
 			if (group->name) mesh->setName(group->name);
 				
-			for (size_t i = 0; i < group->numtriangles; i++)
+			for (int tri_idx = 0; tri_idx < group->numtriangles; ++tri_idx)
 			{
-				triangle = &TRIS(group->triangles[i]); 
+				
+				// get the triangle
+				triangle = &TRIS(group->triangles[tri_idx]);
 
-				if (0 == triangle) continue;
+				if (triangle) {
 
-				tpVec3r cur_vertex;
-				tpVec3r cur_normal;
-				tpVec3r cur_color;
-				tpVec3r cur_tcoord;
-
-				/*
-				// WTF using same index?
-				for (int i = 0; i < 3; ++i)
-				{
-					int idx = triangle->vindices[i];
-					
-					cur_vertex[0] = (tpReal)model->vertices[3 * idx + 0];
-					cur_vertex[1] = (tpReal)model->vertices[3 * idx + 1];
-					cur_vertex[2] = (tpReal)model->vertices[3 * idx + 2];
-
-					mesh->addVertex(v1,v2,v3);
-					
-					// Normal for this vertex
-					idx = triangle->nindices[i];
-
-					if (idx >= 0) {
+					tpVec3r cur_vertex;
+					tpVec3r cur_normal;
+					tpVec3r cur_color;
+					tpVec2r cur_tcoord;
+										
+					// loop through vertices
+					for (int v_idx = 0; v_idx < 3; v_idx++)
+					{
+						// vertex
+						cur_vertex[0] = model->vertices[3 * triangle->vindices[v_idx] + 0];
+						cur_vertex[1] = model->vertices[3 * triangle->vindices[v_idx] + 1];
+						cur_vertex[2] = model->vertices[3 * triangle->vindices[v_idx] + 2];
+							
+						// normal
+						cur_normal[0] = model->normals[3 * triangle->nindices[v_idx] + 0];
+						cur_normal[1] = model->normals[3 * triangle->nindices[v_idx] + 1];
+						cur_normal[2] = model->normals[3 * triangle->nindices[v_idx] + 2];
 						
-						v1 = (tpReal)model->normals[3 * idx];
-						v2 = (tpReal)model->normals[3 * idx + 1];
-						v3 = (tpReal)model->normals[3 * idx + 2];
-
-						mesh->addNormal(v1,v2,v3);
-					}
-					
-					// Texture Coordinates for this vertex
-					idx = triangle->tindices[i];
-					
-					if (idx >= 0) {
+						// tcoord
+						cur_tcoord[0] = model->texcoords[2 * triangle->tindices[v_idx] + 0];
+						cur_tcoord[1] = model->texcoords[2 * triangle->tindices[v_idx] + 1];
 						
-						tpReal t1 = (tpReal)model->texcoords[2 * idx];
-						tpReal t2 = (tpReal)model->texcoords[2 * idx + 1];
+						// add to mesh
+						mesh->addVertex(cur_vertex,cur_normal,cur_tcoord);
 						
-						mesh->addTexCoord(t1, t2);
+						tpLogNotify("%s found add vertex no %d of triangle %d",__FUNCTION__,v_idx,tri_idx);
+						
 						
 					}
 				}
-				*/
 			}
-		
+
+
 			if (model->nummaterials)
 			{
 				GLMmaterial* material;

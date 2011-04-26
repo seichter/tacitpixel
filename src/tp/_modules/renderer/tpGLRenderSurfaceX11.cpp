@@ -13,7 +13,8 @@
 #include "tpGLRenderSurfaceX11.h"
 #include "tpGLRenderer.h"
 #include "tpGL.h"
-#include "tpModule.h"
+
+#include <tp/module.h>
 
 tpGLRenderSurfaceX11::tpGLRenderSurfaceX11( tpRenderSurfaceTraits* traits )
 : tpRenderSurface( traits ), dpy(0), win(0)
@@ -418,13 +419,13 @@ void tpGLRenderSurfaceX11::doKill()
 	
 }
 
-tpBool tpGLRenderSurfaceX11::show(tpBool doShow) {
+bool tpGLRenderSurfaceX11::show(bool doShow) {
 
 	return true;
 
 }
 
-tpBool tpGLRenderSurfaceX11::makeCurrent()
+bool tpGLRenderSurfaceX11::makeCurrent()
 {
 	if (tpGL::eglMakeCurrent) {
 		return tpGL::eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context) == TRUE ? true : false;
@@ -435,7 +436,7 @@ tpBool tpGLRenderSurfaceX11::makeCurrent()
 	return false;
 }
 
-tpBool tpGLRenderSurfaceX11::swapBuffers()
+bool tpGLRenderSurfaceX11::swapBuffers()
 {
 	if (tpGL::eglSwapBuffers) 
 	{

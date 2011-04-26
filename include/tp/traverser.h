@@ -9,11 +9,6 @@ class tpNode;
 
 class TP_API tpTraverser : public tpReferenced {
 public:
-	
-	enum {
-		E_PUSH,
-		E_POP
-	};
 
 	tpTraverser();
 

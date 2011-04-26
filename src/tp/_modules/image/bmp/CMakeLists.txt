@@ -1,15 +1,18 @@
-add_subdirectory(lib3ds)
-
-set(module_name tacit_3ds)
+set(module_name tacit_bmp)
 
 include_directories(
 	${CMAKE_SOURCE_DIR}/include
+	${CMAKE_SOURCE_DIR}/src/_ext
 	${CMAKE_CURRENT_SOURCE_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}/lib3ds
 	)
+	
+	
+if(MSVC)
+	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif()
 
 set(srcs
-	main.cpp
+	bmp_handler.cxx
 	)
 	
 
@@ -17,9 +20,15 @@ add_library(${module_name} MODULE
 	${srcs}
 	)
 	
+
+set_target_properties(${module_name} 
+	PROPERTIES
+	OUTPUT_NAME ${module_name}
+	)
+	
 	
 target_link_libraries(${module_name}
-	tacit lib3ds
+	tacit jpeg
 	)
 	
 if(APPLE)
@@ -31,18 +40,24 @@ endif()
 set_target_properties(${module_name}
 	PROPERTIES
 	PREFIX ""
-	OUTPUT_NAME ${module_name}
-#	PROJECT_LABEL "Plugin 3DS"
+#	PROJECT_LABEL "Plugin JPEG"
 )
 	
 if(CMAKE_CROSSCOMPILING AND MSVC)
+	
+	target_link_libraries(${module_name}
+		libwcex
+		)
+			
 	set_target_properties(${module_name}
 		PROPERTIES
 		LINK_FLAGS /nodefaultlib:secchk.lib
 	)
 endif()
 
+
 if(BUILD_INSTALLTARGET)
+
 	set(MODULE_PATH lib)
 	if (WIN32)
 		set(MODULE_PATH bin)

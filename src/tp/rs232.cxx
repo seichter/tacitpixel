@@ -22,7 +22,7 @@
 
 
 // ctor
-tpSerialLine::tpSerialLine()
+tpRS232::tpRS232()
   : 
 #if defined(__unix) || defined (__APPLE__)
     m_fd(-1),
@@ -56,7 +56,7 @@ tpSerialLine::tpSerialLine()
 
 
 
-tpSerialLine::tpSerialLine(const tpString& tty)
+tpRS232::tpRS232(const tpString& tty)
   :
 #if defined(__unix)
     m_fd(-1),
@@ -89,13 +89,13 @@ tpSerialLine::tpSerialLine(const tpString& tty)
 
 }
 
-tpSerialLine::~tpSerialLine()
+tpRS232::~tpRS232()
 {
 	close();
 }
 
 
-int tpSerialLine::useTimeout(bool use) {
+int tpRS232::useTimeout(bool use) {
 
 	m_use_timeout = use;
 	return configLine();
@@ -103,7 +103,7 @@ int tpSerialLine::useTimeout(bool use) {
 }
 
 
-int tpSerialLine::open(const tpString& ttyname) {
+int tpRS232::open(const tpString& ttyname) {
 
 	if (ttyname.isEmpty())
   {
@@ -177,7 +177,7 @@ int tpSerialLine::open(const tpString& ttyname) {
 
 
 
-int tpSerialLine::isOpen() const
+int tpRS232::isOpen() const
 {
 
 #if defined (__unix) || defined(__APPLE__)
@@ -191,7 +191,7 @@ int tpSerialLine::isOpen() const
 #endif
 }
 
-int tpSerialLine::close()
+int tpRS232::close()
 {
 
 #if defined(__unix) || (__APPLE__)
@@ -222,25 +222,25 @@ int tpSerialLine::close()
 #endif
 }
 
-int tpSerialLine::reopen()
+int tpRS232::reopen()
 {
 	close();
 	return open(m_ttyname.c_str());  
 }
 
-int tpSerialLine::writeChar(char c)
+int tpRS232::writeChar(char c)
 {
 	return write(&c, 1);
 }
 
 
-int tpSerialLine::readChar(char& c)
+int tpRS232::readChar(char& c)
 {
   return read(&c, 1);
   
 }
 
-int tpSerialLine::read(char *buf, int bytes)
+int tpRS232::read(char *buf, int bytes)
 {
 
 #if defined(__unix) || defined(__APPLE__)
@@ -316,7 +316,7 @@ int tpSerialLine::read(char *buf, int bytes)
 
 }
 
-int tpSerialLine::write(const char *buf, int bytes)
+int tpRS232::write(const char *buf, int bytes)
 {
 
 #if defined(__unix) || defined(__APPLE__)
@@ -401,13 +401,13 @@ int tpSerialLine::write(const char *buf, int bytes)
 #endif
 }
 
-int tpSerialLine::writeString(const char* buf)
+int tpRS232::writeString(const char* buf)
 {
   if (!buf) return 0;  
   return write(buf, ::strlen(buf));
 }
 
-void tpSerialLine::flushInput(){
+void tpRS232::flushInput(){
 
 #if defined (__unix)
 #if !defined(__BSD__)
@@ -449,7 +449,7 @@ void tpSerialLine::flushInput(){
 }
 
 
-void tpSerialLine::flushOutput() {
+void tpRS232::flushOutput() {
 
 	// UNIX
 #if defined(__unix)
@@ -472,14 +472,14 @@ void tpSerialLine::flushOutput() {
 }
 
 
-tpHandle tpSerialLine::getFD () const
+tpHandle tpRS232::getFD () const
 {
   return m_fd;
 }
 
 
 int
-tpSerialLine::setVmin(int vmin)
+tpRS232::setVmin(int vmin)
 {
   m_vmin = vmin;
   
@@ -487,7 +487,7 @@ tpSerialLine::setVmin(int vmin)
 }
 
 int
-tpSerialLine::setVtime(int vtime)
+tpRS232::setVtime(int vtime)
 {
   m_vtime = vtime;
   
@@ -495,7 +495,7 @@ tpSerialLine::setVtime(int vtime)
 }
 
 int
-tpSerialLine::setBaudrate(int baud_rate)
+tpRS232::setBaudrate(int baud_rate)
 {
 	m_baud_rate = baud_rate;
   
@@ -503,7 +503,7 @@ tpSerialLine::setBaudrate(int baud_rate)
 }
 
 int
-tpSerialLine::setXon(int on)
+tpRS232::setXon(int on)
 {
   m_xon = on;
   
@@ -511,14 +511,14 @@ tpSerialLine::setXon(int on)
 }
 
 int
-tpSerialLine::setXoff(int on)
+tpRS232::setXoff(int on)
 {
   m_xoff = on;
   
   return this->configLine();
 }
 
-int tpSerialLine::setStopbits(int bits)
+int tpRS232::setStopbits(int bits)
 {
 	switch (bits){
 	case 2:
@@ -531,7 +531,7 @@ int tpSerialLine::setStopbits(int bits)
 	return this->configLine();
 }
 
-int tpSerialLine::setBytesize(int bytes) {
+int tpRS232::setBytesize(int bytes) {
 
 	m_bytesize = bytes;
 
@@ -539,7 +539,7 @@ int tpSerialLine::setBytesize(int bytes) {
 
 }
 
-int tpSerialLine::setParity(int parity) {
+int tpRS232::setParity(int parity) {
 
 	m_parity = parity;
 
@@ -548,14 +548,14 @@ int tpSerialLine::setParity(int parity) {
 }
 
 
-int tpSerialLine::setFlowControl(unsigned char flowcontrol)
+int tpRS232::setFlowControl(unsigned char flowcontrol)
 {
 	m_flowcontrol = flowcontrol;
 	return this->configLine();
 	
 }
 
-int tpSerialLine::configLine() {
+int tpRS232::configLine() {
 
   
   if (!isOpen()) {
@@ -775,7 +775,7 @@ int tpSerialLine::configLine() {
 
 
 
-int tpSerialLine::convert2Baud(int int_baud) {
+int tpRS232::convert2Baud(int int_baud) {
     int baud;
     
     switch (int_baud) {

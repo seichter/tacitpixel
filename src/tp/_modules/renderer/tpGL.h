@@ -45,6 +45,19 @@ typedef void* NativeGLContext;
 #endif
 
 
+#if defined(__unix) || defined(__APPLE__)
+
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/keysym.h>
+
+#undef Cursor
+
+typedef void *GLXContext;
+typedef Window GLXDrawable;
+
+#endif
+
 #if defined(__APPLE__)
 
 
@@ -60,17 +73,7 @@ typedef struct _CGLPBufferObject       *CGLPBufferObj;
 
 
 
-#if defined(__unix) || defined(__APPLE__)
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/keysym.h>
-
-
-typedef void *GLXContext;
-typedef Window GLXDrawable;
-
-#endif
 
 #if defined(_WIN32)
 #	define TP_CALLBACK __stdcall

@@ -377,7 +377,7 @@ tpUDPSocket::tpUDPSocket(unsigned int localport) :
 
 
 
-void tpUDPSocket::setBroadCast(const tpString& remoteaddress,unsigned int remoteport)
+void tpUDPSocket::setBroadcast(const tpString& remoteaddress,unsigned int remoteport)
 {
 
 	m_remoteaddress = remoteaddress;

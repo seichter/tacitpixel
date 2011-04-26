@@ -462,10 +462,11 @@ template <class T> inline tpListIterator<T> tpList<T>::getEnd() const
 	return tail->next;
 }
 
-template <class T> inline T& tpList<T>::getItem(tpULong i)
+template <class T> inline 
+T& tpList<T>::getItem(tpULong i)
 {
 	tpListItem<T>* _l = head;
-	if (i < m_length) for (tpULong i = 0; i < i; i++) _l = _l->next;
+	if (i < m_length) for (tpULong i = 0; i < m_length; i++) _l = _l->next;
 	return _l->value;
 }
 
@@ -474,7 +475,7 @@ template <class T>
 const T& tpList<T>::getItem( tpULong idx ) const
 {
 	tpListItem<T>* _l = head;
-	if (idx < m_length) for (tpULong i = 0; i < i; i++) _l = _l->next;
+	if (idx < m_length) for (tpULong i = 0; i < m_length; i++) _l = _l->next;
 	return _l->value;
 }
 

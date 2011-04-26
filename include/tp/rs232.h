@@ -22,11 +22,11 @@
 
 */ 
 
-#ifndef TPSERIALLINE_H
-#define TPSERIALLINE_H
+#ifndef TP_RS232_H
+#define TP_RS232_H
 
 
-/*! \file tpSerialLine.h
+/*! \file tpRS232.h
  *  \brief a RS232 wrapper
  */
 
@@ -66,7 +66,7 @@
 #define ASCII_XOFF      0x13
 
 /*!
-  \class tpSerialLine
+  \class tpRS232
   \brief a abstraction for a serial line
   \version 1.0
   
@@ -75,13 +75,13 @@
   some code from Jan Springer <jsd@igroup.org>
 */
 
-class TP_API tpSerialLine 
+class TP_API tpRS232 
 {  
 public:
 
-	tpSerialLine();
-	tpSerialLine(const tpString& tty);
-	virtual ~tpSerialLine();
+	tpRS232();
+	tpRS232(const tpString& tty);
+	virtual ~tpRS232();
 
 	// settings
 	int setVmin(int vmin);

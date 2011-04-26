@@ -24,7 +24,7 @@ public:
 	tpVec();
 
 	//! copy constructor
-	tpVec(const tpVec& v);
+	tpVec(const tpVec<T,N>& v);
 
 	//! d'tor
 	~tpVec();
@@ -36,9 +36,9 @@ public:
 	const T* getData() const;
 
 	//! substract a vector
-	tpVec operator -(const tpVec& rs) const;
+	const tpVec operator -(const tpVec& rs) const;
 	//! add a vector
-	tpVec operator +(const tpVec& rs) const;
+	const tpVec operator +(const tpVec& rs) const;
 
 	//! substract from self vector
 	tpVec& operator -= (const tpVec& v);
@@ -47,6 +47,7 @@ public:
 
 	//! copy data from other representations
 	void set(const tpVec& v);
+
 	//! copy data from simple buffer
 	void set(const T* buf);
 	
@@ -55,7 +56,7 @@ public:
 
 	//! get the angle between this and another vector
 	T getAngle(tpVec<T,N> v) const;
-	
+
 	//! assignment operator
 	tpVec& operator = (const tpVec& rs);
 
@@ -98,19 +99,19 @@ public:
 	//{
 	//	cu
 	//}
-
+	
 protected:
 	T vec[N];
 };
 
 // Operators
-
+/*
 template <class T,tpUInt N>
-tpVec<T,N> inline operator - (const tpVec<T,N>& l, const tpVec<T,N>& r)
+const tpVec<T,N> inline operator - (const tpVec<T,N>& l, const tpVec<T,N>& r)
 {
 	tpVec<T,N> res(l); res -= r; return res;
 }
-
+*/
 
 // Vec -----------------------------------------------------------------------------------------
 
@@ -135,19 +136,21 @@ template <class T,tpUInt N> inline const T* tpVec<T,N>::getData() const
 };
 
 
-template <class T,tpUInt N> inline tpVec<T,N> tpVec<T,N>::operator - (const tpVec<T,N>& rs) const
+template <class T,tpUInt N> inline 
+const tpVec<T,N> tpVec<T,N>::operator - (const tpVec<T,N>& rhs) const
 {
-	tpVec<T,N> out;
-	for (tpUInt i = 0; i < N; i++) out.vec[i] = vec[i] - rs.vec[i];
+	tpVec<T,N> out(*this); 
+	out -= rhs;
 	return out;
-};
+}
 
-template <class T,tpUInt N> inline tpVec<T,N> tpVec<T,N>::operator +(const tpVec& rs) const
+template <class T,tpUInt N> inline 
+const tpVec<T,N> tpVec<T,N>::operator + (const tpVec<T,N>& rhs) const
 {
-	tpVec<T,N> out;
-	for (tpUInt i = 0; i < N; i++) out.vec[i] = vec[i] + rs.vec[i];
+	tpVec<T,N> out(*this);
+	out += rhs;
 	return out;
-};
+}
 
 template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::operator -= (const tpVec<T,N>& v)
 {
@@ -264,19 +267,20 @@ template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::swapComponent(tpUInt 
 
 // Vec3 -----------------------------------------------------------------------
 
-template <class T> class tpVec3 : public tpVec<T,3>
+template <class T> 
+class tpVec3 : public tpVec<T,3>
 {
 public:
 
 	tpVec3() { this->vec[0] = T(); this->vec[1] = T(); this->vec[2] = T(); }
 
-	tpVec3(const tpVec& in) { this->vec[0] = in[0]; this->vec[1] = in[1]; this->vec[2] = in[2]; }
+	tpVec3(const tpVec<T,3>& in) { this->vec[0] = in[0]; this->vec[1] = in[1]; this->vec[2] = in[2]; }
 
 	tpVec3(T c1, T c2, T c3) {this->vec[0] = c1; this->vec[1] = c2; this->vec[2] = c3;}
 
 	void set(T c1, T c2, T c3) { this->vec[0] = c1; this->vec[1] = c2; this->vec[2] = c3; }
 
-	tpVec3 cross(const tpVec3&) const;
+	tpVec3 cross(const tpVec3<T>&) const;
 };
 
 // Vec3 Implementation

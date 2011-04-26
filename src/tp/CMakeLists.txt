@@ -16,6 +16,7 @@ CHECK_INCLUDE_FILES("sys/param.h;sys/mount.h" HAVE_SYS_MOUNT_H)
 CHECK_INCLUDE_FILES("pthread.h" HAVE_PTHREAD_H)
 CHECK_INCLUDE_FILES("dlfcn.h" HAVE_DLFCN_H)
 CHECK_INCLUDE_FILES("time.h" HAVE_TIME_H)
+CHECK_INCLUDE_FILES("stdio.h" HAVE_STDIO_H)
 
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
@@ -63,6 +64,7 @@ set(tp_srcs
 	allocator.cxx
 	chunk.cxx
 	file.cxx
+	filename.cxx
 	hash.cxx
 	image.cxx
 	imageop.cxx

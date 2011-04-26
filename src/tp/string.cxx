@@ -36,16 +36,23 @@ tpString::tpString(const tpString& str)
 	set( str.c_str() );
 }
 
+
+tpString::~tpString()
+{
+}
+
 //////////////////////////////////////////////////////////////////////////
 
-tpString& tpString::set( const char* buffer, tpSizeT size, tpUByte encoding )
+tpString&
+tpString::set( const char* buffer, tpSizeT size, tpUByte encoding )
 {
 	_assign(buffer);
 	_truncate(size);
 	return *this;
 }
 
-tpString& tpString::set( const char* str, tpUByte encoding )
+tpString&
+tpString::set( const char* str, tpUByte encoding )
 {
 	_assign(str);
 	
@@ -112,7 +119,8 @@ tpString::truncate( tpSizeT pos )
 
 //////////////////////////////////////////////////////////////////////////
 
-tpString& tpString::subst( const tpChar& c, const tpChar& substc )
+tpString&
+tpString::subst( const tpChar& c, const tpChar& substc )
 {
 	tpChar* cptr =  m_buffer.ptr<tpChar>();
 	for (tpSizeT i = 0; i < getLength();i++)
@@ -123,17 +131,20 @@ tpString& tpString::subst( const tpChar& c, const tpChar& substc )
 	return *this;
 }
 
-bool tpString::isEmpty() const
+bool
+tpString::isEmpty() const
 {
 	return ( 0 == getLength() );
 }
 
-void tpString::empty()
+void
+tpString::empty()
 {
 	m_buffer.empty();
 }
 
-tpInt tpString::getPascal( char** buffer ) const
+tpInt
+tpString::getPascal( char** buffer ) const
 {
 	
 	int _length = this->getLength();
@@ -148,12 +159,6 @@ tpInt tpString::getPascal( char** buffer ) const
 	
 	return _length;
 }
-
-    
-tpString::~tpString()
-{
-}
-
 
 tpSizeT 
 tpString::getLength() const
@@ -280,14 +285,16 @@ tpString::isUTF8(const char* str)
     return 1;
 }
 
-int tpString::find(const char* sub) const
+int
+tpString::find(const char* sub) const
 {
 	const char *pf = tpStrStr(c_str(),(char*)sub);
 	return (pf) ? pf - (const char*)c_str() : TP_NOTFOUND;
 }
 
 
-tpString tpString::afterLast(const char& c) const
+tpString
+tpString::afterLast(const char& c) const
 {
 	tpString _ret;
 	int _pos = find(c,true);
@@ -297,7 +304,51 @@ tpString tpString::afterLast(const char& c) const
 	_ret = (const char*)c_str() + _pos + 1;
 
 	return _ret;
-};
+}
+
+tpString
+tpString::afterFirst(const char& c) const
+{
+	tpString _ret;
+	int _pos = find(c);
+
+	if (0 > _pos) return *this;
+
+	_ret = (const char*)c_str() + _pos + 1;
+
+	return _ret;
+}
+
+tpString
+tpString::beforeFirst(const char& c) const
+{
+
+	tpString _ret;
+/*
+	const char* _pc = (const char*)c_str();
+
+	while (*_pc != 0 && *_pc != c)
+	{
+		_ret << *_pc;
+		_pc++;
+	}
+*/
+	return _ret;
+}
+
+
+tpString
+tpString::beforeLast(const char& c) const
+{
+	tpString _ret;
+/*
+	int pos = find(c,TRUE);
+
+	if (pos != TP_NOTFOUND) _ret = tpString(m_stringbuffer.getData() + pos);
+*/
+	return _ret;
+}
+
 
 
 #if 0
@@ -364,44 +415,8 @@ unsigned long tpString::getHash() const
 
 
 
-tpString tpString::afterFirst(const char& c) const
-{
-	tpString _ret;
-	int _pos = find(c);
-
-	if (0 > _pos) return *this;
-
-	_ret = (const char*)c_str() + _pos + 1;
-
-	return _ret;
-};
-
-tpString tpString::beforeFirst(const char& c) const
-{
-
-	tpString _ret;
-	
-	const char* _pc = (const char*)c_str();
-
-	while (*_pc != 0 && *_pc != c)
-	{
-		_ret << *_pc;
-		_pc++;
-	};
-
-	return _ret;
-};
 
 
-tpString tpString::beforeLast(const char& c) const
-{
-	tpString _ret;
-	int pos = find(c,TRUE);
-	
-	if (pos != TP_NOTFOUND) _ret = tpString(m_stringbuffer.getData() + pos);
-
-	return _ret;
-};
 
 
 tpString tpString::between(char leftc, char rightc) const
@@ -657,9 +672,9 @@ TP_API tpString tpStringFormat( const tpString& format, ... )
 	buffer.resize(1024);
 
 #ifndef _WIN32
-	vsnprintf(&_buf[0],TP_MAXBUFSIZE,format, argptr);
+	vsnprintf(&buffer[0],buffer.getSize(),format.c_str(), argptr);
 #elif (__SYMBIAN32__)
-	snprintf(&_buf[0],TP_MAXBUFSIZE,format, argptr);
+	snprintf(&buffer[0],buffer.getSize(),format.c_str(), argptr);
 #else	
 	_vsnprintf(&buffer[0],buffer.getSize(),format.c_str(),argptr);
 #endif

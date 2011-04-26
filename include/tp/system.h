@@ -1,17 +1,10 @@
 #ifndef TP_SYSTEM_H
 #define TP_SYSTEM_H
 
-
 #include <tp/globals.h>
 #include <tp/referenced.h>
 #include <tp/array.h>
 #include <tp/string.h>
-
-#if defined(_WIN32) || defined(_WIN32_WCE)
-const tpString tpPathSep("\\");
-#else
-const tpString tpPathSep("/");
-#endif
 
 enum {
 	TP_SYS_LITTLEENDIAN = 0x0,
@@ -43,5 +36,8 @@ public:
 	tpString getTime() const;
 
 };
+
+TP_API tpString tpSlash();
+
 
 #endif

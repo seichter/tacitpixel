@@ -50,7 +50,7 @@ public:
 	}
 
 	template <typename T> 
-	bool isOfType(const T* q) const { this->getType() == q->getTypeInfo(); }
+	bool isOfType(const T* q) const { this->isOfType(q->getTypeInfo()); }
 
 	/*! Check if it is exacty the same type.
 		\param parent checks if aclass is of exact type

@@ -287,8 +287,7 @@ public:
 	tpMat44<T>&
 	rotate(const tpVec3<T>& vec, const T& rotation)
 	{
-		tpMat44<T> rot; rot.setRotation(vec,rotation);
-		(*this) *= rot;
+		tpMat44<T> rot; rot.setRotation(vec,rotation); *this *= rot;
 		return *this;
 	}
 
@@ -425,7 +424,7 @@ public:
 		this->m[15] = (T) 0;
 
 		return *this;
-	};
+	}
 
 	tpMat44&
 	setOrtho(T Left,T Right,T Bottom,T Top, T Near, T Far)
@@ -492,7 +491,7 @@ public:
 	tpMat44&
 	lookAt(const tpVec3<T>& eye, const tpVec3<T>& target, const tpVec3<T>& up)
 	{
-		tpVec3<T> L( target - eye );
+		tpVec3<T> L(target - eye);
 		L.normalize();
 		tpVec3<T> S = L.cross(up);
 		S.normalize();

@@ -27,23 +27,24 @@ tpLibrary::tpLibrary() : m_handle(0) {
 tpLibrary::tpLibrary(const tpLibrary& lib) : m_handle(lib.m_handle) {
 }
 
-
-void* tpLibrary::getHandle() const {
-	return m_handle;
-}
-
 tpLibrary::~tpLibrary() 
 {
 	close();
 }
 
-bool tpLibrary::close() 
+void*
+tpLibrary::getHandle() const {
+	return m_handle;
+}
+
+bool
+tpLibrary::close()
 {
 	bool result(false);
 #if defined(WIN32)
 	result = (TRUE == FreeLibrary(static_cast<HMODULE>(m_handle)));
-#elif defined(__unix) || defined(__APPLE__)
-	//result = (0 == dlclose(m_handle));
+#elif defined(HAVE_DLFCN_H)
+	result = (0 == dlclose(m_handle));
 	
 	/*
 	if (!result)
@@ -63,7 +64,8 @@ bool tpLibrary::close()
 }
 
 
-tpString tpLibrary::getModuleName() const {
+tpString
+tpLibrary::getModuleName() const {
 
 	tpString result;
 #if defined(_WIN32) || defined(_WIN32_WCE)
@@ -84,7 +86,8 @@ tpString tpLibrary::getModuleName() const {
 }
 
 
-bool tpLibrary::open( const tpString& file ) 
+bool
+tpLibrary::open( const tpString& file )
 {
 	
 	tpString actual_name = file; 
@@ -101,32 +104,21 @@ bool tpLibrary::open( const tpString& file )
 //	}
 //#endif
 
-#elif defined(__unix) || defined(__APPLE__)
-	
-	
+#elif defined(HAVE_DLFCN_H)
+
 	m_handle = dlopen(actual_name.c_str(), RTLD_GLOBAL | RTLD_NOW) ;
-	
-	if (! m_handle )
-	{
-		actual_name += ".so";
-		
-		m_handle = dlopen(actual_name.c_str(), RTLD_GLOBAL | RTLD_NOW);
-	}
 
-
-	// now try locally
-	if (! m_handle )
+	if (!m_handle)
 	{
-		actual_name = tpSystem::get()->getPluginPath() + tpPathSep + actual_name;
-		m_handle = dlopen(actual_name.c_str(), RTLD_GLOBAL | RTLD_NOW);
+		actual_name = file + ".so";
+		m_handle = dlopen(actual_name.c_str(), RTLD_GLOBAL | RTLD_NOW) ;
 	}
 	
-	// yet another option
-	if (! m_handle )
+	if (!m_handle)
 	{
-		actual_name = "lib" + actual_name;
-		
-		m_handle = dlopen(actual_name.c_str(), RTLD_GLOBAL | RTLD_NOW);
+		actual_name = file + ".dylib";
+		m_handle = dlopen(actual_name.c_str(), RTLD_GLOBAL | RTLD_NOW) ;
+
 	}
 
 	if (!m_handle)
@@ -147,14 +139,15 @@ bool tpLibrary::open( const tpString& file )
 
 }
 
-void* tpLibrary::getAddress( const tpString& funcName ) const
+void*
+tpLibrary::getAddress( const tpString& funcName ) const
 {
 	void* address(0L);
 
 	if (m_handle) {
-#if defined(WIN32)|| defined(WINCE)
+#if defined(_WIN32) || defined(_WIN32_WCE)
 		address = ::GetProcAddress(static_cast<HMODULE>(m_handle),funcName.c_str());
-#elif defined(__unix) || defined(__APPLE__)
+#elif defined(HAVE_DLFCN_H)
 		address = dlsym(m_handle,funcName.c_str());
 #endif
 		
@@ -168,19 +161,17 @@ void* tpLibrary::getAddress( const tpString& funcName ) const
 
 static tpArray<tpString> gs_libsearchpaths;
 
-tpLibrary* tpLibrary::load( const tpString& name )
+tpLibrary*
+tpLibrary::load( const tpString& name )
 {
-
 	tpLibrary* lib = new tpLibrary();
 
-	if ( lib->open(name) ) 
+	if ( false == lib->open(name) )
 	{
-		return lib;
-	} else {
 		delete lib;
+		lib = 0L;
 	}
-
-	return 0L;
+	return lib;
 }
 
 TP_TYPE_REGISTER(tpLibrary,tpReferenced,Library);

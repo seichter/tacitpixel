@@ -3,8 +3,7 @@
 
 #include <tp/types.h>
 #include <tp/utils.h>
-//#include <tp/log.h>
-//#include <typeinfo>
+
 /*!
  \class tpArray
  \brief a dynamic array 
@@ -279,7 +278,7 @@ private:
 };
 
 template <typename T>
-void tpArray<T>::copy( const T* orig, tpUInt length, tpUInt pos )
+void tpArray<T>::copy( const T* orig, tpSizeT length, tpSizeT pos )
 {
 	resize(length);
 	for (tpSizeT i = 0; i < length; i++ ) { m_data[i] = orig[i + pos]; }
@@ -318,11 +317,13 @@ void tpArray<T>::removeEnd()
 //-----------------------------------------------------------------------------
 
 
-template <typename T> tpArray<T>::tpArray() : m_data(0), m_size(0), m_capacity(0)
+template <typename T>
+tpArray<T>::tpArray() : m_data(0), m_size(0), m_capacity(0)
 {
 }
 
-template <typename T> tpArray<T>::tpArray(const tpArray& origin)
+template <typename T>
+tpArray<T>::tpArray(const tpArray& origin)
 : m_data(0), m_size(0), m_capacity(0)
 {
 	*this = origin;
