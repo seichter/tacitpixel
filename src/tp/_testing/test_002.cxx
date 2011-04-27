@@ -35,26 +35,32 @@ int main(int argc, char* argv[])
 
 	tpRefPtr<tpNode> root = new tpNode();
 
+	// first one
 	tpRefPtr<tpTransform> t = new tpTransform();
 	t->getMatrix().setIdentity();
-	t->getMatrix().translate(-2.0,1.0,-2.0);
-	
-	t->addChild(p.get());
-
+	t->getMatrix().translate(0.0,1.0,-1.0);
+	t->getMatrix().rotate(tpVec3r(0,1,0),45);
 	t->addChild(n.get());
+
+	// second one further away
+	tpRefPtr<tpTransform> t2 = new tpTransform();
+	t2->getMatrix().setIdentity();
+	t2->getMatrix().translate(0,0,-5);
+	t2->addChild(n.get());
 
 	root->addChild(p.get());
 	root->addChild(t.get());
+	root->addChild(t2.get());
 	
 	tpRenderSurfaceTraits traits;
-	traits.setSize(640,480).setPosition(10,10);
+	traits.setSize(640,480).setPosition(10,10).setTitle("Tacit Pixel 3");
 
 	tpRefPtr<tpRenderSurface> rendersurface = tpRenderSurface::create(&traits);
 
 	tpRefPtr<tpCamera> camera = new tpCamera;
 
-	camera->setProjectionPerspective(45.0f,1.3f,0.1f,1000.0f);
-	camera->setViewLookAt(tpVec3r(0,1,1),tpVec3r(0,0,0),tpVec3r(0,1,0));
+	camera->setProjectionPerspective(60.0f,1.3f,0.1f,1000.0f);
+	camera->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
 
 	camera->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
 	camera->setClearColor(tpVec4f(0.5f,0.5f,0.9f,1.0f));

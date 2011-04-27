@@ -25,10 +25,8 @@ public:
 	static const tpUInt max_capacity = sizeof(tpUInt);
 	
 	
-	/** \brief c'tor (standard size is 30)
-	 
+	/** C'or
 	 Constructor of the array.
-	 \param size initial size of the array (default = 30)
 	 */
 	tpArray();
 	
@@ -37,7 +35,7 @@ public:
 	 Copies an existing array to this array.
 	 \param array input array
 	 */
-	tpArray(const tpArray&);
+	tpArray(const tpArray& array);
 	
 	/** d'tor
 	 */
@@ -45,7 +43,7 @@ public:
 	
 	/** \brief get the data pointer
 	 
-	 Access the raw data (readonly).
+	 Access the raw data.
 	 \return T data pointer
 	 */
 	const T* getData() const;

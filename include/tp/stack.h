@@ -25,7 +25,7 @@
 #ifndef TPSTACK_H
 #define TPSTACK_H 1
 
-#include "tpTypes.h"
+#include <tp/types.h>
 
 
 /**
@@ -96,7 +96,7 @@ public:
 	
 	Checks if this stack is empty.
 	*/
-	tpBool isEmpty() const;
+	bool isEmpty() const;
 	
 	/** 
 	\brief get the actual size of the stack
@@ -214,7 +214,7 @@ template <typename T> inline void tpStack<T>::grow(tpUInt size)
 };
 
 
-template <typename T> inline tpBool tpStack<T>::isEmpty() const
+template <typename T> inline bool tpStack<T>::isEmpty() const
 {
 	return 0 == m_size;
 }

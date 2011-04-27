@@ -69,8 +69,6 @@ tpGLRenderSurfaceCocoa::tpGLRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 			  backing:NSBackingStoreBuffered 
 			  defer:FALSE];
 	
-
-	
 	NSOpenGLPixelFormatAttribute window_attribs[] =
 	{
 		NSOpenGLPFANoRecovery,
@@ -111,9 +109,10 @@ tpGLRenderSurfaceCocoa::tpGLRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 	[mdelegate setRenderSurface:this];
 	delegate = mdelegate;
 
+	/* title */
+	if (traits) this->setCaption(traits->getTitle());
 	
 	[NSApp finishLaunching];
-
 	
 }
 

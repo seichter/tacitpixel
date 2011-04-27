@@ -29,7 +29,6 @@ class tpStringJoin;
 
 /**
  * \class tpString
- * \module tpCore
  * \brief a string wrapper 
  *
  * A simple wrapper to handle a string. Not yet optimized.

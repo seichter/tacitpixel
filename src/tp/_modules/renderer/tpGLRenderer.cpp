@@ -19,13 +19,15 @@
 #include <tp/camera.h>
 #include <tp/primitive.h>
 #include <tp/transform.h>
+#include <tp/stack.h>
 
 class tpGLFixedFunctionTraverser : public tpGLTraverser {
 public:
 
-	//tpStack<tpMat44r> mvs;
+	tpStack<tpMat44r> mvs;
 
 	tpGLFixedFunctionTraverser() : tpGLTraverser() {
+		tpMat44r identity; identity.setIdentity();
 	}
 
 	void operator()(tpNode* node,tpCamera* camera)
@@ -42,6 +44,9 @@ public:
 
 		tpGL::glFrontFace(tpGL::CCW);
 		tpGL::Disable(tpGL::CULL_FACE);
+
+		//
+		mvs.push(camera->getView());
 
 		//tpGL::Enable(tpGL::LINE_SMOOTH);
 		//tpGL::Enable(tpGL::SMOOTH);
@@ -82,6 +87,8 @@ public:
 
 		// now apply all stuff regarding the nodes
 		if (node) node->traverse(*this);
+
+		mvs.pop();
 	}
 
 
@@ -99,6 +106,7 @@ public:
 
 	void pop(tpNode* node)
 	{
+		if(node->getType() == tpTransform::getTypeInfo()) this->popTransform(static_cast<tpTransform*>(node));
 	}
 
 	void pushPrimitive(tpPrimitive* prim)
@@ -166,7 +174,22 @@ public:
 
 	void pushTransform(tpTransform* trans)
 	{
-		tpGL::MultMatrixf(trans->getMatrix().data());
+#if 0
+		tpMat44r cm = trans->getMatrix();
+		cm *= mvs.getTop();
+		mvs.push(cm);
+#else
+		tpMat44r cm = mvs.getTop();
+		cm *= trans->getMatrix();
+		mvs.push(cm);
+#endif
+		tpGL::LoadMatrixf(cm.data());
+	}
+
+	void popTransform(tpTransform* trans)
+	{
+		mvs.pop();
+		tpGL::LoadMatrixf(mvs.getTop().data());
 	}
 };
 
