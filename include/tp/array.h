@@ -25,116 +25,88 @@ public:
 	static const tpUInt max_capacity = sizeof(tpUInt);
 	
 	
-	/** C'or
-	 Constructor of the array.
+	/**
+	 * Constructor
 	 */
 	tpArray();
 	
-	/** \brief copy c'tor
-	 
-	 Copies an existing array to this array.
-	 \param array input array
+	/**
+	 * Copy Constructor
+	 * 
+	 * \param array (const tpArray &)
 	 */
 	tpArray(const tpArray& array);
-	
-	/** d'tor
+
+	/**
+	 * Destructor
 	 */
 	~tpArray();
 	
-	/** \brief get the data pointer
-	 
-	 Access the raw data.
-	 \return T data pointer
-	 */
-	const T* getData() const;
+
+	const T* getData() const { return this->m_data; }
+	T* getData() { return this->m_data; }
 	
-	/** \brief get the data pointer
-	 
-	 Access the raw data
-	 \return T data pointer
-	 */
-	T* getData();
-	
-	/** \brief get the size of the array
-	 
-	 Returns the size of the array.
-	 \return size
+	T& operator [] (tpSizeT index);
+	const T& operator[] (tpSizeT index) const;
+
+	/**
+	 * Get element count of array
+	 * 
+	 * \return (const tpSizeT&) number of elements in 
+	 * the array
 	 */
 	const tpSizeT& getSize() const;
 	
-	/** \brief grow the array
-	 Grow the array by double the existing size.
-	 */
-	void grow();
-	//! shrink to given size
-	// void shrink(tpULong size);
 	
-	/** \brief add an item
-	 
-	 Add an existing item.
-	 \param item the item to add
-	 \return reference of array for chaining
+	/**
+	 * Add element to the array. Similar to push_back in STL
+	 * 
+	 * \param item (const T &) element to be added
+	 * \return (tpArray<T>&) return reference to self
 	 */
 	tpArray<T>& add(const T& item);
 	
-	/** \brief removes an item
-	 
-	 Removes an item from the array.
-	 \param index is the pointer to the object to remove
-	 
+
+	/**
+	 * Erase an element from the array. Similar to erase in STL
+	 * 
+	 * \param iter (T *) pointer to element
+	 * \return (T*) returns the element for destruction or other usage
 	 */
 	T* erase(T* iter);
 	
-	
-	//! erase the item at pos
+	/**
+	 * Erase an element at position from the array. Similar to erase in STL
+	 * 
+	 * \param pos (tpSizeT) position of the element
+	 * \return (T*) return the element
+	 */
 	T* erase(tpSizeT pos);
 	
-	/** \brief removes one item from the end
-	 
-	 Removes an item from the array.
-	 \param index is the index in the array
+	
+	/**
+	 * Remove the last element in the array
+	 * 
+	 * \return (T*) return the removed element
 	 */
-	void removeEnd();
+	T* removeEnd();
 	
-	///** \brief removes an item
-	
-	//Removes an item from the array.
-	//\param value
-	//*/
-	//void remove(const T& value);
-	
-	/** \brief find an item
-	 
-	 Find an item by value
-	 \param value is the value to find in the array
-	 \return index or -1 if fail or not found
+	/**
+	 * Try to find a value in the array
+	 * 
+	 * \param value (const T &) value to be found
+	 * \return (tpSizeT) position of the item
 	 */
 	tpSizeT find(const T& value) const;
 	
-	/** \brief copy from array
-	 
-	 Copy another array to this array.
-	 \param array array to copy
-	 \return reference to itself
+	/**
+	 * Copy to the array
+	 * 
+	 * \param & (const tpArray)
+	 * \return (tpArray&)
 	 */
 	tpArray& operator = (const tpArray&);
-	
-	/** \brief get item on position
-	 
-	 Returns single item on given position.
-	 \param index index where item is located in the array.
-	 \return reference to item
-	 */
-	
-	T& operator [] (tpSizeT index);
-	
-	/** \brief get item value on position
-	 
-	 Returns the single item value on given position.
-	 \param index index where item is located.
-	 \return value of item
-	 */
-	const T& operator[] (tpSizeT index) const;
+
 	
 	/** \brief add an item
 	 
@@ -264,6 +236,10 @@ public:
 	const T& back() const { return *(end() - 1); }
 
 private:
+
+
+	void grow();
+
 	
 	//! data pointer
 	T* m_data;
@@ -294,9 +270,13 @@ void tpArray<T>::release()
 }
 
 template <typename T>
-void tpArray<T>::removeEnd()
+T* tpArray<T>::removeEnd()
 {
-	if (m_size) m_size--;
+	if (m_size) {
+		m_size--;
+		return m_data[m_size];
+	}
+	return 0;
 }
 
 //template <typename T>
@@ -412,17 +392,6 @@ template <typename T> T& tpArray<T>::operator+=(const T& item)
 template <typename T> tpArray<T>::~tpArray()
 {
 	this->release();
-}
-
-
-template <typename T> const T* tpArray<T>::getData() const
-{
-	return m_data;
-}
-
-template <typename T> T* tpArray<T>::getData()
-{
-	return m_data;
 }
 
 template <typename T> const tpSizeT& tpArray<T>::getSize() const

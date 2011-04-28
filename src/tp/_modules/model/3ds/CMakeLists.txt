@@ -32,7 +32,7 @@ set_target_properties(${module_name}
 	PROPERTIES
 	PREFIX ""
 	OUTPUT_NAME ${module_name}
-#	PROJECT_LABEL "Plugin 3DS"
+	PROJECT_LABEL "Plugin 3DS"
 )
 	
 if(CMAKE_CROSSCOMPILING AND MSVC)

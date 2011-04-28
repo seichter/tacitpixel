@@ -1,4 +1,4 @@
-set(module_name tacit_bmp)
+set(module_name tacit_ppm)
 
 include_directories(
 	${CMAKE_SOURCE_DIR}/include
@@ -12,7 +12,7 @@ if(MSVC)
 endif()
 
 set(srcs
-	bmp_handler.cxx
+	ppm_handler.cxx
 	)
 	
 
@@ -28,7 +28,7 @@ set_target_properties(${module_name}
 	
 	
 target_link_libraries(${module_name}
-	tacit jpeg
+	tacit
 	)
 	
 if(APPLE)
@@ -40,7 +40,7 @@ endif()
 set_target_properties(${module_name}
 	PROPERTIES
 	PREFIX ""
-	PROJECT_LABEL "Plugin BMP"
+	PROJECT_LABEL "Plugin PPM"
 )
 	
 if(CMAKE_CROSSCOMPILING AND MSVC)

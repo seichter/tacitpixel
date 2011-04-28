@@ -27,3 +27,8 @@ set(zlib_srcs
 	)
 	
 add_library(zlib STATIC ${zlib_srcs})
+
+set_target_properties(zlib
+	PROPERTIES
+	PROJECT_LABEL "Dependency zlib"
+)

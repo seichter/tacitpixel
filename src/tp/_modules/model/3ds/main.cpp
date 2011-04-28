@@ -103,7 +103,6 @@ tpTransform* createMesh( Lib3dsFile* file, Lib3dsMesh* mesh )
 		}
 	}
 
-
 	for (tpUInt i_fcs = 0; i_fcs < mesh->faces; i_fcs++) 
 	{
 		Lib3dsFace *face = &(mesh->faceL[i_fcs]);
@@ -181,7 +180,7 @@ TP_TEXTURE_CLAMP : TP_TEXTURE_REPEAT;
 		Lib3dsTextureMap *_texture=0;
 
 		if (f->material[0]) {
-			mat=lib3ds_file_material_by_name(file, f->material);
+			mat = lib3ds_file_material_by_name(file, f->material);
 		}
 
 		if ( mat ) {

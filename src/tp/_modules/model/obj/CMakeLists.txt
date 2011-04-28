@@ -42,7 +42,7 @@ endif()
 set_target_properties(${module_name}
 	PROPERTIES
 	PREFIX ""
-#	PROJECT_LABEL "Plugin OBJ"
+	PROJECT_LABEL "Plugin OBJ"
 )
 	
 if(CMAKE_CROSSCOMPILING AND MSVC)

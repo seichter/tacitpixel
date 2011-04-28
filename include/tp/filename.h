@@ -12,7 +12,7 @@ public:
 
 	tpFilename getExtension() const;
 
-	tpFilename& operator = (const tpString& rhs) {}
+	tpFilename& operator = (const tpString& rhs) { return *this; }
 
 };
 

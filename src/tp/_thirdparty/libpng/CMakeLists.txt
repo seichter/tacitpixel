@@ -24,3 +24,8 @@ set(png_srcs
 	)
 	
 add_library(png STATIC ${png_srcs})
+
+set_target_properties(png
+	PROPERTIES
+	PROJECT_LABEL "Dependency libpng"
+)

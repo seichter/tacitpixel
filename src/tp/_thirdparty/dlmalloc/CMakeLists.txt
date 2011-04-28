@@ -8,3 +8,8 @@ set(dlmalloc_srcs
 add_definitions(-DUSE_DL_PREFIX)
 
 add_library(dlmalloc STATIC ${dlmalloc_srcs})
+
+set_target_properties(dlmalloc
+	PROPERTIES
+	PROJECT_LABEL "Dependency dlmalloc"
+)

@@ -1,4 +1,4 @@
-set(module_name tacit_bmp)
+set(module_name tacit_tga)
 
 include_directories(
 	${CMAKE_SOURCE_DIR}/include
@@ -12,23 +12,17 @@ if(MSVC)
 endif()
 
 set(srcs
-	bmp_handler.cxx
+	tga_handler.cxx
 	)
 	
 
 add_library(${module_name} MODULE
 	${srcs}
 	)
-	
-
-set_target_properties(${module_name} 
-	PROPERTIES
-	OUTPUT_NAME ${module_name}
-	)
-	
+		
 	
 target_link_libraries(${module_name}
-	tacit jpeg
+	tacit
 	)
 	
 if(APPLE)
@@ -39,8 +33,9 @@ endif()
 
 set_target_properties(${module_name}
 	PROPERTIES
+	OUTPUT_NAME ${module_name}
 	PREFIX ""
-	PROJECT_LABEL "Plugin BMP"
+	PROJECT_LABEL "Plugin TGA"
 )
 	
 if(CMAKE_CROSSCOMPILING AND MSVC)

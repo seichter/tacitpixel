@@ -95,7 +95,7 @@ endif()
 set_target_properties(${module_name}
 	PROPERTIES
 	PREFIX ""
-#	PROJECT_LABEL "Plugin OpenGL"
+	PROJECT_LABEL "Plugin OpenGL"
 )
 	
 if(CMAKE_CROSSCOMPILING AND MSVC)

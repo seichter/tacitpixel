@@ -78,16 +78,12 @@ struct tpModuleFunctionProxy
 };
 
 #define TP_MODULE_USE(name) \
-    extern "C" tpVoid tpModule_##name(void); \
+    extern "C" void tpModule_##name(void); \
     static tpModuleFunctionProxy tpModuleProxy_##name(&tpModule_##name);
 
 #define TP_MODULE_REGISTER(name,klass) \
-    extern "C" tpVoid tpModule_##name(void) {} \
+    extern "C" void tpModule_##name(void) {} \
     static tpModuleInitializer<klass> gs_module_##klass;
-
-
-#define TP_MODULE_HOOK(name) \
-	TP_API tpVoid tpModuleHook##name() {}
 
 #endif
 

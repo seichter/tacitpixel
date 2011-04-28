@@ -138,7 +138,5 @@ tpImage* tpImageHandler_BMP::read( const tpString& name )
 
 TP_TYPE_REGISTER(tpImageHandler_BMP,tpImageHandler,ImageFactoryBMP);
 
-TP_MODULE_HOOK(ImageBMP)
-
 tpModuleInitializer<tpImageHandler_BMP> g_imagefactory_bmp;
 

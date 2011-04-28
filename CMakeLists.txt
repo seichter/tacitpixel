@@ -27,12 +27,12 @@ find_package(Doxygen)
 if(DOXYGEN_FOUND)
 	set(TP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 	set(DOXY_CONFIG ${CMAKE_BINARY_DIR}/etc/tacit.dox)
-	configure_file(etc/tacit.dox.in
-		${DOXY_CONFIG}
-		IMMEDIATE
-		@ONLY
-		)
-	 add_custom_target("docs" ${DOXYGEN_EXECUTABLE} ${DOXY_CONFIG})
+#	configure_file(etc/tacit.dox.in
+#		${DOXY_CONFIG}
+#		IMMEDIATE
+#		@ONLY
+#		)
+#	 add_custom_target("docs" ${DOXYGEN_EXECUTABLE} ${DOXY_CONFIG})
 endif()
 
 
