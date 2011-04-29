@@ -54,7 +54,6 @@ add_library(jpeg STATIC ${jpeg_srcs})
 
 set_target_properties(jpeg
 	PROPERTIES
-	PREFIX ""
 	PROJECT_LABEL "Dependency libjpeg"
 )
 

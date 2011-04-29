@@ -10,6 +10,8 @@
  *
  */
 #include "tpGL.h"
+
+
 #include <tp/library.h>
 #include <tp/log.h>
 
@@ -100,7 +102,7 @@ tpRefPtr<tpLibrary> tpGL::mg_ogl = 0;
 #endif
 
 
-#if defined(__unix) || defined(__APPLE__)
+#if defined(TPGL_USE_X11)
 XVisualInfo* (TP_CALLBACK* tpGL::glXQueryExtension)(Display *dpy, int screen, int *attribList ) = 0;
 XVisualInfo* (TP_CALLBACK* tpGL::glXChooseVisual)( Display *dpy, int screen, int *attribList )  = 0;
 Bool         (TP_CALLBACK* tpGL::glXQueryVersion)( Display *dpy, int *major, int *minor )  = 0;
@@ -522,7 +524,7 @@ void tpGL::loadLibraries()
 	tpGL::SwapBuffers = reinterpret_cast<BOOL(TP_CALLBACK *)(HDC)>(tpGL::mg_ogl->getAddress("wglSwapBuffers"));
 #endif
 
-#if defined(__unix) || defined(__APPLE__)
+#if defined(TPGL_USE_X11)
 	/* GLX variant */
 	//static XVisualInfo* (TP_CALLBACK* glXQueryExtension)(Display *dpy, int screen, int *attribList );
 	//static XVisualInfo* (TP_CALLBACK* glXChooseVisual)( Display *dpy, int screen, int *attribList );

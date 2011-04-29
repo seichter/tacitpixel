@@ -13,12 +13,15 @@
 #ifndef TPGL_H
 #define TPGL_H 1
 
-
 #include <tp/globals.h>
 #include <tp/types.h>
 
 #include <tp/referenced.h>
 #include <tp/refptr.h>
+
+#include <tp/tpGLConfig.h>
+
+
 
 #if defined(_WIN32) || defined(_WIN32_WCE)
 
@@ -45,7 +48,7 @@ typedef void* NativeGLContext;
 #endif
 
 
-#if defined(__unix) || defined(__APPLE__)
+#if defined(TPGL_USE_X11)
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -748,7 +751,7 @@ public:
 	static BOOL	   (TP_CALLBACK *	SwapBuffers)(HDC);
 #endif
 
-#if defined(__unix) || defined(__APPLE__)
+#if defined(TPGL_USE_X11)
 	static XVisualInfo* (TP_CALLBACK* glXQueryExtension)(Display *dpy, int screen, int *attribList );
 	static XVisualInfo* (TP_CALLBACK* glXChooseVisual)( Display *dpy, int screen, int *attribList );
 	static Bool         (TP_CALLBACK* glXQueryVersion)( Display *dpy, int *major, int *minor );

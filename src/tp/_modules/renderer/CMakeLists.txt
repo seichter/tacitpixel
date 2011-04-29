@@ -4,6 +4,7 @@ set(module_name tacit_gl)
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_SOURCE_DIR}/include
+	${CMAKE_BINARY_DIR}/include
 	)
 	
 set(shader_srcs
@@ -26,12 +27,16 @@ set(srcs
 	tpGLShader.cpp
 	tpGLShader.h
 	)
+
 	
 list(APPEND srcs ${shader_srcs})
 find_package(X11)
-
 option(TP_USE_X11 FALSE "Option to use X11")
+
+
 if(X11_FOUND AND TP_USE_X11)
+
+	set(TPGL_USE_X11)
 	list(APPEND srcs
 		${CMAKE_CURRENT_SOURCE_DIR}/tpGLRenderSurfaceX11.cpp
 		${CMAKE_CURRENT_SOURCE_DIR}/tpGLRenderSurfaceX11.h
@@ -57,6 +62,14 @@ if(APPLE)
 		${CMAKE_CURRENT_SOURCE_DIR}/tpGLRenderSurfaceCocoa.h
 		)
 endif()
+
+
+
+configure_file(tpGLConfig.h.in
+	${CMAKE_BINARY_DIR}/include/tp/tpGLConfig.h
+	@ONLY
+	)
+
 
 add_library(${module_name} MODULE
 	${srcs}
