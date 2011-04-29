@@ -3,6 +3,5 @@
 
 #cmakedefine TPGL_USE_X11 1
 
-
 #endif
 

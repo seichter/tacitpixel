@@ -41,22 +41,27 @@ bool
 tpLibrary::close()
 {
 	bool result(false);
+
+	if (m_handle)
+	{
 #if defined(WIN32)
 	result = (TRUE == FreeLibrary(static_cast<HMODULE>(m_handle)));
 #elif defined(HAVE_DLFCN_H)
 	result = (0 == dlclose(m_handle));
 	
-	/*
 	if (!result)
 	{
-		char* errstr;
-		errstr = tpStrDup(dlerror());
-		if (errstr != NULL) {
+		const char* errstr = dlerror();
+		if (errstr != 0L) {
 			tpLogError("%s: %s",__FUNCTION__,errstr);
 		}
+	} else {
+		m_handle = 0L;
 	}
-	*/
+
 #endif
+	}
+
 
 	tpLogNotify("%s - release %s",__FUNCTION__,result ? "ok" : "failed");
 

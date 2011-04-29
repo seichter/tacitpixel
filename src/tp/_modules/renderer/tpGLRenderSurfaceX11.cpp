@@ -213,7 +213,7 @@ void tpGLRenderSurfaceX11::doCreateGLX(XVisualInfo* vi)
 
 	tpInt glx_major(0), glx_minor(0), screen(0);
 
-	if (!tpGL::glXQueryExtension(dpy, NULL,NULL)) 
+	if (!tpGL::glXQueryExtension(dpy,0,0)) 
 	{
 		tpLogError("X server has no OpenGL GLX extension");
 	}

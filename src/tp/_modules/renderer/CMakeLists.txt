@@ -36,7 +36,7 @@ option(TP_USE_X11 FALSE "Option to use X11")
 
 if(X11_FOUND AND TP_USE_X11)
 
-	set(TPGL_USE_X11)
+	set(TPGL_USE_X11 TRUE)
 	list(APPEND srcs
 		${CMAKE_CURRENT_SOURCE_DIR}/tpGLRenderSurfaceX11.cpp
 		${CMAKE_CURRENT_SOURCE_DIR}/tpGLRenderSurfaceX11.h
