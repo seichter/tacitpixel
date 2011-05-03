@@ -46,15 +46,16 @@
 
 @end
 
-
-
-
-
+struct tpAutoReleasePool {
+	NSAutoreleasePool* pool;
+	tpAutoReleasePool() { pool = [[NSAutoreleasePool alloc] init]; }
+	~tpAutoReleasePool() { [pool drain]; }
+};
 
 tpGLRenderSurfaceCocoa::tpGLRenderSurfaceCocoa(tpRenderSurfaceTraits* traits) 
 : tpRenderSurface(traits)
 {
-	pool = [[NSAutoreleasePool alloc] init];
+	tpAutoReleasePool apool;
 	
 	[NSApplication sharedApplication];
 	
@@ -118,11 +119,7 @@ tpGLRenderSurfaceCocoa::tpGLRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 
 bool tpGLRenderSurfaceCocoa::makeCurrent() 
 {
-
 	[oglcontext makeCurrentContext];
-	
-	//NSLog(@"%s",__FUNCTION__);
-	
 	
 	NSEvent* event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:YES];
 	
@@ -132,8 +129,8 @@ bool tpGLRenderSurfaceCocoa::makeCurrent()
 		[NSApp sendEvent:event];
 	}
 	
-	[event release];	
-	
+	[event release];
+
 	return true;
 }
 
@@ -170,9 +167,9 @@ tpVoid tpGLRenderSurfaceCocoa::setCaption(const tpString& caption)
 
 tpGLRenderSurfaceCocoa::~tpGLRenderSurfaceCocoa() 
 {
+	tpAutoReleasePool apool;
 	[oglcontext release];
 	[window release];
-	//[pool drain];
 }
 
 

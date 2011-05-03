@@ -52,10 +52,18 @@ public:
 		kPolygon
 	};
 	
+	enum {
+		kAttributeVertex 			= 0,
+		kAttributeNormal 			= (1 << 1),
+		kAttributeTextureCoordinate = (1 << 2),
+		kAttributeColorPerVertex	= (1 << 3)
+	};
+	
 	/*! c'tor
 		\param name name of the name
 	 */
-	tpPrimitive(tpUByte meshtype = kTriangles);
+	tpPrimitive(tpUByte meshtype = kTriangles, 
+		tpUShort attributes = kAttributeVertex | kAttributeNormal);
 
 	/*! copy c'tor
 		\param mesh mesh to copy
@@ -97,6 +105,11 @@ public:
 	void getAABB(tpVec3r& aabb_min,tpVec3r& aabb_max);
 
 	void flipNormals();
+	
+	void setAttributes(tpUShort attrib) { m_attributes = attrib; }
+	tpUShort getAttributes() const { return m_attributes; }
+	
+	bool hasAttribute(tpUByte attrib) const { return (0 != (m_attributes & attrib)); }
 
 
 protected:
@@ -104,6 +117,7 @@ protected:
 	virtual ~tpPrimitive();
 
 	tpUByte	m_primitivetype;
+	tpUShort m_attributes;
 
 	void calcNormals();
 	

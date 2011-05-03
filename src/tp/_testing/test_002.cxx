@@ -11,6 +11,24 @@
 #include <tp/primitive.h>
 #include <tp/transform.h>
 
+tpNode* createNode()
+{
+	tpPrimitive* p = new tpPrimitive(tpPrimitive::kTriangleStrip);
+	tpReal s = 2;
+	
+	p->addVertex(tpVec3r(1,1,0),tpVec3r(0,0,1));
+	p->addVertex(tpVec3r(0,1,0),tpVec3r(0,0,1));
+	p->addVertex(tpVec3r(1,0,0),tpVec3r(0,0,1));
+	p->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1));
+	
+	tpMaterial* m = new tpMaterial();
+	
+	p->setMaterial(m);
+	m->setName("Default Material");	
+	
+	return p;
+}
+
 
 
 int main(int argc, char* argv[])
@@ -25,13 +43,10 @@ int main(int argc, char* argv[])
 		tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kAxis);
 		
 	tpRefPtr<tpNode> n = tpNode::read(argv[1]);
-		
+	
+	//tpRefPtr<tpNode> n = createNode();
 
-	//new tpPrimitive(tpPrimitive::kTriangleStrip);
-	//p->addVertex(tpVec3r(1,1,0),tpVec3r(0,0,1),tpVec2f(0.f,0.f));
-	//p->addVertex(tpVec3r(0,1,0),tpVec3r(0,0,1),tpVec2f(0.f,0.f),tpVec4r(0,1,0,1));
-	//p->addVertex(tpVec3r(1,0,0),tpVec3r(0,0,1),tpVec2f(0.f,0.f),tpVec4r(1,0,0,1));
-	//p->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2f(0.f,0.f));
+
 
 	tpRefPtr<tpNode> root = new tpNode();
 

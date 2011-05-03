@@ -32,23 +32,34 @@ public:
 
 	void operator()(tpNode* node,tpCamera* camera)
 	{
-		tpGL::Enable(tpGL::COLOR_MATERIAL);
 
-		tpGL::Enable(tpGL::NORMALIZE);
-		tpGL::Enable(tpGL::AUTO_NORMAL);
+		//tpGL::Enable(tpGL::NORMALIZE);
+		//tpGL::Enable(tpGL::AUTO_NORMAL);
+
+		tpGL::Enable(tpGL::COLOR_MATERIAL);
 
 		tpGL::Enable(tpGL::LIGHTING);
 		tpGL::Enable(tpGL::LIGHT0);
+		
+		// hack
+		float dim_light[] = {0.0f, 0.0f, 0.0f, 1.0f};
+
+	    tpGL::LightModelfv(tpGL::LIGHT_MODEL_AMBIENT, dim_light);
+	    tpGL::LightModelf(tpGL::LIGHT_MODEL_LOCAL_VIEWER, 1.0f);
+	
+		//#define GL_SEPARATE_SPECULAR_COLOR 0x81FA 
+	    tpGL::LightModeli(tpGL::LIGHT_MODEL_COLOR_CONTROL, 0x81FA);
+	    
 
 		tpGL::Enable(tpGL::DEPTH_TEST);
 
-		tpGL::glFrontFace(tpGL::CCW);
-		tpGL::Disable(tpGL::CULL_FACE);
-
+		//tpGL::glFrontFace(tpGL::CCW);
+		//tpGL::Disable(tpGL::CULL_FACE);
+		
 		//
 		mvs.push(camera->getView());
 
-		//tpGL::Enable(tpGL::LINE_SMOOTH);
+		tpGL::Enable(tpGL::LINE_SMOOTH);
 		//tpGL::Enable(tpGL::SMOOTH);
 
 		TP_REPORT_GLERROR();
@@ -119,14 +130,14 @@ public:
 		tpGL::EnableClientState(tpGL::VERTEX_ARRAY);
 		tpGL::VertexPointer(3, tpGL::FLOAT, 0, prim->getVertices().getData());
 
-		if (prim->getNormals().getSize()) 
+		if (prim->hasAttribute(tpPrimitive::kAttributeNormal)) 
 		{
 			//tpLogNotify("%s %d normals",__FUNCTION__,prim->getNormals().getSize());
 			tpGL::EnableClientState(tpGL::NORMAL_ARRAY);
 			tpGL::NormalPointer(tpGL::FLOAT, 0, prim->getNormals().getData());
 		}
 
-		if (prim->getTexCoords().getSize())
+		if (prim->hasAttribute(tpPrimitive::kAttributeTextureCoordinate)) 
 		{
 			//tpLogNotify("%s %d texcoords",__FUNCTION__,mesh->getTexCoords().getSize());
 			//float tex[] = {0,0, 0,1, 1,0, 1,1};
@@ -134,7 +145,7 @@ public:
 			tpGL::TexCoordPointer(2, tpGL::FLOAT, 0, prim->getTexCoords().getData());
 		}
 
-		if (prim->getColors().getSize())
+		if (prim->hasAttribute(tpPrimitive::kAttributeColorPerVertex)) 
 		{
 			//tpLogNotify("%s %d color",__FUNCTION__,prim->getColors().getSize());
 			//float tex[] = {0,0, 0,1, 1,0, 1,1};
@@ -142,22 +153,21 @@ public:
 			tpGL::ColorPointer(4, tpGL::FLOAT, 0, prim->getColors().getData());
 		}
 
-
 		tpGL::DrawArrays(prim->getPrimitiveType(),0,prim->getVertexCount());
 
 		tpGL::DisableClientState(tpGL::VERTEX_ARRAY);
 
-		if (prim->getNormals().getSize()) 
+		if (prim->hasAttribute(tpPrimitive::kAttributeNormal)) 
 		{
 			tpGL::DisableClientState(tpGL::NORMAL_ARRAY);
 		}
 
-		if (prim->getTexCoords().getSize())
+		if (prim->hasAttribute(tpPrimitive::kAttributeTextureCoordinate))
 		{
 			tpGL::DisableClientState(tpGL::TEXTURE_COORD_ARRAY);
 		}
 
-		if (prim->getColors().getSize())
+		if (prim->hasAttribute(tpPrimitive::kAttributeColorPerVertex))
 		{
 			tpGL::DisableClientState(tpGL::COLOR_ARRAY);
 		}
@@ -165,11 +175,18 @@ public:
 		TP_REPORT_GLERROR();
 	}
 
-	void pushMaterial(tpMaterial* mat) {
-		tpGL::Materialfv(tpGL::FRONT,tpGL::AMBIENT,mat->getAmbientColor().getData());
-		tpGL::Materialfv(tpGL::FRONT,tpGL::DIFFUSE,mat->getDiffuseColor().getData());
-		tpGL::Materialfv(tpGL::FRONT,tpGL::EMISSION,mat->getEmissiveColor().getData());
-		tpGL::Materialfv(tpGL::FRONT,tpGL::SPECULAR,mat->getSpecularColor().getData());
+	void pushMaterial(const tpMaterial* mat) {
+		
+		tpLogNotify("set material > %s",mat->getName().c_str());
+		
+		//tpGL::LightModeli(tpGL::LIGHT_MODEL_COLOR_CONTROL, tpGL::GL_SEPARATE_SPECULAR_COLOR);
+		
+		tpGL::Materialfv(tpGL::FRONT_AND_BACK,tpGL::AMBIENT,mat->getAmbientColor().getData());
+		tpGL::Materialfv(tpGL::FRONT_AND_BACK,tpGL::DIFFUSE,mat->getDiffuseColor().getData());
+		tpGL::Materialfv(tpGL::FRONT_AND_BACK,tpGL::EMISSION,mat->getEmissiveColor().getData());
+		tpGL::Materialfv(tpGL::FRONT_AND_BACK,tpGL::SPECULAR,mat->getSpecularColor().getData());
+		
+		TP_REPORT_GLERROR();
 	}
 
 	void pushTransform(tpTransform* trans)

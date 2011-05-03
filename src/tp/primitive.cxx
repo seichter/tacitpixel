@@ -15,9 +15,10 @@
 #include "tp/node.h"
 
 
-tpPrimitive::tpPrimitive(tpUByte meshtype)
+tpPrimitive::tpPrimitive(tpUByte meshtype,tpUShort attributes)
 	: tpRenderable() ,
-	m_primitivetype(meshtype)
+	m_primitivetype(meshtype),
+	m_attributes(attributes)
 {
 }
 
@@ -187,7 +188,10 @@ tpPrimitive* tpPrimitiveFactory::create( tpUShort primitive_type )
 	switch (primitive_type)
 	{
 	case kAxis:
-		res = new tpPrimitive(tpPrimitive::kLines);
+		res = new tpPrimitive(tpPrimitive::kLines, 
+			tpPrimitive::kAttributeVertex | tpPrimitive::kAttributeColorPerVertex
+			);
+			
 		res->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(1,0,0,1));
 		res->addVertex(tpVec3r(1,0,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(1,0,0,1));
 		res->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,1,0,1));

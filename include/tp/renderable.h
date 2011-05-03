@@ -32,22 +32,22 @@ public:
 	virtual tpObject* clone();
 
 	//! set a material for the regarding geometry
-	void setMaterial(tpMaterial* material);
+	void setMaterial(tpMaterial* material) { m_material = material; }
 	//! get a pointer to the material
-	tpMaterial* getMaterial();
+	const tpMaterial* getMaterial() const { return m_material.get(); }
 
 
 	//! set a texture for the regarding geometry
-	void setTexture(tpTexture* texture);
-
+	void setTexture(tpTexture* texture) { m_texture = texture; }
 	//! get a pointer to the texture
-	tpTexture* getTexture();
+	const tpTexture* getTexture() const { return m_texture.get(); }
 
 	//! check if this material has a texture
 	bool hasTexture() { return m_texture.isValid(); }
 
-	void setCulling(bool flag);
-	bool getCulling() const;
+	//! set if this material is renderable is for culling only
+	void setCulling(bool flag) { m_culling = flag; }
+	bool getCulling() const { return m_culling; }
 
 
 protected:

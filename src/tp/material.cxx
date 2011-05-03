@@ -15,13 +15,10 @@
 tpMaterial::tpMaterial(const tpString& name)
 	: tpObject(name)
 {
-	//m_ambientcolor.setValue(tpVec4f(0.2f,0.2f,0.2f,1.0f));
-	//m_diffusecolor.setValue(tpVec4f(0.8f,0.8f,0.8f,1.0f));
-	//m_specularcolor.setValue(tpVec4f(0.0f,0.0f,0.0f,1.0f));
-	//m_emissivecolor.setValue(tpVec4f(0.0f,0.0f,0.0f,1.0f));
-	//
-	//m_shininess.setValue(0.0f);
-	//m_transparency.setValue(0.0f);
+	m_ambientcolor = tpVec4r(0.8,0.8,0.8,1.0);
+	m_diffusecolor = tpVec4r(0.2,0.2,0.2,1.0);
+	m_specularcolor = tpVec4r(0.0,0.0,0.0,1.0);
+	m_emissivecolor = tpVec4r(0.0,0.0,0.0,1.0);
 }
 
 

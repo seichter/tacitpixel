@@ -240,6 +240,7 @@ public:
 	static tpUInt LIGHT_MODEL_TWO_SIDE;
 	static tpUInt LIGHT_MODEL_LOCAL_VIEWER;
 	static tpUInt LIGHT_MODEL_AMBIENT;
+	static tpUInt LIGHT_MODEL_COLOR_CONTROL;
 	static tpUInt FRONT_AND_BACK;
 	static tpUInt SHADE_MODEL;
 	static tpUInt FLAT;

@@ -48,7 +48,7 @@ public:
 	
 protected:
 	
-	NSAutoreleasePool *pool;
+//	NSAutoreleasePool *pool;
 	NSWindow *window;
 	NSOpenGLContext *oglcontext;
 	NSObject *delegate;

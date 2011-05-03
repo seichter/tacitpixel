@@ -43,7 +43,8 @@ tpNode* tpOBJ(const tpString& filename)
 	// regenerate the model structure
 	glmUnitize(model);
 	glmFacetNormals(model);
-	glmVertexNormals(model,90);
+	// should make the crease angle an option
+	glmVertexNormals(model,89);
 	glmLinearTexture(model);
 
 	tpNode* root = new tpNode();
@@ -95,8 +96,7 @@ tpNode* tpOBJ(const tpString& filename)
 						// add to mesh
 						mesh->addVertex(cur_vertex,cur_normal,cur_tcoord);
 						
-						tpLogNotify("%s found add vertex no %d of triangle %d",__FUNCTION__,v_idx,tri_idx);
-						
+						//tpLogNotify("%s found add vertex no %d of triangle %d",__FUNCTION__,v_idx,tri_idx);
 						
 					}
 				}
@@ -127,14 +127,17 @@ tpNode* tpOBJ(const tpString& filename)
 
 				mesh->setMaterial(mat);
 				
-				tpLogNotify("%s %3.3f %3.3f %3.3f %3.3f",
+				tpLogNotify("%s - Ambient: %3.3f %3.3f %3.3f %3.3f",
 						__FUNCTION__,
 						material->ambient[0],material->ambient[1],material->ambient[2],material->ambient[3]);
 
-				tpLogNotify("%s %3.3f %3.3f %3.3f %3.3f",
+				tpLogNotify("%s - Diffuse %3.3f %3.3f %3.3f %3.3f",
 						__FUNCTION__,
 						material->diffuse[0],material->diffuse[1],material->diffuse[2],material->diffuse[3]);
-
+				
+				tpLogNotify("%s - Specular %3.3f %3.3f %3.3f %3.3f",
+						__FUNCTION__,
+						material->specular[0],material->specular[1],material->specular[2],material->specular[3]);
 
 				if (material->texturename)
 				{

@@ -31,43 +31,10 @@ tpRenderable::tpRenderable(const tpRenderable& geo)
 {
 }
 
-tpObject* tpRenderable::clone()
+tpObject* 
+tpRenderable::clone()
 {
 	return new tpRenderable(*this);
-};
-
-
-tpMaterial* tpRenderable::getMaterial()
-{
-	return (m_material.isValid() ? m_material.get() : tpDefaultMaterial);
 }
-
-
-void tpRenderable::setMaterial(tpMaterial* material)
-{
-	m_material = material;
-}
-
-
-void tpRenderable::setTexture(tpTexture* texture)
-{
-	m_texture = texture;
-}
-
-tpTexture* tpRenderable::getTexture()
-{
-	return m_texture.get();
-}
-
-void tpRenderable::setCulling(bool flag)
-{
-	m_culling = flag;
-}
-
-bool tpRenderable::getCulling() const
-{
-	return m_culling;
-}
-
 
 TP_TYPE_REGISTER(tpRenderable,tpNode,Geometry);

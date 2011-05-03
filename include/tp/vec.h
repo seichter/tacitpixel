@@ -33,7 +33,10 @@ public:
 	tpUInt dimension() const;
 
 	//! get the raw vector data
-	const T* getData() const;
+	const T* getData() const { return &vec[0]; }
+
+	//! get the raw vector data
+	T* getData() { return &vec[0]; }
 
 	//! substract a vector
 	const tpVec operator -(const tpVec& rs) const;
@@ -94,47 +97,30 @@ public:
 	//! swap components in the vector
 	tpVec<T,N>& swapComponent(tpUInt c1,tpUInt c2);
 
-	//template <tpUInt cut> inline 
-	//void slice(tpVec<T,cut>& front, tpVec<T,N-cut>& back) const
-	//{
-	//	cu
-	//}
-	
 protected:
 	T vec[N];
 };
 
-// Operators
-/*
-template <class T,tpUInt N>
-const tpVec<T,N> inline operator - (const tpVec<T,N>& l, const tpVec<T,N>& r)
-{
-	tpVec<T,N> res(l); res -= r; return res;
-}
-*/
 
 // Vec -----------------------------------------------------------------------------------------
 
-template <class T,tpUInt N> inline tpVec<T,N>::tpVec()
+template <class T,tpUInt N> inline
+tpVec<T,N>::tpVec()
 {
 	for (tpUInt i = 0; i < N; i++) vec[i] = T(0);
 }
 
-template <class T,tpUInt N> inline tpVec<T,N>::tpVec(const tpVec& v)
+template <class T,tpUInt N> inline
+tpVec<T,N>::tpVec(const tpVec& v)
 {
 	for (tpUInt i = 0; i < N; i++) this->vec[i] = v.vec[i];
 }
 
 
-template <class T,tpUInt N> inline tpVec<T,N>::~tpVec() 
+template <class T,tpUInt N> inline
+tpVec<T,N>::~tpVec()
 {
-};
-
-template <class T,tpUInt N> inline const T* tpVec<T,N>::getData() const 
-{ 
-	return (T*)&vec; 
-};
-
+}
 
 template <class T,tpUInt N> inline 
 const tpVec<T,N> tpVec<T,N>::operator - (const tpVec<T,N>& rhs) const
@@ -152,44 +138,48 @@ const tpVec<T,N> tpVec<T,N>::operator + (const tpVec<T,N>& rhs) const
 	return out;
 }
 
-template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::operator -= (const tpVec<T,N>& v)
+template <class T,tpUInt N> inline
+tpVec<T,N>& tpVec<T,N>::operator -= (const tpVec<T,N>& v)
 {
 	for (tpUInt i = 0; i < N; i++) vec[i] -= v.vec[i];
 	return *this;
-};
+}
 
-template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::operator += (const tpVec& v)
+template <class T,tpUInt N> inline
+tpVec<T,N>& tpVec<T,N>::operator += (const tpVec& v)
 {
 	for (tpUInt i = 0; i < N; i++) vec[i] += v.vec[i];
 	return *this;
-};
+}
 
-
-template <class T,tpUInt N> void tpVec<T,N>::set(const tpVec<T,N>& v)
+template <class T,tpUInt N> inline
+void tpVec<T,N>::set(const tpVec<T,N>& v)
 {
 	for (tpUInt i = 0; i < N; i++) vec[i] = v.vec[i];
-};
+}
 
-
-template <class T,tpUInt N> void tpVec<T,N>::set(const T* buf)
+template <class T,tpUInt N> inline
+void tpVec<T,N>::set(const T* buf)
 {
 	for (tpUInt i =0; i < N; ++i) vec[i] = *buf[i];
-};
+}
 
-template <class T,tpUInt N> T tpVec<T,N>::dot(const tpVec<T,N>& v) const
+template <class T,tpUInt N> inline
+T tpVec<T,N>::dot(const tpVec<T,N>& v) const
 {
 	T res = 0;
 	for (tpUInt i = 0; i < N; i++) res = res + (vec[i] * v.vec[i]);
 	return res;
 }
 
-template <class T,tpUInt N> T tpVec<T,N>::getAngle(tpVec<T,N> v) const
+template <class T,tpUInt N> inline
+T tpVec<T,N>::getAngle(tpVec<T,N> v) const
 {
 	tpVec<T,N> nself = *this;
 	tpVec<T,N> nothr = v;
 	nself.normalize();
 	nothr.normalize();
-	return (T)acos( nothr.dot(nself) );
+	return acos( nothr.dot(nself) );
 }
 
 template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::operator = (const tpVec& rs)
@@ -216,7 +206,8 @@ template <class T,tpUInt N> inline bool tpVec<T,N>::operator != (const tpVec<T,N
 	return ! operator==(rs);
 }
 
-template <class T,tpUInt N> inline void tpVec<T,N>::normalize()
+template <class T,tpUInt N> inline
+void tpVec<T,N>::normalize()
 {
 	T _length = getLength();
 	if (_length > 0)
@@ -225,32 +216,32 @@ template <class T,tpUInt N> inline void tpVec<T,N>::normalize()
 	}
 }
 
-template <class T,tpUInt N> inline T tpVec<T,N>::getLength() const
+template <class T,tpUInt N> inline
+T tpVec<T,N>::getLength() const
 {
 	return sqrt(getSquareLength());
-};
+}
 
-template <class T,tpUInt N> inline T tpVec<T,N>::getSquareLength() const
+template <class T,tpUInt N> inline
+T tpVec<T,N>::getSquareLength() const
 {
 	T sum = 0;
 	for (register tpUInt i = 0; i < N; i++) sum += (vec[i] * vec[i]);
 	return sum;
-};
+}
 
 template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::scaleUniform(T scale)
 {
 	for (tpUInt i = 0; i < N; i++) vec[i] = vec[i] * scale;
 	return *this;
-};
+}
 
 template <class T,tpUInt N> inline tpVec<T,N> tpVec<T,N>::operator* (T scale) const
 {
 	tpVec<T,N> v = *this;
 	v.scaleUniform(scale);
 	return v;
-};
-
-
+}
 
 template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::swapComponent(tpUInt c1,tpUInt c2) 
 {
@@ -259,9 +250,7 @@ template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::swapComponent(tpUInt 
 	vec[c2] = _swp;
 	
 	return *this;
-};
-
-
+}
 
 
 

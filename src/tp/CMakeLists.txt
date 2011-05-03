@@ -97,6 +97,7 @@ list(APPEND tp_srcs
 #
 set(tp_hdrs_sg
 	${tp_include_path}/tp/camera.h
+	${tp_include_path}/tp/light.h
 	${tp_include_path}/tp/material.h
 	${tp_include_path}/tp/node.h
 	${tp_include_path}/tp/object.h
@@ -111,6 +112,7 @@ set(tp_hdrs_sg
 	
 set(tp_srcs_sg
 	camera.cxx
+	light.cxx
 	material.cxx
 	node.cxx
 	object.cxx
