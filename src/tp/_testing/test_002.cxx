@@ -24,9 +24,12 @@ tpNode* createNode()
 	tpMaterial* m = new tpMaterial();
 	
 	p->setMaterial(m);
-	m->setName("Default Material");	
+	m->setName("Default Material");
 	
-	return p;
+	m->setDiffuseColor(tpVec4r(.3,0,0,1));
+	
+	//return p;
+	return 0;
 }
 
 
@@ -44,7 +47,7 @@ int main(int argc, char* argv[])
 		
 	tpRefPtr<tpNode> n = tpNode::read(argv[1]);
 	
-	//tpRefPtr<tpNode> n = createNode();
+	if (!n.isValid()) n = createNode();
 
 
 

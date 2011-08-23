@@ -25,6 +25,7 @@ class tpGLFixedFunctionTraverser : public tpGLTraverser {
 public:
 
 	tpStack<tpMat44r> mvs;
+	tpStack<tpMaterial> materials;
 
 	tpGLFixedFunctionTraverser() : tpGLTraverser() {
 		tpMat44r identity; identity.setIdentity();
@@ -33,8 +34,8 @@ public:
 	void operator()(tpNode* node,tpCamera* camera)
 	{
 
-		//tpGL::Enable(tpGL::NORMALIZE);
-		//tpGL::Enable(tpGL::AUTO_NORMAL);
+		tpGL::Enable(tpGL::NORMALIZE);
+		tpGL::Enable(tpGL::AUTO_NORMAL);
 
 		tpGL::Enable(tpGL::COLOR_MATERIAL);
 
@@ -42,18 +43,21 @@ public:
 		tpGL::Enable(tpGL::LIGHT0);
 		
 		// hack
-		float dim_light[] = {0.0f, 0.0f, 0.0f, 1.0f};
-
-	    tpGL::LightModelfv(tpGL::LIGHT_MODEL_AMBIENT, dim_light);
-	    tpGL::LightModelf(tpGL::LIGHT_MODEL_LOCAL_VIEWER, 1.0f);
+		float amb_light[] = {0.2f, 0.2f, 0.2f, 1.0f};		
+	    tpGL::LightModelfv(tpGL::LIGHT_MODEL_AMBIENT, amb_light);	
+	    tpGL::LightModelf(tpGL::LIGHT_MODEL_LOCAL_VIEWER, 0.0f);
+		tpGL::LightModelf(tpGL::LIGHT_MODEL_TWO_SIDE, 0.0f);
 	
 		//#define GL_SEPARATE_SPECULAR_COLOR 0x81FA 
 	    tpGL::LightModeli(tpGL::LIGHT_MODEL_COLOR_CONTROL, 0x81FA);
+
+	
+		tpGL::ShadeModel(tpGL::SMOOTH);
 	    
 
 		tpGL::Enable(tpGL::DEPTH_TEST);
 
-		//tpGL::glFrontFace(tpGL::CCW);
+		tpGL::glFrontFace(tpGL::CCW);
 		//tpGL::Disable(tpGL::CULL_FACE);
 		
 		//
@@ -123,7 +127,7 @@ public:
 	void pushPrimitive(tpPrimitive* prim)
 	{
 
-		if (prim->getMaterial()) pushMaterial(prim->getMaterial());
+		pushMaterial(prim->getMaterial());
 
 		TP_REPORT_GLERROR();
 
@@ -177,16 +181,28 @@ public:
 
 	void pushMaterial(const tpMaterial* mat) {
 		
-		tpLogNotify("set material > %s",mat->getName().c_str());
-		
-		//tpGL::LightModeli(tpGL::LIGHT_MODEL_COLOR_CONTROL, tpGL::GL_SEPARATE_SPECULAR_COLOR);
-		
-		tpGL::Materialfv(tpGL::FRONT_AND_BACK,tpGL::AMBIENT,mat->getAmbientColor().getData());
-		tpGL::Materialfv(tpGL::FRONT_AND_BACK,tpGL::DIFFUSE,mat->getDiffuseColor().getData());
-		tpGL::Materialfv(tpGL::FRONT_AND_BACK,tpGL::EMISSION,mat->getEmissiveColor().getData());
-		tpGL::Materialfv(tpGL::FRONT_AND_BACK,tpGL::SPECULAR,mat->getSpecularColor().getData());
+		if (mat)
+		{
+			tpGL::Materialfv(tpGL::FRONT_AND_BACK,tpGL::AMBIENT,mat->getAmbientColor().getData());
+			tpGL::Materialfv(tpGL::FRONT_AND_BACK,tpGL::DIFFUSE,mat->getDiffuseColor().getData());
+			tpGL::Materialfv(tpGL::FRONT_AND_BACK,tpGL::SPECULAR,mat->getSpecularColor().getData());
+			tpGL::Materialfv(tpGL::FRONT_AND_BACK,tpGL::EMISSION,mat->getEmissiveColor().getData());
+
+			tpGL::Materialf(tpGL::FRONT_AND_BACK,tpGL::SHININESS,mat->getShininess());
+
+			//materials.push(mat);	
+		}
 		
 		TP_REPORT_GLERROR();
+	}
+	
+	void popMaterial(const tpMaterial* mat) {
+		
+		if (mat) 
+		{
+			//materials.pop();
+		}
+		
 	}
 
 	void pushTransform(tpTransform* trans)

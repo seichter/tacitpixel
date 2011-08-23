@@ -31,6 +31,8 @@ public:
 	virtual bool makeCurrent();
 	virtual bool swapBuffers();
 	
+	virtual void frame();
+	
 	virtual tpString getString(tpUInt glenum);
 	
 	virtual bool show(bool doShow);	

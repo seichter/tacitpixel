@@ -1,14 +1,27 @@
-/*
-* Twisted Pair Visualization Engine
-*
-* Copyright (c) 1999-2009 Hartmut Seichter 
-* 
-* This library is open source and may be redistributed and/or modified under  
-* the terms of the Twisted Pair License (TPL) version 1.0 or (at your option) 
-* any later version. The full license text is available in the LICENSE file 
-* included with this distribution, and on the technotecture.com website.
-*
-*/
+/* 
+ * Copyright (C) 1999-2011 Hartmut Seichter
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL AUTHOR OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
 
 #ifndef TPRENDERSURFACE_H
 #define TPRENDERSURFACE_H
@@ -81,7 +94,6 @@ public:
 
 	virtual bool makeCurrent() = 0;
 	virtual bool swapBuffers() = 0; 
-
 	virtual bool show(bool doShow) = 0;
 
 	virtual void frame();
@@ -164,10 +176,28 @@ class TP_API tpRenderSurfaceTraits {
 	bool anti_alias;
 	
 	
-
+	tpUInt renderbackend;
+	bool embedded;
+	
 public:
-
+	
+	enum {
+		kRenderDefault = 0x0,
+		kRenderOpenGL,
+		kRenderOpenGLES1,
+		kRenderOpenGLES2
+	};
+	
 	tpRenderSurfaceTraits();
+	
+	
+	tpRenderSurfaceTraits& setEmbedded(bool flag) { embedded = true; return *this; }
+	bool getEmbedded() const { return embedded; }
+	
+	
+	tpRenderSurfaceTraits& setRenderBackend(tpUInt be) { renderbackend = be; return *this; }
+	tpUInt getRenderBackend() const { return renderbackend; }
+	
 
 	tpVec2i getSize() const;
 	tpRenderSurfaceTraits& setSize(tpVec2i val);	
