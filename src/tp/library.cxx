@@ -105,23 +105,15 @@ tpLibrary::getModuleName() const {
 }
 
 
-bool
+bool 
 tpLibrary::open( const tpString& file )
 {
 	
 	tpString actual_name = file; 
 
 #if defined(WIN32) || defined(WINCE)
-	m_handle = ::LoadLibraryA(actual_name.c_str());
 
-//#if defined(WIN32)
-//	if (m_handle) 
-//	{		
-//		typedef void (*tpHookFunc)(void);
-//		tpHookFunc hookFunc = (tpHookFunc)getAddress("tpWinCEHook");
-//		if (hookFunc) hookFunc();
-//	}
-//#endif
+	m_handle = ::LoadLibraryA(actual_name.c_str());
 
 #elif defined(HAVE_DLFCN_H)
 

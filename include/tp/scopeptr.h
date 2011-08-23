@@ -74,10 +74,10 @@ public:
 
 	void set(T* ptr);
 
-	//! 
+	//! assignment 
 	tpScopePtr<T>& operator=(const tpScopePtr& ref);
 
-
+	//! return true if pointer is in use
 	bool isValid() const;
 	
 
@@ -89,33 +89,40 @@ protected:
 
 // ----------------------------------------------------------------------------------------
 
-template <class T> inline tpScopePtr<T>::tpScopePtr() : m_ptr(NULL)
+template <class T> inline tpScopePtr<T>::tpScopePtr() 
+	: m_ptr(NULL)
 {
-};
+}
 
-template <class T> inline tpScopePtr<T>::tpScopePtr(T* ptr) : m_ptr(ptr)
+
+template <class T> inline tpScopePtr<T>::tpScopePtr(T* ptr) 
+	: m_ptr(ptr)
 {
-};
+}
+
 
 template <class T> inline tpScopePtr<T>::tpScopePtr(const tpScopePtr& ref)
 	: m_ptr(ref.m_ptr)
 {
-};
+}
+
 
 template <class T> inline tpScopePtr<T>::~tpScopePtr()
 {
 	this->cleanup();
-};
+}
+
 
 template <class T> inline T* tpScopePtr<T>::operator->() const
 {
 	return m_ptr;
-};
+}
+
 
 template <class T> inline T& tpScopePtr<T>::operator *() const
 {
 	return *m_ptr;
-};
+}
 
 
 template <class T> inline tpScopePtr<T>& tpScopePtr<T>::operator=(T* ptr)
@@ -123,13 +130,14 @@ template <class T> inline tpScopePtr<T>& tpScopePtr<T>::operator=(T* ptr)
 	cleanup();
 	m_ptr = ptr;
 	return *this;
-};
+}
+
 
 template <class T> inline void tpScopePtr<T>::set(T* ptr)
 {
 	cleanup();
 	m_ptr = ptr;
-};
+}
 
 
 template <class T> inline tpScopePtr<T>& tpScopePtr<T>::operator=(const tpScopePtr<T>& ref)
@@ -137,16 +145,18 @@ template <class T> inline tpScopePtr<T>& tpScopePtr<T>::operator=(const tpScopeP
 	if (this->m_ptr == ref.m_ptr) return *this;
 	if (ref.m_ptr) m_ptr = ref.m_ptr;
 	return *this;
-};
+}
+
 
 template <class T> inline void tpScopePtr<T>::cleanup()
 {
 	if (m_ptr != NULL) delete m_ptr;
-};
+}
+
 
 template <class T> inline bool tpScopePtr<T>::isValid() const
 {
 	return (m_ptr != NULL);
-};
+}
 
 #endif

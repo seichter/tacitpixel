@@ -137,7 +137,7 @@ set_target_properties(${tp_name}
 	COMPILE_DEFINITIONS TP_BUILD_LIBRARY=1
 	)
 
-target_link_libraries(${tp_name} dlmalloc jpeg)
+target_link_libraries(${tp_name} jpeg)
 
 if(APPLE)
 	target_link_libraries(${tp_name}
@@ -145,7 +145,7 @@ if(APPLE)
 		)
 endif()
 
-if (UNIX)
+if (UNIX AND NOT ANDROID)
 	target_link_libraries(${tp_name}
 		pthread dl
 		)

@@ -23,9 +23,12 @@
  * SUCH DAMAGE.
  */
 
-#define USE_DL_PREFIX 1
 
-#include <dlmalloc/malloc.h>
+#if defined(USE_DLMALLOC)
+	#define USE_DL_PREFIX 1
+	#include <dlmalloc/malloc.h>
+#endif
+
 #include <tp/chunk.h>
 
 #include <string.h>
@@ -43,13 +46,22 @@ tpChunk::~tpChunk()
 void 
 tpChunk::setSize(tpSizeT size)
 {
+#if defined(USE_DLMALLOC)
 	m_ptr = dlrealloc(m_ptr,size);
+#else
+	m_ptr = ::realloc(m_ptr,size);
+#endif
 }
 
 void 
 tpChunk::empty()
 {
-	if (m_ptr) dlfree(m_ptr); 
+	if (m_ptr) 
+#if defined(USE_DLMALLOC)
+	dlfree(m_ptr); 
+#else
+	::free(m_ptr);
+#endif
 	m_ptr = 0L;
 }
 

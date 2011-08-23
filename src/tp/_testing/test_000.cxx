@@ -12,6 +12,7 @@
 #include <tp/matrix.h>
 #include <tp/map.h>
 #include <tp/file.h>
+#include <tp/library.h>
 
 class tpTestObject : public tpNode {
 public:
@@ -175,7 +176,10 @@ int main(int argc, char* argv[])
 		//stpLogMessage("data > (%d) %s",rb,buffer.getData());
 	}
 	
-	
+	// Library - get symbols of itself
+	tpRefPtr<tpLibrary> self = new tpLibrary();
+	self->open("");
+	tpLogMessage("Get address to main 0x%x",self->getAddress("main"));	
 
 	
 	return 0;

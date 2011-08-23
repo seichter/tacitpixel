@@ -35,6 +35,6 @@
  *  \param bufsize size of the buffer
  *  \return the hashcode
  */
-TP_API tpULong tpAdler32(const tpUChar* buffer,tpULong bufsize);
+TP_API tpUInt32 tpAdler32(const tpUChar* buffer,tpULong bufsize);
 
 #endif

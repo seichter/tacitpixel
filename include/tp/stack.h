@@ -128,7 +128,7 @@ template <typename T> inline tpStack<T>::tpStack()
 	m_datasize(0),
 	m_size(0)
 {
-};
+}
 
 
 template <typename T> inline tpStack<T>::tpStack(const tpStack<T>& stack)
@@ -137,18 +137,20 @@ template <typename T> inline tpStack<T>::tpStack(const tpStack<T>& stack)
 	m_size(0)
 {
 	*this = stack;
-};
+}
+
 
 template <typename T> inline tpStack<T>::~tpStack()
 {
 	empty();
-};
+}
 
 
 template <typename T> inline void tpStack<T>::pop()
 {
 	--m_size;
-};
+}
+
 
 template <typename T> inline void tpStack<T>::push(T val)
 {
@@ -158,23 +160,23 @@ template <typename T> inline void tpStack<T>::push(T val)
 	m_data[m_size] = val;
 
 	++m_size;
-};
+}
 
 
 template <typename T> inline T tpStack<T>::getTop()
 {
 	return m_data[m_size - 1];
-};
+}
 
 
 template <typename T> inline const T& tpStack<T>::getTop() const
 {
 	return m_data[m_size - 1];
-};
+}
+
 
 template <typename T> inline void tpStack<T>::operator = (const tpStack& stack)
 {
-
 	grow(stack.m_size);
 
 	T* src = stack.m_data;
@@ -185,9 +187,8 @@ template <typename T> inline void tpStack<T>::operator = (const tpStack& stack)
 		*dest = *src;
 		++dest;
 		++src;
-	};
-	// m_size = stack.m_size;
-};
+	}
+}
 
 
 template <typename T> inline void tpStack<T>::grow(tpUInt size)
@@ -205,14 +206,14 @@ template <typename T> inline void tpStack<T>::grow(tpUInt size)
 		*dest = *src;
 		++dest;
 		++src;
-	};
+	}
 
 	if (m_data) delete [] m_data;
 
 	m_datasize = size;	
 	m_data = _temp;
 	
-};
+}
 
 
 template <typename T> inline bool tpStack<T>::isEmpty() const
@@ -233,12 +234,13 @@ template <typename T> inline void tpStack<T>::empty()
 template <typename T> inline tpUInt tpStack<T>::getSize() const
 {
 	return m_size;
-};
+}
+
 
 template <typename T> inline tpUInt tpStack<T>::getMaxSize() const
 {
 	return m_datasize;
-};
+}
 
 
 
