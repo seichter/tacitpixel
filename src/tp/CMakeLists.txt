@@ -147,8 +147,12 @@ endif()
 
 if (UNIX)
 	target_link_libraries(${tp_name}
-		pthread dl
-		)
+		dl)
+endif()
+
+if(HAVE_PTHREAD_H)
+	target_link_libraries(${tp_name}
+		pthread)
 endif()
 
 
