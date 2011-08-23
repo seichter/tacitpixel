@@ -176,10 +176,28 @@ class TP_API tpRenderSurfaceTraits {
 	bool anti_alias;
 	
 	
-
+	tpUInt renderbackend;
+	bool embedded;
+	
 public:
-
+	
+	enum {
+		kRenderDefault = 0x0,
+		kRenderOpenGL,
+		kRenderOpenGLES1,
+		kRenderOpenGLES2
+	};
+	
 	tpRenderSurfaceTraits();
+	
+	
+	tpRenderSurfaceTraits& setEmbedded(bool flag) { embedded = true; return *this; }
+	bool getEmbedded() const { return embedded; }
+	
+	
+	tpRenderSurfaceTraits& setRenderBackend(tpUInt be) { renderbackend = be; return *this; }
+	tpUInt getRenderBackend() const { return renderbackend; }
+	
 
 	tpVec2i getSize() const;
 	tpRenderSurfaceTraits& setSize(tpVec2i val);	

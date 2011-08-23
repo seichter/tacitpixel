@@ -26,6 +26,8 @@ set(srcs
 	tpGLRenderer.cpp
 	tpGLShader.cpp
 	tpGLShader.h
+	tpGLRenderSurfaceEmbedded.cpp
+	tpGLRenderSurfaceEmbedded.h
 	)
 
 	
