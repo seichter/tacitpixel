@@ -81,7 +81,6 @@ public:
 
 	virtual bool makeCurrent() = 0;
 	virtual bool swapBuffers() = 0; 
-
 	virtual bool show(bool doShow) = 0;
 
 	virtual void frame();

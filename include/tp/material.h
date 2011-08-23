@@ -33,7 +33,7 @@ public:
 	tpMaterial(const tpString& name = "");
 
 	//! copy c'tor
-	tpMaterial(const tpMaterial& node);
+	tpMaterial(const tpMaterial& mat);
 
 	//! cloning interface
 	virtual tpObject* clone();

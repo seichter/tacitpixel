@@ -14,9 +14,10 @@
 
 #import "tpGLRenderSurfaceCocoa.h"
 
+
 @interface tpGLRenderSurfaceCocoaDelegate : NSObject
 {
-	tpRenderSurface* rendersurface;
+	tpGLRenderSurfaceCocoa* rendersurface;
 	
 	
 };
@@ -32,30 +33,36 @@
 
 -(void)setRenderSurface: (tpGLRenderSurfaceCocoa*)arendersurface
 {
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(tryClose:) name:NSWindowWillCloseNotification
-											   object:arendersurface->getWindow()];	
+	[[NSNotificationCenter defaultCenter] 
+		addObserver:self
+		selector:@selector(tryClose:) 
+		name:NSWindowWillCloseNotification
+		object:arendersurface->getWindow()];	
 	
 	rendersurface = arendersurface;
 }
 
 -(void)tryClose:(NSNotification*)notification
-{
+{	
+	[[NSNotificationCenter defaultCenter] 
+		removeObserver:self
+		name:NSWindowWillCloseNotification
+		object:rendersurface->getWindow()];
+
 	if (rendersurface) rendersurface->setDone(true);
+	
 }
 
 @end
 
-struct tpAutoReleasePool {
-	NSAutoreleasePool* pool;
-	tpAutoReleasePool() { pool = [[NSAutoreleasePool alloc] init]; }
-	~tpAutoReleasePool() { [pool drain]; }
-};
 
 tpGLRenderSurfaceCocoa::tpGLRenderSurfaceCocoa(tpRenderSurfaceTraits* traits) 
-: tpRenderSurface(traits)
+	: tpRenderSurface(traits),
+	window(NULL),
+	oglcontext(NULL),
+	delegate(NULL)
 {
-	tpAutoReleasePool apool;
+	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
 	[NSApplication sharedApplication];
 	
@@ -115,29 +122,67 @@ tpGLRenderSurfaceCocoa::tpGLRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 	
 	[NSApp finishLaunching];
 	
+	[pool release];
+	
 }
 
-bool tpGLRenderSurfaceCocoa::makeCurrent() 
+
+tpGLRenderSurfaceCocoa::~tpGLRenderSurfaceCocoa() 
 {
-	[oglcontext makeCurrentContext];
+	//NSLog(@"%s %x0x",__FUNCTION__,window);
 	
-	NSEvent* event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:YES];
+	if (window)
+	{
+		//[window release];
+		/*
+		NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+		
+		 [window performSelectorOnMainThread: @selector(close) withObject:NULL waitUntilDone: YES];
+        [window performSelectorOnMainThread: @selector(release) withObject:NULL waitUntilDone: YES];
+		
+		[pool release];
+		*/
+	}
 	
-	
+	window = NULL;
+}
+
+void
+tpGLRenderSurfaceCocoa::frame()
+{
+	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+
+	NSEvent* event = [NSApp 
+		nextEventMatchingMask:NSAnyEventMask 
+		untilDate:nil 
+		inMode:NSDefaultRunLoopMode 
+		dequeue:YES];
+
 	if (event)
 	{
 		[NSApp sendEvent:event];
 	}
 	
-	[event release];
+	[pool release];
+	
+	tpRenderSurface::frame();	
+}
+
+bool 
+tpGLRenderSurfaceCocoa::makeCurrent() 
+{
+	
+	[oglcontext update];	
+	[oglcontext makeCurrentContext];
+	
 
 	return true;
 }
 
-bool tpGLRenderSurfaceCocoa::swapBuffers() 
+bool 
+tpGLRenderSurfaceCocoa::swapBuffers() 
 {	
 	[oglcontext flushBuffer];
-	[oglcontext update];
 	
 	return true;
 }
@@ -158,18 +203,12 @@ bool tpGLRenderSurfaceCocoa::show(bool doShow)
 }
 
 
-tpVoid tpGLRenderSurfaceCocoa::setCaption(const tpString& caption)
+void 
+tpGLRenderSurfaceCocoa::setCaption(const tpString& caption)
 {
 	NSString* name = [[NSString alloc] initWithCString: caption.c_str() encoding: NSASCIIStringEncoding ];
 	[window setTitle:name];
 	[name release];
-}
-
-tpGLRenderSurfaceCocoa::~tpGLRenderSurfaceCocoa() 
-{
-	tpAutoReleasePool apool;
-	[oglcontext release];
-	[window release];
 }
 
 
