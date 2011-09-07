@@ -157,7 +157,7 @@ tpLibrary::getAddress( const tpString& funcName ) const
 
 	if (m_handle) {
 #if defined(_WIN32) || defined(_WIN32_WCE)
-		address = ::GetProcAddress(static_cast<HMODULE>(m_handle),funcName.c_str());
+		address = reinterpret_cast<void*>(::GetProcAddress(static_cast<HMODULE>(m_handle),funcName.c_str()));
 #elif defined(HAVE_DLFCN_H)
 		address = dlsym(m_handle,funcName.c_str());
 #endif
