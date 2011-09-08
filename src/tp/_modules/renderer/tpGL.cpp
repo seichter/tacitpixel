@@ -504,6 +504,7 @@ void tpGL::loadLibraries()
 	if (!tpGL::mg_ogl->open(tpString("/System/Library/Frameworks/OpenGL.framework/OpenGL")))
 	if (!tpGL::mg_ogl->open(tpString("/usr/lib/libGL.so.1")))
 	if (!tpGL::mg_ogl->open(tpString("/usr/lib/mesa/libGL.so.1")))
+	if (!tpGL::mg_ogl->open(tpString("/usr/lib/i386-linux-gnu/libGL.so.1")))	
 	//if (!tpGL::mg_ogl->open(tpString("/usr/X11/lib/libGL.dylib")))
 	{
 		tpLogError("%s - no OpenGL backend",__FUNCTION__);

@@ -37,7 +37,7 @@ enum tpMeshType {
 };
 
 typedef tpArray<tpDouble> tpArrayd;
-typedef tpArray<tpDouble> tpArrayf;
+typedef tpArray<tpFloat> tpArrayf;
 typedef tpArray<tpReal> tpArrayr;
 
 /*!
