@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,35 +27,32 @@
 #define TPLOG_H
 
 
-#include "tp/globals.h"
-#include "tp/types.h"
-
-
-//! different type of notifivation levels
-enum tpLogLevelType {
-
-    TP_LOG_NONE,		//!< nothing will be logged, even no errors
-    TP_LOG_ERROR,		//!< only errors will be logged
-    TP_LOG_WARNING,		//!< log warnings
-    TP_LOG_MESSAGE,		//!< log messages
-    TP_LOG_NOTIFY,		//!< log some more information
-    TP_LOG_ALL			//!< just for the sake of completeness
-
-};
+#include <tp/globals.h>
+#include <tp/types.h>
 
 typedef void (*tpLogFunc)(const char* cstr);
 
 
 /*! \brief wrapper for outputstream for the logs
-    \version 0.1
-    \date 04.04.2002
+	\version 0.1
+	\date 04.04.2002
 
-    This describes a wrapper for the logging of messages.
-    There is a singleton of it accessable through tpGlobalLog();
+	This describes a wrapper for the logging of messages.
+	There is a singleton of it accessable through tpGlobalLog();
 */
 
 class TP_API tpLog {
 public:
+
+	enum {
+		kLogNone,	//!< nothing will be logged, even no errors
+		kLogError,	//!< only errors will be logged
+		kLogWarning,	//!< log warnings
+		kLogMessage,	//!< log messages
+		kLogNotify,	//!< log some more information
+		kLogInfo,	//!< log verbose information
+		kLogAll = 0xFF //!< log absolutely everything
+	};
 
 	void log(tpUShort logtype, const char* buf, int endline = 1);
 
@@ -65,7 +62,7 @@ public:
 	tpUInt getLevel() const { return m_level; }
 
 	static tpLog& get();
-	
+
 	void setBackend(tpLogFunc);
 
 protected:
@@ -76,7 +73,7 @@ protected:
 	tpUInt	m_level;
 	tpLogFunc m_func;
 
-	
+
 };
 
 //! logs a normal message aka. notification

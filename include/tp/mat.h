@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,9 +43,9 @@ public:
 	template <typename Tout>
 	void copy(tpMat<R,C,T>& out) const { for (tpUInt i = 0; i < R*C; ++i) out[i] = m[i]; }
 
-	const T* data() const { return m; }	
+	const T* data() const { return m; }
 
-	T* data() { return m; }	
+	T* data() { return m; }
 
 	tpUInt getRowCount() const { return R; }
 
@@ -54,9 +54,9 @@ public:
 	bool isSquare() const { return C == R; }
 
 	void setValue(T val) { for (int i = 0; i < R*C; ++i) m[i] = val; }
-	
 
-	tpMat<R,C,T>& 
+
+	tpMat<R,C,T>&
 	setIdentity()
 	{
 		if (isSquare())
@@ -84,7 +84,7 @@ public:
 
 	void getTranspose(tpMat<C,R,T>& rot) const
 	{
-		for (tpUInt r = 0; r < R; r++) 
+		for (tpUInt r = 0; r < R; r++)
 		{
 			for (tpUInt c = 0; c < C; c++ )
 			{
@@ -111,12 +111,12 @@ public:
 	}
 
 	tpMat<R,C,T>&
-	invert() 
+	invert()
 	{
 		tpMat<R,C,T> b;
 		for ( tpUInt r = 0; r < C; ++r)
 		{
-			for ( int j = 0; j < R; ++j) 
+			for ( int j = 0; j < R; ++j)
 			{
 				short sgn = ( (r+j)%2) ? -1 : 1;
 				tpMat<R-1,C-1,T> minor;
@@ -186,13 +186,13 @@ template <tpUInt R, tpUInt C,typename T>
 const T& tpMat<R,C,T>::operator()(tpUInt r,tpUInt c) const { return m[r * C + c]; }
 
 template <tpUInt R, tpUInt C,typename T>
-void tpMat<R,C,T>::getMinor(tpMat<R-1,C-1,T>& res,tpUInt r0, tpUInt c0) const 
+void tpMat<R,C,T>::getMinor(tpMat<R-1,C-1,T>& res,tpUInt r0, tpUInt c0) const
 {
 	tpUInt r = 0;
 	for (tpUInt ri = 0; ri < R; ri++)
 	{
 		tpUInt c = 0;
-		if (ri == r0) continue;		
+		if (ri == r0) continue;
 		for (tpUInt ci = 0; ci < C; ci++)
 		{
 			if (ci == c0) continue;
@@ -204,8 +204,8 @@ void tpMat<R,C,T>::getMinor(tpMat<R-1,C-1,T>& res,tpUInt r0, tpUInt c0) const
 }
 
 template <tpUInt R, tpUInt C,typename T>
-T tpMat<R,C,T>::getDeterminant() const 
-{	
+T tpMat<R,C,T>::getDeterminant() const
+{
 	T res(0);
 
 	tpMat<R-1,C-1,T> minor;
@@ -227,9 +227,8 @@ T tpMat<R,C,T>::getDeterminant() const
 //
 // Mat 4x4
 //
-template <typename T> 
-class tpMat44 : public tpMat<4,4,T>
-{
+template <typename T>
+class tpMat44 : public tpMat<4,4,T> {
 public:
 
 	tpMat44<T>&
@@ -250,7 +249,7 @@ public:
 		this->m[14] = v3;
 		return *this;
 	}
-	
+
 	tpVec3<T>
 	getTranslation() const
 	{
@@ -277,7 +276,7 @@ public:
 
 	tpMat44<T>&
 	setRotation(const tpVec3<T>& vec, const T& rotation)
-	{ 
+	{
 
 		//setIdentity();
 
@@ -327,7 +326,7 @@ public:
 			+(this->m[8]*this->m[13] - this->m[12] *this->m[9])*(this->m[ 2]*this->m[7] - this->m[6]*this->m[3]);
 	}
 
-	tpMat44& 
+	tpMat44&
 	invert()
 	{
 		T tmp[12]; /* temp array for pairs             */
@@ -415,15 +414,15 @@ public:
 
 		return *this;
 	}
-	
+
 	tpMat44
 	getInverse() const
 	{
 		tpMat44<T> result(*this); result.invert(); return result;
 	}
-	
-	
-	
+
+
+
 	tpMat44&
 	setFrustum(T Left,T Right,T Bottom,T Top, T Near, T Far)
 	{
@@ -434,7 +433,7 @@ public:
 		this->m[12] = (T) 0;
 
 		this->m[ 1] = (T) 0;
-		this->m[ 5] = (T) 2 * Near/(Top-Bottom);	
+		this->m[ 5] = (T) 2 * Near/(Top-Bottom);
 		this->m[ 9] = (T) (Top+Bottom)/(Top-Bottom);
 		this->m[13] = (T) 0;
 
@@ -444,7 +443,7 @@ public:
 		this->m[14] = (T) -	2*Far*Near	/ Far-Near;
 
 		this->m[ 3] = (T) 0;
-		this->m[ 7] = (T) 0;	
+		this->m[ 7] = (T) 0;
 		this->m[11] = (T) -1;
 		this->m[15] = (T) 0;
 
@@ -461,7 +460,7 @@ public:
 		this->m[12] = (T) -(Right + Left)/(Right - Left);
 
 		this->m[ 1] = (T) 0;
-		this->m[ 5] = (T) 2 / (Top-Bottom);	
+		this->m[ 5] = (T) 2 / (Top-Bottom);
 		this->m[ 9] = (T) 0;
 		this->m[13] = (T) -(Top + Bottom)/(Top - Bottom);
 
@@ -471,7 +470,7 @@ public:
 		this->m[14] = (T) -(Far + Near) / (Far - Near);
 
 		this->m[ 3] = (T) 0;
-		this->m[ 7] = (T) 0;	
+		this->m[ 7] = (T) 0;
 		this->m[11] = (T) 0;
 		this->m[15] = (T) 1;
 
@@ -490,8 +489,8 @@ public:
 
 		return setFrustum( xmin, xmax, ymin, ymax, Near, Far );
 	}
-	
-	
+
+
 	tpMat44&
 	operator *= (const tpMat44<T>& rs)
 	{
@@ -511,8 +510,8 @@ public:
 		*this = ret;
 		return *this;
 	};
-	
-	
+
+
 	tpMat44&
 	lookAt(const tpVec3<T>& eye, const tpVec3<T>& target, const tpVec3<T>& up)
 	{
@@ -536,7 +535,7 @@ public:
 
 		 this->m[8] = -L[0];
 		 this->m[9] = -L[1];
-		 this->m[10] = -L[2];	
+		 this->m[10] = -L[2];
 		 this->m[11] = (T) 0;
 		 */
 
@@ -563,9 +562,9 @@ public:
 
 		return *this;
 	}
-	
-	
-	
+
+
+
 };
 
 
@@ -575,13 +574,13 @@ public:
 //
 
 template <> inline
-float tpMat<1,1,float>::getDeterminant() const 
+float tpMat<1,1,float>::getDeterminant() const
 {
 	return this->m[0];
 }
 
 template <> inline
-tpFixed32 tpMat<1,1,tpFixed32>::getDeterminant() const 
+tpFixed32 tpMat<1,1,tpFixed32>::getDeterminant() const
 {
 	return this->m[0];
 }

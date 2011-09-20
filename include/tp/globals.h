@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,9 @@
 
 #if defined(_MSC_VER)
 
-	#pragma warning( disable : 4251 )
+	// switch of warning for simple types in tpListIterator
+	#pragma warning( disable: 4284)
+	#pragma warning( disable: 4251 )
 
 	#if defined(TP_BUILD_LIBRARY)
 		#define TP_API __declspec(dllexport)

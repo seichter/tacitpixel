@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,7 +50,7 @@ tpNode::tpNode(const tpNode& node)
 {
 }
 
-tpNode::~tpNode() 
+tpNode::~tpNode()
 {
 }
 
@@ -60,7 +60,7 @@ tpObject* tpNode::clone()
 }
 
 
-void 
+void
 tpNode::traverse(tpTraverser& traverser)
 {
 	traverser.push(this);
@@ -69,13 +69,13 @@ tpNode::traverse(tpTraverser& traverser)
 		 ++iter)
 	{
 		(*iter).get()->traverse(traverser);
-	}	
+	}
 	traverser.pop(this);
 }
 
 
 //! add a child node
-tpNode* 
+tpNode*
 tpNode::addChild(tpNode* node)
 {
 	if (node)
@@ -87,14 +87,14 @@ tpNode::addChild(tpNode* node)
 }
 
 //! remove child node
-tpNode* 
+tpNode*
 tpNode::removeChild(tpNode* node)
 {
 	if (node)
 	{
 		tpSizeT idx_c = m_children.find(node);
 		tpSizeT idx_p = node->m_parents.find(this);
-		
+
 		m_children.erase(m_children.begin() + idx_c);
 		node->m_parents.erase(node->m_parents.begin() + idx_p);
 	}
@@ -155,14 +155,14 @@ tpNode* tpNode::read(const tpString& file)
 
 			tpNodeHandler* nf = reinterpret_cast<tpNodeHandler*>(item.get());
 
-			if (nf && (tpNodeHandler::kRead & nf->getCapabilities(file))) 
+			if (nf && (tpNodeHandler::kRead & nf->getCapabilities(file)))
 			{
 				result = nf->read(file);
 
 			}
 		}
 	}
-	
+
 	return result;
 
 }

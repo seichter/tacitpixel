@@ -75,7 +75,7 @@ public:
 	tpSizeT getDataSize() const { return m_data.getSize(); }
 	
 	tpUInt getChangeCount() const { return m_changecount; }
-	void dirty() { ++m_changecount; }
+    void makeDirty() { ++m_changecount; }
 	
 	static tpImage* read(const tpString& name);
 	

@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,26 @@ tpTransform::tpTransform(const tpTransform& transform) : tpNode(transform), m_sc
 	m_fields.add(new tpRefField< tpUByte >(m_scope,"scope"));
 }
 
+#if 0
+void
+tpTransform::getMatrix(bool toWorld,tpMat44r& m) const
+{
+	if (toWorld)
+	{
+		//m = (m_scope == kRelative) ? m_matrix.multiply(m) : m_matrix;
+	} else
+	{
+		tpMat44r inverse = m_matrix; inverse.invert();
+		if (m_scope == kRelative)
+		{
+			inverse = m.multiply(inverse);
+		} else {
+			m =  inverse;
+		}
 
+	}
+}
+#endif
 
 #if 0
 
@@ -119,18 +138,18 @@ tpMatrix<tpReal> tpTransform::getMatrix() const
 	return m_matrix;
 };
 
-void tpTransform::dump() 
+void tpTransform::dump()
 {
 
 	//tpNode::dump();
 
-	//tpLogMessage("%d Children",m_children.getSize());	
+	//tpLogMessage("%d Children",m_children.getSize());
 
 	//for (tpULong i = 0; i < m_children.getSize(); ++i)
 	//	if (m_children[i]) m_children[i]->dump();
-	
-	
-	
+
+
+
 }
 
 

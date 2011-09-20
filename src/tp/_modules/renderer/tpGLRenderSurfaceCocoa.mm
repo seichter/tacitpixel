@@ -1,11 +1,11 @@
 /*
  * Twisted Pair Visualization Engine
  *
- * Copyright (c) 1999-2009 Hartmut Seichter 
- * 
- * This library is open source and may be redistributed and/or modified under  
- * the terms of the Twisted Pair License (TPL) version 1.0 or (at your option) 
- * any later version. The full license text is available in the LICENSE file 
+ * Copyright (c) 1999-2009 Hartmut Seichter
+ *
+ * This library is open source and may be redistributed and/or modified under
+ * the terms of the Twisted Pair License (TPL) version 1.0 or (at your option)
+ * any later version. The full license text is available in the LICENSE file
  * included with this distribution, and on the technotecture.com website.
  *
  */
@@ -18,8 +18,8 @@
 @interface tpGLRenderSurfaceCocoaDelegate : NSObject
 {
 	tpGLRenderSurfaceCocoa* rendersurface;
-	
-	
+
+
 };
 @end
 
@@ -33,50 +33,50 @@
 
 -(void)setRenderSurface: (tpGLRenderSurfaceCocoa*)arendersurface
 {
-	[[NSNotificationCenter defaultCenter] 
+	[[NSNotificationCenter defaultCenter]
 		addObserver:self
-		selector:@selector(tryClose:) 
+		selector:@selector(tryClose:)
 		name:NSWindowWillCloseNotification
-		object:arendersurface->getWindow()];	
-	
+		object:arendersurface->getWindow()];
+
 	rendersurface = arendersurface;
 }
 
 -(void)tryClose:(NSNotification*)notification
-{	
-	[[NSNotificationCenter defaultCenter] 
+{
+	[[NSNotificationCenter defaultCenter]
 		removeObserver:self
 		name:NSWindowWillCloseNotification
 		object:rendersurface->getWindow()];
 
 	if (rendersurface) rendersurface->setDone(true);
-	
+
 }
 
 @end
 
 
-tpGLRenderSurfaceCocoa::tpGLRenderSurfaceCocoa(tpRenderSurfaceTraits* traits) 
+tpGLRenderSurfaceCocoa::tpGLRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 	: tpRenderSurface(traits),
 	window(NULL),
 	oglcontext(NULL),
 	delegate(NULL)
 {
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	
+
 	[NSApplication sharedApplication];
-	
+
 	int width = (traits) ? traits->getSize()[0] : 640;
 	int height = (traits) ? traits->getSize()[1] : 480;
-	
+
 	tpLogNotify("%s creating window %dx%d",__FUNCTION__,width,height);
-	
+
 	window = [[NSWindow alloc]
 			  initWithContentRect: NSMakeRect(0,0,width,height)
-			  styleMask:NSTitledWindowMask+NSClosableWindowMask+NSResizableWindowMask 
-			  backing:NSBackingStoreBuffered 
-			  defer:FALSE];
-	
+			  styleMask:NSTitledWindowMask+NSClosableWindowMask+NSResizableWindowMask
+			  backing:NSBackingStoreBuffered
+			  defer:false];
+
 	NSOpenGLPixelFormatAttribute window_attribs[] =
 	{
 		NSOpenGLPFANoRecovery,
@@ -90,28 +90,29 @@ tpGLRenderSurfaceCocoa::tpGLRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 		NSOpenGLPFADoubleBuffer,
 		(NSOpenGLPixelFormatAttribute)nil
 	};
-	
+
 	NSOpenGLPixelFormat *format(nil);
-	
+
 	format = [[NSOpenGLPixelFormat alloc] initWithAttributes:window_attribs];
 	oglcontext = [[NSOpenGLContext alloc] initWithFormat:format shareContext:NULL];
-	
-	
+
+
 	[format release];
 
 	[window center];
 	[window setDelegate:[NSApp delegate]];
 	[oglcontext setView:[window contentView]];
-	[window setAcceptsMouseMovedEvents:TRUE];	
+	[window setAcceptsMouseMovedEvents:TRUE];
 	[window makeKeyAndOrderFront:nil];
-	
+	[window isMainWindow];
+
 	CGLContextObj cgl_context = (CGLContextObj) [oglcontext CGLContextObj];
-	
+
 	CGLSetCurrentContext(cgl_context);
 	tpInt swap_interval = (true) ? 1 : 0;
 	CGLSetParameter(cgl_context, kCGLCPSwapInterval, &swap_interval);
-	
-	
+
+
 	/* set notification interfaces */
 	tpGLRenderSurfaceCocoaDelegate* mdelegate = [[tpGLRenderSurfaceCocoaDelegate alloc] init];
 	[mdelegate setRenderSurface:this];
@@ -119,31 +120,22 @@ tpGLRenderSurfaceCocoa::tpGLRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 
 	/* title */
 	if (traits) this->setCaption(traits->getTitle());
-	
+
+	/* now make application active */
+	NSRunningApplication* app = [NSRunningApplication currentApplication];
+	[app activateWithOptions: NSApplicationActivateAllWindows];
+
 	[NSApp finishLaunching];
-	
+
+
+
 	[pool release];
-	
+
 }
 
 
-tpGLRenderSurfaceCocoa::~tpGLRenderSurfaceCocoa() 
+tpGLRenderSurfaceCocoa::~tpGLRenderSurfaceCocoa()
 {
-	//NSLog(@"%s %x0x",__FUNCTION__,window);
-	
-	if (window)
-	{
-		//[window release];
-		/*
-		NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-		
-		 [window performSelectorOnMainThread: @selector(close) withObject:NULL waitUntilDone: YES];
-        [window performSelectorOnMainThread: @selector(release) withObject:NULL waitUntilDone: YES];
-		
-		[pool release];
-		*/
-	}
-	
 	window = NULL;
 }
 
@@ -152,42 +144,42 @@ tpGLRenderSurfaceCocoa::frame()
 {
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
-	NSEvent* event = [NSApp 
-		nextEventMatchingMask:NSAnyEventMask 
-		untilDate:nil 
-		inMode:NSDefaultRunLoopMode 
+	NSEvent* event = [NSApp
+		nextEventMatchingMask:NSAnyEventMask
+		untilDate:nil
+		inMode:NSDefaultRunLoopMode
 		dequeue:YES];
 
 	if (event)
 	{
 		[NSApp sendEvent:event];
 	}
-	
+
 	[pool release];
-	
-	tpRenderSurface::frame();	
+
+	tpRenderSurface::frame();
 }
 
-bool 
-tpGLRenderSurfaceCocoa::makeCurrent() 
+bool
+tpGLRenderSurfaceCocoa::makeCurrent()
 {
-	
-	[oglcontext update];	
+
+	[oglcontext update];
 	[oglcontext makeCurrentContext];
-	
+
 
 	return true;
 }
 
-bool 
-tpGLRenderSurfaceCocoa::swapBuffers() 
-{	
+bool
+tpGLRenderSurfaceCocoa::swapBuffers()
+{
 	[oglcontext flushBuffer];
-	
+
 	return true;
 }
 
-tpString tpGLRenderSurfaceCocoa::getString(tpUInt glenum) 
+tpString tpGLRenderSurfaceCocoa::getString(tpUInt glenum)
 {
 	makeCurrent();
 	tpString result;
@@ -195,7 +187,7 @@ tpString tpGLRenderSurfaceCocoa::getString(tpUInt glenum)
 	return result;
 }
 
-bool tpGLRenderSurfaceCocoa::show(bool doShow) 
+bool tpGLRenderSurfaceCocoa::show(bool doShow)
 {
 	[window setIsVisible:(BOOL)doShow];
 
@@ -203,7 +195,7 @@ bool tpGLRenderSurfaceCocoa::show(bool doShow)
 }
 
 
-void 
+void
 tpGLRenderSurfaceCocoa::setCaption(const tpString& caption)
 {
 	NSString* name = [[NSString alloc] initWithCString: caption.c_str() encoding: NSASCIIStringEncoding ];
@@ -216,14 +208,14 @@ tpGLRenderSurfaceCocoa::setCaption(const tpString& caption)
 
 class tpRenderSurfaceFactoryCocoa : public tpRenderSurfaceFactory {
 public:
-	
+
 	TP_TYPE_DECLARE;
-	
+
 	tpRenderSurfaceFactoryCocoa() : tpRenderSurfaceFactory()
 	{
 		tpLogNotify("%s - added Cocoa Surface Factory");
 	}
-protected:	
+protected:
 	tpRenderSurface* create( tpRenderSurfaceTraits* traits )
 	{
 		return new tpGLRenderSurfaceCocoa( traits );

@@ -71,8 +71,6 @@ public:
 
 	void rewind() { seek(0,kSeekSet); clear(kGood); }
 
-
-
 protected:
 
 	tpUByte m_state;

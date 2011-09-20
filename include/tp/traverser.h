@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,15 +39,15 @@ public:
 
 	virtual void push(tpNode* node) = 0;
 	virtual void pop(tpNode* node) = 0;
-	
+
 	tpUInt getFrameCount() const { return m_framecount; }
-	
+
 protected:
-	
+
 	virtual ~tpTraverser();
-	
+
 	tpUInt m_framecount;
-	
+
 };
 
 

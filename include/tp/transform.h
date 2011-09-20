@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,11 +26,9 @@
 #ifndef TPTRANSFORM_H
 #define TPTRANSFORM_H
 
-
 #include <tp/node.h>
 #include <tp/vec.h>
 #include <tp/mat.h>
-
 
 class TP_API tpTransform : public tpNode {
 public:
@@ -51,35 +49,12 @@ public:
 	tpUByte getScope() const { return m_scope; }
 	void setScope(tpUByte val) { m_scope = val; }
 
-
-	/*
-	const tpVec3r& getTranslation();
-	const tpVec3r& getScale();
-	const tpVec4r& getRotation();
-	
-	void setTranslation(tpReal x, tpReal y, tpReal z);
-
-
-	void setScale(const tpVec3r&);
-	void setRotation(const tpVec4r&);
-	void rotate(const tpReal& x, 
-		const tpReal& y,
-		const tpReal& z,
-		const tpReal& degree);
-
-
-	void translate(tpReal x, tpReal y, tpReal z);
-	void translate(const tpVec3r&);
-	void scale(const tpVec3r&);
-
-	virtual tpObject* clone();
-
-	*/
+	//void getMatrix(bool toWorld, tpMat44r &m) const;
 
 protected:
+
 	tpUByte m_scope;
 	tpMat44r m_matrix;
-
 };
 
 

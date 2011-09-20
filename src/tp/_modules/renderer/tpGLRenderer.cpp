@@ -1,11 +1,11 @@
 /*
 * Twisted Pair Visualization Engine
 *
-* Copyright (c) 1999-2009 Hartmut Seichter 
-* 
-* This library is open source and may be redistributed and/or modified under  
-* the terms of the Twisted Pair License (TPL) version 1.0 or (at your option) 
-* any later version. The full license text is available in the LICENSE file 
+* Copyright (c) 1999-2009 Hartmut Seichter
+*
+* This library is open source and may be redistributed and/or modified under
+* the terms of the Twisted Pair License (TPL) version 1.0 or (at your option)
+* any later version. The full license text is available in the LICENSE file
 * included with this distribution, and on the technotecture.com website.
 *
 */
@@ -41,25 +41,25 @@ public:
 
 		tpGL::Enable(tpGL::LIGHTING);
 		tpGL::Enable(tpGL::LIGHT0);
-		
-		// hack
-		float amb_light[] = {0.2f, 0.2f, 0.2f, 1.0f};		
-	    tpGL::LightModelfv(tpGL::LIGHT_MODEL_AMBIENT, amb_light);	
-	    tpGL::LightModelf(tpGL::LIGHT_MODEL_LOCAL_VIEWER, 0.0f);
-		tpGL::LightModelf(tpGL::LIGHT_MODEL_TWO_SIDE, 0.0f);
-	
-		//#define GL_SEPARATE_SPECULAR_COLOR 0x81FA 
-	    tpGL::LightModeli(tpGL::LIGHT_MODEL_COLOR_CONTROL, 0x81FA);
 
-	
+		// hack
+		float amb_light[] = {0.2f, 0.2f, 0.2f, 1.0f};
+		tpGL::LightModelfv(tpGL::LIGHT_MODEL_AMBIENT, amb_light);
+		tpGL::LightModelf(tpGL::LIGHT_MODEL_LOCAL_VIEWER, 0.0f);
+		tpGL::LightModelf(tpGL::LIGHT_MODEL_TWO_SIDE, 0.0f);
+
+		//#define GL_SEPARATE_SPECULAR_COLOR 0x81FA
+		tpGL::LightModeli(tpGL::LIGHT_MODEL_COLOR_CONTROL, 0x81FA);
+
+
 		tpGL::ShadeModel(tpGL::SMOOTH);
-	    
+
 
 		tpGL::Enable(tpGL::DEPTH_TEST);
 
 		tpGL::glFrontFace(tpGL::CCW);
 		//tpGL::Disable(tpGL::CULL_FACE);
-		
+
 		//
 		mvs.push(camera->getView());
 
@@ -72,7 +72,7 @@ public:
 		if (camera)
 		{
 
-			tpGL::Viewport(camera->getViewport()[0],camera->getViewport()[1],camera->getViewport()[2],camera->getViewport()[3]);
+			//tpGL::Viewport(camera->getViewport()[0],camera->getViewport()[1],camera->getViewport()[2],camera->getViewport()[3]);
 			//tpLogMessage("%s - %d,%d - %dx%d",__FUNCTION__,camera->getViewport()[0],camera->getViewport()[1],camera->getViewport()[2],camera->getViewport()[3]);
 
 			TP_REPORT_GLERROR();
@@ -92,10 +92,12 @@ public:
 			TP_REPORT_GLERROR();
 
 			tpGL::MatrixMode(tpGL::PROJECTION);
+			tpGL::LoadIdentity();
 			tpGL::LoadMatrixf(camera->getProjection().data());
 			TP_REPORT_GLERROR();
 
 			tpGL::MatrixMode(tpGL::MODELVIEW);
+			tpGL::LoadIdentity();
 			tpGL::LoadMatrixf(camera->getView().data());
 			TP_REPORT_GLERROR();
 		}
@@ -134,14 +136,14 @@ public:
 		tpGL::EnableClientState(tpGL::VERTEX_ARRAY);
 		tpGL::VertexPointer(3, tpGL::FLOAT, 0, prim->getVertices().getData());
 
-		if (prim->hasAttribute(tpPrimitive::kAttributeNormal)) 
+		if (prim->hasAttribute(tpPrimitive::kAttributeNormal))
 		{
 			//tpLogNotify("%s %d normals",__FUNCTION__,prim->getNormals().getSize());
 			tpGL::EnableClientState(tpGL::NORMAL_ARRAY);
 			tpGL::NormalPointer(tpGL::FLOAT, 0, prim->getNormals().getData());
 		}
 
-		if (prim->hasAttribute(tpPrimitive::kAttributeTextureCoordinate)) 
+		if (prim->hasAttribute(tpPrimitive::kAttributeTextureCoordinate))
 		{
 			//tpLogNotify("%s %d texcoords",__FUNCTION__,mesh->getTexCoords().getSize());
 			//float tex[] = {0,0, 0,1, 1,0, 1,1};
@@ -149,7 +151,7 @@ public:
 			tpGL::TexCoordPointer(2, tpGL::FLOAT, 0, prim->getTexCoords().getData());
 		}
 
-		if (prim->hasAttribute(tpPrimitive::kAttributeColorPerVertex)) 
+		if (prim->hasAttribute(tpPrimitive::kAttributeColorPerVertex))
 		{
 			//tpLogNotify("%s %d color",__FUNCTION__,prim->getColors().getSize());
 			//float tex[] = {0,0, 0,1, 1,0, 1,1};
@@ -161,7 +163,7 @@ public:
 
 		tpGL::DisableClientState(tpGL::VERTEX_ARRAY);
 
-		if (prim->hasAttribute(tpPrimitive::kAttributeNormal)) 
+		if (prim->hasAttribute(tpPrimitive::kAttributeNormal))
 		{
 			tpGL::DisableClientState(tpGL::NORMAL_ARRAY);
 		}
@@ -180,7 +182,7 @@ public:
 	}
 
 	void pushMaterial(const tpMaterial* mat) {
-		
+
 		if (mat)
 		{
 			tpGL::Materialfv(tpGL::FRONT_AND_BACK,tpGL::AMBIENT,mat->getAmbientColor().getData());
@@ -190,19 +192,19 @@ public:
 
 			tpGL::Materialf(tpGL::FRONT_AND_BACK,tpGL::SHININESS,mat->getShininess());
 
-			//materials.push(mat);	
+			//materials.push(mat);
 		}
-		
+
 		TP_REPORT_GLERROR();
 	}
-	
+
 	void popMaterial(const tpMaterial* mat) {
-		
-		if (mat) 
+
+		if (mat)
 		{
 			//materials.pop();
 		}
-		
+
 	}
 
 	void pushTransform(tpTransform* trans)
@@ -230,14 +232,14 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
-tpGLRenderer::tpGLRenderer() : tpRenderer() 
+tpGLRenderer::tpGLRenderer() : tpRenderer()
 {
 	if (!tpGL::get().isValid()) tpGL::get().load();
 
 	m_traverser = new tpGLFixedFunctionTraverser();
 }
 
-tpGLRenderer::~tpGLRenderer() 
+tpGLRenderer::~tpGLRenderer()
 {
 	tpGL::get().release();
 }
@@ -272,9 +274,9 @@ void tpGLRenderer::operator()(tpNode* node, tpCamera* camera)
 		return;
 	}
 
-	if (camera) 
+	if (camera)
 	{
-	
+
 		}
 
 
@@ -292,14 +294,14 @@ void tpGLRenderer::operator()(tpNode* node, tpCamera* camera)
 		}
 
 
-		// just in case 
+		// just in case
 		if ( !tpGL::get().hasShaderSupport() ) tpGL::MatrixMode(tpGL::MODELVIEW);
 #endif
 	}
 
-	if (node) 
+	if (node)
 	{
-		if (camera && !tpGL::get().hasShaderSupport()) 
+		if (camera && !tpGL::get().hasShaderSupport())
 		{
 			//tpGL::MatrixMode(tpGL::MODELVIEW);
 			//tpGL::LoadIdentity();
@@ -326,7 +328,7 @@ TP_TYPE_REGISTER(tpGLRenderer,tpRenderer,GLRenderer);
 
 //
 //
-// 
+//
 
 #if 0 // needs rewrite
 
@@ -399,11 +401,11 @@ protected:
 //
 //public:
 //
-//	tpGLLightRenderObject(tpLight* light) : m_light(light) 
+//	tpGLLightRenderObject(tpLight* light) : m_light(light)
 //	{
 //	}
 //
-//	virtual tpVoid onDraw() 
+//	virtual tpVoid onDraw()
 //	{
 //		//tpGL::Lightfv(tpGL::AMBIENT,)
 //	}
@@ -429,10 +431,10 @@ public:
 	tpGLTextureObject(tpTexture* texture) : m_texture(texture), m_image(new tpImage()), m_texturechanges(0), m_glname(0)
 	{}
 
-	tpVoid createTextureName() 
+	tpVoid createTextureName()
 	{
-			
-		// ES - does not "enable" a Texture2D - therefore only apply on 
+
+		// ES - does not "enable" a Texture2D - therefore only apply on
 		// desktop systems (non-EGL)
 		if (! tpGL::get().hasEGL() ) tpGL::Enable(GL_TEXTURE_2D);
 
@@ -448,7 +450,7 @@ public:
 	tpVoid onDraw(tpContext& context)
 	{
 		tpTimer t;
-		
+
 		tpGL::glActiveTexture(GL_TEXTURE0);
 
 		TP_REPORT_GLERROR();
@@ -495,8 +497,8 @@ public:
 			tpInt npot_width = nextPowerOfTwo(m_image->getWidth());
 			tpInt npot_height =  nextPowerOfTwo(m_image->getHeight());
 
-			tpGL::TexImage2D(GL_TEXTURE_2D, 
-				0, 
+			tpGL::TexImage2D(GL_TEXTURE_2D,
+				0,
 				glformat.imageformat,
 				npot_width,
 				npot_height,
@@ -506,7 +508,7 @@ public:
 				0);
 
 
-			tpGL::TexSubImage2D(GL_TEXTURE_2D, 0, 
+			tpGL::TexSubImage2D(GL_TEXTURE_2D, 0,
 				0,
 				0,
 				m_image->getWidth(),
@@ -522,7 +524,7 @@ public:
 				__FUNCTION__,m_texturechanges,t.getElapsed(),
 				m_texture->getImage()->getFileName().c_str());
 
-		} else 
+		} else
 		if ( m_texturechanges != m_image->getChangeCount() ) {
 
 
@@ -531,7 +533,7 @@ public:
 
 			tpGL::PixelStorei(tpGL::UNPACK_ALIGNMENT, 1);
 
-			tpGL::TexSubImage2D(GL_TEXTURE_2D, 0, 
+			tpGL::TexSubImage2D(GL_TEXTURE_2D, 0,
 				0,
 				0,
 				m_image->getWidth(),
@@ -541,7 +543,7 @@ public:
 				(void*)m_image->getData());
 
 			m_texturechanges = m_image->getChangeCount();
-			
+
 			tpLogNotify("%s - upload texture with glTexSubImage2D (%d) %3.1lf",__FUNCTION__,m_texturechanges,t.getElapsed());
 
 		}
@@ -563,14 +565,14 @@ public:
 
 */
 		TP_REPORT_GLERROR();
-	
+
 		//glEnable(GL_TEXTURE_GEN_S);			// Auto Texture Generation
 		//glEnable(GL_TEXTURE_GEN_T);			// Auto Texture Generation
 
-		// LABEL	
+		// LABEL
 		//tex_out:
 
-		//tpLogNotify("%s - %3.1fms",__FUNCTION__,t.getElapsed()); 
+		//tpLogNotify("%s - %3.1fms",__FUNCTION__,t.getElapsed());
 
 	}
 
@@ -603,24 +605,24 @@ class tpGLMeshRenderObject : public tpRenderObject {
 
 	tpRefPtr<tpMesh> m_mesh;
 	tpRefPtr<tpGLProgram> m_program;
-	
+
 	GLuint m_vbos[3];
 
 	static tpRefCache<tpGLProgram> m_programcache;
 
 public:
 
-	tpGLMeshRenderObject(tpMesh* mesh) : m_mesh(mesh), m_program(0) 
+	tpGLMeshRenderObject(tpMesh* mesh) : m_mesh(mesh), m_program(0)
 	{
 		m_vbos[0] = 0;
 	}
 
-	
+
 	void createVBOs()
 	{
 		tpGL::glGenBuffers(3,m_vbos);
-		
-		
+
+
 #define GL_ARRAY_BUFFER                                0x8892
 #define GL_ELEMENT_ARRAY_BUFFER                        0x8893
 #define GL_STATIC_DRAW                                 0x88E4
@@ -638,54 +640,54 @@ public:
 		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIds[1]); glBufferData(GL_ELEMENT_ARRAY_BUFFER,
 		//numIndices * sizeof(GLushort),indices, GL_STATIC_DRAW);
 	}
-	
+
 	void drawVBOs()
 	{
-		
+
 		if (m_vbos[0] == 0) createVBOs();
-		
+
 		/* VERTICES */
 		tpInt attrib_pos = m_program->getAttributeLocation("a_vertex");
-		if (attrib_pos > -1) 
+		if (attrib_pos > -1)
 		{
 			tpGL::glBindBuffer(GL_ARRAY_BUFFER, m_vbos[0]);
 			tpGL::glVertexAttribPointer(attrib_pos, 3, tpGL::FLOAT, tpGL::_FALSE, 0, 0);
-			tpGL::glEnableVertexAttribArray(attrib_pos); 
+			tpGL::glEnableVertexAttribArray(attrib_pos);
 		}
-		
+
 		TP_REPORT_GLERROR();
-		
-		
+
+
 		/* NORMALS */
-		attrib_pos = m_program->getAttributeLocation("a_normal");	
-		if (attrib_pos > -1) 
+		attrib_pos = m_program->getAttributeLocation("a_normal");
+		if (attrib_pos > -1)
 		{
 			tpGL::glBindBuffer(GL_ARRAY_BUFFER, m_vbos[1]);
 			tpGL::glVertexAttribPointer(attrib_pos, 3, tpGL::FLOAT, tpGL::_FALSE, 0, 0);
 			tpGL::glEnableVertexAttribArray(attrib_pos);
 		}
-		
+
 		TP_REPORT_GLERROR();
-		
+
 		/* TEXTURE COORDINATES */
 		attrib_pos = m_program->getAttributeLocation("a_texture_coord");
 		if (attrib_pos > -1 && m_mesh->getTexCoordsCount())
 		{
 			tpGL::glBindBuffer(GL_ARRAY_BUFFER, m_vbos[2]);
-			tpGL::glVertexAttribPointer(attrib_pos, 2, tpGL::FLOAT, tpGL::_FALSE, 0, 0); 
-			tpGL::glEnableVertexAttribArray(attrib_pos); 
+			tpGL::glVertexAttribPointer(attrib_pos, 2, tpGL::FLOAT, tpGL::_FALSE, 0, 0);
+			tpGL::glEnableVertexAttribArray(attrib_pos);
 		}
-		
+
 		TP_REPORT_GLERROR();
-		
+
 		//tpLogMessage("%s Mesh with %d Vertices\t%d Normals\t%d TexCoords",__FUNCTION__,
 		//	m_mesh->getVertexCount(),m_mesh->getNormalsCount(),m_mesh->getTexCoordsCount());
-		
+
 		// now draw the whole thing
 		tpGL::DrawArrays(m_mesh->getMeshType(),0,m_mesh->getVertexCount());
-		
+
 		tpGL::glBindBuffer(GL_ARRAY_BUFFER, 0);
-		
+
 	}
 
 
@@ -714,18 +716,18 @@ public:
 
 		TP_REPORT_GLERROR();
 
-	
+
 		m_program = new tpGLProgram;
 
 		tpLogMessage("%s - checking for shader support",__FUNCTION__);
 
 		if (tpGL::get().hasShaderSupport())
-		{	
+		{
 			if (tpGL::get().hasShaderCompiler())
 			{
 				tpLogMessage("%s - shader compiler on board. Using inline shaders.",__FUNCTION__);
 
-				
+
 				/*
 				m_program->setVertexShaderSource(
 					"uniform mat4 vProjMat;               \n"
@@ -746,12 +748,12 @@ public:
 					"void main()                               \n"
 					"{                                         \n"
 					" gl_FragColor = outColour;                \n"
-					"}                                        \n"      
+					"}                                        \n"
 					);
-				*/				
-				
+				*/
 
-						
+
+
 				tpString path_vs = tpSystem::get()->getExecutablePath(true) + tpPathSep + "shaders" + tpPathSep + "mesh.vert";
 				tpString path_fs = tpSystem::get()->getExecutablePath(true) + tpPathSep + "shaders" + tpPathSep + "mesh.frag";;
 
@@ -808,8 +810,8 @@ public:
 
 		//tpGL::glFrontFace(tpGL::CW);
 
-		
-		// HACK!		
+
+		// HACK!
 		if (m_program.isValid() /* && m_program->isReady() */)
 		{
 			m_program->use();
@@ -820,7 +822,7 @@ public:
 			return;
 		}
 
-		
+
 		if (getNestedRenderObject()) getNestedRenderObject()->onDraw(context);
 
 		TP_REPORT_GLERROR();
@@ -840,7 +842,7 @@ public:
 		TP_REPORT_GLERROR();
 
 		tpVec4f vec(camera->getPosition(),1.0);
-		tpGL::glUniform4fv(m_program->getUniformLocation("u_viewer_pos"), 
+		tpGL::glUniform4fv(m_program->getUniformLocation("u_viewer_pos"),
 			1, vec.getData());
 
 		TP_REPORT_GLERROR();
@@ -860,25 +862,25 @@ public:
 		TP_REPORT_GLERROR();
 
 		//////////////////////////////////////////////////////////////////////////
-		// Attributes 
+		// Attributes
 		//////////////////////////////////////////////////////////////////////////
 
 #if 0
-		
+
 		/* VERTICES */
 		tpInt attrib_pos = m_program->getAttributeLocation("a_vertex");
-		if (attrib_pos > -1) 
+		if (attrib_pos > -1)
 		{
 			tpGL::glVertexAttribPointer(attrib_pos, 3, tpGL::FLOAT, tpGL::_FALSE, 0, m_mesh->getVertices().getData());
-			tpGL::glEnableVertexAttribArray(attrib_pos); 
+			tpGL::glEnableVertexAttribArray(attrib_pos);
 		}
 
 		TP_REPORT_GLERROR();
-		
+
 
 		/* NORMALS */
-		attrib_pos = m_program->getAttributeLocation("a_normal");	
-		if (attrib_pos > -1) 
+		attrib_pos = m_program->getAttributeLocation("a_normal");
+		if (attrib_pos > -1)
 		{
 			tpGL::glVertexAttribPointer(attrib_pos, 3, tpGL::FLOAT, tpGL::_FALSE, 0, m_mesh->getNormals().getData());
 			tpGL::glEnableVertexAttribArray(attrib_pos);
@@ -890,8 +892,8 @@ public:
 		attrib_pos = m_program->getAttributeLocation("a_texture_coord");
 		if (attrib_pos > -1 && m_mesh->getTexCoordsCount())
 		{
-			tpGL::glVertexAttribPointer(attrib_pos, 2, tpGL::FLOAT, tpGL::_FALSE, 0, m_mesh->getTexCoords().getData()); 
-			tpGL::glEnableVertexAttribArray(attrib_pos); 
+			tpGL::glVertexAttribPointer(attrib_pos, 2, tpGL::FLOAT, tpGL::_FALSE, 0, m_mesh->getTexCoords().getData());
+			tpGL::glEnableVertexAttribArray(attrib_pos);
 		}
 
 		TP_REPORT_GLERROR();
@@ -919,14 +921,14 @@ public:
 		tpGL::EnableClientState(tpGL::VERTEX_ARRAY);
 		tpGL::VertexPointer(3,tpGL::FLOAT,0,m_mesh->getVertices().getData());
 
-		if (m_mesh->getNormals().getSize()) 
+		if (m_mesh->getNormals().getSize())
 		{
 			//tpLogNotify("%s %d normals",__FUNCTION__,m_mesh->getNormals().getSize());
 			tpGL::EnableClientState(tpGL::NORMAL_ARRAY);
 			tpGL::NormalPointer(tpGL::FLOAT,0,m_mesh->getNormals().getData());
 		}
 
-		if (m_mesh->getTexCoords().getSize()) 
+		if (m_mesh->getTexCoords().getSize())
 		{
 			//tpLogNotify("%s %d texcoords",__FUNCTION__,m_mesh->getTexCoords().getSize());
 			tpGL::EnableClientState(tpGL::TEXTURE_COORD_ARRAY);
@@ -938,13 +940,13 @@ public:
 
 		tpGL::DisableClientState(tpGL::VERTEX_ARRAY);
 
-		if (m_mesh->getNormals().getSize()) 
+		if (m_mesh->getNormals().getSize())
 		{
 			tpGL::DisableClientState(tpGL::NORMAL_ARRAY);
 		}
 
 
-		if (m_mesh->getTexCoords().getSize()) 
+		if (m_mesh->getTexCoords().getSize())
 		{
 			tpGL::DisableClientState(tpGL::TEXTURE_COORD_ARRAY);
 		}
@@ -952,9 +954,9 @@ public:
 
 	void onDraw(tpContext& context) {
 
-		// HACK!		
-		tpGL::get().hasShaderSupport() ? 
-			onDrawShader(context) : 
+		// HACK!
+		tpGL::get().hasShaderSupport() ?
+			onDrawShader(context) :
 			onDrawFixedFunc(context);
 	}
 
@@ -983,7 +985,7 @@ void tpGLTraverser::applyMaterial(tpNode* node)
 };
 
 tpVoid tpGLTraverser::preAction( tpNode* node, tpContext& context )
-{		
+{
 
 	if (node && false == node->getDepthTest() )
 	{
@@ -1004,14 +1006,14 @@ tpVoid tpGLTraverser::preAction( tpNode* node, tpContext& context )
 	}
 
 
-	if (node->isOfType(tpPrimitive::getTypeInfo())) 
+	if (node->isOfType(tpPrimitive::getTypeInfo()))
 	{
 		tpPrimitive* mesh = static_cast<tpPrimitive*>(node);
 
 		tpRenderObject* robj = mesh->getRenderObject();
 
 		if (0 == robj) {
-			
+
 			robj = new tpGLMeshRenderObject(mesh);
 			mesh->setRenderObject(robj);
 		}

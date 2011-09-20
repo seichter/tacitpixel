@@ -15,19 +15,19 @@ tpNode* createNode()
 {
 	tpPrimitive* p = new tpPrimitive(tpPrimitive::kTriangleStrip);
 	tpReal s = 2;
-	
+
 	p->addVertex(tpVec3r(1,1,0),tpVec3r(0,0,1));
 	p->addVertex(tpVec3r(0,1,0),tpVec3r(0,0,1));
 	p->addVertex(tpVec3r(1,0,0),tpVec3r(0,0,1));
 	p->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1));
-	
+
 	tpMaterial* m = new tpMaterial();
-	
+
 	p->setMaterial(m);
 	m->setName("Default Material");
-	
+
 	m->setDiffuseColor(tpVec4r(.3,0,0,1));
-	
+
 	//return p;
 	return 0;
 }
@@ -36,42 +36,30 @@ tpNode* createNode()
 
 int main(int argc, char* argv[])
 {
-	
 	tpRefPtr<tpLibrary> mod_gl = tpLibrary::load("tacit_gl");
-	//tpRefPtr<tpLibrary> mod_3ds = tpLibrary::load("tacit_3ds");
+	tpRefPtr<tpLibrary> mod_3ds = tpLibrary::load("tacit_3ds");
 	tpRefPtr<tpLibrary> mod_obj = tpLibrary::load("tacit_obj");
-	
 
-	tpRefPtr<tpPrimitive> p = 
+	tpRefPtr<tpPrimitive> p =
 		tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kAxis);
-		
+
 	tpRefPtr<tpNode> n = tpNode::read(argv[1]);
-	
+
 	if (!n.isValid()) n = createNode();
-
-
 
 	tpRefPtr<tpNode> root = new tpNode();
 
 	// first one
 	tpRefPtr<tpTransform> t = new tpTransform();
 	t->getMatrix().setIdentity();
-	t->getMatrix().translate(0.0,1.0,-1.0);
-	t->getMatrix().rotate(tpVec3r(0,1,0),45);
+//	t->getMatrix().translate(0.0,1.0,-1.0);
+	//t->getMatrix().rotate(tpVec3r(0,1,0),45);
 	t->addChild(n.get());
 
-	// second one further away
-	tpRefPtr<tpTransform> t2 = new tpTransform();
-	t2->getMatrix().setIdentity();
-	t2->getMatrix().translate(0,0,-5);
-	t2->addChild(n.get());
-
-	root->addChild(p.get());
 	root->addChild(t.get());
-	root->addChild(t2.get());
-	
+
 	tpRenderSurfaceTraits traits;
-	traits.setSize(640,480).setPosition(10,10).setTitle("Tacit Pixel 3");
+	traits.setSize(640,480).setPosition(740,10).setTitle("Tacit Pixel 3");
 
 	tpRefPtr<tpRenderSurface> rendersurface = tpRenderSurface::create(&traits);
 
@@ -83,10 +71,9 @@ int main(int argc, char* argv[])
 	camera->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
 	camera->setClearColor(tpVec4f(0.5f,0.5f,0.9f,1.0f));
 	camera->setViewport(tpVec4i(0,0,640,480));
-	
+
 	if (rendersurface.isValid())
 	{
-
 		rendersurface->show(true);
 
 		rendersurface->setCamera(camera.get());

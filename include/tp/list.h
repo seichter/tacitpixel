@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,13 +26,7 @@
 #ifndef TPLIST_H
 #define TPLIST_H
 
-
-#ifdef _MSC_VER
-// switch of warning for simple types in tpListIterator
-#pragma warning(disable:4284)
-#endif
-
-
+#include <tp/globals.h>
 #include <tp/types.h>
 
 /*!
@@ -52,7 +46,7 @@ public:
 
 	//! copy c'tor
 	tpListItem(const tpListItem<T>& item);
-	
+
 	//! returns the stored item
 	T* get();
 	//! the item in raw format
@@ -77,21 +71,21 @@ public:
 	Accessing all items of a list is more
 	convenient through iterators. Just
 	to illustrate that functionality:
-	
+
 	\code
-	
+
 	tpList<int> list;
-	
+
 	tpListIterator<int> iterator(list.getBegin());
-	
+
 	while (iterator.getItem())
 	{
 		cout << *iterator.getItem() << ", ";
 		iterator++;
-	};	
+	};
 	\endcode
-	
-*/  
+
+*/
 template <class T> class tpListIterator
 {
 public:
@@ -106,10 +100,10 @@ public:
 
 	//! returns reference to item
 	T* get();
-	
-	//! resets the iterator to a certain item	
+
+	//! resets the iterator to a certain item
 	void set(tpListItem<T>* item);
-	
+
 	//! operator for going up in the list
 	void operator ++ (int);
 	//! operator for going down in the list
@@ -128,7 +122,7 @@ public:
 
 private:
 	tpListItem<T>* m_current;
-		
+
 };
 
 /*!
@@ -147,20 +141,20 @@ public:
 
 	//! default c'tor
 	tpList();
-	//! copy c'tor	
+	//! copy c'tor
 	tpList(const tpList<T>& list);
 	//! d'tor
 	virtual ~tpList();
-	
+
 	//! adds an item on the end of the list
 	tpListItem<T>* add(const T& item);
-	
+
 	//! removes an item (does not delete it)
 	tpListItem<T>* remove(const T& item);
-	
+
 	//! removes last item
 	void pop();
-	
+
 	//! appends a list
 	void append(const tpList<T>& list);
 	//! deletes all items
@@ -185,7 +179,7 @@ public:
 	T* getFirst() const;
 	//! get last item
 	T* getLast() const;
-	
+
 	//! get the head (for iterating)
 	tpListIterator<T> getBegin() const;
 	//! get the tail (for iterating)
@@ -193,11 +187,11 @@ public:
 
 	tpULong getSize() const;
 
-		
+
 
 private:
 	tpULong m_length;
-	tpListItem<T> *head;                            
+	tpListItem<T> *head;
 	tpListItem<T> *tail;
 };
 
@@ -208,7 +202,7 @@ private:
 template <class T> inline tpListItem<T>::tpListItem(const T& v) :
 	value(v),
 	prev(NULL),
-	next(NULL)	
+	next(NULL)
 {
 };
 
@@ -218,74 +212,74 @@ template <class T> inline tpListItem<T>::tpListItem(const tpListItem<T>& item)
 	prev = item.prev;
 	next = item.next;
 
-	
+
 	value = item.value;
 };
 */
-	
+
 template <class T> inline T* tpListItem<T>::get()
-{ 
+{
 	return &value;
 };
 
 
 // ----------------------------------------------------------------------------
 
-template <class T> 
+template <class T>
 inline tpListIterator<T>::tpListIterator(tpListItem<T>* item)
 : m_current(item)
-{	
+{
 };
 
 
-template <class T> 
+template <class T>
 inline tpListIterator<T>::tpListIterator(const tpListIterator& iter)
 : m_current(iter.m_current)
 {
 };
-	
-template <class T> 
+
+template <class T>
 inline T* tpListIterator<T>::get()
 {
 	return m_current ? m_current->get() : NULL;
 };
 
-	
-	
-template <class T> 
+
+
+template <class T>
 inline void tpListIterator<T>::set(tpListItem<T>* item)
 {
 	m_current = item;
 };
 
 
-template <class T> 
+template <class T>
 inline void tpListIterator<T>::operator ++ (int)
 {
 	m_current = (m_current) ? m_current->next : NULL;
 };
 
-template <class T> 
+template <class T>
 inline void tpListIterator<T>::operator -- (int)
 {
 	m_current = (m_current) ? m_current->prev : NULL;
 }
 
-template <class T> 
+template <class T>
 inline T& tpListIterator<T>::operator->()
 {
 	return *m_current->value();
 };
 
 
-template <class T> 
+template <class T>
 inline void tpListIterator<T>::operator = (const tpListIterator<T>& rhs)
 {
 	m_current = rhs.m_current;
 };
 
 
-template <class T> 
+template <class T>
 inline T& tpListIterator<T>::operator *() const
 {
 	return *m_current->get();
@@ -309,7 +303,7 @@ inline bool tpListIterator<T>::operator != (const tpListIterator<T>& rhs) const
 
 // ----------------------------------------------------------------------------
 
-template <class T> inline tpList<T>::tpList() 
+template <class T> inline tpList<T>::tpList()
 	: m_length(0),
 	head(NULL),
 	tail(NULL)
@@ -341,9 +335,9 @@ template <class T> inline tpListItem<T>* tpList<T>::add(const T& item)
 		// head = tail = newtail;
 	} else
 	{
-	
+
 		newtail->prev = tail;
-		newtail->next = NULL;	
+		newtail->next = NULL;
 
 		tail->next = newtail;
 
@@ -370,7 +364,7 @@ template <class T> inline tpListItem<T>* tpList<T>::remove(const T& item)
 		};
 		_l = _l->next;
 	};
-	return NULL;	
+	return NULL;
 };
 
 
@@ -386,7 +380,7 @@ template <class T> inline void tpList<T>::purge()
 
 		_l = _n;
 	};
-	
+
 };
 
 
@@ -395,7 +389,7 @@ template <class T> inline void tpList<T>::append(const tpList<T>& l)
 	tpListIterator<T> _i = l.getBegin();
 	while (_i.get())
 	{
-		this->add((*_i));		
+		this->add((*_i));
 		_i++;
 	}
 };
@@ -410,27 +404,27 @@ template <class T> inline void tpList<T>::empty()
 		delete _c;
 		// _c = NULL;	// paranoia?
 	};
-	m_length = 0;	
+	m_length = 0;
 	tail = head = NULL;
 }
-	
+
 
 template <class T> inline bool tpList<T>::contains(const T& item)
 {
 	tpListItem<T>* _l = head;
 	while (_l != NULL)
 	{
-		if (_l->value == item) return true; 
+		if (_l->value == item) return true;
 		_l = _l->next;
 	};
-	
+
 	return false;
 };
 
 
 template <class T> inline tpLong tpList<T>::find(const T& item) const
 {
-	tpLong ret = 0;		
+	tpLong ret = 0;
 	tpListItem<T>* _l = head;
 	while (_l != NULL)
 	{
@@ -438,8 +432,8 @@ template <class T> inline tpLong tpList<T>::find(const T& item) const
 		_l = _l->next;
 		ret++;
 	};
-	
-	return -1;				
+
+	return -1;
 };
 
 template <class T> inline T* tpList<T>::getFirst() const
@@ -447,11 +441,11 @@ template <class T> inline T* tpList<T>::getFirst() const
 	return !head ? NULL : &head->value;
 };
 
-template <class T> inline T* tpList<T>::getLast() const 
+template <class T> inline T* tpList<T>::getLast() const
 {
 	return !tail ? NULL : &tail->value;
-};			
-	
+};
+
 template <class T> inline tpListIterator<T> tpList<T>::getBegin() const
 {
 	tpListIterator<T> _iter(head);
@@ -463,7 +457,7 @@ template <class T> inline tpListIterator<T> tpList<T>::getEnd() const
 	return tail->next;
 }
 
-template <class T> inline 
+template <class T> inline
 T& tpList<T>::getItem(tpULong i)
 {
 	tpListItem<T>* _l = head;

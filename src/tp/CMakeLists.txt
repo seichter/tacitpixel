@@ -20,9 +20,11 @@ CHECK_INCLUDE_FILES("stdio.h" HAVE_STDIO_H)
 
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
+message(STATUS "Build ${TP_VERSION_BUILD}")
+
 configure_file(config.h.in
 	${CMAKE_BINARY_DIR}/include/tp/config.h
-	@ONLY
+	@ONLY IMMEDIATE
 	)
 
 set(tp_hdrs
@@ -30,28 +32,29 @@ set(tp_hdrs
 	${tp_include_path}/tp/array.h
 	${tp_include_path}/tp/chunk.h
 	${tp_include_path}/tp/field.h
-	${tp_include_path}/tp/file.h	
+	${tp_include_path}/tp/file.h
 	${tp_include_path}/tp/globals.h
 	${tp_include_path}/tp/hash.h
 	${tp_include_path}/tp/image.h
 	${tp_include_path}/tp/imageop.h
 	${tp_include_path}/tp/io.h
 	${tp_include_path}/tp/log.h
-	${tp_include_path}/tp/list.h	
+	${tp_include_path}/tp/list.h
 	${tp_include_path}/tp/library.h
 	${tp_include_path}/tp/map.h
 	${tp_include_path}/tp/math.h
 	${tp_include_path}/tp/matrix.h
-	${tp_include_path}/tp/mat.h	
+	${tp_include_path}/tp/mat.h
 	${tp_include_path}/tp/module.h
 	${tp_include_path}/tp/mutex.h
-	${tp_include_path}/tp/quat.h	
+	${tp_include_path}/tp/quat.h
 	${tp_include_path}/tp/referenced.h
-	${tp_include_path}/tp/rs232.h	
-	${tp_include_path}/tp/rtti.h	
-	${tp_include_path}/tp/socket.h	
+	${tp_include_path}/tp/rs232.h
+	${tp_include_path}/tp/rtti.h
+	${tp_include_path}/tp/socket.h
 	${tp_include_path}/tp/stack.h
 	${tp_include_path}/tp/string.h
+	${tp_include_path}/tp/stringutils.h
 	${tp_include_path}/tp/system.h
 	${tp_include_path}/tp/thread.h
 	${tp_include_path}/tp/timer.h
@@ -59,7 +62,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/version.h
 	)
 
-	
+
 set(tp_srcs
 	allocator.cxx
 	chunk.cxx
@@ -81,10 +84,10 @@ set(tp_srcs
 	timer.cxx
 	version.cxx
 	)
-	
+
 #
 # Image handlers
-# 
+#
 list(APPEND tp_srcs
 #	_modules/image/bmp/bmp_handler.cxx
 #	_modules/image/jpg/jpg_handler.cxx
@@ -109,7 +112,7 @@ set(tp_hdrs_sg
 	${tp_include_path}/tp/transform.h
 	${tp_include_path}/tp/traverser.h
 	)
-	
+
 set(tp_srcs_sg
 	camera.cxx
 	light.cxx
@@ -131,7 +134,7 @@ add_library(${tp_name} SHARED
 	${tp_hdrs_sg}
 	${tp_srcs_sg}
 	)
-	
+
 set_target_properties(${tp_name}
 	PROPERTIES
 	COMPILE_DEFINITIONS TP_BUILD_LIBRARY=1

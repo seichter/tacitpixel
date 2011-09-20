@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,13 +43,13 @@ public:
 	}
 
 	~tpFileLog() {
-		if (m_file) fclose(m_file);		
+		if (m_file) fclose(m_file);
 	}
 
 	void log(const char* stuff) {
 		if (m_file) fprintf(m_file,"%s",stuff);
 	}
-	
+
 	static tpFileLog& get() {
 		static tpFileLog thefilelog;
 		return thefilelog;
@@ -63,7 +63,7 @@ void tpFileLogFunction(const char* stuff) {
 
 
 
-void tpDefaultLogFunction(const char* stuff) {	
+void tpDefaultLogFunction(const char* stuff) {
 	fprintf(stdout,"%s",stuff);
 }
 
@@ -78,15 +78,15 @@ void tpSetGlobalNotifyLevel(tpUInt level)
 #endif
 
 #if defined(WIN32) || defined(WINCE)
-    #if defined (GNUWIN32)
-    #define tpVSNPRINTF vsnprintf
-    #else
-    #define tpVSNPRINTF _vsnprintf
-    #endif
+	#if defined (GNUWIN32)
+	#define tpVSNPRINTF vsnprintf
+	#else
+	#define tpVSNPRINTF _vsnprintf
+	#endif
 #elif defined(ANDROID)
 	#define tpVSNPRINTF snprintf
 #elif defined(__unix) || defined(__APPLE__)
-    #define tpVSNPRINTF vsnprintf
+	#define tpVSNPRINTF vsnprintf
 #elif defined(__SYMBIAN32__)
 	#define tpVSNPRINTF snprintf
 #endif
@@ -107,7 +107,7 @@ void tpLogNotify(const char* szFormat, ...) {
 
    va_end(argptr);
 
-   tpLog::get().log(TP_LOG_NOTIFY,s_szBuf);
+   tpLog::get().log(tpLog::kLogNotify,s_szBuf);
 
 }
 
@@ -120,49 +120,49 @@ void tpLogMessage(const char* szFormat, ...) {
 
    va_end(argptr);
 
-   tpLog::get().log(TP_LOG_MESSAGE,s_szBuf);
+   tpLog::get().log(tpLog::kLogMessage,s_szBuf);
 
 }
 
 
 void tpLogError(const char* szFormat, ... ) {
 
-    va_list argptr;
-    va_start(argptr, szFormat);
-    tpVSNPRINTF(s_szBuf, sizeof(s_szBuf), szFormat, argptr);
+	va_list argptr;
+	va_start(argptr, szFormat);
+	tpVSNPRINTF(s_szBuf, sizeof(s_szBuf), szFormat, argptr);
 
-    va_end(argptr);
+	va_end(argptr);
 
-    tpLog::get().log(TP_LOG_ERROR,s_szBuf);
+	tpLog::get().log(tpLog::kLogError,s_szBuf);
 }
 
 
 void tpLogProgress(const char* szFormat, ... ) {
 
-    va_list argptr;
-    va_start(argptr, szFormat);
-    tpVSNPRINTF(s_szBuf, sizeof(s_szBuf), szFormat, argptr);
+	va_list argptr;
+	va_start(argptr, szFormat);
+	tpVSNPRINTF(s_szBuf, sizeof(s_szBuf), szFormat, argptr);
 
-    va_end(argptr);
+	va_end(argptr);
 
-    tpLog::get().log(TP_LOG_NOTIFY,s_szBuf,0);
+	tpLog::get().log(tpLog::kLogInfo,s_szBuf,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 tpLog::tpLog() :
-	m_level(TP_LOG_NOTIFY),
+	m_level(tpLog::kLogNotify),
 	m_func(0)
 {
-	m_func = 
+	m_func =
 #if defined(WINCE)
 		&tpFileLogFunction;
 #else
 		&tpDefaultLogFunction;
 #endif
-	
-	this->log(TP_LOG_NOTIFY,tpGetVersionString(), 1);
-	
+
+	this->log(tpLog::kLogNotify,tpGetVersionString(), 1);
+
 }
 
 tpLog::~tpLog() {
@@ -171,7 +171,7 @@ tpLog::~tpLog() {
 void tpLog::log(tpUShort logtype, const char* buf, int endline)
 {
 	if (logtype > m_level) return;
-	
+
 	if (m_func) {
 		tpString t = tpSystem::get()->getTime();
 		m_func(t.c_str());
@@ -181,7 +181,7 @@ void tpLog::log(tpUShort logtype, const char* buf, int endline)
 	}
 }
 
-void tpLog::printf(tpUShort logtype, const char* szFormat, ...) 
+void tpLog::printf(tpUShort logtype, const char* szFormat, ...)
 {
 
 	if (logtype >= m_level) return;
@@ -192,7 +192,7 @@ void tpLog::printf(tpUShort logtype, const char* szFormat, ...)
 
    va_end(argptr);
 
-   tpLog::get().log((tpLogLevelType)logtype,s_szBuf);
+   tpLog::get().log(logtype,s_szBuf);
 
 }
 
@@ -201,7 +201,7 @@ void tpLog::printf(tpUShort logtype, const char* szFormat, ...)
 /* static */
 tpLog& tpLog::get() {
 	static tpLog the_log;
-	return the_log;	
+	return the_log;
 }
 
 void tpLog::setBackend( tpLogFunc func) {

@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,8 +35,8 @@
 #cmakedefine HAVE_STDIO_H
 
 
-#cmakedefine TP_VERSION_MAJOR @TP_VERSION_MAJOR@
-#cmakedefine TP_VERSION_MINOR @TP_VERSION_MINOR@
-#cmakedefine TP_VERSION_BUILD @TP_VERSION_BUILD@
+#define TP_VERSION_MAJOR @TP_VERSION_MAJOR@
+#define TP_VERSION_MINOR @TP_VERSION_MINOR@
+#define TP_VERSION_BUILD @TP_VERSION_BUILD@
 
 #endif

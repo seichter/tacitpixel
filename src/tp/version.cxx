@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,16 +24,21 @@
  */
 
 #include <tp/version.h>
+#include <tp/config.h>
 
+#include <stdio.h>
 
-int tpGetMajorVersion() { return 0; }
-int tpGetMinorVersion() { return 0; }
-int tpGetBuildVersion() { return 0; }
+int tpGetMajorVersion() { return TP_VERSION_MAJOR; }
+int tpGetMinorVersion() { return TP_VERSION_MINOR; }
+int tpGetBuildVersion() { return TP_VERSION_BUILD; }
 
 
 const char*
 tpGetVersionString()
 {
-	return "tacit pixel 3.1.5";
+	static char pbuf[88];
+	const char gs_version[] = "tacitpixel %d.%d.%d";
+	sprintf(pbuf,gs_version,TP_VERSION_MAJOR,TP_VERSION_MINOR,TP_VERSION_BUILD);
+	return &pbuf[0];
 }
 

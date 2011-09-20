@@ -4,7 +4,7 @@ project(tacitpixel)
 
 set(TP_VERSION_MAJOR 3)
 set(TP_VERSION_MINOR 2)
-set(TP_VERSION_BUILD 0)
+set(TP_VERSION_BUILD 160911)
 
 set(LIB_OUTPUT_PATH lib)
 if (WIN32)

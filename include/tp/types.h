@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,8 +23,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef _TACITPIXEL_TYPES_H_
-#define _TACITPIXEL_TYPES_H_
+#ifndef TP_TYPES_H
+#define TP_TYPES_H
 
 
 #include <tp/config.h>
@@ -58,7 +58,7 @@ typedef size_t tpSizeT;
 
 #if defined(HAVE_WCHAR_H)
 typedef wchar_t tpWChar;
-#endif 
+#endif
 
 
 
