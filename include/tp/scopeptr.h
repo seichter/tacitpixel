@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,7 @@
 /*!
 	\class tpScopePtr
 	\brief a smartpointer implementation
-	
+
 	This kind of referencing is needed for handling
 	referenced nodes in a scenegraph.
 */
@@ -39,7 +39,7 @@
 template <class T> class tpScopePtr
 {
 public:
-	/*! brief standard c'tor		
+	/*! brief standard c'tor
 	*/
 	tpScopePtr();
 
@@ -57,16 +57,16 @@ public:
 	*/
 	virtual ~tpScopePtr();
 
-	/*! get the pointer		
+	/*! get the pointer
 	*/
 	T* operator->() const;
 
 	/*! unref the managed pointer
-		\result 
+		\result
 	*/
 	T& operator *() const;
 
-	/*! copy operator 
+	/*! copy operator
 		\param ptr pointer to manage
 		\result reference to this ptr
 	*/
@@ -74,12 +74,12 @@ public:
 
 	void set(T* ptr);
 
-	//! assignment 
+	//! assignment
 	tpScopePtr<T>& operator=(const tpScopePtr& ref);
 
 	//! return true if pointer is in use
 	bool isValid() const;
-	
+
 
 protected:
 	T* m_ptr;
@@ -89,13 +89,14 @@ protected:
 
 // ----------------------------------------------------------------------------------------
 
-template <class T> inline tpScopePtr<T>::tpScopePtr() 
+template <class T> inline
+tpScopePtr<T>::tpScopePtr()
 	: m_ptr(NULL)
 {
 }
 
-
-template <class T> inline tpScopePtr<T>::tpScopePtr(T* ptr) 
+template <class T> inline
+tpScopePtr<T>::tpScopePtr(T* ptr)
 	: m_ptr(ptr)
 {
 }

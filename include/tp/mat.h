@@ -34,6 +34,9 @@ public:
 
 	typedef T value_type;
 
+	static const tpUInt rows = R;
+	static const tpUInt cols = C;
+
 	tpMat() {}
 
 	tpMat(const tpMat<R,C,T>& mtc) { for (int i = 0; i < R*C; ++i) m[i] = mtc.data()[i]; }

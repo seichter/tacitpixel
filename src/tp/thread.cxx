@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,6 @@
 
 #include <tp/thread.h>
 
-
 // Includes for Windows and *nic'es
 #if defined(_WIN32)
 	#define WIN32_LEAN_AND_MEAN
@@ -33,116 +32,124 @@
 #if !defined(WINCE)
 	#include <process.h>
 #else
-	//#include <atlbase.h>
-	// Windows Mobile doesn't provide _beginthreadex or _beginthread. Note that
-	// unlike on the desktop, CreateThread for WinCE does support the CRT.
-/*
-	uintptr_t _beginthreadex(void *security,
-			unsigned stack_size,
-			unsigned (*start_address)(void*),
-			void *arglist,
-			unsigned initflag,
-			unsigned *thrdaddr) 
-	{
-				return reinterpret_cast<uintptr_t>(CreateThread(
-					reinterpret_cast<SECURITY_ATTRIBUTES*>(security),
-					stack_size,
-					reinterpret_cast<DWORD (*)(void*)>(start_address),
-					arglist,
-					initflag,
-					reinterpret_cast<DWORD*>(thrdaddr)));
-	}
-*/
-
-
+#error "Not Implemented"
 #endif
 
-unsigned int __stdcall tpWin32ThreadDispatch(void *arg)
+struct tpThreadHandle
 {
-    tpThread* t = (tpThread*)arg;
-	if (t) t->doRun(arg);
+	DWORD handle;
 
-	return 0;
-}
+	static int dispatch(void* arg)
+	{
+		static_cast<tpThread*>(arg)->run();
+		return 0;
+	}
+};
 
 #elif defined(HAVE_PTHREAD_H)
 
 #include <pthread.h>
 
-// Dispatching function for pthreads
-extern "C" void *tpPThreadDispatch(void *arg)
+struct tpThreadHandle
 {
+	pthread_t handle;
 
-	tpThread* t = (tpThread*)arg;
-
-	if (t) t->doRun(arg);
-	/*
-	if (t) t->onStop();
-
-	pthread_exit((void**)0);
-	*/
-	return (void*)0;
-
-}
+	static void* dispatch(void* arg)
+	{
+		static_cast<tpThread*>(arg)->run();
+		return (void*)0;
+	}
+};
 
 #endif
 
-tpThread::tpThread()
-: m_run(false), m_thread(0L)
+tpThread::tpThread(tpRunnable* runnable)
+	: mState(kStateNew)
+	, mThreadHandle(0L)
+	, mRunnable(runnable)
 {
 }
 
 tpThread::~tpThread()
 {
-	if (m_run) stop();
-};
-
-
-void tpThread::start()
-{
-    
-	m_run = true;
-#if defined(_WIN32)
-	//_beginthreadex(0, 0, tpWin32ThreadDispatch, this, 0, &_threadid);
-	// _beginthread(tpThreadDispatch, 0, this);
-	CreateThread( 0, 0, 
-		reinterpret_cast<LPTHREAD_START_ROUTINE>(tpWin32ThreadDispatch), 
-		this,0,static_cast<LPDWORD>(m_thread));
-
-#elif defined(HAVE_PTHREAD_H)
-	pthread_t _thread;
-	pthread_create(&_thread,NULL,tpPThreadDispatch,(void*)this);
-#endif
-
-};
-
-
-void tpThread::stop()
-{
-	m_run = false;
+	stop();
 }
 
-
-void tpThread::onStop()
+void
+tpThread::start()
 {
+
+#if defined(_WIN32)
+	mThreadHandle = new tpThreadHandle();
+	CreateThread( 0, 0,
+		static_cast<LPTHREAD_START_ROUTINE>(tpThreadHandle::dispatch),
+		this,0,static_cast<LPDWORD>(mThreadHandle->handle));
+#elif defined(HAVE_PTHREAD_H)
+	mThreadHandle = new tpThreadHandle();
+	pthread_create(&mThreadHandle->handle,0L,tpThreadHandle::dispatch,static_cast<void*>(this));
+	mState = kStateRun;
+#endif
+
+}
+
+void
+tpThread::stop()
+{
+	mState = kStateStop;
+}
+
+void
+tpThread::run()
+{
+	mRunnable->run();
+}
+
+void
+tpThread::join()
+{
+#if defined(HAVE_PTHREAD_H)
+	void *result = 0;
+	pthread_join(mThreadHandle->handle, &result);
+#else
+#endif
+}
+
+void
+tpThread::detach()
+{
+#if defined(HAVE_PTHREAD_H)
+	void *result = 0;
+	pthread_detach(mThreadHandle->handle);
+#else
+#endif
+
 }
 
 
 /* static */
-void tpThread::doRun(void* userdata)
+void
+tpThread::yield()
 {
-	static_cast<tpThread*>(userdata)->onRun();
+	sleep(0);
 }
 
-void tpThread::doStop()
+/* static */
+void
+tpThread::sleep(tpULong milliseconds)
 {
- 	this->onStop();
-#if defined(WIN32)
-	//_endthreadex(0);
-	ExitThread(0);
-#elif defined(HAVE_PTHREAD_H)
-	pthread_exit(NULL);
+
+#if defined(__unix) || defined(__APPLE__)
+
+	timespec tmReq;
+	tmReq.tv_sec = (time_t)(milliseconds / 1000);
+	tmReq.tv_nsec = (milliseconds % 1000) * 1000 * 1000;
+
+	// we're not interested in remaining time nor in return value
+	nanosleep(&tmReq, (timespec *)NULL);
+#elif defined(WIN32)
+	Sleep(milliseconds);
 #endif
 
+}
 
-};
+

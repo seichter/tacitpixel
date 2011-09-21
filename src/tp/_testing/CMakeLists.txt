@@ -7,6 +7,8 @@ target_link_libraries(test_000 ${tp_name})
 add_executable(test_001 test_001.cxx)
 target_link_libraries(test_001 ${tp_name})
 
-
 add_executable(test_002 test_002.cxx)
 target_link_libraries(test_002 ${tp_name})
+
+add_executable(test_003 test_003.cxx)
+target_link_libraries(test_003 ${tp_name})

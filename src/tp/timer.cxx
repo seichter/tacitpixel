@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,41 +34,7 @@
 #endif
 
 
-/* static */
-void tpMilliSleep(tpULong milliseconds) 
-{
-	
-#if defined(__unix) || defined(__APPLE__)
-	
-	timespec tmReq;
-	tmReq.tv_sec = (time_t)(milliseconds / 1000);
-	tmReq.tv_nsec = (milliseconds % 1000) * 1000 * 1000;
-	
-	// we're not interested in remaining time nor in return value
-	nanosleep(&tmReq, (timespec *)NULL);
-#elif defined(WIN32)
-	Sleep(milliseconds);
-#endif
-	
-}
-
-tpVoid tpYield()
-{
-#if defined(__unix) || defined(__APPLE__)
-
-	timespec tmReq;
-	tmReq.tv_sec = 0;
-	tmReq.tv_nsec = 0;
-
-	// we just want to give back a minimum to the system
-	nanosleep(&tmReq, (timespec *)NULL);
-#elif defined(WIN32)
-	Sleep(0);
-#endif
-
-}
-
-tpTimer::tpTimer() : m_secondsPerTick(1.0 / tpDouble(1000000)) {
+tpTimer::tpTimer() : mSecondsPerTick(1.0 / tpDouble(1000000)) {
 #if defined(_WIN32)
 	LARGE_INTEGER _freq;
 	if(QueryPerformanceFrequency(&_freq))
@@ -81,26 +47,26 @@ tpTimer::tpTimer() : m_secondsPerTick(1.0 / tpDouble(1000000)) {
 
 }
 
-tpTimer::~tpTimer() 
+tpTimer::~tpTimer()
 {
 }
 
-void tpTimer::start() 
+void tpTimer::start()
 {
-	getCurrentTick(m_start);
+	getCurrentTick(mStart);
 }
 
 tpDouble tpTimer::getElapsed( tpDouble scale /*= TP_TIME_SEC*/ ) const
 {
 	tpTimerTick r;
 	getCurrentTick(r);
-	return tpDouble((r - m_start) * m_secondsPerTick * scale);
+	return tpDouble((r - mStart) * mSecondsPerTick * scale);
 }
-	
+
 /* static */
 void tpTimer::getCurrentTick(tpTimerTick& val) {
 #if defined(__unix) || defined(__APPLE__)
-	
+
 	timeval tv;
 	gettimeofday(&tv, 0);
 	val = (tpTimerTick)(tv.tv_sec * 1000000 + tv.tv_usec);
@@ -109,7 +75,7 @@ void tpTimer::getCurrentTick(tpTimerTick& val) {
 
 	LARGE_INTEGER _value;
 
-	if ( QueryPerformanceCounter(&_value) ) 
+	if ( QueryPerformanceCounter(&_value) )
 	{
 		val = _value.QuadPart;
 	}

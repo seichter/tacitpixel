@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,88 +23,88 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TPTHREAD_H
-#define TPTHREAD_H
+#ifndef TP_THREAD_H
+#define TP_THREAD_H
 
 #include <tp/globals.h>
 #include <tp/types.h>
+#include <tp/scopeptr.h>
 
+/**
+  * @brief wrapper for running code within threads or timers
+  */
+struct TP_API tpRunnable {
+	/**
+	  * @brief needs to be overwritten and should contain the time critical code
+	  */
+	virtual void run() = 0;
+};
 
-/*!
-	\class tpThread
-	\brief extreme simple threading object
+/** structure holding the handle of the threading implementation */
+struct tpThreadHandle;
 
-	You need to derive your own class from tpThread. If you
-	need more comprehensible threading I suggest you go
-	for http://zthread.sourceforge.net which is very nice and
-	can be easily integrated. Nevertheless, tpThread is enough
-	for most of the tasks. tpThread is an interface as you need
-	to overload onRun()
-
-	To implement a thread follow this outline:
-	\code
-
-	class myThread : public tpThread
-	{
-	public:
-	myThread() : tpThread()
-	{
-	};
-
-	virtual void onRun()
-	{
-		while (isRunning())
-		{
-			cout << "The thread ..." << endl;
-		};
-	};
-	};
-
-	myThread* t = new myThread();
-	t->start();
-
-	// do other important stuff
-
-	t->stop();
-
-	\endcode
-*/
+/**
+  * @brief wrapper for managing threads
+  */
 class TP_API tpThread {
 public:
-	/** c'tor
-	*/
-	tpThread();
-	//! d'tor
-	virtual ~tpThread();
 
-	//! start thread
+	enum {
+		kStateNew = 0,
+		kStateRun,
+		kStateStop
+	};
+
+	/**
+	  * @brief C'tor
+	  * @param runnable object to be executed within the thread
+	  */
+	tpThread(tpRunnable* runnable);
+
+	/**
+	  * @brief D'tor
+	  */
+	~tpThread();
+
+	/**
+	  * @brief starts the execution of the thread
+	  */
 	void start();
 
-	//! stop running thread
+	/**
+	  * @brief stops the execution of the thread
+	  */
 	void stop();
 
-	//! check if the thread is running
-	bool isRunning() const { return m_run; }
+	/**
+	  * @brief calls ::run() on the runnable
+	  */
+	void run();
 
-	//! the task needs to be put in here!
-	virtual void onRun() = 0;
+	/**
+	  * @brief joins the thread into the calling thread
+	  */
+	void join();
 
-	//! overload this for cleaning up
-	virtual void onStop();
+	void detach();
 
-	static void doRun(void*);
+	/**
+	  * @brief calling thread being suspended
+	  * @param milliseconds time in milliseconds
+	  */
+	static void sleep(tpULong milliseconds);
+
+	/**
+	  * @brief returns time to the calling thread
+	  */
+	static void yield();
 
 protected:
 
+	tpUInt mState;
 
-	void doStop();
-
-	bool m_run;
-
-
-private:
-
-	void* m_thread;
+	tpScopePtr<tpRunnable> mRunnable;
+	tpScopePtr<tpThreadHandle> mThreadHandle;
 
 };
 
