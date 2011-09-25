@@ -146,8 +146,8 @@ int main(int argc, char* argv[])
 	tpMat44<float> m44f;
 	tpMat44<tpFixed32> m44x;
 
-	m44f.setIdentity();
-	m44x.setIdentity();
+	m44f.identity();
+	m44x.identity();
 
 	m44f.invert();
 	m44x.invert();

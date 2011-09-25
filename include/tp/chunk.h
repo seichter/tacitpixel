@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,17 +33,17 @@
 /*!	\class tpChunk
 	\brief a very simple memory chunk handler for naive types
 
-	Wraps up allocating and deleting memory for random access. 
+	Wraps up allocating and deleting memory for random access.
 */
 
 class TP_API tpChunk {
-	
+
 	//! Copy c'tor.
 	tpChunk(const tpChunk& origin) {};
-	
+
 	//! assignment
 	tpChunk& operator = (const tpChunk& rhs) { return *this; }
-	
+
 public:
 
 	//! Standard c'tor.
@@ -51,50 +51,51 @@ public:
 
 	//! D'tor.
 	virtual ~tpChunk();
-	
+
 	//! set raw data size
 	virtual void setSize(tpSizeT size);
 
 	//! Remove all data
 	virtual void empty();
-		
+
 	//! Get data pointer
 	const void* getData() const { return m_ptr; }
-	
+
 	//! Get data pointer
 	void* getData() { return m_ptr; }
-	
+
 	//! typed pointer
 	template <typename T>
 	T* ptr() { return static_cast<T*>(m_ptr); }
-	
+
 	//! typed pointer
 	template <typename T>
 	const T* ptr() const { return static_cast<T*>(m_ptr); }
-	
+
 	//! get an item
-	template <typename T> 
+	template <typename T>
 	T& at(tpSizeT idx) { return this->ptr<T>()[idx]; }
-	
+
 	//! get an item
-	template <typename T> 
+	template <typename T>
 	const T& at(tpSizeT idx) const { return this->ptr<T>()[idx]; }
-	
-	
+
+
+
 	template <typename T>
 	void reserve(tpSizeT size) { this->reserve<sizeof(T)>(size); }
-	
+
 	template <int itemsize>
 	void reserve(tpSizeT size) { setSize(itemsize * size ); }
-	
+
 protected:
-	
+
 	void* m_ptr;
 
 };
 
 class TP_API tpSizedChunk : public tpChunk {
-public: 
+public:
 
 	/**
 	 * Set size of memory chunk. Please be aware
@@ -111,12 +112,12 @@ public:
 	 * @return size of the memory chunk
 	 */
 	virtual tpSizeT getSize() const { return m_size; }
-	
+
 	/**
 	 * Clears and frees the memory of the memory chunk
 	 */
 	virtual void empty();
-	
+
 	/**
 	 * Copies the content of another memory pointer
 	 * into the memory chunk. The routine expects the
@@ -130,7 +131,7 @@ public:
 protected:
 
 	tpSizeT m_size;
-	
+
 };
 
 

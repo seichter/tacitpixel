@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,9 +23,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TPVEC_H
-#define TPVEC_H
-
+#ifndef TP_VEC_H
+#define TP_VEC_H
 
 /*!
 	\class tpVec
@@ -42,7 +41,6 @@ template <class T, tpUInt N> class tpVec
 public:
 
 	typedef T value_type;
-	
 	const static tpUInt dimensions = N;
 
 	//! c'tor initializes all to 0
@@ -78,32 +76,20 @@ public:
 
 	//! copy data from simple buffer
 	void set(const T* buf);
-	
+
 	//! dot product with other vector
 	T dot(const tpVec<T,N>& v) const;
 
 	//! get the angle between this and another vector
 	T getAngle(tpVec<T,N> v) const;
 
-	//! assignment operator
-	tpVec& operator = (const tpVec& rs);
-
-	//! assignment operator using raw data 
-	tpVec& operator = (const T* rs);
-
-	//! comparison
-	bool operator == (const tpVec<T,N>& rs) const;
-	
-	//! inverted comparison
-	bool operator != (const tpVec<T,N>& rs) const;
-
 	//! normalizes this vector
 	void normalize();
-	
+
 	//! return length
 	T getLength() const;
 
-	//! returns squared length 
+	//! returns squared length
 	T getSquareLength() const;
 
 	//! uniformly scales the vector
@@ -114,13 +100,33 @@ public:
 
 	//! return the component at position i
 	T& operator [] (const tpUInt& i) { return vec[i]; }
-	
+
 	//! return the component at position i
 	const T& operator [] (const tpUInt& i) const { return vec[i]; }
 
-	
+
 	//! swap components in the vector
 	tpVec<T,N>& swapComponent(tpUInt c1,tpUInt c2);
+
+	inline tpVec<T,N> operator - () const
+	{
+		tpVec<T,N> r;
+		for (int i = 0; i < N; ++i) { r.vec[i] = -this->vec[i]; }
+		return r;
+	}
+
+	//! assignment operator
+	tpVec& operator = (const tpVec& rs);
+
+	//! assignment operator using raw data
+	tpVec& operator = (const T* rs);
+
+	//! comparison
+	bool operator == (const tpVec<T,N>& rs) const;
+
+	//! inverted comparison
+	bool operator != (const tpVec<T,N>& rs) const;
+
 
 protected:
 	T vec[N];
@@ -147,15 +153,15 @@ tpVec<T,N>::~tpVec()
 {
 }
 
-template <class T,tpUInt N> inline 
+template <class T,tpUInt N> inline
 const tpVec<T,N> tpVec<T,N>::operator - (const tpVec<T,N>& rhs) const
 {
-	tpVec<T,N> out(*this); 
+	tpVec<T,N> out(*this);
 	out -= rhs;
 	return out;
 }
 
-template <class T,tpUInt N> inline 
+template <class T,tpUInt N> inline
 const tpVec<T,N> tpVec<T,N>::operator + (const tpVec<T,N>& rhs) const
 {
 	tpVec<T,N> out(*this);
@@ -207,7 +213,8 @@ T tpVec<T,N>::getAngle(tpVec<T,N> v) const
 	return acos( nothr.dot(nself) );
 }
 
-template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::operator = (const tpVec& rs)
+template <class T,tpUInt N>
+inline tpVec<T,N>& tpVec<T,N>::operator = (const tpVec& rs)
 {
 	for (tpUInt i = 0; i < N; i++) this->vec[i] = rs.vec[i];
 	return *this;
@@ -268,12 +275,12 @@ template <class T,tpUInt N> inline tpVec<T,N> tpVec<T,N>::operator* (T scale) co
 	return v;
 }
 
-template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::swapComponent(tpUInt c1,tpUInt c2) 
+template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::swapComponent(tpUInt c1,tpUInt c2)
 {
 	T _swp = vec[c1];
 	vec[c1] = vec[c2];
 	vec[c2] = _swp;
-	
+
 	return *this;
 }
 
@@ -281,7 +288,7 @@ template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::swapComponent(tpUInt 
 
 // Vec3 -----------------------------------------------------------------------
 
-template <class T> 
+template <class T>
 class tpVec3 : public tpVec<T,3>
 {
 public:
@@ -314,24 +321,24 @@ template <class T> inline tpVec3<T> tpVec3<T>::cross(const tpVec3<T>& vec2) cons
 
 /*!	\brief a two dimensional vector
 */
-template <class T> class tpVec2 : public tpVec<T,2> 
+template <class T> class tpVec2 : public tpVec<T,2>
 {
 public:
 
 	tpVec2()
 	{
 		this->vec[0] = this->vec[1] = (T)0;
-	};
+	}
 
 	tpVec2(T v1,T v2)
 	{
 		this->vec[0] = v1; this->vec[1] = v2;
-	};
+	}
 
 	void set(T v1,T v2)
 	{
 		this->vec[0] = v1; this->vec[1] = v2;
-	};
+	}
 };
 
 typedef tpVec2<tpDouble> tpVec2d;
@@ -363,7 +370,7 @@ public:
 		this->vec[0] = this->vec[1] = this->vec[2] = this->vec[3] = T(0);
 	}
 
-	tpVec4(const tpVec3<T>& rv,T pad = T(0)) 
+	tpVec4(const tpVec3<T>& rv,T pad = T(0))
 	{
 		this->vec[0] = rv.vec[0]; this->vec[1] = rv.vec[1]; this->vec[2] = rv.vec[2]; this->vec[3] = pad;
 	}
@@ -389,18 +396,19 @@ public:
 		return tpVec2<T>(this->vec[0],this->vec[1]);
 	}
 
-	
+
 };
 
-
 typedef tpVec4<tpReal> tpVec4r;
-typedef tpVec4<tpDouble> tpVec4d;
-typedef tpVec4<tpFloat> tpVec4f;
 typedef tpVec4<tpInt> tpVec4i;
+
+typedef tpVec4<tpFloat> tpVec4f;
+typedef tpVec4<tpDouble> tpVec4d;
+
 
 
 // Quaternion
-template <typename T> 
+template <typename T>
 class tpQuat : public tpVec<T,4> {
 public:
 
@@ -408,7 +416,7 @@ public:
 	{
 		tpVec3<T> result; // = v + 2 * v.cross(
 
-		
+
 	}
 };
 

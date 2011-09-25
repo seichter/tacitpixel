@@ -51,9 +51,8 @@ int main(int argc, char* argv[])
 
 	// first one
 	tpRefPtr<tpTransform> t = new tpTransform();
-	t->getMatrix().setIdentity();
-//	t->getMatrix().translate(0.0,1.0,-1.0);
-	//t->getMatrix().rotate(tpVec3r(0,1,0),45);
+	t->getMatrix().identity();
+	t->getMatrix().translate(0.0,0.0,-1.0);
 	t->addChild(n.get());
 
 	root->addChild(t.get());

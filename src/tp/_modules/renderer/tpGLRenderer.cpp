@@ -20,6 +20,15 @@
 #include <tp/primitive.h>
 #include <tp/transform.h>
 #include <tp/stack.h>
+#include <tp/log.h>
+#include <tp/stringformater.h>
+
+#define tpMatRep(mat) \
+			{ tpString mstr; \
+				mstr << mat; \
+				tpLog::get() << mstr.c_str(); \
+			}
+
 
 class tpGLFixedFunctionTraverser : public tpGLTraverser {
 public:
@@ -28,11 +37,12 @@ public:
 	tpStack<tpMaterial> materials;
 
 	tpGLFixedFunctionTraverser() : tpGLTraverser() {
-		tpMat44r identity; identity.setIdentity();
+		tpMat44r identity; identity.identity();
 	}
 
 	void operator()(tpNode* node,tpCamera* camera)
 	{
+		mvs.push(camera->getView());
 
 		tpGL::Enable(tpGL::NORMALIZE);
 		tpGL::Enable(tpGL::AUTO_NORMAL);
@@ -97,11 +107,6 @@ public:
 			tpGL::MatrixMode(tpGL::MODELVIEW);
 			tpGL::LoadIdentity();
 
-			// push the camera view on the stack
-			mvs.push(camera->getView());
-
-			tpGL::MultMatrixf(mvs.getTop().data());
-
 			TP_REPORT_GLERROR();
 		}
 
@@ -132,16 +137,10 @@ public:
 
 	void pushTransform(tpTransform* trans)
 	{
-#if 0
-		tpMat44r cm = trans->getMatrix();
-		cm *= mvs.getTop();
-		mvs.push(cm);
-#else
-		tpMat44r cm = mvs.getTop();
-		cm *= trans->getMatrix();
-		mvs.push(cm);
-#endif
-		tpGL::LoadMatrixf(cm.data());
+		tpMat44r m = mvs.getTop();
+		trans->getMatrix(true,m);
+		mvs.push(m);
+		tpGL::LoadMatrixf(mvs.getTop().data());
 	}
 
 	void popTransform(tpTransform* trans)

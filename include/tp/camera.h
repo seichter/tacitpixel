@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,24 +22,25 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#ifndef TPCAMERA_H
-#define TPCAMERA_H 1
+#ifndef TP_CAMERA_H
+#define TP_CAMERA_H 1
 
 
 #include <tp/referenced.h>
 #include <tp/mat.h>
+#include <tp/matop.h>
 #include <tp/vec.h>
 
 /*! \brief camera in a scene
-	
-	To render a scene you can either use your own 
-	matrix before rendering the scene. Or you 
+
+	To render a scene you can either use your own
+	matrix before rendering the scene. Or you
 	pass a pointer to a camera (tpCamera) to the
 	respective renderengine (tpRenderEngine)
  */
 class TP_API tpCamera : public tpReferenced {
 public:
-	
+
 	TP_TYPE_DECLARE;
 
 	enum {
@@ -65,8 +66,8 @@ public:
 	void setProjection(const tpMat44r& val) { m_projection = val; }
 
 
-	void setProjectionOrtho(const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f ) { 
-		m_projection.setOrtho(l,r,b,t,n,f); 
+	void setProjectionOrtho(const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f ) {
+		tpMatOp::ortho(l,r,b,t,n,f,m_projection);
 	}
 
 	void setProjectionFrustum(const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f );
@@ -76,7 +77,7 @@ public:
 	const tpMat44r& getView() const { return m_view; }
 	void setView(const tpMat44r& val) { m_view = val; }
 
-	tpMat44r getInverseView() const { return m_view.getInverse(); }
+	//tpMat44r getInverseView() const { return m_view.getInverse(); }
 
 	void setViewLookAt(const tpVec3r& eye, const tpVec3r& target, const tpVec3r& up);
 

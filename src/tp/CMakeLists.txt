@@ -45,6 +45,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/math.h
 	${tp_include_path}/tp/matrix.h
 	${tp_include_path}/tp/mat.h
+	${tp_include_path}/tp/matop.h
 	${tp_include_path}/tp/module.h
 	${tp_include_path}/tp/mutex.h
 	${tp_include_path}/tp/quat.h
@@ -62,6 +63,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/thread.h
 	${tp_include_path}/tp/timer.h
 	${tp_include_path}/tp/types.h
+	${tp_include_path}/tp/vec.h
 	${tp_include_path}/tp/version.h
 	)
 

@@ -39,26 +39,24 @@ tpTransform::tpTransform(const tpTransform& transform) : tpNode(transform), m_sc
 	m_fields.add(new tpRefField< tpUByte >(m_scope,"scope"));
 }
 
-#if 0
 void
 tpTransform::getMatrix(bool toWorld,tpMat44r& m) const
 {
-	if (toWorld)
-	{
-		//m = (m_scope == kRelative) ? m_matrix.multiply(m) : m_matrix;
-	} else
-	{
-		tpMat44r inverse = m_matrix; inverse.invert();
-		if (m_scope == kRelative)
-		{
-			inverse = m.multiply(inverse);
+	if (toWorld) {
+		if (m_scope  == kRelative) {
+			m *= m_matrix;
+		} else {
+			m = m_matrix;
+		}
+	} else {
+		tpMat44r inverse(m_matrix); inverse.invert();
+		if (m_scope == kRelative) {
+			inverse *= m; m = inverse;
 		} else {
 			m =  inverse;
 		}
-
 	}
 }
-#endif
 
 #if 0
 

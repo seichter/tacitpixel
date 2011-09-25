@@ -77,9 +77,11 @@ public:
 
 	/**
 	  * @brief getter for the singleton
-	  & @return returns a reference to the singleton
+	  * @return returns a reference to the singleton
 	  */
 	static tpLog& get();
+
+	void operator << (const char* input) { this->printf("%s",input); }
 
 protected:
 
@@ -99,7 +101,5 @@ TP_API void tpLogNotify(const char* szFormat, ...);
 
 //! set the global notification level
 TP_API void tpSetGlobalNotifyLevel(tpUShort level);
-
-
 
 #endif
