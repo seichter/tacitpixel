@@ -109,8 +109,9 @@ tpGLRenderSurfaceCocoa::tpGLRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 	CGLContextObj cgl_context = (CGLContextObj) [oglcontext CGLContextObj];
 
 	CGLSetCurrentContext(cgl_context);
-	tpInt swap_interval = (true) ? 1 : 0;
-	CGLSetParameter(cgl_context, kCGLCPSwapInterval, &swap_interval);
+
+//	tpInt swap_interval = (true) ? 1 : 0;
+//	CGLSetParameter(cgl_context, kCGLCPSwapInterval, &swap_interval);
 
 
 	/* set notification interfaces */
@@ -126,8 +127,6 @@ tpGLRenderSurfaceCocoa::tpGLRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 	[app activateWithOptions: NSApplicationActivateAllWindows];
 
 	[NSApp finishLaunching];
-
-
 
 	[pool release];
 

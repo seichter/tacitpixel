@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,7 @@ tpString::tpString()
 	this->empty();
 }
 
-tpString::tpString(const char* str, tpUShort encoding /* tpString::ASCII */) : m_encoding(encoding)
+tpString::tpString(const char* str, tpUShort encoding /* tpString::ASCII */) : mEncoding(encoding)
 {
 	set( str, encoding, encoding );
 }
@@ -68,62 +68,62 @@ tpString&
 tpString::set( const char* str, tpUByte encoding )
 {
 	_assign(str);
-	
+
 	return *this;
 }
 
 
-tpString& 
+tpString&
 tpString::_assign(const char* str, tpUByte encoding /* = ASCII*/)
 {
 	tpUInt len = tpStrLen(str);
 
 	if (len)
-	{	
-		m_buffer.reserve<char>(len + 1);
-		memcpy(m_buffer.getData(),str,len + 1);
+	{
+		mBuffer.reserve<char>(len + 1);
+		memcpy(mBuffer.getData(),str,len + 1);
 	} else {
 		empty();
 	}
 
-	
+
 	return *this;
 }
 
-tpString& 
+tpString&
 tpString::_append(const char* str, tpUByte encoding /* = ASCII */)
 {
 	tpSizeT input_length = tpStrLen(str);
-	
+
 	if (input_length)
 	{
 		tpSizeT local_length = getLength();
-		
+
 		input_length++;
-		
-		m_buffer.reserve<char>(local_length + input_length);
-		
+
+		mBuffer.reserve<char>(local_length + input_length);
+
 		for (tpSizeT i = 0; i < input_length; ++i)
 		{
-			m_buffer.at<char>(i + local_length) = str[i];
+			mBuffer.at<char>(i + local_length) = str[i];
 		}
 	}
-	
+
 	return *this;
 }
 
-tpString& 
+tpString&
 tpString::_truncate(tpSizeT pos)
 {
 	if (pos && pos > getLength())
 	{
-		m_buffer.at<char>(pos) = '\0';
+		mBuffer.at<char>(pos) = '\0';
 	}
-	
+
 	return *this;
 }
 
-tpString& 
+tpString&
 tpString::truncate( tpSizeT pos )
 {
 	return this->_truncate(pos);
@@ -135,7 +135,7 @@ tpString::truncate( tpSizeT pos )
 tpString&
 tpString::subst( const tpChar& c, const tpChar& substc )
 {
-	tpChar* cptr =  m_buffer.ptr<tpChar>();
+	tpChar* cptr =  mBuffer.ptr<tpChar>();
 	for (tpSizeT i = 0; i < getLength();i++)
 	{
 		if (*cptr == c) *cptr = substc; cptr++;
@@ -153,36 +153,29 @@ tpString::isEmpty() const
 void
 tpString::empty()
 {
-	m_buffer.empty();
+	mBuffer.empty();
 }
 
-tpInt
-tpString::getPascal( char** buffer ) const
+void
+tpString::toPascal( char** buffer ) const
 {
-	
-	int _length = this->getLength();
-	
-	#if 0
-	if (*buffer == 0) 
+	if (*buffer == 0)
 	{
-		*buffer[0] = (_length > 255) ? 255 : _length;
-		strncpy(buffer[1],c_str(),_length);	
+		*buffer[0] = static_cast<unsigned char>(getLength());
+		strncpy(buffer[1],c_str(),getLength());
 	}
-	#endif
-	
-	return _length;
 }
 
-tpSizeT 
+tpSizeT
 tpString::getLength() const
 {
-	return tpStrLen(m_buffer.ptr<char>());
+	return tpStrLen(mBuffer.ptr<char>());
 }
 
 tpString&
 tpString::append(const tpString& other)
 {
-	return _append( other.c_str(), other.m_encoding );
+	return _append( other.c_str(), other.mEncoding );
 }
 
 tpString&
@@ -200,7 +193,7 @@ tpString::prepend(const char* other)
 	return *this;
 }
 
-int 
+int
 tpString::find(const char& c, bool fromright) const
 {
 	if ( isEmpty() ) return -1;
@@ -218,16 +211,16 @@ tpString& tpString::removeFrom(const char& end, bool fromright)
 }
 
 
-bool 
+bool
 tpString::isUTF8(const char* str)
 {
-    if(!str)
-        return 0;
-	
-    const unsigned char * bytes = (const unsigned char *)str;
-    while(*bytes)
-    {
-        if(     (// ASCII
+	if(!str)
+		return 0;
+
+	const unsigned char * bytes = (const unsigned char *)str;
+	while(*bytes)
+	{
+		if(     (// ASCII
 				 bytes[0] == 0x09 ||
 				 bytes[0] == 0x0A ||
 				 bytes[0] == 0x0D ||
@@ -236,18 +229,18 @@ tpString::isUTF8(const char* str)
 		   ) {
 			bytes += 1;
 			continue;
-        }
-		
-        if(     (// non-overlong 2-byte
+		}
+
+		if(     (// non-overlong 2-byte
 				 (0xC2 <= bytes[0] && bytes[0] <= 0xDF) &&
 				 (0x80 <= bytes[1] && bytes[1] <= 0xBF)
 				 )
 		   ) {
 			bytes += 2;
 			continue;
-        }
-		
-        if((// excluding overlongs
+		}
+
+		if((// excluding overlongs
 				 bytes[0] == 0xE0 &&
 				 (0xA0 <= bytes[1] && bytes[1] <= 0xBF) &&
 				 (0x80 <= bytes[2] && bytes[2] <= 0xBF)
@@ -267,8 +260,8 @@ tpString::isUTF8(const char* str)
 		   ) {
 			bytes += 3;
 			continue;
-        }
-		
+		}
+
 		if((// planes 1-3
 			bytes[0] == 0xF0 &&
 			(0x90 <= bytes[1] && bytes[1] <= 0xBF) &&
@@ -290,19 +283,19 @@ tpString::isUTF8(const char* str)
 		   ) {
 			bytes += 4;
 			continue;
-        }
-		
-        return 0;
-    }
-	
-    return 1;
+		}
+
+		return 0;
+	}
+
+	return 1;
 }
 
 int
 tpString::find(const char* sub) const
 {
 	const char *pf = tpStrStr(c_str(),(char*)sub);
-	return (pf) ? pf - (const char*)c_str() : TP_NOTFOUND;
+	return (pf) ? pf - (const char*)c_str() : kNotFound;
 }
 
 
@@ -312,7 +305,7 @@ tpString::afterLast(const char& c) const
 	tpString _ret;
 	int _pos = find(c,true);
 
-	if (TP_NOTFOUND == _pos) return *this;
+	if (kNotFound == _pos) return *this;
 
 	_ret = (const char*)c_str() + _pos + 1;
 
@@ -363,27 +356,7 @@ tpString::beforeLast(const char& c) const
 }
 
 
-
 #if 0
-
-
-long tpString::toLong() const
-{
-	return atol(c_str());
-};
-
-
-float tpString::toFloat() const
-{
-	return (float)atof(c_str());
-}
-
-
-int tpString::toInteger() const
-{
-	return (c_str()) ? atoi(c_str()) : 0;
-}
-
 
 
 tpString& tpString::append(const tpString& str)
@@ -435,16 +408,16 @@ unsigned long tpString::getHash() const
 tpString tpString::between(char leftc, char rightc) const
 {
 	tpString _ret;
-	
+
 	int _rpos = find(rightc,TRUE);
 	int _lpos = find(leftc,FALSE);
-	
-	
+
+
 	// copy if right and left are not the same
 	_ret = sub(_lpos + 1,_rpos - _lpos);
 
 	return _ret;
-	
+
 };
 
 
@@ -459,12 +432,12 @@ void tpString::format(const char* format,...)
 	vsnprintf(&_buf[0],TP_MAXBUFSIZE,format, argptr);
 #elif (__SYMBIAN32__)
 	snprintf(&_buf[0],TP_MAXBUFSIZE,format, argptr);
-#else	
+#else
 	_vsnprintf(&_buf[0],TP_MAXBUFSIZE,format, argptr);
 #endif
 
 	set(_buf);
-	
+
 	va_end(argptr);
 
 };
@@ -551,13 +524,13 @@ bool tpString::contains(const tpString& str) const
 };
 
 
-tpString tpString::sub(int pos, 
+tpString tpString::sub(int pos,
 					   int length) const
 {
 
 	tpString _res = c_str() + pos;
 	_res.m_stringbuffer[length] = '\0';
-	
+
 	return _res;
 };
 
@@ -565,7 +538,7 @@ tpArray<tpString> tpString::split(const tpString& separator) const
 {
 
 	tpArray<tpString> _res;
-	
+
 	tpStringTokenizer _tok(*this,separator);
 
 	while (_tok.hasTokens()) _res += _tok.nextToken();
@@ -645,7 +618,7 @@ tpString tpStringTokenizer::nextToken()
 	tpString _res;
 
 	int _pos = m_string.find(m_delim.c_str());
-	
+
 	if (_pos > TP_NOTFOUND)
 	{
 		_res = m_string.sub(0,_pos);
@@ -658,7 +631,7 @@ tpString tpStringTokenizer::nextToken()
 		_res = m_string.sub(0,m_string.getLength());
 		m_string = "";
 	}
-	
+
 	return _res;
 };
 
@@ -688,11 +661,32 @@ TP_API tpString tpStringFormat( const tpString& format, ... )
 	vsnprintf(&buffer[0],buffer.getSize(),format.c_str(), argptr);
 #elif (__SYMBIAN32__)
 	snprintf(&buffer[0],buffer.getSize(),format.c_str(), argptr);
-#else	
+#else
 	_vsnprintf(&buffer[0],buffer.getSize(),format.c_str(),argptr);
 #endif
 	va_end(argptr);
 
 	return tpString(buffer.getData());
 
+}
+
+/*static*/ tpString
+tpString::format(const char *format, ... )
+{
+	va_list argptr;
+	va_start(argptr, format);
+
+	tpArray<char> buffer;
+	buffer.resize(1024);
+
+#ifndef _WIN32
+	vsnprintf(&buffer[0],buffer.getSize(),format, argptr);
+#elif (__SYMBIAN32__)
+	snprintf(&buffer[0],buffer.getSize(),format, argptr);
+#else
+	_vsnprintf(&buffer[0],buffer.getSize(),format,argptr);
+#endif
+	va_end(argptr);
+
+	return tpString(buffer.getData());
 }

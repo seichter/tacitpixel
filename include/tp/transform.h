@@ -49,7 +49,7 @@ public:
 	tpUByte getScope() const { return m_scope; }
 	void setScope(tpUByte val) { m_scope = val; }
 
-	//void getMatrix(bool toWorld, tpMat44r &m) const;
+	void getMatrix(bool toWorld, tpMat44r &m) const;
 
 protected:
 

@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,14 +31,59 @@
 
 /**
  * Mesh types are mapping to the enums in OpenGL
- *	
+ *
  */
-enum tpMeshType {
-};
+
 
 typedef tpArray<tpDouble> tpArrayd;
 typedef tpArray<tpFloat> tpArrayf;
 typedef tpArray<tpReal> tpArrayr;
+
+
+template <typename T>
+class tpMultiArray
+{
+	T* mData;
+	tpArray<tpUInt> mDimensions;
+
+public:
+
+	tpMultiArray() : mData(0) {}
+
+	const void* data() const { return static_cast<void*>(mData); }
+
+	void create(void* data,tpUInt dimensions,...)
+	{
+		if (data != 0) { mData = data; }
+
+		mDimensions.clear();
+	}
+};
+
+
+class TP_API tpAttributeBuffer : public tpReferenced
+{
+	tpArrayr mAttributes;
+	tpUShort mType;
+	tpUShort mIndex;
+
+public:
+
+	enum {
+		kUnkown = 0,
+		kVertices,
+		kColors,
+		kNormals,
+		kTextureCoordinates,
+		kUser = 0xff
+	};
+
+	tpAttributeBuffer() : tpReferenced(), mType(kUnkown), mIndex(0) {}
+
+	tpAttributeBuffer(tpUShort type, tpUShort index = 0) : tpReferenced(), mType(type), mIndex(index) {}
+
+};
+
 
 /*!
 	\class tpMesh
@@ -51,7 +96,7 @@ class TP_API tpPrimitive : public tpRenderable {
 public:
 
 	TP_TYPE_DECLARE;
-	
+
 	enum {
 		kPoints = 0x0000,
 		kLines,
@@ -64,24 +109,26 @@ public:
 		kQuadStrip,
 		kPolygon
 	};
-	
+
 	enum {
-		kAttributeVertex 			= 0,
-		kAttributeNormal 			= (1 << 1),
-		kAttributeTextureCoordinate = (1 << 2),
-		kAttributeColorPerVertex	= (1 << 3)
+		kAttributeVertex =	(1 << 0),
+		kAttributeNormals =	(1 << 1),
+		kAttributeColors =	(1 << 2),
+		kAttributeUV =		(1 << 3)
 	};
-	
+
+
+
 	/*! c'tor
 		\param name name of the name
 	 */
-	tpPrimitive(tpUByte meshtype = kTriangles, 
-		tpUShort attributes = kAttributeVertex | kAttributeNormal);
+	tpPrimitive(tpUByte meshtype = kTriangles,
+		tpUShort attributes = kAttributeVertex | kAttributeNormals);
 
 	/*! copy c'tor
 		\param mesh mesh to copy
 		\param mode mode for copying
-	 */ 
+	 */
 	tpPrimitive(const tpPrimitive& mesh);
 
 	/*! cloning interface
@@ -89,14 +136,14 @@ public:
 	 */
 	virtual tpObject* clone();
 
-	void addVertex(const tpVec3<tpReal>& pos, 
-		const tpVec3<tpReal>& normal = tpVec3r(0,0,1), 
+	void addVertex(const tpVec3<tpReal>& pos,
+		const tpVec3<tpReal>& normal = tpVec3r(0,0,1),
 		const tpVec2<tpReal>& tcoord = tpVec2r(0,1),
 		const tpVec4<tpReal>& color = tpVec4r(1,1,1,1));
-	    
+
 	//! remove a vertex
 	void removeVertex(tpUInt id);
-	
+
 	//! returns the vertices of that mesh
 	const tpArray<tpReal>& getVertices() const;
 	//! returns the normals of that mesh
@@ -118,10 +165,10 @@ public:
 	void getAABB(tpVec3r& aabb_min,tpVec3r& aabb_max);
 
 	void flipNormals();
-	
+
 	void setAttributes(tpUShort attrib) { m_attributes = attrib; }
 	tpUShort getAttributes() const { return m_attributes; }
-	
+
 	bool hasAttribute(tpUByte attrib) const { return (0 != (m_attributes & attrib)); }
 
 
@@ -133,8 +180,9 @@ protected:
 	tpUShort m_attributes;
 
 	void calcNormals();
-	
+
 	tpArray<tpReal> m_vertices;
+
 	tpArray<tpReal> m_normals;
 	tpArray<tpReal> m_texcoords;
 	tpArray<tpReal> m_colors;

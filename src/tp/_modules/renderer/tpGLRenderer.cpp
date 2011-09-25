@@ -20,6 +20,15 @@
 #include <tp/primitive.h>
 #include <tp/transform.h>
 #include <tp/stack.h>
+#include <tp/log.h>
+#include <tp/stringformater.h>
+
+#define tpMatRep(mat) \
+			{ tpString mstr; \
+				mstr << mat; \
+				tpLog::get() << mstr.c_str(); \
+			}
+
 
 class tpGLFixedFunctionTraverser : public tpGLTraverser {
 public:
@@ -28,11 +37,12 @@ public:
 	tpStack<tpMaterial> materials;
 
 	tpGLFixedFunctionTraverser() : tpGLTraverser() {
-		tpMat44r identity; identity.setIdentity();
+		tpMat44r identity; identity.identity();
 	}
 
 	void operator()(tpNode* node,tpCamera* camera)
 	{
+		mvs.push(camera->getView());
 
 		tpGL::Enable(tpGL::NORMALIZE);
 		tpGL::Enable(tpGL::AUTO_NORMAL);
@@ -59,9 +69,6 @@ public:
 
 		tpGL::glFrontFace(tpGL::CCW);
 		//tpGL::Disable(tpGL::CULL_FACE);
-
-		//
-		mvs.push(camera->getView());
 
 		tpGL::Enable(tpGL::LINE_SMOOTH);
 		//tpGL::Enable(tpGL::SMOOTH);
@@ -94,11 +101,12 @@ public:
 			tpGL::MatrixMode(tpGL::PROJECTION);
 			tpGL::LoadIdentity();
 			tpGL::LoadMatrixf(camera->getProjection().data());
+
 			TP_REPORT_GLERROR();
 
 			tpGL::MatrixMode(tpGL::MODELVIEW);
 			tpGL::LoadIdentity();
-			tpGL::LoadMatrixf(camera->getView().data());
+
 			TP_REPORT_GLERROR();
 		}
 
@@ -126,6 +134,21 @@ public:
 		if(node->getType() == tpTransform::getTypeInfo()) this->popTransform(static_cast<tpTransform*>(node));
 	}
 
+
+	void pushTransform(tpTransform* trans)
+	{
+		tpMat44r m = mvs.getTop();
+		trans->getMatrix(true,m);
+		mvs.push(m);
+		tpGL::LoadMatrixf(mvs.getTop().data());
+	}
+
+	void popTransform(tpTransform* trans)
+	{
+		mvs.pop();
+		tpGL::LoadMatrixf(mvs.getTop().data());
+	}
+
 	void pushPrimitive(tpPrimitive* prim)
 	{
 
@@ -136,14 +159,14 @@ public:
 		tpGL::EnableClientState(tpGL::VERTEX_ARRAY);
 		tpGL::VertexPointer(3, tpGL::FLOAT, 0, prim->getVertices().getData());
 
-		if (prim->hasAttribute(tpPrimitive::kAttributeNormal))
+		if (prim->hasAttribute(tpPrimitive::kAttributeNormals))
 		{
 			//tpLogNotify("%s %d normals",__FUNCTION__,prim->getNormals().getSize());
 			tpGL::EnableClientState(tpGL::NORMAL_ARRAY);
 			tpGL::NormalPointer(tpGL::FLOAT, 0, prim->getNormals().getData());
 		}
 
-		if (prim->hasAttribute(tpPrimitive::kAttributeTextureCoordinate))
+		if (prim->hasAttribute(tpPrimitive::kAttributeUV))
 		{
 			//tpLogNotify("%s %d texcoords",__FUNCTION__,mesh->getTexCoords().getSize());
 			//float tex[] = {0,0, 0,1, 1,0, 1,1};
@@ -151,7 +174,7 @@ public:
 			tpGL::TexCoordPointer(2, tpGL::FLOAT, 0, prim->getTexCoords().getData());
 		}
 
-		if (prim->hasAttribute(tpPrimitive::kAttributeColorPerVertex))
+		if (prim->hasAttribute(tpPrimitive::kAttributeColors))
 		{
 			//tpLogNotify("%s %d color",__FUNCTION__,prim->getColors().getSize());
 			//float tex[] = {0,0, 0,1, 1,0, 1,1};
@@ -163,17 +186,17 @@ public:
 
 		tpGL::DisableClientState(tpGL::VERTEX_ARRAY);
 
-		if (prim->hasAttribute(tpPrimitive::kAttributeNormal))
+		if (prim->hasAttribute(tpPrimitive::kAttributeNormals))
 		{
 			tpGL::DisableClientState(tpGL::NORMAL_ARRAY);
 		}
 
-		if (prim->hasAttribute(tpPrimitive::kAttributeTextureCoordinate))
+		if (prim->hasAttribute(tpPrimitive::kAttributeUV))
 		{
 			tpGL::DisableClientState(tpGL::TEXTURE_COORD_ARRAY);
 		}
 
-		if (prim->hasAttribute(tpPrimitive::kAttributeColorPerVertex))
+		if (prim->hasAttribute(tpPrimitive::kAttributeColors))
 		{
 			tpGL::DisableClientState(tpGL::COLOR_ARRAY);
 		}
@@ -207,25 +230,7 @@ public:
 
 	}
 
-	void pushTransform(tpTransform* trans)
-	{
-#if 0
-		tpMat44r cm = trans->getMatrix();
-		cm *= mvs.getTop();
-		mvs.push(cm);
-#else
-		tpMat44r cm = mvs.getTop();
-		cm *= trans->getMatrix();
-		mvs.push(cm);
-#endif
-		tpGL::LoadMatrixf(cm.data());
-	}
 
-	void popTransform(tpTransform* trans)
-	{
-		mvs.pop();
-		tpGL::LoadMatrixf(mvs.getTop().data());
-	}
 };
 
 

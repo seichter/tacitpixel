@@ -35,37 +35,32 @@
 #include <stdio.h>
 
 
-class tpFileLog : public tpReferenced {
+struct tpConsoleLog : tpLogCallback
+{
+	void operator()(const char* cstr)
+	{
+		::fputs(cstr,stdout);
+	}
+};
+
+
+struct tpFileLog : tpLogCallback {
 	FILE* m_file;
-public:
-	tpFileLog() : m_file(0) {
+
+	tpFileLog() : m_file(0)
+	{
 		m_file = fopen("twistedpair.txt","a+");
 	}
 
-	~tpFileLog() {
+	~tpFileLog()
+	{
 		if (m_file) fclose(m_file);
 	}
 
-	void log(const char* stuff) {
-		if (m_file) fprintf(m_file,"%s",stuff);
+	void operator()(const char* stuff) {
+		if (m_file) ::fputs(stuff,m_file);
 	}
-
-	static tpFileLog& get() {
-		static tpFileLog thefilelog;
-		return thefilelog;
-	}
-
 };
-
-void tpFileLogFunction(const char* stuff) {
-	tpFileLog::get().log(stuff);
-}
-
-
-
-void tpDefaultLogFunction(const char* stuff) {
-	fprintf(stdout,"%s",stuff);
-}
 
 void tpSetGlobalNotifyLevel(tpUInt level)
 {
@@ -94,8 +89,6 @@ void tpSetGlobalNotifyLevel(tpUInt level)
 #define LOG_BUFFER_SIZE   (8192)
 
 static char s_szBuf[LOG_BUFFER_SIZE];
-
-
 
 
 void tpLogNotify(const char* szFormat, ...) {
@@ -137,74 +130,59 @@ void tpLogError(const char* szFormat, ... ) {
 }
 
 
-void tpLogProgress(const char* szFormat, ... ) {
-
-	va_list argptr;
-	va_start(argptr, szFormat);
-	tpVSNPRINTF(s_szBuf, sizeof(s_szBuf), szFormat, argptr);
-
-	va_end(argptr);
-
-	tpLog::get().log(tpLog::kLogInfo,s_szBuf,0);
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
 tpLog::tpLog() :
-	m_level(tpLog::kLogNotify),
-	m_func(0)
+	mLevel(tpLog::kLogNotify)
 {
-	m_func =
-#if defined(WINCE)
-		&tpFileLogFunction;
+#if defined(_WINCE)
+	mLogCallbacks.add(new tpFileLog());
 #else
-		&tpDefaultLogFunction;
+	mLogCallbacks.add(new tpConsoleLog());
 #endif
 
-	this->log(tpLog::kLogNotify,tpGetVersionString(), 1);
-
+	this->log(tpLog::kLogNotify,tpGetVersionString());
 }
 
-tpLog::~tpLog() {
-}
-
-void tpLog::log(tpUShort logtype, const char* buf, int endline)
+tpLog::~tpLog()
 {
-	if (logtype > m_level) return;
-
-	if (m_func) {
-		tpString t = tpSystem::get()->getTime();
-		m_func(t.c_str());
-		m_func(" ");
-		m_func(buf);
-		if (endline) m_func("\n");
+	for (tpArray<tpLogCallback*>::iterator i = mLogCallbacks.begin();
+		 i != mLogCallbacks.end();
+		 ++i)
+	{
+		delete (*i);
 	}
 }
 
-void tpLog::printf(tpUShort logtype, const char* szFormat, ...)
+void tpLog::log(tpUShort logtype,const char* buf)
 {
+	if (logtype > mLevel) return;
 
-	if (logtype >= m_level) return;
+	tpString output = tpSystem::get()->getTime();
+	output += " ";
+	output += buf;
+	output += "\n";
+	this->printf(output.c_str());
+}
 
+void tpLog::printf(const char* szFormat, ...)
+{
    va_list argptr;
    va_start(argptr, szFormat);
    tpVSNPRINTF(s_szBuf, sizeof(s_szBuf), szFormat, argptr);
-
    va_end(argptr);
 
-   tpLog::get().log(logtype,s_szBuf);
-
+   for (tpArray<tpLogCallback*>::iterator i = mLogCallbacks.begin();
+		i != mLogCallbacks.end();
+		++i)
+   {
+	   (*(*i))(s_szBuf);
+   }
 }
-
-
 
 /* static */
 tpLog& tpLog::get() {
 	static tpLog the_log;
 	return the_log;
-}
-
-void tpLog::setBackend( tpLogFunc func) {
-	m_func = func;
 }
 

@@ -45,20 +45,25 @@ set(tp_hdrs
 	${tp_include_path}/tp/math.h
 	${tp_include_path}/tp/matrix.h
 	${tp_include_path}/tp/mat.h
+	${tp_include_path}/tp/matop.h
 	${tp_include_path}/tp/module.h
 	${tp_include_path}/tp/mutex.h
 	${tp_include_path}/tp/quat.h
 	${tp_include_path}/tp/referenced.h
+	${tp_include_path}/tp/refptr.h
 	${tp_include_path}/tp/rs232.h
 	${tp_include_path}/tp/rtti.h
 	${tp_include_path}/tp/socket.h
+	${tp_include_path}/tp/scopeptr.h
 	${tp_include_path}/tp/stack.h
 	${tp_include_path}/tp/string.h
+	${tp_include_path}/tp/stringformater.h
 	${tp_include_path}/tp/stringutils.h
 	${tp_include_path}/tp/system.h
 	${tp_include_path}/tp/thread.h
 	${tp_include_path}/tp/timer.h
 	${tp_include_path}/tp/types.h
+	${tp_include_path}/tp/vec.h
 	${tp_include_path}/tp/version.h
 	)
 

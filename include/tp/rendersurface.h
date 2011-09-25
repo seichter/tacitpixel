@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,7 @@ protected:
 public:
 
 	TP_TYPE_DECLARE;
-	
+
 	virtual tpRenderSurface* create( tpRenderSurfaceTraits* ) = 0;
 
 };
@@ -64,11 +64,11 @@ protected:
 
 class tpMouseAdapter : public tpCallbackAdapter {
 public:
-	
+
 	tpMouseAdapter() {};
 
 	virtual void onMouseMotion( tpInt& x, tpInt& y, tpUByte& button, tpUByte& pressed ) {};
-	
+
 	virtual void onMouseWheel( tpInt& x_dir, tpInt& y_dir ) {};
 
 protected:
@@ -85,15 +85,14 @@ class tpCamera;
 
 class TP_API tpRenderSurface : public tpReferenced {
 public:
-	
+
 	TP_TYPE_DECLARE;
 
 	static tpRenderSurface* create( tpRenderSurfaceTraits* traits = 0);
 
-	tpRenderSurface( tpRenderSurfaceTraits* traits );
 
 	virtual bool makeCurrent() = 0;
-	virtual bool swapBuffers() = 0; 
+	virtual bool swapBuffers() = 0;
 	virtual bool show(bool doShow) = 0;
 
 	virtual void frame();
@@ -126,8 +125,6 @@ public:
 
 	const tpCamera* getCamera() const;
 
-
-
 	void setDone(bool isDone = true);
 
 	bool isDone() const;
@@ -140,7 +137,8 @@ public:
 
 protected:
 
-	
+	tpRenderSurface( tpRenderSurfaceTraits* traits );
+
 	tpRefPtr<tpRenderer> m_renderer;
 	tpRefPtr<tpNode> m_root;
 	tpRefPtr<tpCamera> m_camera;
@@ -158,7 +156,7 @@ protected:
 
 /**
  * \class tpRenderSurfaceTraits
- * 
+ *
  * Initializes a window with predefined traits
  */
 class TP_API tpRenderSurfaceTraits {
@@ -171,36 +169,36 @@ class TP_API tpRenderSurfaceTraits {
 
 	void* window_handle;
 	bool fullscreen;
-	
+
 	tpUInt depth;
 	bool anti_alias;
-	
-	
+
+
 	tpUInt renderbackend;
 	bool embedded;
-	
+
 public:
-	
+
 	enum {
 		kRenderDefault = 0x0,
 		kRenderOpenGL,
 		kRenderOpenGLES1,
 		kRenderOpenGLES2
 	};
-	
+
 	tpRenderSurfaceTraits();
-	
-	
+
+
 	tpRenderSurfaceTraits& setEmbedded(bool flag) { embedded = true; return *this; }
 	bool getEmbedded() const { return embedded; }
-	
-	
+
+
 	tpRenderSurfaceTraits& setRenderBackend(tpUInt be) { renderbackend = be; return *this; }
 	tpUInt getRenderBackend() const { return renderbackend; }
-	
+
 
 	tpVec2i getSize() const;
-	tpRenderSurfaceTraits& setSize(tpVec2i val);	
+	tpRenderSurfaceTraits& setSize(tpVec2i val);
 	tpRenderSurfaceTraits& setSize(tpInt width, tpInt height);
 
 	tpRenderSurfaceTraits& setDefaultSize();
@@ -208,12 +206,12 @@ public:
 	//tpRenderSurfaceTraits& setAntiAlias(bool val);
 
 	bool useDefaultSize();
-	
+
 	tpVec2i getPosition() const;
-	tpRenderSurfaceTraits& setPosition(tpVec2i val);	
+	tpRenderSurfaceTraits& setPosition(tpVec2i val);
 	tpRenderSurfaceTraits& setPosition(tpInt width, tpInt height);
 	tpRenderSurfaceTraits& setDefaultPosition();
-	
+
 	bool useDefaultPosition();
 
 	tpString getTitle() const;

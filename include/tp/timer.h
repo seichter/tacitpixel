@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,69 +29,54 @@
 #include <tp/globals.h>
 #include <tp/types.h>
 
-const tpDouble TP_TIME_MICROSEC = 1e6;
-const tpDouble TP_TIME_MILLISEC = 1e3;
-const tpDouble TP_TIME_SEC      = 1;
-
 typedef tpUInt64 tpTimerTick;
 
-
-TP_API void tpYield();
-
-TP_API void tpMilliSleep(tpULong milliseconds);
-
-
-
-/*!
-	\class tpTimer
-	\brief a high resolution timer
-
-	This timer provides access to high resolution timing
-	on the respective platform. The timing is done like 
-	this:
-	\code
-	tpTimer atimer;
-
-	atimer.start();
-
-	// ... do the measured things
-
-
-	tpDouble elapsed_in_sec = atimer.getElapsed(TP_TIME_SEC);
-
-	\endcode
-*/
-
+/**
+  * @brief a high resolution timer
+  * @code
+  * tpTimer timer;
+  * timer.start();
+  * // do some stuff
+  * tpDouble elapsed_time_in_seconds = timer.getElapsed(tpTimer::kTimeSeconds);
+  * @endcode
+  */
 class TP_API tpTimer {
 public:
 
-	/*! c'tor
-	*/
+	const static tpDouble kTimeMicroSeconds = 1e6;
+	const static tpDouble kTimeMilliSeconds = 1e3;
+	const static tpDouble kTimeSeconds      = 1;
+
+	/**
+	  * @brief c'tor - will reset the timer (call ::start())
+	  */
 	tpTimer();
-	/*! d'tor
-	*/
+
+	/**
+	  * @brief d'tor
+	  */
 	~tpTimer();
-	
-	/*! start timer
-	*/
+
+	/**
+	  * @brief starts the timer
+	  */
 	void start();
 
-	/*! Get the elapsed time in the given scale.
-		\brief get elapsed time
-		\param scale time scale for reporting
-		\return time in respective scale (usec,msec or sec ...)		
-	*/
-	tpDouble getElapsed(tpDouble scale = TP_TIME_SEC) const;
-	
-	
+	/**
+	  * @brief returns the time elapsed since last call of start()
+	  * @param scale is the scale of the returned value
+	  * @return time in units
+	  */
+	tpDouble getElapsed(tpDouble scale = kTimeSeconds) const;
+
 protected:
 
 	//! static function to get the current time
 	static void getCurrentTick(tpTimerTick& val);
-		
-	tpTimerTick m_start;
-	tpDouble m_secondsPerTick;
-	
+
+	tpTimerTick mStart;
+	tpDouble mSecondsPerTick;
+
 };
 
 

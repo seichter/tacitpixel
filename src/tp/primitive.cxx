@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,7 +23,7 @@
  * SUCH DAMAGE.
  */
 
-#include "tp/primitive.h"           
+#include "tp/primitive.h"
 #include "tp/math.h"
 #include "tp/log.h"
 #include "tp/node.h"
@@ -70,9 +70,9 @@ void tpPrimitive::setPrimitiveType(tpUInt meshtype)
 	this->m_primitivetype = meshtype;
 }
 
-void 
-tpPrimitive::addVertex(const tpVec3<tpReal>& pos, 
-					   const tpVec3<tpReal>& normal, 
+void
+tpPrimitive::addVertex(const tpVec3<tpReal>& pos,
+					   const tpVec3<tpReal>& normal,
 					   const tpVec2<tpReal>& tcoord,
 					   const tpVec4<tpReal>& color)
 {
@@ -83,12 +83,12 @@ tpPrimitive::addVertex(const tpVec3<tpReal>& pos,
 }
 
 
-void 
+void
 tpPrimitive::removeVertex( tpUInt id ) {
 	m_vertices.erase(id);
 }
 
-void 
+void
 tpPrimitive::scale(const tpVec3r& scale)
 {
 	tpReal* v_ptr = m_vertices.getData();
@@ -100,7 +100,7 @@ tpPrimitive::scale(const tpVec3r& scale)
 	}
 }
 
-void 
+void
 tpPrimitive::getAABB(tpVec3r& aabb_min,tpVec3r& aabb_max)
 {
 
@@ -138,7 +138,7 @@ const tpArray<tpReal>& tpPrimitive::getTexCoords() const {
 tpVec3r tpGetNormal(const tpArray<tpReal>& vertices)
 {
 	tpVec3r normal(0,1,0);
-	
+
 	/* minimum of 3 vertices needed */
 	if (vertices.getSize() > 8) {
 
@@ -148,7 +148,7 @@ tpVec3r tpGetNormal(const tpArray<tpReal>& vertices)
 
 		a -= b;
 		b -= c;
-	
+
 		if (a == b) return normal;
 
 		normal = a.cross(b);
@@ -160,11 +160,11 @@ tpVec3r tpGetNormal(const tpArray<tpReal>& vertices)
 };
 
 
-void tpPrimitive::flipNormals() 
+void tpPrimitive::flipNormals()
 {
 	tpReal *n_ptr = m_normals.getData();
 
-	for (tpULong i = getNormalsCount(); i; --i) 
+	for (tpULong i = getNormalsCount(); i; --i)
 	{
 		*n_ptr++ *= -1;
 		*n_ptr++ *= -1;
@@ -202,10 +202,10 @@ tpPrimitive* tpPrimitiveFactory::create( tpUShort primitive_type )
 	switch (primitive_type)
 	{
 	case kAxis:
-		res = new tpPrimitive(tpPrimitive::kLines, 
-			tpPrimitive::kAttributeVertex | tpPrimitive::kAttributeColorPerVertex
+		res = new tpPrimitive(tpPrimitive::kLines,
+			tpPrimitive::kAttributeVertex | tpPrimitive::kAttributeColors
 			);
-			
+
 		res->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(1,0,0,1));
 		res->addVertex(tpVec3r(1,0,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(1,0,0,1));
 		res->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,1,0,1));

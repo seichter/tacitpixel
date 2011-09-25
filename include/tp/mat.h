@@ -23,8 +23,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TPMAT_H
-#define TPMAT_H
+#ifndef TP_MAT_H
+#define TP_MAT_H
 
 #include <tp/vec.h>
 #include <tp/fixed.h>
@@ -34,37 +34,34 @@ public:
 
 	typedef T value_type;
 
+	static const tpUInt rows = R;
+	static const tpUInt cols = C;
+	static const tpUInt cells = R*C;
+
 	tpMat() {}
 
-	tpMat(const tpMat<R,C,T>& mtc) { for (int i = 0; i < R*C; ++i) m[i] = mtc.data()[i]; }
+	tpMat(const tpMat<R,C,T>& mtc) { *this = mtc; }
 
-	tpMat(const T* val) { for (int i = 0; i < R*C; ++i) m[i] = val[i]; }
+	tpMat(const T* val) { for (int i = 0; i < tpMat<R,C,T>::cells; ++i) m[i] = val[i]; }
 
 	template <typename Tout>
-	void copy(tpMat<R,C,T>& out) const { for (tpUInt i = 0; i < R*C; ++i) out[i] = m[i]; }
+	void copy(tpMat<R,C,Tout>& out) const { for (tpUInt i = 0; i < tpMat<R,C,T>::cells; ++i) out[i] = Tout(m[i]); }
 
 	const T* data() const { return m; }
-
 	T* data() { return m; }
-
-	tpUInt getRowCount() const { return R; }
-
-	tpUInt getColumnCount() const { return C; }
 
 	bool isSquare() const { return C == R; }
 
-	void setValue(T val) { for (int i = 0; i < R*C; ++i) m[i] = val; }
+	tpMat<R,C,T>& all(const T& val = T(0)) { for (int i = 0; i < tpMat<R,C,T>::cells; ++i) m[i] = val; return *this; }
 
-
-	tpMat<R,C,T>&
-	setIdentity()
+	tpMat<R,C,T>& identity()
 	{
 		if (isSquare())
 		{
-			setValue(0);
+			all(0);
 			for (int i = 0; i < R; ++i)
 			{
-				m[i*C+i] = 1;
+				m[i*C+i] = T(1);
 			}
 		}
 		return *this;
@@ -72,35 +69,37 @@ public:
 
 	void setCellIdValue()
 	{
-		for (int i = 0; i < R*C;i++) {m[i] = i;}
+		for (register int i = 0; i < tpMat<R,C,T>::cells;++i) {m[i] = i;}
 	}
 
-	void transpose()
+	inline tpMat<R,C,T>&
+	transpose()
 	{
-		tpMat<R,C,T> r;
-		getTranspose(r);
+		tpMat<C,R,T> r;
+		this->getTranspose(r);
 		*this = r;
+		return *this;
 	}
 
-	void getTranspose(tpMat<C,R,T>& rot) const
+	inline void
+	getTranspose(tpMat<C,R,T>& rot) const
 	{
-		for (tpUInt r = 0; r < R; r++)
-		{
-			for (tpUInt c = 0; c < C; c++ )
+		for (register tpUInt r = 0; r < rows; r++)
+			for (register tpUInt c = 0; c < cols; c++ )
 			{
 				rot(c,r) = (*this)(r,c);
 			}
-		}
 	}
 
-	tpMat<R,C,T> multiply(const tpMat<R,C,T>& rhs) const
+	inline tpMat<R,C,T>
+	multiply(const tpMat<R,C,T>& rhs) const
 	{
 		tpMat<R,C,T> res;
 		for (tpUInt r = 0; r < R; ++r)
 		{
 			for (tpUInt c = 0; c < C; ++c)
 			{
-				T& v = res(r,c) = 0;
+				T& v = res(r,c) = T(0);
 				for (tpUInt k = 0; k < C; ++k)
 				{
 					v += (*this)(r,k) * rhs(k,c);
@@ -110,8 +109,10 @@ public:
 		return res;
 	}
 
-	tpMat<R,C,T>&
-	invert()
+
+
+	inline
+	tpMat<R,C,T>& invert()
 	{
 		tpMat<R,C,T> b;
 		for ( tpUInt r = 0; r < C; ++r)
@@ -125,7 +126,7 @@ public:
 			}
 		}
 		b.transpose();
-		b /= getDeterminant();
+		b *= T(1)/getDeterminant();
 		*this = b;
 		return *this;
 	}
@@ -134,56 +135,63 @@ public:
 
 	T getDeterminant() const;
 
-	T& operator()(tpUInt r,tpUInt c);
 
+	T& at(tpUInt idx) { return m[idx]; }
+	const T& at(tpUInt idx) const { return m[idx]; }
+
+	T& operator()(tpUInt r,tpUInt c);
 	const T& operator()(tpUInt r,tpUInt c) const;
 
-	void _print() const;
+	tpMat<R,C,T>& operator = (const tpMat<R,C,T>& rhs);
 
-	tpMat<R,C,T>& operator = (const tpMat<R,C,T>& rhs) { for (tpUInt i = 0; i < R*C; i++) {m[i] = rhs.m[i];} return *this; }
-
-	tpMat<R,C,T>& operator / (const T& rhs) { for (tpUInt i = 0; i < R*C; i++) {m[i] /= rhs;} return *this; }
-
-	void operator /= (const T& rhs) { for (tpUInt i = 0; i < R*C; i++) {m[i] /= rhs;} }
-
+	tpMat<R,C,T>& operator *= (const tpMat<R,C,T>& rhs);
+	tpMat<R,C,T>& operator *= (const T& rhs);
 
 protected:
 
 	T m[R*C];
-
 };
 
-//template<> inline
-//tpStringBase<tpChar>& tpStringBase<tpChar>::format(const tpChar* format,...)
-//{
-//}
 
-
-
-template <tpUInt R, tpUInt C,typename T>
-void tpMat<R,C,T>::_print() const
-{
-	printf("tpMat %dx%d\n",R,C);
-	for (int r=0;r < R;r++)
-	{
-		for (int c=0;c < C;c++)
-		{
-			printf("%3.5f ",(*this)(r,c));
-		}
-		printf("\n");
-	}
-	//	printf("determinant: %3.f\n",getDeterminant());
-	printf("\n");
-}
-
-
-
+/////////////////////////////////////////////////////////////////////////////
 
 template <tpUInt R, tpUInt C,typename T>
 T& tpMat<R,C,T>::operator()(tpUInt r,tpUInt c) { return m[r * C + c]; }
 
 template <tpUInt R, tpUInt C,typename T>
 const T& tpMat<R,C,T>::operator()(tpUInt r,tpUInt c) const { return m[r * C + c]; }
+
+template <tpUInt R, tpUInt C,typename T>
+tpMat<R,C,T>& tpMat<R,C,T>::operator = (const tpMat<R,C,T>& rhs)
+{
+	if (&rhs != this)
+	{
+		for (register tpUInt i = 0; i < tpMat<R,C,T>::cells; i++) {
+			this->m[i] = rhs.m[i];
+		}
+	}
+	return *this;
+}
+
+template <tpUInt R, tpUInt C,typename T>
+tpMat<R,C,T>& tpMat<R,C,T>::operator *= (const tpMat<R,C,T>& rhs)
+{
+	*this = this->multiply(rhs);
+	return *this;
+}
+
+template <tpUInt R, tpUInt C,typename T>
+tpMat<R,C,T>& tpMat<R,C,T>::operator *= (const T& rhs)
+{
+	for (tpUInt i = 0; i < tpMat<R,C,T>::cells; i++)
+	{
+		m[i] *= rhs;
+	}
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+
 
 template <tpUInt R, tpUInt C,typename T>
 void tpMat<R,C,T>::getMinor(tpMat<R-1,C-1,T>& res,tpUInt r0, tpUInt c0) const
@@ -219,8 +227,6 @@ T tpMat<R,C,T>::getDeterminant() const
 
 	return res;
 }
-
-
 
 // partial specializations
 
@@ -420,151 +426,6 @@ public:
 	{
 		tpMat44<T> result(*this); result.invert(); return result;
 	}
-
-
-
-	tpMat44&
-	setFrustum(T Left,T Right,T Bottom,T Top, T Near, T Far)
-	{
-		// set column-wise
-		this->m[ 0] = (T) 2	* Near/(Right-Left);
-		this->m[ 4] = (T) 0;
-		this->m[ 8] = (T) (Right+Left)/(Right-Left);
-		this->m[12] = (T) 0;
-
-		this->m[ 1] = (T) 0;
-		this->m[ 5] = (T) 2 * Near/(Top-Bottom);
-		this->m[ 9] = (T) (Top+Bottom)/(Top-Bottom);
-		this->m[13] = (T) 0;
-
-		this->m[ 2] = (T) 0;
-		this->m[ 6] = (T) 0;
-		this->m[10] = (T) -(Far+Near)/(Far-Near);
-		this->m[14] = (T) -	2*Far*Near	/ Far-Near;
-
-		this->m[ 3] = (T) 0;
-		this->m[ 7] = (T) 0;
-		this->m[11] = (T) -1;
-		this->m[15] = (T) 0;
-
-		return *this;
-	}
-
-	tpMat44&
-	setOrtho(T Left,T Right,T Bottom,T Top, T Near, T Far)
-	{
-
-		this->m[ 0] = (T) 2	* (Right-Left);
-		this->m[ 4] = (T) 0;
-		this->m[ 8] = (T) 0;
-		this->m[12] = (T) -(Right + Left)/(Right - Left);
-
-		this->m[ 1] = (T) 0;
-		this->m[ 5] = (T) 2 / (Top-Bottom);
-		this->m[ 9] = (T) 0;
-		this->m[13] = (T) -(Top + Bottom)/(Top - Bottom);
-
-		this->m[ 2] = (T) 0;
-		this->m[ 6] = (T) 0;
-		this->m[10] = (T) - 2 / (Far - Near);
-		this->m[14] = (T) -(Far + Near) / (Far - Near);
-
-		this->m[ 3] = (T) 0;
-		this->m[ 7] = (T) 0;
-		this->m[11] = (T) 0;
-		this->m[15] = (T) 1;
-
-		return *this;
-	};
-
-
-	tpMat44&
-	setPerspective(T FovY, T Aspect, T Near, T Far) {
-
-		T xmin, xmax, ymin, ymax;
-		ymax = Near * (T)tan( FovY * TP_PI / T(360) );
-		ymin = -ymax;
-		xmin = ymin * Aspect;
-		xmax = ymax * Aspect;
-
-		return setFrustum( xmin, xmax, ymin, ymax, Near, Far );
-	}
-
-
-	tpMat44&
-	operator *= (const tpMat44<T>& rs)
-	{
-		register int r;
-		register int c;
-		register int t = 4;
-
-		tpMat44<T> ret;
-
-		for (register tpUByte k = 0; k < 16; k++ ) {
-			r = k % t;
-			c = (tpUInt)(k / t);
-			ret.m[k] = (T)0;
-			for (int i = 0;i < t; i++)
-				ret.m[k] += this->m[r+(i*t)] * rs.m[(c*t)+i];
-		}
-		*this = ret;
-		return *this;
-	};
-
-
-	tpMat44&
-	lookAt(const tpVec3<T>& eye, const tpVec3<T>& target, const tpVec3<T>& up)
-	{
-		tpVec3<T> L(target - eye);
-		L.normalize();
-		tpVec3<T> S = L.cross(up);
-		S.normalize();
-		tpVec3<T> Ud = S.cross(L);
-		Ud.normalize();
-
-		/*
-		 this->m[0] = S[0];
-		 this->m[1] = S[1];
-		 this->m[2] = S[2];
-		 this->m[3] = (T)0;
-
-		 this->m[4] = Ud[0];
-		 this->m[5] = Ud[1];
-		 this->m[6] = Ud[2];
-		 this->m[7] = (T) 0;
-
-		 this->m[8] = -L[0];
-		 this->m[9] = -L[1];
-		 this->m[10] = -L[2];
-		 this->m[11] = (T) 0;
-		 */
-
-		this->m[ 0] = S[0];
-		this->m[ 4] = S[1];
-		this->m[ 8] = S[2];
-		this->m[ 3] = T(0);
-
-		this->m[ 1] = Ud[0];
-		this->m[ 5] = Ud[1];
-		this->m[ 9] = Ud[2];
-		this->m[ 7] = T(0);
-
-		this->m[ 2] = -L[0];
-		this->m[ 6] = -L[1];
-		this->m[10] = -L[2];
-		this->m[14] = T(0);
-
-		this->m[12] = -eye[0];
-		this->m[13] = -eye[1];
-		this->m[14] = -eye[2];
-
-		this->m[15] = T(1);
-
-		return *this;
-	}
-
-
-
 };
 
 
@@ -589,31 +450,12 @@ tpFixed32 tpMat<1,1,tpFixed32>::getDeterminant() const
 //////////////////////////////////////////////////////////////////////////
 
 // predefined matricies
-typedef tpMat44<tpFloat> tpMat44f;
-typedef tpMat44<tpDouble> tpMat44d;
-typedef tpMat44<tpReal> tpMat44r;
-typedef tpMat44<tpFixed32> tpMat44x;
 
+class tpMat44r : public tpMat44<tpReal> {};
+class tpMat44d : public tpMat44<tpDouble> {};
+class tpMat44f : public tpMat44<tpFloat> {};
+class tpMat44x : public tpMat44<tpFixed32> {};
 
-
-
-//
-//tpString inline
-//operator << (tpString& ostr, const tpMat44r& m)
-//{
-//	ostr += tpStringFormat(
-//		"%3.3f\t%3.3f\t%3.3f\t%3.3f\n"
-//		"%3.3f\t%3.3f\t%3.3f\t%3.3f\n"
-//		"%3.3f\t%3.3f\t%3.3f\t%3.3f\n"
-//		"%3.3f\t%3.3f\t%3.3f\t%3.3f",
-//		m(0,0),m(0,1),m(0,2),m(0,3),
-//		m(1,0),m(1,1),m(1,2),m(1,3),
-//		m(2,0),m(2,1),m(2,2),m(2,3),
-//		m(3,0),m(3,1),m(3,2),m(3,3)
-//		);
-//	return ostr;
-//}
-//
 
 
 #endif

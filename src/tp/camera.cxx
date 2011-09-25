@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,31 +24,29 @@
  */
 
 #include "tp/camera.h"
+#include "tp/matop.h"
 
 tpCamera::tpCamera() : tpReferenced()
 {
-	m_projection.setIdentity();
-	m_view.setIdentity();
+	m_projection.identity();
+	m_view.identity();
 
 }
 
 void tpCamera::setViewLookAt( const tpVec3r& eye, const tpVec3r& target, const tpVec3r& up )
 {
-	m_view.lookAt(eye,target,up);
+	tpMatOp::lookAt(eye,target,up,m_view);
+	m_view.transpose();
 }
 
 void tpCamera::setProjectionPerspective( const tpReal& fov, const tpReal& aspect, const tpReal& n, const tpReal& f )
 {
-	m_projection.setPerspective(fov,aspect,n,f);
-	m_projection.transpose();
-	m_projection.invert();
+	tpMatOp::perspective(fov,aspect,n,f,m_projection);
 }
 
 void tpCamera::setProjectionFrustum( const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f )
 {
-	m_projection.setFrustum(l,r,b,t,n,f);
-	m_projection.transpose();
-	m_projection.invert();
+	tpMatOp::frustum(l,r,b,t,n,f,m_projection);
 }
 
 TP_TYPE_REGISTER(tpCamera,tpReferenced,Camera);
