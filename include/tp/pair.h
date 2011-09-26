@@ -26,13 +26,10 @@
 #ifndef TP_PAIR_H
 #define TP_PAIR_H
 
-/*!
-	\class tpPair
-	\brief pairs for storage in a tpMap
-	
-	That class stores pairs of data 
-*/
 
+/**
+ * @brief class to store pairs of values
+ */
 template <typename K, typename V> class tpPair {
 public:
 	

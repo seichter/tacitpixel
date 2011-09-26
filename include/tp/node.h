@@ -109,6 +109,8 @@ protected:
 
 class TP_API tpNode : public tpObject {
 public:
+
+	static const int kNotFound = -1;
 	
 	TP_TYPE_DECLARE;
 
@@ -148,7 +150,7 @@ public:
 		{
 			if (c == m_children[i].get()) return i;
 		}
-		return static_cast<tpSizeT>(-1);
+		return static_cast<tpSizeT>(kNotFound);
 	}
 	
 	//! get parent list
@@ -175,6 +177,7 @@ protected:
 
 
     virtual ~tpNode();
+	
 	tpArray< tpRefPtr<tpNode> > m_children;
 	tpArray<tpNode*> m_parents;
 
