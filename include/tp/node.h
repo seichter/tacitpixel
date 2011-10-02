@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,42 +36,94 @@
 #include <tp/matrix.h>
 
 
-class TP_API tpRenderObject : public tpReferenced {
+typedef tpArray<tpNode*> tpNodeArray;
+typedef tpArray<tpRefPtr<tpNode> > tpRefNodeArray;
+typedef tpArray<tpNodeArray> tpNodeArrayList;
+
+typedef tpArray<tpMat44r> tpMatrixArray;
+
+/*!
+	\class tpNode
+	\brief abstract traversable Node for the scenegraph
+*/
+
+class TP_API tpNode : public tpObject {
 public:
 
-	tpRenderObject() {};
+	TP_TYPE_DECLARE;
 
-	/*
-	virtual void onEvent(tpContext& context) {};
-	virtual void onCull(tpContext& context) {};
-	virtual void onUpdate(tpContext& context) {};
-	virtual void onDraw(tpContext& context) {};
-	*/
+	//! standard c'tor
+	tpNode(const tpString& name = "");
 
-	tpVoid setNestedRenderObject( tpRenderObject* robj ) { m_nested = robj; }
-	tpRenderObject* getNestedRenderObject() const { return m_nested.get(); }
+	//! copy c'tor
+	tpNode(const tpNode& node);
+
+	//! cloning interface
+	virtual tpObject* clone();
+
+	//! traversing interface
+	void traverse(tpTraverser& traverser);
+
+	//! add a child node
+	tpNode* addChild(tpNode* node);
+
+	//! remove child node
+	tpNode* removeChild(tpNode* node);
+
+	//! set child node
+	bool setChild(tpSizeT idx,tpNode* node);
+
+	//! get nested children
+	tpSizeT getChildCount() const { return m_children.getSize(); }
+
+	//! get child at index
+	tpNode* getChild(tpSizeT idx) { return m_children[idx].get(); }
+
+	//! get child at index (const)
+	const tpNode* getChild(tpSizeT idx) const { return m_children[idx].get(); }
+
+	//! get index of child
+	tpSizeT getIndexOfChild(const tpNode* c) const {
+		for (tpSizeT i = 0; i < m_children.getSize(); i++)
+		{
+			if (c == m_children[i].get()) return i;
+		}
+		return static_cast<tpSizeT>(-1);
+	}
+
+	//! get parent list
+	const tpArray<tpNode*>& getParents() const { return m_parents; }
+
+	//! get copy of parent list
+	tpArray<tpNode*> getParents() { return m_parents; }
+
+	//! get count of parent nodes
+	tpSizeT getParentsCount() const { return m_parents.getSize(); }
+
+	//! check if this node has any parent > root
+	bool hasParents() const { return (getParentsCount() > 0); }
+
+	//! check if this node has any child nodes > leaf
+	bool hasChildren() const { return (getChildCount() > 0); }
+
+	//!
+	const tpNodeArrayList& getNodePaths() const { return m_nodepath; }
+
+	//! read a node from a file
+	static tpNode* read(const tpString& file);
 
 protected:
 
-	tpRefPtr<tpRenderObject> m_nested;
+	virtual ~tpNode();
 
-	virtual ~tpRenderObject() {};
+	tpRefNodeArray m_children;
+	tpNodeArray m_parents;
+
+	tpNodeArrayList m_nodepath;
+	tpMatrixArray m_matrices;
+
 };
 
-
-/*
-
-enum tpTraverseFlags
-{
-	TP_TRAVERSE_OFF	 = 0,
-	TP_TRAVERSE_DRAW = 0 << 1,
-	TP_TRAVERSE_STAT = 1 << 1,
-	TP_TRAVERSE_DISTRIBUTE = 2 << 1
-};
-
-//////////////////////////////////////////////////////////////////////////
-
-*/
 
 class TP_API tpNodeHandler : public tpReferenced {
 public:
@@ -94,95 +146,6 @@ public:
 protected:
 
 	~tpNodeHandler();
-};
-
-
- 
- 
-//class tpGroup;
-
-
-/*!
-	\class tpNode
-	\brief abstract traversable Node for the scenegraph
-*/
-
-class TP_API tpNode : public tpObject {
-public:
-	
-	TP_TYPE_DECLARE;
-
-	//! standard c'tor
-	tpNode(const tpString& name = "");
-
-	//! copy c'tor
-	tpNode(const tpNode& node);
-
-	//! cloning interface
-	virtual tpObject* clone();
-
-	//! traversing interface
-	void traverse(tpTraverser& traverser);
-	
-	//! add a child node
-	tpNode* addChild(tpNode* node);
-	
-	//! remove child node
-	tpNode* removeChild(tpNode* node);
-	
-	//! set child node
-	bool setChild(tpSizeT idx,tpNode* node);
-	
-	//! get nested children
-	tpSizeT getChildCount() const { return m_children.getSize(); }
-	
-	//! get child at index
-	tpNode* getChild(tpSizeT idx) { return m_children[idx].get(); }
-	
-	//! get child at index (const)
-	const tpNode* getChild(tpSizeT idx) const { return m_children[idx].get(); }
-	
-	//! get index of child
-	tpSizeT getIndexOfChild(const tpNode* c) const {
-		for (tpSizeT i = 0; i < m_children.getSize(); i++)
-		{
-			if (c == m_children[i].get()) return i;
-		}
-		return static_cast<tpSizeT>(-1);
-	}
-	
-	//! get parent list
-	const tpArray<tpNode*>& getParents() const { return m_parents; }
-	
-	//! get copy of parent list
-	tpArray<tpNode*> getParents() { return m_parents; }
-	
-	//! get count of parent nodes
-	tpSizeT getParentsCount() const { return m_parents.getSize(); }
-	
-	//! check if this node has any parent > root
-	bool hasParents() const { return (getParentsCount() > 0); }
-	
-	//! check if this node has any child nodes > leaf
-	bool hasChildren() const { return (getChildCount() > 0); }
-
-
-	//! read a node from a file
-	static tpNode* read(const tpString& file);
-
-	
-protected:
-
-
-    virtual ~tpNode();
-	tpArray< tpRefPtr<tpNode> > m_children;
-	tpArray<tpNode*> m_parents;
-
-	tpArray<tpNode*> m_nodepath;
-	tpArray<tpMat44r*> m_matrices;
-
-
-	tpRefPtr<tpRenderObject> m_renderobject;
 };
 
 

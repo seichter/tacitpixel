@@ -4,10 +4,11 @@
 #include <tp/string.h>
 #include <tp/mat.h>
 
-inline
-tpString& operator << (tpString& out, const tpMat44r& m)
+inline tpString&
+operator << (tpString& out, const tpMat44r& m)
 {
-	tpString result("[");
+	// we are using MatLab style
+	tpString result("[ ");
 	for (int r = 0; r < m.rows;++r)
 	{
 		for (int c = 0; c < m.cols;++c)
@@ -17,8 +18,7 @@ tpString& operator << (tpString& out, const tpMat44r& m)
 		}
 		if (r != m.rows - 1) result += ";\n";
 	}
-	result += "]\n";
-
+	result += " ]\n";
 	return out.append(result);
 }
 

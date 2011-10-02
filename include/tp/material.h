@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,8 +23,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TPMATERIAL_H
-#define TPMATERIAL_H
+#ifndef TP_MATERIAL_H
+#define TP_MATERIAL_H
 
 #include <tp/object.h>
 #include <tp/vec.h>
@@ -50,14 +50,14 @@ public:
 
 	//! cloning interface
 	virtual tpObject* clone();
-	
-	//! 
+
+	//!
 	tpMaterial& operator = (const tpMaterial&);
 
-	void setShininess(const tpFloat& v) { m_shininess = v; } 
+	void setShininess(const tpFloat& v) { m_shininess = v; }
 	const tpFloat& getShininess() const {return m_shininess; }
 
-	void setTransparency(const tpFloat& v) { m_transparency = v; } 
+	void setTransparency(const tpFloat& v) { m_transparency = v; }
 	const tpFloat& getTransparency() const { return m_transparency; }
 
 	void setDiffuseColor(const tpVec4f& v) { m_diffusecolor = v; }
@@ -73,7 +73,7 @@ public:
 	const tpVec4f& getAmbientColor() const { return m_ambientcolor; }
 
 protected:
-	
+
 	tpVec4r m_ambientcolor;
 	tpVec4r m_diffusecolor;
 	tpVec4r m_emissivecolor;

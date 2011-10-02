@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,8 +34,8 @@
 	\class tpRTTI
 	\brief runtime type information (RTTI)
 
-	This class circumvents compilers with a weak or not working RTTI 
-	implementation. If you derive a class for rendering 
+	This class circumvents compilers with a weak or not working RTTI
+	implementation. If you derive a class for rendering
 	into the scenegraph you have to provide type information.
 */
 
@@ -47,7 +47,7 @@ public:
 		\param parent parent class of this one, NULL if it is a base class
 	 */
 	explicit tpRTTI(const tpChar* name,tpRTTI* parent) : m_hash(tpAdler32((tpUChar*)name,tpStrLen(name))), m_parent(parent), m_name(name) {}
-	
+
 	/*! Check if this class has been inherited from another class
 		\param parent check if this is a child (inherited) class
 	 */
@@ -62,8 +62,14 @@ public:
 		return false;
 	}
 
-	template <typename T> 
+	template <typename T>
 	bool isOfType(const T* q) const { this->isOfType(q->getTypeInfo()); }
+
+	template <typename T,typename Tin>
+	T* self_cast(Tin* q) const
+	{
+		return (q->getType()->isOfType(T::getTypeInfo())) ? static_cast<T*>(q) : 0L;
+	}
 
 	/*! Check if it is exacty the same type.
 		\param parent checks if aclass is of exact type
@@ -72,9 +78,9 @@ public:
 	{
 		return (query->m_hash == this->m_hash);
 	}
-	
+
 	const char* getName() const { return m_name; }
-	
+
 	const tpULong& getID() const { return m_hash; }
 
 protected:
@@ -86,7 +92,7 @@ protected:
 #define TP_TYPE_DECLARE \
 	static tpRTTI ms_type; \
 	static tpRTTI *getTypeInfo() { return &ms_type;} \
-	virtual tpRTTI *getType() const { return this->getTypeInfo(); } 
+	virtual tpRTTI *getType() const { return this->getTypeInfo(); }
 
 #define TP_TYPE_REGISTER(type,parent_type,class_name) \
 	tpRTTI type::ms_type(#class_name,&parent_type::ms_type)

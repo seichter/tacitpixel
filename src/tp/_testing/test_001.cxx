@@ -17,9 +17,9 @@ public:
 
 	tpLogTraverser() : tpTraverser() {}
 
-	void push(tpNode* node) { tpLogMessage("push node: %s",node->getName().c_str()); }
+	void enter(tpNode* node) { tpLogMessage("enter node: %s",node->getName().c_str()); }
 
-	void pop(tpNode* node) { tpLogMessage("pop node: %s",node->getName().c_str()); }
+	void leave(tpNode* node) { tpLogMessage("leave node: %s",node->getName().c_str()); }
 
 
 };
@@ -29,9 +29,9 @@ public:
 
 	tpMatTraverser() : tpTraverser() {}
 
-	void push(tpNode* node)
+	void enter(tpNode* node)
 	{
-		tpLogMessage("push node: %s",node->getName().c_str());
+		tpLogMessage("enter node: %s",node->getName().c_str());
 		//
 		if (node->getType()->isOfType(tpTransform::getTypeInfo()))
 		{
@@ -39,9 +39,9 @@ public:
 		}
 	}
 
-	void pop(tpNode* node)
+	void leave(tpNode* node)
 	{
-		tpLogMessage("pop node: %s",node->getName().c_str());
+		tpLogMessage("leave node: %s",node->getName().c_str());
 	}
 
 
@@ -78,10 +78,10 @@ int main(int argc, char* argv[])
 	obj->addChild(new tpNode("Child 2"))->addChild(new tpNode("Child of Child 2"))->addChild(new tpTransform("A transform"));
 
 
-	tpRefPtr<tpLogTraverser> logtraverser = new tpLogTraverser();
-	tpRefPtr<tpMatTraverser> mattraverser = new tpMatTraverser();
+	tpLogTraverser logtraverser;
+	tpMatTraverser mattraverser;
 
-	obj->traverse(*mattraverser);
+	obj->traverse(mattraverser);
 
 
 	return 0;

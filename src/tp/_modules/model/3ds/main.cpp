@@ -1,11 +1,11 @@
 /*
 * Twisted Pair Visualization Engine
 *
-* Copyright (c) 1999-2009 Hartmut Seichter 
-* 
-* This library is open source and may be redistributed and/or modified under  
-* the terms of the Twisted Pair License (TPL) version 1.0 or (at your option) 
-* any later version. The full license text is available in the LICENSE file 
+* Copyright (c) 1999-2009 Hartmut Seichter
+*
+* This library is open source and may be redistributed and/or modified under
+* the terms of the Twisted Pair License (TPL) version 1.0 or (at your option)
+* any later version. The full license text is available in the LICENSE file
 * included with this distribution, and on the technotecture.com website.
 *
 */
@@ -42,7 +42,7 @@ tpTransform* createMeshNew( Lib3dsFile* file, Lib3dsMesh* mesh )
 	// we loop through the materials
 	for (;mat;mat = mat->next)
 	{
-		for (tpUInt i_fcs = 0; i_fcs < mesh->faces; i_fcs++) 
+		for (tpUInt i_fcs = 0; i_fcs < mesh->faces; i_fcs++)
 		{
 			Lib3dsFace *face = &(mesh->faceL[i_fcs]);
 			Lib3dsMaterial *face_mat = lib3ds_file_material_by_name (file, face->material);
@@ -70,19 +70,21 @@ tpTransform* createMesh( Lib3dsFile* file, Lib3dsMesh* mesh )
 
 
 	Lib3dsMatrix M;
-	
+
 	lib3ds_matrix_copy(M, mesh->matrix);
-    lib3ds_matrix_inv(M);
+	lib3ds_matrix_inv(M);
 
 	tpMat44r _mat;
+	_mat.copyFrom(&mesh->matrix[0][0]);
+
 	//_mat.setFromRaw((float*)&mesh->matrix[0][0]);
 
-	_transform->getMatrix() = _mat;
+	_transform->setMatrix(_mat);
 
 	Lib3dsVector *normalL = 0;
 	normalL = (Lib3dsVector*)malloc(3 * sizeof(Lib3dsVector) * mesh->faces);
 
-	if (!normalL || !_transform ) 
+	if (!normalL || !_transform )
 	{
 		tpLogError("Memory Allocation problem!");
 		return NULL;
@@ -103,7 +105,7 @@ tpTransform* createMesh( Lib3dsFile* file, Lib3dsMesh* mesh )
 		}
 	}
 
-	for (tpUInt i_fcs = 0; i_fcs < mesh->faces; i_fcs++) 
+	for (tpUInt i_fcs = 0; i_fcs < mesh->faces; i_fcs++)
 	{
 		Lib3dsFace *face = &(mesh->faceL[i_fcs]);
 		Lib3dsWord *points = face->points;
@@ -112,7 +114,7 @@ tpTransform* createMesh( Lib3dsFile* file, Lib3dsMesh* mesh )
 		tpLogNotify("%s - Vertices: %d",__FUNCTION__,mesh->points);
 
 		// Vertices
-		for (tpUInt i = 0; i < mesh->points; i++) 
+		for (tpUInt i = 0; i < mesh->points; i++)
 		{
 			Lib3dsPoint *point = &(mesh->pointL[i]);
 
@@ -137,7 +139,7 @@ tpTransform* createMesh( Lib3dsFile* file, Lib3dsMesh* mesh )
 
 		// Materials
 
-		if (mat && mat->texture1_map.name) 
+		if (mat && mat->texture1_map.name)
 		{
 			tpString fname = mat->texture1_map.name;
 
@@ -165,7 +167,7 @@ TP_TEXTURE_CLAMP : TP_TEXTURE_REPEAT;
 		}
 
 
-		
+
 	}
 
 
@@ -208,7 +210,7 @@ TP_TEXTURE_CLAMP : TP_TEXTURE_REPEAT;
 
 			_mesh->setMaterial(_material);
 
-			if (mat->texture1_map.name) 
+			if (mat->texture1_map.name)
 			{
 
 				tpLogNotify("%s Face:%d image '%s'",__FUNCTION__,p,mat->texture1_map.name);
@@ -228,8 +230,8 @@ TP_TEXTURE_CLAMP : TP_TEXTURE_REPEAT;
 
 					tpImage* img = tpImage::read(fname);
 
-					if (img && txture) {					
-					
+					if (img && txture) {
+
 						txture->setName(mat->texture1_map.name);
 
 						tpUInt wrapmode = ( (mat->texture1_map.flags)&LIB3DS_NO_TILE ) ?
@@ -244,7 +246,7 @@ TP_TEXTURE_CLAMP : TP_TEXTURE_REPEAT;
 
 				}
 
-				
+
 
 			}
 
@@ -252,15 +254,15 @@ TP_TEXTURE_CLAMP : TP_TEXTURE_REPEAT;
 
 		tpVec3r normal(f->normal[0],f->normal[1],f->normal[2]);
 
-		for (tpUInt i = 0; i < 3; i++) 
+		for (tpUInt i = 0; i < 3; i++)
 		{
-	
+
 			tpVec3r vertice(
 				mesh->pointL[f->points[i]].pos[0],
 				mesh->pointL[f->points[i]].pos[1],
 				mesh->pointL[f->points[i]].pos[2]
 			);
-			
+
 			_mesh->addVertex(vertice);
 #if 0
 			_mesh->addNormal(normal);
@@ -273,17 +275,17 @@ TP_TEXTURE_CLAMP : TP_TEXTURE_REPEAT;
 			if (mesh->texels) _mesh->addTexCoord(mesh->texelL[f->points[i]][0],mesh->texelL[f->points[i]][1]);
 
 #endif
-		
+
 		}
 
 		//tpLogMessage("%s - created mesh %d",__FUNCTION__,_mesh->getVertexCount());
 
 		//tpLogNotify("%s %.1f / %.1f / %.f",__FUNCTION__,normal[0],normal[1],normal[2]);
-		
+
 	}
 
 	_transform->addChild(_mesh);
-		
+
 	if (normalL) {
 		free(normalL);
 		normalL = 0;
@@ -324,7 +326,7 @@ tpVoid addNodes(Lib3dsFile *file,
 
 		if (!node->user.d)
 		{
-            tpLogMessage("%s - %s",__FUNCTION__,node->name);
+			tpLogMessage("%s - %s",__FUNCTION__,node->name);
 
 			Lib3dsMesh *mesh = lib3ds_file_mesh_by_name(file, node->name);
 
@@ -338,10 +340,12 @@ tpVoid addNodes(Lib3dsFile *file,
 		}
 
 
-		if (node->user.d)
-		{
+		if (node->user.d) {
 
-            //tpLogMessage("Node: %s",node->name);
+			tpMat44r mat;
+			mat.identity();
+
+			//tpLogMessage("Node: %s",node->name);
 
 			tpTransform *_mesh = (tpTransform*)node->user.d;
 
@@ -353,7 +357,8 @@ tpVoid addNodes(Lib3dsFile *file,
 			tpReal z = (tpReal)-d->pivot[2];
 
 			tpTransform *_temp = (tpTransform*)_mesh->clone();
-			_temp->getMatrix().setTranslation(x,y,z);
+			mat.setTranslation(x,y,z);
+			_temp->setMatrix(mat);
 
 			group->addChild(_temp);
 		}
@@ -367,12 +372,12 @@ tpNode* load(const tpString& filename)
 
 	Lib3dsFile *_3dsfile = 0;
 	_3dsfile = lib3ds_file_load(filename.c_str());
-	
+
 
 	if (_3dsfile)
 	{
 
-		lib3ds_file_eval(_3dsfile,0.0f); 
+		lib3ds_file_eval(_3dsfile,0.0f);
 
 		_root = new tpNode();
 
@@ -400,7 +405,7 @@ tpNode* load(const tpString& filename)
 
 		tpLogMessage("%s could not load %s",__FUNCTION__,filename.c_str());
 	}
-	
+
 	return _root;
 }
 
@@ -411,7 +416,7 @@ public:
 
 	TP_TYPE_DECLARE;
 
-	tpNodeFactory3DS() : tpNodeFactory() 
+	tpNodeFactory3DS() : tpNodeFactory()
 	{
 		tpLogNotify("Twisted Pairs 3DS loader 1.0");
 	}
@@ -429,11 +434,11 @@ public:
 		return false;
 	}
 
-	~tpNodeFactory3DS() 
+	~tpNodeFactory3DS()
 	{
 	}
 
-	tpNode* read(const tpString& name) 
+	tpNode* read(const tpString& name)
 	{
 		tpLogNotify("tp3DS Loader loading '%s'",name.c_str());
 		return load(name.c_str());
