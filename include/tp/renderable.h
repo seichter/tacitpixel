@@ -23,8 +23,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TPGEOMETRY_H
-#define TPGEOMETRY_H
+#ifndef TP_RENDERABLE_H
+#define TP_RENDERABLE_H
 
 #include <tp/node.h>
 #include <tp/material.h>

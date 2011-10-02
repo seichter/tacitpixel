@@ -23,8 +23,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TPREFPTR_H
-#define TPREFPTR_H
+#ifndef TP_REFPTR_H
+#define TP_REFPTR_H
 
 #include <tp/types.h>
 #include <tp/referenced.h>

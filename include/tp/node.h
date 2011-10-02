@@ -50,6 +50,8 @@ typedef tpArray<tpMat44r> tpMatrixArray;
 class TP_API tpNode : public tpObject {
 public:
 
+	static const int kNotFound = -1;
+
 	TP_TYPE_DECLARE;
 
 	//! standard c'tor
@@ -88,7 +90,7 @@ public:
 		{
 			if (c == m_children[i].get()) return i;
 		}
-		return static_cast<tpSizeT>(-1);
+		return static_cast<tpSizeT>(kNotFound);
 	}
 
 	//! get parent list
