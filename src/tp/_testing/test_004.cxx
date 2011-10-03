@@ -3,8 +3,34 @@
 #include <tp/transform.h>
 #include <tp/log.h>
 #include <tp/stringformater.h>
+#include <tp/stack.h>
+#include <tp/nodeops.h>
+#include <tp/primitive.h>
+
+void report(const tpNodeArray& nodes)
+{
+	for (tpNodeArray::const_iterator i = nodes.begin();
+		 i != nodes.end();
+		 ++i)
+	{
+		printf("%s, ",(*i)->getName().c_str());
+	}
+
+	printf("\n");
+}
 
 
+void report(const tpNodeArrayArray& nodepaths)
+{
+	for (tpNodeArrayArray::const_iterator i = nodepaths.begin();
+		 i != nodepaths.end();
+		 ++i)
+	{
+		report(*i);
+
+		printf("\n");
+	}
+}
 
 struct tpMatTraverser : tpTraverser {
 
@@ -42,50 +68,6 @@ struct tpMatTraverser : tpTraverser {
 
 };
 
-struct tpPathCollector : tpTraverser {
-
-	tpNodeArray nodepath;
-	tpNodeArrayList nodepaths;
-
-	unsigned char getDirection() const { return kUpward; }
-
-	void enter(tpNode* node)
-	{
-		nodepath.add(node);
-	}
-
-	void leave(tpNode* node)
-	{
-		if (node->getParentsCount() == 0)
-		{
-			nodepaths.add(nodepath);
-
-			printf("Np %d\n",nodepath.getSize());
-			printf("Np %d\n",nodepaths.back().getSize());
-
-			nodepath.clear();
-		}
-	}
-
-	void report()
-	{
-		for (tpNodeArrayList::iterator i = nodepaths.begin();
-			 i != nodepaths.end();
-			 ++i)
-		{
-			for (tpNodeArray::iterator j = (*i).begin();
-				 j != (*i).end();
-				 ++j)
-			{
-				printf("%s, ",(*j)->getName().c_str());
-			}
-			printf("\n");
-		}
-	}
-
-};
-
-
 int main(int argc, char* argv[])
 {
 	tpRefPtr<tpNode> leaf = new tpNode(); leaf->setName("Leaf");
@@ -94,12 +76,13 @@ int main(int argc, char* argv[])
 	tpRefPtr<tpTransform> tfn_1 = new tpTransform(); tfn_1->setName("Transform 1");
 	tpRefPtr<tpTransform> tfn_2 = new tpTransform(); tfn_2->setName("Transform 2");
 
+	tpRefPtr<tpPrimitive> prim = new tpPrimitive(); prim->setName("Primitive");
+
 	tpMat44r m;
 	m.setTranslation(1,2,3);
 	tfn_1->setMatrix(m);
 	m.setTranslation(4,5,6);
 	tfn_2->setMatrix(m);
-
 
 	root->addChild(tfn_1.get());
 	tfn_1->addChild(tfn_2.get());
@@ -107,18 +90,24 @@ int main(int argc, char* argv[])
 	tfn_1->addChild(leaf.get());
 	tfn_2->addChild(leaf.get());
 
+	// add a primitive
+	tfn_2->addChild(prim.get());
 
-	tpMatTraverser mt;
+	tpNodeArray nodes = tpNodeOps::getNodesOfType(root.get(),tpTransform::getTypeInfo());
+	printf("Transforms: %d\n",nodes.getSize());
 
-	//root->traverse(mt);
+	nodes = tpNodeOps::getNodesOfType(root.get(),tpNode::getTypeInfo());
+	printf("Nodes: %d\n",nodes.getSize());
 
-	leaf->traverse(mt);
+	nodes = tpNodeOps::getNodesOfType(root.get(),tpPrimitive::getTypeInfo());
+	printf("Primitives: %d\n",nodes.getSize());
 
-	tpPathCollector pc;
-	leaf->traverse(pc);
+	//
+	tpNodeArrayArray nodepaths = tpNodeOps::getNodePaths(leaf.get());
+	//report(nodepaths);
 
-	pc.report();
-
+	nodepaths = tpNodeOps::getNodePathsOfType(root.get(),tpPrimitive::getTypeInfo());
+	report(nodepaths);
 
 	return 0;
 }
