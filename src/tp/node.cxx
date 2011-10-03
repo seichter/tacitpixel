@@ -51,21 +51,21 @@ tpNode::clone()
 void
 tpNode::traverse(tpTraverser& traverser)
 {
+
 	traverser.enter(this);
 
 	if (traverser.getDirection() == tpTraverser::kDownward)
 	{
-
-		for (tpArray<tpRefPtr<tpNode> >::iterator iter = m_children.begin();
-			 iter != m_children.end();
+		for (tpRefNodeArray::iterator iter = mChildren.begin();
+			 iter != mChildren.end();
 			 ++iter)
 		{
 			(*iter).get()->traverse(traverser);
 		}
-
 	} else {
-		for (tpArray<tpNode*>::iterator iter = m_parents.begin();
-			 iter != m_parents.end();
+
+		for (tpNodeArray::iterator iter = mParents.begin();
+			 iter != mParents.end();
 			 ++iter)
 		{
 			(*iter)->traverse(traverser);
@@ -82,8 +82,8 @@ tpNode::addChild(tpNode* node)
 {
 	if (node)
 	{
-		m_children.add(node);
-		node->m_parents.add(this);
+		mChildren.add(node);
+		node->mParents.add(this);
 	}
 	return node;
 }
@@ -94,11 +94,11 @@ tpNode::removeChild(tpNode* node)
 {
 	if (node)
 	{
-		tpSizeT idx_c = m_children.find(node);
-		tpSizeT idx_p = node->m_parents.find(this);
+		tpSizeT idx_c = mChildren.find(node);
+		tpSizeT idx_p = node->mParents.find(this);
 
-		m_children.erase(m_children.begin() + idx_c);
-		node->m_parents.erase(node->m_parents.begin() + idx_p);
+		mChildren.erase(mChildren.begin() + idx_c);
+		node->mParents.erase(node->mParents.begin() + idx_p);
 	}
 	return node;
 }

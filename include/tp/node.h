@@ -38,7 +38,8 @@
 
 typedef tpArray<tpNode*> tpNodeArray;
 typedef tpArray<tpRefPtr<tpNode> > tpRefNodeArray;
-typedef tpArray<tpNodeArray> tpNodeArrayList;
+typedef tpArray<tpNodeArray> tpNodeArrayArray;
+
 
 typedef tpArray<tpMat44r> tpMatrixArray;
 
@@ -76,40 +77,37 @@ public:
 	bool setChild(tpSizeT idx,tpNode* node);
 
 	//! get nested children
-	tpSizeT getChildCount() const { return m_children.getSize(); }
+	tpSizeT getChildCount() const { return mChildren.getSize(); }
 
 	//! get child at index
-	tpNode* getChild(tpSizeT idx) { return m_children[idx].get(); }
+	tpNode* getChild(tpSizeT idx) { return mChildren[idx].get(); }
 
 	//! get child at index (const)
-	const tpNode* getChild(tpSizeT idx) const { return m_children[idx].get(); }
+	const tpNode* getChild(tpSizeT idx) const { return mChildren[idx].get(); }
 
 	//! get index of child
 	tpSizeT getIndexOfChild(const tpNode* c) const {
-		for (tpSizeT i = 0; i < m_children.getSize(); i++)
+		for (tpSizeT i = 0; i < mChildren.getSize(); i++)
 		{
-			if (c == m_children[i].get()) return i;
+			if (c == mChildren[i].get()) return i;
 		}
 		return static_cast<tpSizeT>(kNotFound);
 	}
 
 	//! get parent list
-	const tpArray<tpNode*>& getParents() const { return m_parents; }
+	const tpArray<tpNode*>& getParents() const { return mParents; }
 
 	//! get copy of parent list
-	tpArray<tpNode*> getParents() { return m_parents; }
+	tpArray<tpNode*> getParents() { return mParents; }
 
 	//! get count of parent nodes
-	tpSizeT getParentsCount() const { return m_parents.getSize(); }
+	tpSizeT getParentsCount() const { return mParents.getSize(); }
 
 	//! check if this node has any parent > root
-	bool hasParents() const { return (getParentsCount() > 0); }
+	bool isRoot() const { return (getParentsCount() == 0); }
 
 	//! check if this node has any child nodes > leaf
-	bool hasChildren() const { return (getChildCount() > 0); }
-
-	//!
-	const tpNodeArrayList& getNodePaths() const { return m_nodepath; }
+	bool isLeaf() const { return (getChildCount() == 0); }
 
 	//! read a node from a file
 	static tpNode* read(const tpString& file);
@@ -118,11 +116,8 @@ protected:
 
 	virtual ~tpNode();
 
-	tpRefNodeArray m_children;
-	tpNodeArray m_parents;
-
-	tpNodeArrayList m_nodepath;
-	tpMatrixArray m_matrices;
+	tpRefNodeArray mChildren;
+	tpNodeArray mParents;
 
 };
 
@@ -147,7 +142,7 @@ public:
 
 protected:
 
-	~tpNodeHandler();
+	virtual ~tpNodeHandler();
 };
 
 
