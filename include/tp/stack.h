@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,13 +31,20 @@
 
 /**
 	\brief a simple stack container
-	
+
 	The tpStack container is a substitute to STL stack.
-	It has a different API but 
+	It has a different API but
 	Performance issues are tackled.
 */
 template <typename T> class tpStack {
 public:
+
+	typedef T element_type;
+	typedef T* iterator;
+	typedef const T* const_iterator;
+
+	static const tpUInt element_size = sizeof(T);
+
 	//! standard constructor.
 	tpStack();
 
@@ -50,13 +57,13 @@ public:
 	/**
 	\brief put value on the top of the stack
 	\param val value to be copied on the top of the stack.
-	
+
 	Copies the value on top of the stack. It also increments
 	the preoccupied memory space on request.
 	*/
 	void push(T val);
 
-	/** 
+	/**
 	\brief removes value from the top of the stack
 	\return returns the value of the top element
 
@@ -68,8 +75,8 @@ public:
 	/**
 	\brief copies the value of the top of the stack
 	\return value of the top element in the stack
-	
-	Copies the value of the top element of the stack. 
+
+	Copies the value of the top element of the stack.
 	Elements keep untouched.
 	*/
 	T getTop();
@@ -78,44 +85,57 @@ public:
 
 	/**
 	\brief assignment from other stack
-	
+
 	Copies the elements of another stack to this one.
 	*/
 	void operator = (const tpStack& stack);
 
-	/** 
+	/**
 	\brief removes all elements from the stack
-	
-	Removes all elements from the stack and frees the 
+
+	Removes all elements from the stack and frees the
 	memory occupied by the stack.
 	*/
 	void empty();
 
-	/** 
+	/**
 	\brief checks if the stack is empty
 	\return TRUE if the stack is empty, otherwise FALSE
-	
+
 	Checks if this stack is empty.
 	*/
 	bool isEmpty() const;
-	
-	/** 
+
+	/**
 	\brief get the actual size of the stack
 	\return number of elements in the stack
-	
+
 	Get the number of elements of the stack.
 	*/
 	tpUInt getSize() const;
-	
+
 	tpUInt getMaxSize() const;
+
+
+	T* begin() { return mData; }
+	const T* begin() const { return mData; }
+	T* end() { return mData + mSize; }
+	const T* end() const { return mData + mSize; }
+
+	T& front() { return *begin(); }
+	const T& front() const { return *begin(); }
+
+	T& back() { return *(end() - 1); }
+	const T& back() const { return *(end() - 1); }
+
 
 protected:
 
 	void grow(tpUInt size);
 
-	T* m_data;
-	tpUInt m_datasize;
-	tpUInt m_size;
+	T* mData;
+	tpUInt mCapacity;
+	tpUInt mSize;
 
 };
 
@@ -124,17 +144,17 @@ protected:
 
 
 template <typename T> inline tpStack<T>::tpStack()
-	: m_data(0),
-	m_datasize(0),
-	m_size(0)
+	: mData(0),
+	mCapacity(0),
+	mSize(0)
 {
 }
 
 
 template <typename T> inline tpStack<T>::tpStack(const tpStack<T>& stack)
-	: m_data(0),
-	m_datasize(0),
-	m_size(0)
+	: mData(0),
+	mCapacity(0),
+	mSize(0)
 {
 	*this = stack;
 }
@@ -148,41 +168,41 @@ template <typename T> inline tpStack<T>::~tpStack()
 
 template <typename T> inline void tpStack<T>::pop()
 {
-	--m_size;
+	--mSize;
 }
 
 
 template <typename T> inline void tpStack<T>::push(T val)
 {
 	// should use a better growing strategy
-	if (m_size <= m_datasize) grow(m_size + 2);
-	
-	m_data[m_size] = val;
+	if (mSize <= mCapacity) grow(mSize + 2);
 
-	++m_size;
+	mData[mSize] = val;
+
+	++mSize;
 }
 
 
 template <typename T> inline T tpStack<T>::getTop()
 {
-	return m_data[m_size - 1];
+	return mData[mSize - 1];
 }
 
 
 template <typename T> inline const T& tpStack<T>::getTop() const
 {
-	return m_data[m_size - 1];
+	return mData[mSize - 1];
 }
 
 
 template <typename T> inline void tpStack<T>::operator = (const tpStack& stack)
 {
-	grow(stack.m_size);
+	grow(stack.mSize);
 
-	T* src = stack.m_data;
-	T* dest = m_data;
+	T* src = stack.mData;
+	T* dest = mData;
 
-	for (tpULong i = 0; i < m_size; ++i)
+	for (tpULong i = 0; i < mSize; ++i)
 	{
 		*dest = *src;
 		++dest;
@@ -193,53 +213,53 @@ template <typename T> inline void tpStack<T>::operator = (const tpStack& stack)
 
 template <typename T> inline void tpStack<T>::grow(tpUInt size)
 {
-	
-	if ((size <= m_datasize) || (!size)) return;
+
+	if ((size <= mCapacity) || (!size)) return;
 
 	T* _temp = new T[size];
 
-	T* src = m_data;
+	T* src = mData;
 	T* dest = _temp;
 
-	for (tpUInt i = 0; i < m_size;++i)
+	for (tpUInt i = 0; i < mSize;++i)
 	{
 		*dest = *src;
 		++dest;
 		++src;
 	}
 
-	if (m_data) delete [] m_data;
+	if (mData) delete [] mData;
 
-	m_datasize = size;	
-	m_data = _temp;
-	
+	mCapacity = size;
+	mData = _temp;
+
 }
 
 
 template <typename T> inline bool tpStack<T>::isEmpty() const
 {
-	return 0 == m_size;
+	return 0 == mSize;
 }
 
 
 template <typename T> inline void tpStack<T>::empty()
 {
-	if (m_data) delete [] m_data;
-	m_data = 0;
-	m_size = 0;
-	m_datasize = 0;
+	if (mData) delete [] mData;
+	mData = 0;
+	mSize = 0;
+	mCapacity = 0;
 }
 
 
 template <typename T> inline tpUInt tpStack<T>::getSize() const
 {
-	return m_size;
+	return mSize;
 }
 
 
 template <typename T> inline tpUInt tpStack<T>::getMaxSize() const
 {
-	return m_datasize;
+	return mCapacity;
 }
 
 
