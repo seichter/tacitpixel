@@ -179,10 +179,12 @@ public:
 	void assign(Tidx n, const T& data);
 
 	/**
-	  * @brief
-	  * @param
+	  * @brief sets the array to the values described between
+	  * the two values first and last
+	  * @param first start of the array
+	  * @param last item in the array
 	  */
-	void assign(T* first, T* last);
+	void assign(const T* first, const T* last);
 
 	void preallocate(Tidx newsize, const T& data);
 
@@ -214,6 +216,13 @@ public:
 
 	T& back() { return *(end() - 1); }
 	const T& back() const { return *(end() - 1); }
+
+	/**
+	  * @brief checks if an item is already in the array
+	  * @param item item to search for
+	  * @return true if the item exists already
+	  */
+	bool contains(const T &item) const;
 
 private:
 
@@ -292,15 +301,7 @@ tpArray<T,Tidx>::operator = (const tpArray& rhs)
 {
 	if (this != &rhs)
 	{
-		resize(rhs.getSize());
-		const T* rhs_iter = rhs.begin();
-		T* this_iter = this->begin();
-		while( this_iter != this->end() &&
-			rhs_iter != rhs.end() )
-		{
-			*this_iter = *rhs_iter;
-			this_iter++; rhs_iter++;
-		}
+		this->assign(rhs.begin(),rhs.end());
 	}
 	return *this;
 }
@@ -313,6 +314,18 @@ tpArray<T,Tidx>& tpArray<T,Tidx>::add(const T& item)
 	mData[end_pos] = item;
 	++mSize;
 	return *this;
+}
+
+template <typename T,typename Tidx>
+bool tpArray<T,Tidx>::contains(const T& item) const
+{
+	for (const_iterator i = this->begin();
+		 i != this->end();
+		 ++i)
+	{
+		if (item == (*i)) return true;
+	}
+	return false;
 }
 
 
@@ -403,10 +416,15 @@ void tpArray<T,Tidx>::assign(Tidx n, const T& data)
 }
 
 template <typename T,typename Tidx>
-void tpArray<T,Tidx>::assign(T* first, T* last)
+void tpArray<T,Tidx>::assign(const T* first, const T* last)
 {
-	T* ptr = first;
-	while (ptr != last) {this->mData.add(*ptr); ptr++; }
+	clear();
+	for (const_iterator i = first;
+		 i != last;
+		 ++i)
+	{
+		this->add((*i));
+	}
 }
 
 
