@@ -22,16 +22,16 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#ifndef TPARRAY_H
-#define TPARRAY_H
+#ifndef TP_ARRAY_H
+#define TP_ARRAY_H
 
 #include <tp/types.h>
 #include <tp/utils.h>
 
 /**
-  * @brief a dynamic array similar to an STL vector
+  * @brief a dynamic array similar to an std::vector with reduced features
   */
-template <typename T>
+template <typename T, typename Tidx = tpUInt>
 class tpArray {
 public:
 
@@ -40,212 +40,176 @@ public:
 	typedef const T* const_iterator;
 
 	static const tpUInt element_size = sizeof(T);
-	static const tpUInt max_capacity = sizeof(tpUInt);
+	static const tpUInt max_capacity = sizeof(Tidx);
 
 
-	/**
-	 * Constructor
-	 */
+	/** Constructor */
 	tpArray();
 
 	/**
-	 * Copy Constructor
-	 *
-	 * \param array (const tpArray &)
-	 */
+	  * @brief copy constructor
+	  * @param array input array
+	  */
 	tpArray(const tpArray& array);
 
-	/**
-	 * Destructor
-	 */
+	/** Destructor*/
 	~tpArray();
 
+	/** get pointer to the data array (const) */
+	const T* getData() const { return this->mData; }
 
-	const T* getData() const { return this->m_data; }
-	T* getData() { return this->m_data; }
+	/** get pointer to the data array */
+	T* getData() { return this->mData; }
 
-	T& operator [] (tpSizeT index);
-	const T& operator[] (tpSizeT index) const;
+	/** get element in the data array */
+	const T& operator[] (Tidx index) const;
 
-	/**
-	 * Get element count of array
-	 *
-	 * \return (const tpSizeT&) number of elements in
-	 * the array
-	 */
-	const tpSizeT& getSize() const;
-
+	/** get element in the data array */
+	T& operator [] (Tidx index);
 
 	/**
-	 * Add element to the array. Similar to push_back in STL
-	 *
-	 * \param item (const T &) element to be added
-	 * \return (tpArray<T>&) return reference to self
-	 */
-	tpArray<T>& add(const T& item);
-
+	  * @brief get element count of array
+	  * @return (const Tidx&) number of elements
+	  */
+	const Tidx& getSize() const;
 
 	/**
-	 * Erase an element from the array. Similar to erase in STL
-	 *
-	 * \param iter (T *) pointer to element
-	 * \return (T*) returns the element for destruction or other usage
+	  * @brief add an element to the array. similar to push_back()
+	  * @param item (const T &) element to be added
+	  * @return (tpArray<T,Tidx>&) return reference to self
+	  */
+	tpArray<T,Tidx>& add(const T& item);
+
+	/**
+	 * @brief erase an element from the array.
+	 * @param iter (T *) pointer to element
+	 * @return (T*) returns the element for destruction or other usage
 	 */
 	T* erase(T* iter);
 
 	/**
-	 * Erase an element at position from the array. Similar to erase in STL
-	 *
-	 * \param pos (tpSizeT) position of the element
-	 * \return (T*) return the element
-	 */
-	T* erase(tpSizeT pos);
-
+	  * @brief Erase an element at position from the array.
+	  * @param pos (Tidx) position of the element
+	  * @return (T*) return the element
+	  */
+	T* erase(Tidx pos);
 
 	/**
-	 * Remove the last element in the array
-	 *
-	 * \return (T*) return the removed element
-	 */
+	  * @brief remove the last element in the array
+	  * @return (T*) return the removed element
+	  */
 	T* removeEnd();
 
 	/**
-	 * Try to find a value in the array
-	 *
-	 * \param value (const T &) value to be found
-	 * \return (tpSizeT) position of the item
-	 */
-	tpSizeT find(const T& value) const;
+	  * @brief find the index of a value
+	  * @param value (const T &) value to be found
+	  * @return (Tidx) position of the item
+	  */
+	Tidx find(const T& value) const;
 
 	/**
-	 * Copy to the array
-	 *
-	 * \param & (const tpArray)
-	 * \return (tpArray&)
-	 */
+	  * @brief assignment operator
+	  * @param & (const tpArray) input array
+	  * @return (tpArray&) reference to *this
+	  */
 	tpArray& operator = (const tpArray&);
 
+	/**
+	  * @brief merge two arrays
+	  * @param merge array to merge with this
+	  * @return value of merged array
+	  */
+	tpArray<T,Tidx> operator+(const tpArray& merge);
 
-	/** \brief add an item
-
-	 Add item to the array.
-	 \param item item to add
-	 \return reference to added item
-	 */
-	T& operator+=(const T& item);
-
-	/** \brief merge two arrays
-
-	 Merge two arrays.
-	 \param merge array to merge with this
-	 \return value of merged array
-	 */
-	tpArray<T> operator+(const tpArray& merge);
-
-	/** \brief compare array for equality
-
-	 Compare two tpArray's for equality.
-	 \param rs array as right-side parameter
-	 \return TRUE if equal, otherwise false
-	 */
+	/**
+	  * @brief comparison operator
+	  * @param rs array to compare to
+	  * @return true if equal, otherwise false
+	  */
 	bool operator==(const tpArray& rs) const;
 
-	/** \brief compare for difference
-
-	 Compare two arrays for difference.
-	 \param rs array to compare to
-	 \return TRUE if different, otherwise false
-	 */
+	/**
+	  * @brief comparison operator
+	  * @param rs array to compare to
+	  * @return true if different, otherwise false
+	  */
 	bool operator!=(const tpArray& rs) const;
 
-	/** \brief check if the array is empty
-
-	 Returns true when no items are in the array
-	 \return TRUE if empty, otherwise false
-	 */
+	/** return true if empty, otherwise false */
 	bool isEmpty() const;
 
-	/** \brief empties the array (only resets size to 0)
-
-	 Empties the array. No check is done here!
-	 */
+	/** empties the array (same as ::clear() */
 	void clear();
 
-	/** \brief get the maximum capacity
+	/** get maximum capaxity of the array */
+	Tidx getCapacity() const;
 
-	 Get the current capacity of the array. This value
-	 is dynamic.
-	 */
-	tpSizeT getCapacity() const;
-
-	/** \brief resizes the array to optimal size
-
-	 Optimize for memory usage. Only use it with
-	 large arrays! It can be counterproductive.
-	 */
+	/**
+	  * @brief resizes the array to optimal size
+	  *
+	  * Optimize for memory usage. Only use it with
+	  * large arrays as it can be counterproductive.
+	  */
 	void optimize();
 
-
 	/**
-	 * Overloaded operator to add items to the array
-	 *
-	 * \param value value
-	 * \return reference to array for chaining
-	 */
+	  * @brief Overloaded operator to add items to the array
+	  * @param value value
+	  * @return reference to array for chaining
+	  */
 	tpArray& operator << (const T& value);
 
-	//tpArray<T>& tpArray<T>::operator << (const tpArray<T>& other);
+	/**
+	  * @brief reserves memory for items
+	  * @param newsize size in elements
+	  */
+	void reserve(Tidx newsize);
 
 	/**
-	 * Reserves memory
-	 *
-	 * \param newsize
-	 */
-	void reserve(tpSizeT newsize);
+	  * @brief Resize the array fit to the new size.
+	  * @param newsize size in elements
+	  * @param v set all values to this value
+	  */
+	void resize(Tidx newsize, T v = T());
 
 	/**
-	 * Resize the array fit to the new size.
-	 *
-	 * \param newsize
-	 */
-	void resize(tpSizeT newsize, T v = T());
+	  * @brief assign a value to items in the array
+	  * @param data value that is being used to assign
+	  */
+	void assign(Tidx n, const T& data);
 
 	/**
-	 *	Set all items
-	 *
-	 * \param data
-	 */
-	void assign(tpSizeT n, const T& data);
+	  * @brief sets the array to the values described between
+	  * the two values first and last
+	  * @param first start of the array
+	  * @param last item in the array
+	  */
+	void assign(const T* first, const T* last);
 
-	void assign(T* first, T* last);
+	void preallocate(Tidx newsize, const T& data);
 
-	/**
-	 *
-	 */
-	void preallocate(tpSizeT newsize, const T& data);
-
-	//tpArray& clone(tpArray<T>& l);
+	//tpArray& clone(tpArray<T,Tidx>& l);
 
 	void release();
 
-	void copy( const T* orig, tpSizeT size, tpSizeT pos = 0 );
+	void copy( const T* orig, Tidx size, Tidx pos = 0 );
 
-	tpArray<T>& append( const tpArray<T>& rs );
+	tpArray<T,Tidx>& append( const tpArray<T,Tidx>& rs );
 
-	tpArray<T>& prepend( const tpArray<T>& rs );
+	tpArray<T,Tidx>& prepend( const tpArray<T,Tidx>& rs );
 
-	tpArray<T>& reverse();
-
-
-	tpArray<T>& insert( const tpArray<T>& ins, tpSizeT pos );
-
-	tpArray<T>& insert( const T* ins, tpSizeT pos, tpUInt length );
+	tpArray<T,Tidx>& reverse();
 
 
-	T* begin() { return m_data; }
-	const T* begin() const { return m_data; }
-	T* end() { return m_data + m_size; }
-	const T* end() const { return m_data + m_size; }
+	tpArray<T,Tidx>& insert( const tpArray<T,Tidx>& ins, Tidx pos );
+
+	tpArray<T,Tidx>& insert( const T* ins, Tidx pos, tpUInt length );
+
+
+	T* begin() { return mData; }
+	const T* begin() const { return mData; }
+	T* end() { return mData + mSize; }
+	const T* end() const { return mData + mSize; }
 
 	T& front() { return *begin(); }
 	const T& front() const { return *begin(); }
@@ -253,129 +217,130 @@ public:
 	T& back() { return *(end() - 1); }
 	const T& back() const { return *(end() - 1); }
 
-private:
+	/**
+	  * @brief checks if an item is already in the array
+	  * @param item item to search for
+	  * @return true if the item exists already
+	  */
+	bool contains(const T &item) const;
 
+private:
 
 	void grow();
 
-
 	//! data pointer
-	T* m_data;
+	T* mData;
 
 	//! current size
-	tpSizeT m_size;
+	Tidx mSize;
 
 	//! current allocated size
-	tpSizeT m_capacity;
+	Tidx mCapacity;
 };
 
-template <typename T>
-void tpArray<T>::copy( const T* orig, tpSizeT length, tpSizeT pos )
+template <typename T,typename Tidx>
+void tpArray<T,Tidx>::copy( const T* orig, Tidx length, Tidx offset )
 {
 	resize(length);
-	for (tpSizeT i = 0; i < length; i++ ) { m_data[i] = orig[i + pos]; }
-	m_size = length;
+	for (Tidx i = 0; i < length; i++ ) { mData[i] = orig[i + offset]; }
+	mSize = length;
 }
 
 
-template <typename T>
-void tpArray<T>::release()
+template <typename T,typename Tidx>
+void tpArray<T,Tidx>::release()
 {
-	//tpLogNotify("release 0x%x size:%d capacity:%d (0x%x) element size: %d '%s'",this,m_size,m_capacity,&m_data[0],sizeof(T),typeid(T).name());
-	if (m_data) { delete [] m_data; m_data = 0; }
-	//tpLogNotify("release 0x%x size:%d capacity:%d (0x%x)",this,m_size,m_capacity,&m_data[0]);
-	m_size = m_capacity = 0;
+	if (mData) { delete [] mData; mData = 0; }
+	mSize = mCapacity = 0;
 }
 
-template <typename T>
-T* tpArray<T>::removeEnd()
+template <typename T,typename Tidx>
+T* tpArray<T,Tidx>::removeEnd()
 {
-	if (m_size) {
-		m_size--;
-		return m_data[m_size];
+	if (mSize) {
+		mSize--;
+		return &mData[mSize];
 	}
 	return 0;
 }
 
-//template <typename T>
-//void tpArray<T>::copy( tpArray<T>& l ) const
-//{
-//	if (&l != this)
-//	{
-//		l.resize(getSize());
-//		for ( tpSizeT i = 0; i < m_size; ++i ) l.m_data[i] = m_data[i];
-//	}
-//
-//	return *this;
-//}
-
-
 //-----------------------------------------------------------------------------
 
 
-template <typename T>
-tpArray<T>::tpArray() : m_data(0), m_size(0), m_capacity(0)
+template <typename T,typename Tidx>
+tpArray<T,Tidx>::tpArray()
+	: mData(0)
+	, mSize(0)
+	, mCapacity(0)
 {
 }
 
-template <typename T>
-tpArray<T>::tpArray(const tpArray& origin)
-: m_data(0), m_size(0), m_capacity(0)
+template <typename T,typename Tidx>
+tpArray<T,Tidx>::tpArray(const tpArray& origin)
+	: mData(0)
+	, mSize(0)
+	, mCapacity(0)
 {
 	*this = origin;
 }
 
-template <typename T> T& tpArray<T>::operator [] (tpSizeT index)
+template <typename T,typename Tidx> T&
+tpArray<T,Tidx>::operator [] (Tidx index)
 {
-	return m_data[index];
+	return mData[index];
 }
 
-template <typename T> const T& tpArray<T>::operator [] (tpSizeT index) const
+template <typename T,typename Tidx> const T& tpArray<T,Tidx>::operator [] (Tidx index) const
 {
-	return m_data[index];
+	return mData[index];
 }
 
 
-template <typename T> tpArray<T>& tpArray<T>::operator = (const tpArray& rhs)
+template <typename T,typename Tidx> tpArray<T,Tidx>&
+tpArray<T,Tidx>::operator = (const tpArray& rhs)
 {
 	if (this != &rhs)
 	{
-		reserve(rhs.getSize());
-		const T* rhs_iter = rhs.begin();
-		T* this_iter = this->begin();
-		while( this_iter != this->end() &&
-			rhs_iter != rhs.end() )
-		{
-			*this_iter = *rhs_iter;
-			this_iter++; rhs_iter++;
-		}
+		this->assign(rhs.begin(),rhs.end());
 	}
 	return *this;
 }
 
-template <typename T>
-tpArray<T>& tpArray<T>::add(const T& item)
+template <typename T,typename Tidx>
+tpArray<T,Tidx>& tpArray<T,Tidx>::add(const T& item)
 {
-	tpSizeT end_pos = m_size;
+	Tidx end_pos = mSize;
 	if (getSize() == getCapacity()) grow();
-	m_data[end_pos] = item;
-	++m_size;
+	mData[end_pos] = item;
+	++mSize;
 	return *this;
 }
 
+template <typename T,typename Tidx>
+bool tpArray<T,Tidx>::contains(const T& item) const
+{
+	for (const_iterator i = this->begin();
+		 i != this->end();
+		 ++i)
+	{
+		if (item == (*i)) return true;
+	}
+	return false;
+}
 
-template <typename T>
-T* tpArray<T>::erase(T* iter)
+
+template <typename T,typename Tidx>
+T* tpArray<T,Tidx>::erase(T* iter)
 {
 	for (T* i = iter; i != end() - 1; i++)
 	{
 		*i = *(i + 1);
 	}
-	--m_size;
+	--mSize;
 	return iter;
 }
 
-template <typename T> T* tpArray<T>::erase(tpSizeT pos)
+template <typename T,typename Tidx> T* tpArray<T,Tidx>::erase(Tidx pos)
 {
 	T* iter = begin() + pos;
 	erase(iter);
@@ -383,163 +348,163 @@ template <typename T> T* tpArray<T>::erase(tpSizeT pos)
 }
 
 
-template <typename T> tpSizeT tpArray<T>::find(const T& value) const
+template <typename T,typename Tidx> Tidx tpArray<T,Tidx>::find(const T& value) const
 {
-	for (tpSizeT i = 0; i < m_size; ++i) if (value == m_data[i]) return i;
-	return static_cast<tpSizeT>(-1);
+	for (Tidx i = 0; i < mSize; ++i) if (value == mData[i]) return i;
+	return static_cast<Tidx>(-1);
 }
 
-template <typename T> tpArray<T> tpArray<T>::operator+(const tpArray& merge)
+template <typename T,typename Tidx> tpArray<T,Tidx> tpArray<T,Tidx>::operator+(const tpArray& merge)
 {
-	tpArray<T> _new(m_size + merge.m_size);
+	tpArray<T,Tidx> _new(mSize + merge.mSize);
 
-	tpSizeT i = 0;
+	Tidx i = 0;
 
-	for (i = 0; i < m_size; i++) _new.m_data[i] = m_data[i];
-	for (tpULong j = 0; j < merge.m_size; j++) _new.m_data[m_size+i] = merge.m_data[i];
+	for (i = 0; i < mSize; i++) _new.mData[i] = mData[i];
+	for (tpULong j = 0; j < merge.mSize; j++) _new.mData[mSize+i] = merge.mData[i];
 
 	return _new;
-};
-
-template <typename T> T& tpArray<T>::operator+=(const T& item)
-{
-	add(item);
-	return m_data[m_size - 1];
 }
 
-template <typename T> tpArray<T>::~tpArray()
+template <typename T,typename Tidx> tpArray<T,Tidx>::~tpArray()
 {
 	this->release();
 }
 
-template <typename T> const tpSizeT& tpArray<T>::getSize() const
+template <typename T,typename Tidx>
+const Tidx& tpArray<T,Tidx>::getSize() const
 {
-	return m_size;
+	return mSize;
 }
 
 
-template <typename T>
-void tpArray<T>::reserve(tpSizeT n)
+template <typename T,typename Tidx>
+void tpArray<T,Tidx>::reserve(Tidx n)
 {
 	//tpLogNotify("reserve 0x%x (%d) data: 0x%x",this,n,m_data);
 	if ( n > getCapacity() )
 	{
 		T* tmp = new T[n];
-		for(tpSizeT i = 0; i < m_size;++i) tmp[i] = m_data[i];
-		delete [] m_data; m_data = 0;
-		m_data = tmp;
-		m_capacity = n;
+		for(Tidx i = 0; i < mSize;++i) tmp[i] = mData[i];
+		delete [] mData; mData = 0;
+		mData = tmp;
+		mCapacity = n;
 	}
 	//tpLogNotify("reserve 0x%x (%d) data: 0x%x",this,n,m_data);
 }
 
-template <typename T> void tpArray<T>::grow()
+template <typename T,typename Tidx> void tpArray<T,Tidx>::grow()
 {
 	reserve( getSize() ? getSize() * 2 : 8 );
 }
 
-template <typename T>
-void tpArray<T>::resize(tpSizeT newsize, T v /*= T()*/)
+template <typename T,typename Tidx>
+void tpArray<T,Tidx>::resize(Tidx newsize, T v /*= T()*/)
 {
 	reserve(newsize);
 	//\todo implement fill (should only set the overlapping part)
-	m_size = newsize;
+	mSize = newsize;
 }
 
 
-template <typename T>
-void tpArray<T>::assign(tpSizeT n, const T& data)
+template <typename T,typename Tidx>
+void tpArray<T,Tidx>::assign(Tidx n, const T& data)
 {
 	resize(n);
 	iterator iter = begin();
-	for (tpSizeT i = 0; i < n; ++i) { *iter = data; ++iter; }
+	for (Tidx i = 0; i < n; ++i) { *iter = data; ++iter; }
 }
 
-template <typename T>
-void tpArray<T>::assign(T* first, T* last)
+template <typename T,typename Tidx>
+void tpArray<T,Tidx>::assign(const T* first, const T* last)
 {
-	T* ptr = first;
-	while (ptr != last) {this->m_data.add(*ptr); ptr++; }
+	clear();
+	for (const_iterator i = first;
+		 i != last;
+		 ++i)
+	{
+		this->add((*i));
+	}
 }
 
 
-template <typename T>
-bool tpArray<T>::operator==(const tpArray& rs) const
+template <typename T,typename Tidx>
+bool tpArray<T,Tidx>::operator==(const tpArray& rs) const
 {
-	if (m_size != rs.m_size) return false;
-	for (tpSizeT i = 0; i < m_size;i++) if (rs.m_data[i] != m_data[i]) return false;
+	if (mSize != rs.mSize) return false;
+	for (Tidx i = 0; i < mSize;i++) if (rs.mData[i] != mData[i]) return false;
 	return true;
 }
 
-template <typename T> bool tpArray<T>::operator!=(const tpArray& rs) const
+template <typename T,typename Tidx> bool tpArray<T,Tidx>::operator!=(const tpArray& rs) const
 {
 	return !operator==(rs);
 }
 
 
-template <typename T>
-bool tpArray<T>::isEmpty() const
+template <typename T,typename Tidx>
+bool tpArray<T,Tidx>::isEmpty() const
 {
-	return (m_size == 0);
+	return (mSize == 0);
 }
 
-template <typename T>
-void tpArray<T>::clear()
+template <typename T,typename Tidx>
+void tpArray<T,Tidx>::clear()
 {
 	// just set size to null
-	m_size = 0;
+	mSize = 0;
 }
 
-template <typename T> tpSizeT tpArray<T>::getCapacity() const
+template <typename T,typename Tidx> Tidx tpArray<T,Tidx>::getCapacity() const
 {
-	return m_capacity;
+	return mCapacity;
 }
 
-template <typename T> void tpArray<T>::optimize()
+template <typename T,typename Tidx> void tpArray<T,Tidx>::optimize()
 {
-	reserve(m_size);
+	reserve(mSize);
 }
 
-template <typename T> tpArray<T>& tpArray<T>::operator << (const T& value)
+template <typename T,typename Tidx> tpArray<T,Tidx>& tpArray<T,Tidx>::operator << (const T& value)
 {
 	add(value);
 	return *this;
 }
 
-template <typename T>
-void tpArray<T>::preallocate( tpSizeT newsize, const T& data )
+template <typename T,typename Tidx>
+void tpArray<T,Tidx>::preallocate( Tidx newsize, const T& data )
 {
 	assign(newsize,data);
 }
 
-template <typename T>
-tpArray<T>& tpArray<T>::append( const tpArray<T>& rs )
+template <typename T,typename Tidx>
+tpArray<T,Tidx>& tpArray<T,Tidx>::append( const tpArray<T,Tidx>& rs )
 {
 	tpInt rsSize = rs.getSize();
 	for (tpInt i = 0; i < rsSize; i++)
 	{
-		add(rs.m_data[i]);
+		add(rs.mData[i]);
 	}
 
 	return *this;
 }
 
-template <typename T>
-tpArray<T>& tpArray<T>::prepend( const tpArray<T>& rs )
+template <typename T,typename Tidx>
+tpArray<T,Tidx>& tpArray<T,Tidx>::prepend( const tpArray<T,Tidx>& rs )
 {
-	tpArray<T> tmp = rs;
+	tpArray<T,Tidx> tmp = rs;
 	tpInt size = getSize();
 	for (tpInt i = 0; i < size; i++)
 	{
-		tmp.add(m_data[i]);
+		tmp.add(mData[i]);
 	}
 	*this = tmp;
 
 	return *this;
 }
 
-template <typename T>
-tpArray<T>& tpArray<T>::insert( const tpArray<T>& ins, tpSizeT pos )
+template <typename T,typename Tidx>
+tpArray<T,Tidx>& tpArray<T,Tidx>::insert( const tpArray<T,Tidx>& ins, Tidx pos )
 {
 	if ( 0 == pos )
 	{
@@ -548,9 +513,9 @@ tpArray<T>& tpArray<T>::insert( const tpArray<T>& ins, tpSizeT pos )
 	} else
 		if ( pos < getSize() )
 		{
-			tpArray<T> front;
+			tpArray<T,Tidx> front;
 			front.copy(getData(), pos);
-			tpArray<T> back;
+			tpArray<T,Tidx> back;
 			back.copy(getData() + pos, getSize() - pos);
 
 			front.append(ins);
@@ -562,22 +527,22 @@ tpArray<T>& tpArray<T>::insert( const tpArray<T>& ins, tpSizeT pos )
 	return *this;
 }
 
-template <typename T>
-tpArray<T>& tpArray<T>::insert( const T* ins, tpSizeT pos, tpUInt length )
+template <typename T,typename Tidx>
+tpArray<T,Tidx>& tpArray<T,Tidx>::insert( const T* ins, Tidx pos, tpUInt length )
 {
-	tpArray<T> tmp;
+	tpArray<T,Tidx> tmp;
 	tmp.copy(ins,length,0);
 
 	return insert(tmp,pos);
 }
 
-template <typename T>
-tpArray<T>& tpArray<T>::reverse()
+template <typename T,typename Tidx>
+tpArray<T,Tidx>& tpArray<T,Tidx>::reverse()
 {
-	tpArray<T> tmp = *this;
+	tpArray<T,Tidx> tmp = *this;
 
 	T* v_ptr = getData();
-	for (tpSizeT i = getSize();i;i--)
+	for (Tidx i = getSize();i;i--)
 	{
 		*v_ptr++ = tmp[getSize()-i];
 	}

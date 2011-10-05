@@ -47,8 +47,11 @@ public:
 	template <typename Tout>
 	void copy(tpMat<R,C,Tout>& out) const { for (tpUInt i = 0; i < tpMat<R,C,T>::cells; ++i) out[i] = Tout(m[i]); }
 
-	const T* data() const { return m; }
-	T* data() { return m; }
+	inline const T*
+	data() const { return m; }
+
+	inline T*
+	data() { return m; }
 
 	bool isSquare() const { return C == R; }
 
@@ -109,12 +112,9 @@ public:
 		return res;
 	}
 
-
-
-	inline
-	tpMat<R,C,T>& invert()
+	inline void
+	getInverse(tpMat<R,C,T>& resMat) const
 	{
-		tpMat<R,C,T> b;
 		for ( tpUInt r = 0; r < C; ++r)
 		{
 			for ( int j = 0; j < R; ++j)
@@ -122,19 +122,25 @@ public:
 				short sgn = ( (r+j)%2) ? -1 : 1;
 				tpMat<R-1,C-1,T> minor;
 				this->getMinor(minor,r,j);
-				b(r,j) = minor.getDeterminant() * sgn;
+				resMat(r,j) = minor.getDeterminant() * sgn;
 			}
 		}
-		b.transpose();
-		b *= T(1)/getDeterminant();
-		*this = b;
+		resMat.transpose();
+		resMat *= T(1)/getDeterminant();
+	}
+
+	inline
+	tpMat<R,C,T>& invert()
+	{
+		tpMat<R,C,T> resMat;
+		this->getInverse(resMat);
+		*this = resMat;
 		return *this;
 	}
 
 	void getMinor(tpMat<R-1,C-1,T>& res, tpUInt r0, tpUInt c0) const;
 
 	T getDeterminant() const;
-
 
 	T& at(tpUInt idx) { return m[idx]; }
 	const T& at(tpUInt idx) const { return m[idx]; }
@@ -145,7 +151,10 @@ public:
 	tpMat<R,C,T>& operator = (const tpMat<R,C,T>& rhs);
 
 	tpMat<R,C,T>& operator *= (const tpMat<R,C,T>& rhs);
+
 	tpMat<R,C,T>& operator *= (const T& rhs);
+
+	tpMat<R,C,T>& copyFrom(const T* ptr) { for (int i = 0; i < tpMat::cells; ++i) { this->at(i) = ptr[i]; } return *this; }
 
 protected:
 
@@ -189,7 +198,6 @@ tpMat<R,C,T>& tpMat<R,C,T>::operator *= (const T& rhs)
 	}
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -211,7 +219,7 @@ void tpMat<R,C,T>::getMinor(tpMat<R-1,C-1,T>& res,tpUInt r0, tpUInt c0) const
 	}
 }
 
-template <tpUInt R, tpUInt C,typename T>
+template <tpUInt R, tpUInt C,typename T> inline
 T tpMat<R,C,T>::getDeterminant() const
 {
 	T res(0);
@@ -227,6 +235,8 @@ T tpMat<R,C,T>::getDeterminant() const
 
 	return res;
 }
+
+/////////////////////////////////////////////////////////////////////////////
 
 // partial specializations
 
@@ -250,6 +260,7 @@ public:
 	tpMat44<T>&
 	setTranslation(const T& v1,const T& v2,const T& v3)
 	{
+		this->identity();
 		this->m[12] = v1;
 		this->m[13] = v2;
 		this->m[14] = v3;
@@ -265,6 +276,7 @@ public:
 	tpMat44<T>&
 	setScale(const T& v1,const T& v2,const T& v3)
 	{
+		this->identity();
 		this->m[ 0] = v1;
 		this->m[ 5] = v2;
 		this->m[10] = v3;
@@ -283,8 +295,7 @@ public:
 	tpMat44<T>&
 	setRotation(const tpVec3<T>& vec, const T& rotation)
 	{
-
-		//setIdentity();
+		this->identity();
 
 		if (vec.getLength() < T(.000001f)) return *this;
 
@@ -332,6 +343,7 @@ public:
 			+(this->m[8]*this->m[13] - this->m[12] *this->m[9])*(this->m[ 2]*this->m[7] - this->m[6]*this->m[3]);
 	}
 
+#if 0
 	tpMat44&
 	invert()
 	{
@@ -421,11 +433,8 @@ public:
 		return *this;
 	}
 
-	tpMat44
-	getInverse() const
-	{
-		tpMat44<T> result(*this); result.invert(); return result;
-	}
+#endif
+
 };
 
 
@@ -455,6 +464,9 @@ class tpMat44r : public tpMat44<tpReal> {};
 class tpMat44d : public tpMat44<tpDouble> {};
 class tpMat44f : public tpMat44<tpFloat> {};
 class tpMat44x : public tpMat44<tpFixed32> {};
+
+
+class tpVector3d : public tpMat<1,3,tpDouble> {};
 
 
 

@@ -72,6 +72,7 @@ public:
 
 	/** sets the logging level */
 	void setLevel(tpUShort level) {mLevel = level;}
+
 	/** gets the logging level */
 	tpUShort getLevel() const { return mLevel; }
 
@@ -101,5 +102,23 @@ TP_API void tpLogNotify(const char* szFormat, ...);
 
 //! set the global notification level
 TP_API void tpSetGlobalNotifyLevel(tpUShort level);
+
+
+/**
+  * @brief helper for changing the log level in a scope
+  */
+struct tpScopeLogLevel
+{
+	tpUShort levelOutside;
+	explicit tpScopeLogLevel(tpUShort level)
+	{
+		levelOutside = tpLog::get().getLevel();
+		tpLog::get().setLevel(level);
+	}
+	~tpScopeLogLevel()
+	{
+		tpLog::get().setLevel(levelOutside);
+	}
+};
 
 #endif

@@ -43,8 +43,9 @@ public:
 	tpTransform(const tpString& name = "transform");
 	tpTransform(const tpTransform& transform);
 
+
+	void setMatrix(const tpMat44r& m) { m_matrix = m; }
 	const tpMat44r& getMatrix() const { return m_matrix; }
-	tpMat44r& getMatrix() { return m_matrix; }
 
 	tpUByte getScope() const { return m_scope; }
 	void setScope(tpUByte val) { m_scope = val; }

@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,43 +30,46 @@
 /**
  * @brief class to store pairs of values
  */
-template <typename K, typename V> class tpPair {
+template <typename K, typename V>
+class tpPair {
 public:
-	
+
 	typedef K key_type;
 	typedef V value_type;
-	
+
 	tpPair() {}
 
-	tpPair(const K& key, const V& value) : m_key(key), m_value(value) {}
-	
-	tpPair(const tpPair<K,V>& p) : m_key(p.m_key), m_value(p.m_value) {}
+	tpPair(const K& key, const V& value) : mKey(key), mValue(value) {}
 
-	const K& getKey() const { return m_key; }
-	K& getKey() { return m_key; }
-	
-	const V& getValue() const { return m_value; }
-	V& getValue() { return m_value; }
-	
+	tpPair(const tpPair<K,V>& p) : mKey(p.mKey), mValue(p.mValue) {}
+
+	tpPair& operator = (const tpPair<K,V>& in) { mKey = in.mKey; mValue = in.mValue; return *this; }
+
+	const K& getKey() const { return mKey; }
+	K& getKey() { return mKey; }
+
+	const V& getValue() const { return mValue; }
+	V& getValue() { return mValue; }
+
 protected:
-	
-	K m_key;
-	V m_value;
+
+	K mKey;
+	V mValue;
 };
 
 
 // operators
 template <typename K, typename V>
-bool operator == (const tpPair<K,V>& x,const tpPair<K,V>& y) 
-{ 
-	return ((x.m_key == y.m_key) && 
-			(x.m_value == y.m_value)); 
+bool operator == (const tpPair<K,V>& x,const tpPair<K,V>& y)
+{
+	return ((x.mKey == y.mKey) &&
+			(x.mValue == y.mValue));
 }
 
 template <typename K, typename V>
-bool operator < (const tpPair<K,V>& x,const tpPair<K,V>& y) 
-{ 
-	return (x.m_key < y.m_key) ? true : (x.m_key > y.m_key) ? false : (x.m_value < y.m_value); 
+bool operator < (const tpPair<K,V>& x,const tpPair<K,V>& y)
+{
+	return (x.mKey < y.mKey) ? true : (x.mKey > y.mKey) ? false : (x.mValue < y.mValue);
 }
 
 

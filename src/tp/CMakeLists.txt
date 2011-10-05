@@ -50,6 +50,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/module.h
 	${tp_include_path}/tp/mutex.h
 	${tp_include_path}/tp/pixelformat.h
+	${tp_include_path}/tp/pair.h
 	${tp_include_path}/tp/quat.h
 	${tp_include_path}/tp/referenced.h
 	${tp_include_path}/tp/refptr.h
@@ -111,6 +112,7 @@ set(tp_hdrs_sg
 	${tp_include_path}/tp/light.h
 	${tp_include_path}/tp/material.h
 	${tp_include_path}/tp/node.h
+	${tp_include_path}/tp/nodeops.h
 	${tp_include_path}/tp/object.h
 	${tp_include_path}/tp/primitive.h
 	${tp_include_path}/tp/renderable.h
@@ -126,6 +128,7 @@ set(tp_srcs_sg
 	light.cxx
 	material.cxx
 	node.cxx
+	nodeops.cxx
 	object.cxx
 	primitive.cxx
 	renderable.cxx

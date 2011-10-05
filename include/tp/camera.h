@@ -67,7 +67,7 @@ public:
 
 
 	void setProjectionOrtho(const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f ) {
-		tpMatOp::ortho(l,r,b,t,n,f,m_projection);
+		tpMat44Op::ortho(l,r,b,t,n,f,m_projection);
 	}
 
 	void setProjectionFrustum(const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f );
@@ -75,9 +75,9 @@ public:
 	void setProjectionPerspective(const tpReal& fov, const tpReal& aspect, const tpReal& n, const tpReal& f );
 
 	const tpMat44r& getView() const { return m_view; }
-	void setView(const tpMat44r& val) { m_view = val; }
+	void setView(const tpMat44r& val) { m_view = val; m_view.getInverse(m_view_inverse); }
 
-	//tpMat44r getInverseView() const { return m_view.getInverse(); }
+	tpMat44r getViewInverse() const { return m_view_inverse; }
 
 	void setViewLookAt(const tpVec3r& eye, const tpVec3r& target, const tpVec3r& up);
 
@@ -88,6 +88,7 @@ protected:
 	tpVec4i m_viewport;
 
 	tpMat44r	m_view;
+	tpMat44r m_view_inverse;
 	tpMat44r	m_projection;
 };
 

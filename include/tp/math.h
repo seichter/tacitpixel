@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,14 +23,14 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TPMATH_H
-#define TPMATH_H
+#ifndef TP_MATH_H
+#define TP_MATH_H
 
 #include <tp/types.h>
 
 #include <math.h>
 
-//! internal calculations need a decent PI
+/** Pi */
 const tpReal TP_PI = tpReal(3.14159265358979323846);
 
 
@@ -46,13 +46,12 @@ template <class T> inline T tpDeg2Rad(const T& degree)
 	return (T)degree / 180 * (T)TP_PI;
 }
 
-template <class T> inline T tpSqrt(const T& in) 
+template <class T> inline T tpSqrt(const T& in)
 {
 	return ::sqrt(in);
 }
 
-template <class T> inline 
-bool isPowerOfTwo( const T& v )
+template <class T> inline bool tpIsPowerOfTwo( const T& v )
 {
 	return v && !(v & (v - 1));
 }

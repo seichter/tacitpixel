@@ -53,8 +53,11 @@ int main(int argc, char* argv[])
 
 	// first one
 	tpRefPtr<tpTransform> t = new tpTransform();
-	t->getMatrix().identity();
-	t->getMatrix().translate(0.0,0.0,-1.0);
+	tpMat44r mat;
+	mat.identity();
+	mat.translate(0.0,0.0,-1.0);
+
+	t->setMatrix(mat);
 	t->addChild(n.get());
 
 	root->addChild(t.get());

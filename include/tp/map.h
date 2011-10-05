@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,13 +37,41 @@
 	\brief simple container with key=value mapping
 */
 
-template <typename K, typename V> 
-class tpMap : public tpArray< tpPair<K,V> > 
+template <typename K, typename V>
+class tpMap : public tpArray< tpPair<K,V> >
 {
 public:
-	
+
+	typedef tpPair<K,V> element_type;
+	typedef tpPair<K,V>* iterator;
+	typedef const tpPair<K,V>* const_iterator;
+
 	void add(const K& k, const V& v) { tpArray< tpPair<K,V> >::add(tpPair<K,V>(k,v)); }
-	
+
+	bool containsKey(const K& k) const
+	{
+		for (const_iterator i = this->begin();
+			 i != this->end();
+			 ++i)
+		{
+			if (k == (*i).getKey()) return true;
+		}
+
+		return false;
+	}
+
+	bool containsValue(const V& v) const
+	{
+		for (const_iterator i = this->begin();
+			 i != this->end();
+			 ++i)
+		{
+			if (v == (*i).getValue()) return true;
+		}
+
+		return false;
+	}
+
 };
 
 
