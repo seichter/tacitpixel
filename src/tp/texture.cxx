@@ -70,10 +70,10 @@ void tpTexture::createTexture( tpUByte pixelformat )
 tpUByte tpTexture::getSupportedTextureFormat( bool needalpha )
 {
 #if 0 //defined(_WIN32_WCE)
-	return TP_RGB565;
+	return tpPixelFormat::kRGB565;
 #endif
 	
-	return (needalpha) ? TP_RGBA8888 : TP_RGB888;
+	return (needalpha) ? tpPixelFormat::kBGRA8888 : tpPixelFormat::kRGB888;
 
 }
 

@@ -1,4 +1,5 @@
 // includes from libTAP
+#include <tp/imagehandler.h>
 #include <tp/image.h>
 #include <tp/log.h>
 #include <tp/module.h>
@@ -42,11 +43,11 @@ tpImage* tpJPEGLoader(const tpString& filename)
     
     jpeg_start_decompress ( &cinfo );
     
-    tpPixelFormat pix_format = TP_RGB888;
+	tpUShort pix_format = tpPixelFormat::kRGB888;
 
 	tpImage* img = new tpImage();
 	//img->create(0,cinfo.image_width,cinfo.image_height,TP_RGB);
-	img->allocate(cinfo.image_width,cinfo.image_height,TP_RGB888);
+	img->allocate(cinfo.image_width,cinfo.image_height, tpPixelFormat::kRGB888);
         
     _imgsize = cinfo.image_width * cinfo.image_height * 3;
        
@@ -79,6 +80,11 @@ tpImage* tpJPEGLoader(const tpString& filename)
 
 bool tpJPEGLoader_Save(const tpString& filename,const tpImage* img)
 {
+	if (!img || !img->isValid())
+	{
+		tpLogError("can't save '%s' - image or data invalid",filename.c_str());
+		return false;
+	}
 
     struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr       jerr;
@@ -105,25 +111,25 @@ bool tpJPEGLoader_Save(const tpString& filename,const tpImage* img)
 			
 		switch (img->getPixelFormat())
 		{
-			case TP_RGB888:
+			case tpPixelFormat::kRGB888:
 				stride = cinfo.image_width * 3;
 				cinfo.input_components = 3;              //Color components per pixel
 		        cinfo.in_color_space   = JCS_RGB;      //Colorspace of input image
 				break;
 				
-			case TP_RGBA8888:
+			case tpPixelFormat::kRGBA8888:
 				stride = cinfo.image_width * 4;
 				cinfo.input_components = 4;              //Color components per pixel
 		        cinfo.in_color_space   = JCS_RGB;        //Colorspace of input image
 				break;
 
-			case TP_GREY8:
+			case tpPixelFormat::kGREY8:
 				stride = cinfo.image_width;
 				cinfo.input_components = 1;              //Color components per pixel
 		        cinfo.in_color_space   = JCS_GRAYSCALE;      //Colorspace of input image
 				break;
 		
-			case TP_YUV420:
+			case tpPixelFormat::kYUV420:
 				stride = cinfo.image_width * 3;
 				cinfo.input_components = 2;              //Color components per pixel
 		        cinfo.in_color_space   = JCS_YCbCr;      //Colorspace of input image
@@ -171,11 +177,11 @@ public:
 	{
 		switch (capability)
 		{
-		case TP_IMAGE_CAN_READ:
+		case kCanRead:
 			return name.afterLast('.') == "jpg" || name.afterLast('.') == "jpeg";
 			break;
 
-		case TP_IMAGE_CAN_WRITE:
+		case kCanWrite:
 			return name.afterLast('.') == "jpg" || name.afterLast('.') == "jpeg";
 			break;
 		}

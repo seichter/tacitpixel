@@ -33,7 +33,8 @@
 
 #include <string.h>
 
-tpChunk::tpChunk(tpSizeT size) : m_ptr(0)
+tpChunk::tpChunk(tpSizeT size)
+	: m_ptr(0)
 {
 	this->setSize(size);
 }

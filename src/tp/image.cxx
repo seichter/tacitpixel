@@ -30,35 +30,15 @@
 #include <tp/factory.h>
 #include <tp/module.h>
 #include <tp/system.h>
+#include <tp/imagehandler.h>
 
 
 
-inline static tpUShort tpGetBitsPerPixel(const tpUByte& format)
-{
-    switch (format) {
-		case TP_RGB888:
-		case TP_BGR888:
-			return 24;
-		case TP_RGBA8888:
-		case TP_BGRA8888:
-			return 32;
-//		case TP_YUV422:
-//		case TP_YUV444:
-		case TP_YUV420:
-			return 12;
-		case TP_RGB565:
-		case TP_RGB555:
-			return 16;
-		case TP_GREY8:
-			return 8;
-		default:
-			tpLogError("%s: format not supported",__FUNCTION__);
-			break;
-	};
-	return 0;
-}
-
-tpImage::tpImage() : m_width(0), m_height(0), m_pixelformat(0), m_changecount(0)
+tpImage::tpImage()
+	: m_width(0)
+	, m_height(0)
+	, m_pixelformat(0)
+	, m_changecount(0)
 {
 }
 
@@ -70,7 +50,7 @@ tpImage::~tpImage()
 void 
 tpImage::allocate(unsigned int w, unsigned int h, tpUByte pixelformat )
 {
-	unsigned int size = (w * h * tpGetBitsPerPixel(pixelformat)) >> 3;
+	unsigned int size = (w * h * tpPixelFormat::getBitsPerPixel(pixelformat)) >> 3;
 	m_data.setSize(size);
 	if (size) 
 	{
@@ -84,15 +64,6 @@ void
 tpImage::copy(const void* data)
 {
 	m_data.copy(data);
-}
-
-tpImageHandler::tpImageHandler() : tpReferenced()
-{
-
-}
-
-tpImageHandler::~tpImageHandler()
-{
 }
 
 //
@@ -117,7 +88,7 @@ tpImage::read( const tpString& name )
 
 			tpRefPtr<tpImageHandler> nf = static_cast<tpImageHandler*>(item.get());
 
-			if (nf.isValid() && nf->getCapability(TP_IMAGE_CAN_READ,name))
+			if (nf.isValid() && nf->getCapability(tpImageHandler::kCanRead,name))
 			{
 
 				tpString filename = tpSystem::get()->findFile(name);
@@ -168,7 +139,7 @@ tpImage::write( const tpString& name ) const
 
 			tpRefPtr<tpImageHandler> nf = static_cast<tpImageHandler*>(item.get());
 
-			if (nf.isValid() && nf->getCapability(TP_IMAGE_CAN_WRITE,name))
+			if (nf.isValid() && nf->getCapability(tpImageHandler::kCanWrite,name))
 			{
 				return nf->write(this,name);
 			}

@@ -119,11 +119,11 @@ struct tpToGrayOp : tpImageOperator {
 	
 	tpImageOperator& operator()(const tpImage* in, tpImage* out)
 	{
-		if (in && out && out->getPixelFormat() == TP_GREY8)
+		if (in && out && out->getPixelFormat() == tpPixelFormat::kGREY8)
 		{
 			switch(in->getPixelFormat())
 			{
-				case TP_RGB888:
+				case tpPixelFormat::kRGB888:
 					_rgb2grey(in,out);
 					break;
 			}

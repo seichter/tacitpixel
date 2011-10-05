@@ -11,7 +11,9 @@
 */
 
 
+#include <tp/imagehandler.h>
 #include <tp/image.h>
+
 #include <tp/log.h>
 #include <tp/module.h>
 #include <tp/version.h>
@@ -40,7 +42,7 @@ bool tpImageHandler_BMP::getCapability( tpUInt capability,const tpString& name )
 {
 	switch (capability)
 	{
-		case TP_IMAGE_CAN_READ:
+		case kCanRead:
 			return name.afterLast('.') == "bmp";
 			break;
 		default:
@@ -127,7 +129,7 @@ tpImage* tpImageHandler_BMP::read( const tpString& name )
 	fclose(_file);
 
 	tpImage* img = new tpImage();
-	img->allocate(width,height,TP_RGB888);
+	img->allocate(width,height,tpPixelFormat::kRGB888);
 	img->copy(buffer);
 
 	free(buffer);

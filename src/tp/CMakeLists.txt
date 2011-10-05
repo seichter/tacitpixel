@@ -36,6 +36,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/globals.h
 	${tp_include_path}/tp/hash.h
 	${tp_include_path}/tp/image.h
+	${tp_include_path}/tp/imagehandler.h
 	${tp_include_path}/tp/imageop.h
 	${tp_include_path}/tp/io.h
 	${tp_include_path}/tp/log.h
@@ -48,6 +49,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/matop.h
 	${tp_include_path}/tp/module.h
 	${tp_include_path}/tp/mutex.h
+	${tp_include_path}/tp/pixelformat.h
 	${tp_include_path}/tp/quat.h
 	${tp_include_path}/tp/referenced.h
 	${tp_include_path}/tp/refptr.h
@@ -75,6 +77,7 @@ set(tp_srcs
 	filename.cxx
 	hash.cxx
 	image.cxx
+	imagehandler.cxx
 	imageop.cxx
 	log.cxx
 	library.cxx

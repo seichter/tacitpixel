@@ -39,6 +39,8 @@ int main(int argc, char* argv[])
 	tpRefPtr<tpLibrary> mod_gl = tpLibrary::load("tacit_gl");
 	tpRefPtr<tpLibrary> mod_3ds = tpLibrary::load("tacit_3ds");
 	tpRefPtr<tpLibrary> mod_obj = tpLibrary::load("tacit_obj");
+	tpRefPtr<tpLibrary> mod_png = tpLibrary::load("tacit_png");
+	tpRefPtr<tpLibrary> mod_jpg = tpLibrary::load("tacit_jpg");
 
 	tpRefPtr<tpPrimitive> p =
 		tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kAxis);

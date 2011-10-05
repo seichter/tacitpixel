@@ -50,8 +50,8 @@ public:
 
 	inline bool operator == (const tpRefPtr& pr) const;
 	inline bool operator == (const T* pr) const;
-	
-	
+		
+	T * release() const;
 
 protected:
 	T* m_ptr;
@@ -134,6 +134,12 @@ template <class T> inline T* tpRefPtr<T>::operator->() const
 
 template <class T> inline T* tpRefPtr<T>::get() const
 {
+	return m_ptr;
+}
+
+template <class T> inline T* tpRefPtr<T>::release() const
+{
+	m_ptr->pushRef();
 	return m_ptr;
 }
 

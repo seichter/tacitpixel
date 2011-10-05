@@ -30,20 +30,8 @@
 #include <tp/referenced.h>
 #include <tp/chunk.h>
 #include <tp/string.h>
+#include <tp/pixelformat.h>
 
-
-enum tpPixelFormat {
-	TP_RGB888,
-	TP_BGR888,
-	TP_RGBA8888,
-	TP_BGRA8888,
-	TP_RGB565,
-	TP_BGR565,
-	TP_RGB555,
-	TP_BGR555,
-	TP_GREY8,
-	TP_YUV420
-};
 
 class TP_API tpImage : public tpReferenced {
 
@@ -65,7 +53,7 @@ public:
 	unsigned int getHeight() const { return m_height; }
 	tpUByte getPixelFormat() const { return m_pixelformat; }
 
-	void allocate(unsigned int w, unsigned int h, tpUByte pixelformat = TP_RGB888);
+	void allocate(unsigned int w, unsigned int h, tpUByte pixelformat = tpPixelFormat::kRGB888);
 	void copy(const void* data);
 	
 	bool isValid() const { return (m_data.getSize() && m_width && m_height); } 
@@ -83,31 +71,6 @@ public:
 	
 protected:
 	virtual ~tpImage();
-};
-
-
-
-enum tpImageFactoryCapability {
-	TP_IMAGE_CAN_READ = 0x0,
-	TP_IMAGE_CAN_WRITE
-};
-
-class TP_API tpImageHandler : public tpReferenced {
-public:
-
-	TP_TYPE_DECLARE;
-
-	tpImageHandler();
-
-	virtual bool getCapability(tpUInt capability,const tpString& name) { return false; }
-
-	virtual tpImage* read(const tpString& name) { return 0; };
-	virtual bool write(const tpImage* img, const tpString& name) { return false; } 
-	
-protected:
-	
-	virtual ~tpImageHandler();
-
 };
 
 
