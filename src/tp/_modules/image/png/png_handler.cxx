@@ -181,7 +181,6 @@ tpImageHandler_PNG::write(const tpImage* img, const tpString& name)
 		break;
 	}
 
-
 	png_set_IHDR(png_ptr, info_ptr, img->getWidth(), img->getHeight(),
 				 bit_depth, color_type, PNG_INTERLACE_NONE,
 				 PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
