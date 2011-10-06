@@ -23,8 +23,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TPREFERENCED_H
-#define TPREFERENCED_H
+#ifndef TP_REFERENCED_H
+#define TP_REFERENCED_H
 
 
 #include <tp/globals.h>

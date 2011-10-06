@@ -27,18 +27,6 @@
 #include <tp/log.h>
 #include <tp/module.h>
 
-template <class T> class tpRenderInterface
-{
-public:
-
-	tpRenderInterface(T* object){};
-
-protected:
-
-	T* m_object;
-
-};
-
 
 tpNode::tpNode(const tpString& name)
 	: tpObject(name)
@@ -54,23 +42,37 @@ tpNode::~tpNode()
 {
 }
 
-tpObject* tpNode::clone()
+tpObject*
+tpNode::clone()
 {
 	return new tpNode(*this);
 }
 
-
 void
 tpNode::traverse(tpTraverser& traverser)
 {
-	traverser.push(this);
-	for (tpArray<tpRefPtr<tpNode> >::iterator iter = m_children.begin();
-		 iter != m_children.end();
-		 ++iter)
+
+	traverser.enter(this);
+
+	if (traverser.getDirection() == tpTraverser::kDownward)
 	{
-		(*iter).get()->traverse(traverser);
+		for (tpRefNodeArray::iterator iter = mChildren.begin();
+			 iter != mChildren.end();
+			 ++iter)
+		{
+			(*iter).get()->traverse(traverser);
+		}
+	} else {
+
+		for (tpNodeArray::iterator iter = mParents.begin();
+			 iter != mParents.end();
+			 ++iter)
+		{
+			(*iter)->traverse(traverser);
+		}
 	}
-	traverser.pop(this);
+
+	traverser.leave(this);
 }
 
 
@@ -80,8 +82,8 @@ tpNode::addChild(tpNode* node)
 {
 	if (node)
 	{
-		m_children.add(node);
-		node->m_parents.add(this);
+		mChildren.add(node);
+		node->mParents.add(this);
 	}
 	return node;
 }
@@ -92,46 +94,14 @@ tpNode::removeChild(tpNode* node)
 {
 	if (node)
 	{
-		tpSizeT idx_c = m_children.find(node);
-		tpSizeT idx_p = node->m_parents.find(this);
+		tpSizeT idx_c = mChildren.find(node);
+		tpSizeT idx_p = node->mParents.find(this);
 
-		m_children.erase(m_children.begin() + idx_c);
-		node->m_parents.erase(node->m_parents.begin() + idx_p);
+		mChildren.erase(mChildren.begin() + idx_c);
+		node->mParents.erase(node->mParents.begin() + idx_p);
 	}
 	return node;
 }
-
-//! set child node
-bool setChild(tpSizeT idx,tpNode* node)
-{
-	return false;
-}
-
-
-/*
-
-void tpNode::setOpaquePtr(tpSizeT opaquesize, tpRawPtr opaqueptr)
-{
-	m_opaque = opaqueptr;
-	m_opaquesize = opaquesize;
-}
-
-tpRawPtr tpNode::getOpaquePtr()
-{
-	return m_opaque;
-}
-
-
-tpSizeT tpNode::getOpaquePtrSize() const
-{
-	return m_opaquesize;
-}
-
-
-tpVoid tpNode::setTraverseFlags(tpUInt flags) {
-	this->m_traverserflags = flags;
-}
-*/
 
 
 TP_TYPE_REGISTER(tpNode,tpObject,Node);

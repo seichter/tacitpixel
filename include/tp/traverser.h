@@ -32,21 +32,33 @@
 
 class tpNode;
 
-class TP_API tpTraverser : public tpReferenced {
-public:
+/**
+  * @brief the traverser implements the hierarchical visitor pattern
+  */
+struct TP_API tpTraverser {
 
-	tpTraverser();
+	enum {
+		kDownward,	/** traverses down the children */
+		kUpward		/** traverses up into the parents */
+	};
 
-	virtual void push(tpNode* node) = 0;
-	virtual void pop(tpNode* node) = 0;
+	/**
+	  * @brief returns traversal direction
+	  * @return get direction of traversal
+	  */
+	virtual unsigned char getDirection() const { return kDownward; }
 
-	tpUInt getFrameCount() const { return m_framecount; }
+	/**
+	  * @brief enters a node
+	  * @param node a node is currently comming in
+	  */
+	virtual void enter(tpNode* node) {}
 
-protected:
-
-	virtual ~tpTraverser();
-
-	tpUInt m_framecount;
+	/**
+	  * @brief leaves a node
+	  * @param node a node that we had visited
+	  */
+	virtual void leave(tpNode* node) {}
 
 };
 

@@ -82,7 +82,8 @@ tpSocket::~tpSocket()
 
 
 
-bool tpSocket::doInit(unsigned int port,bool blocking)
+bool
+tpSocket::doInit(unsigned int port,bool blocking)
 {
 
 #ifdef _WIN32

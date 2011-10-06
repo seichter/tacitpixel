@@ -28,7 +28,7 @@ set_target_properties(${module_name}
 	
 	
 target_link_libraries(${module_name}
-	tacit jpeg
+	tacit 
 	)
 	
 if(APPLE)

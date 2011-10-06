@@ -66,7 +66,8 @@ tpLibrary::close()
 	if (!result)
 	{
 		const char* errstr = dlerror();
-		if (errstr != 0L) {
+		if (errstr != 0L)
+		{
 			tpLogError("%s: %s",__FUNCTION__,errstr);
 		}
 	} else {
@@ -121,19 +122,26 @@ tpLibrary::open( const tpString& file )
 
 	if (!m_handle)
 	{
+		tpLogNotify("could not find %s as '%s'",file.c_str(),actual_name.c_str());
+
 		actual_name = file + ".so";
 		m_handle = dlopen(actual_name.c_str(), RTLD_GLOBAL | RTLD_NOW) ;
 	}
+
 	
 	if (!m_handle)
 	{
+		tpLogNotify("could not find %s as '%s'",file.c_str(),actual_name.c_str());
+
 		actual_name = file + ".dylib";
 		m_handle = dlopen(actual_name.c_str(), RTLD_GLOBAL | RTLD_NOW) ;
 
 	}
-
+\
 	if (!m_handle)
 	{
+		tpLogNotify("could not find %s as '%s'",file.c_str(),actual_name.c_str());
+
 		tpString errstr(dlerror());
 		if (!errstr.isEmpty()) {
 			tpLogError("%s: %s",__FUNCTION__,errstr.c_str());

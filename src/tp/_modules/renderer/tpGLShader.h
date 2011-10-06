@@ -33,7 +33,6 @@ public:
 
 	tpGLProgram();
 
-
 	tpVoid bindAttributeLocation( const tpString& name, tpUInt location );
 
 	tpUInt getProgramObject() const { return m_program; }
@@ -44,10 +43,7 @@ public:
 	tpVoid destroy();
 
 	tpVoid compile();
-
 	tpVoid link();
-
-
 	tpVoid use() const;
 
 	void log(tpUInt obj);

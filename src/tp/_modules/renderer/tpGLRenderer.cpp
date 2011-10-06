@@ -123,13 +123,13 @@ public:
 	//template <typename Base, typename Derived>
 	//Derived* tpCastCall(Base* b) { return (Base->getType() == Derived::getTypeInfo()) ? static_cast<Derived>(b) : 0L; }
 
-	void push(tpNode* node)
+	void enter(tpNode* node)
 	{
 		if(node->getType() == tpPrimitive::getTypeInfo()) this->pushPrimitive(static_cast<tpPrimitive*>(node));
 		if(node->getType() == tpTransform::getTypeInfo()) this->pushTransform(static_cast<tpTransform*>(node));
 	}
 
-	void pop(tpNode* node)
+	void leave(tpNode* node)
 	{
 		if(node->getType() == tpTransform::getTypeInfo()) this->popTransform(static_cast<tpTransform*>(node));
 	}
@@ -146,6 +146,9 @@ public:
 	void popTransform(tpTransform* trans)
 	{
 		mvs.pop();
+
+		tpMatRep(mvs.getTop());
+
 		tpGL::LoadMatrixf(mvs.getTop().data());
 	}
 
@@ -240,8 +243,6 @@ public:
 tpGLRenderer::tpGLRenderer() : tpRenderer()
 {
 	if (!tpGL::get().isValid()) tpGL::get().load();
-
-	m_traverser = new tpGLFixedFunctionTraverser();
 }
 
 tpGLRenderer::~tpGLRenderer()
@@ -253,7 +254,6 @@ tpUInt tpGLRenderer::implementsBackend() const { return tpRenderer::kOpenGL; }
 
 void tpGLRenderer::operator()(tpNode* node, tpCamera* camera)
 {
-	if (m_traverser.isValid()) (*m_traverser)(node,camera);
 #if 0
 	tpTimer t;
 

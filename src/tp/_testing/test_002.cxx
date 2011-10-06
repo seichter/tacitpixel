@@ -39,6 +39,8 @@ int main(int argc, char* argv[])
 	tpRefPtr<tpLibrary> mod_gl = tpLibrary::load("tacit_gl");
 	tpRefPtr<tpLibrary> mod_3ds = tpLibrary::load("tacit_3ds");
 	tpRefPtr<tpLibrary> mod_obj = tpLibrary::load("tacit_obj");
+	tpRefPtr<tpLibrary> mod_png = tpLibrary::load("tacit_png");
+	tpRefPtr<tpLibrary> mod_jpg = tpLibrary::load("tacit_jpg");
 
 	tpRefPtr<tpPrimitive> p =
 		tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kAxis);
@@ -51,8 +53,11 @@ int main(int argc, char* argv[])
 
 	// first one
 	tpRefPtr<tpTransform> t = new tpTransform();
-	t->getMatrix().identity();
-	t->getMatrix().translate(0.0,0.0,-1.0);
+	tpMat44r mat;
+	mat.identity();
+	mat.translate(0.0,0.0,-1.0);
+
+	t->setMatrix(mat);
 	t->addChild(n.get());
 
 	root->addChild(t.get());

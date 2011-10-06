@@ -28,23 +28,18 @@
 
 #include <tp/mat.h>
 
-struct tpMatOp {
+/**
+  * @brief just a stub for typical OpenGL matrix operations
+  */
+struct tpMat44Op {
 
-
-	template <typename T>
-	static void preMultiplyTranslation(const tpVec<T,3>& vec,tpMat<4,4,T>& m)
-	{
-		for (unsigned i = 0; i < 3; ++i)
-		{
-			T tmp = vec[i];
-			if (tmp == 0) continue;
-			m(0,3) += tmp*m(0,i);
-			m(1,3) += tmp*m(1,i);
-			m(2,3) += tmp*m(2,i);
-			m(3,3) += tmp*m(3,i);
-		}
-	}
-
+	/**
+	  * @brief OpenGL based lookAt implementation
+	  * @param eye position of the eye (or camera)
+	  * @param target where the camera looks at
+	  * @param up vector describing the upright direction
+	  * @param matOut output of the calculation
+	  */
 	template <typename T>
 	static void lookAt(const tpVec3<T>& eye, const tpVec3<T>& target, const tpVec3<T>& up,tpMat<4,4,T>& matOut)
 	{
@@ -77,7 +72,16 @@ struct tpMatOp {
 
 	}
 
-
+	/**
+	  * @brief OpenGL based frustum implementation
+	  * @param Left left border of the frustum (in pixel)
+	  * @param Right right border of the frustum (in pixel)
+	  * @param Bottom bottom border of the frustum (in pixel)
+	  * @param Top topborder of the frustum (in pixel)
+	  * @param Near near clipping plane
+	  * @param Far far clipping plane
+	  * @param matOut output of the calculation
+	  */
 	template <typename T>
 	static void frustum(T Left,T Right,T Bottom,T Top, T Near, T Far,tpMat44<T>& matOut)
 	{
@@ -104,6 +108,14 @@ struct tpMatOp {
 	}
 
 
+	/**
+	  * @brief OpenGL based perspective projection matrix implementation
+	  * @param FovY of the camera (in degree)
+	  * @param Aspect aspect ratio (normalized) width by height
+	  * @param Near near clipping plane
+	  * @param Far far clipping plane
+	  * @param matOut output of the calculation
+	  */
 	template <typename T>
 	static void perspective(T FovY, T Aspect, T Near, T Far, tpMat44<T>& matOut)
 	{
@@ -114,13 +126,21 @@ struct tpMatOp {
 		xmin = ymin * Aspect;
 		xmax = ymax * Aspect;
 
-		tpMatOp::frustum( xmin, xmax, ymin, ymax, Near, Far, matOut );
+		tpMat44Op::frustum( xmin, xmax, ymin, ymax, Near, Far, matOut );
 	}
 
-
-
+	/**
+	  * @brief OpenGL based 2D orthographic matrix implementation
+	  * @param Left left border of the frustum (in pixel)
+	  * @param Right right border of the frustum (in pixel)
+	  * @param Bottom bottom border of the frustum (in pixel)
+	  * @param Top topborder of the frustum (in pixel)
+	  * @param Near near clipping plane
+	  * @param Far far clipping plane
+	  * @param matOut output of the calculation
+	  */
 	template <typename T>
-	static void ortho(T Left,T Right,T Bottom,T Top, T Near, T Far, tpMat44<T>& matOut)
+	static void ortho(T Left, T Right, T Bottom, T Top, T Near, T Far, tpMat44<T>& matOut)
 	{
 
 		matOut.at( 0) = (T) 2	* (Right-Left);

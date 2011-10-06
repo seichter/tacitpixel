@@ -10,7 +10,7 @@
 *
 */
 
-
+#include <tp/imagehandler.h>
 #include <tp/image.h>
 #include <tp/log.h>
 #include <tp/module.h>
@@ -33,14 +33,14 @@ public:
 
 tpImageHandler_TGA::tpImageHandler_TGA() : tpImageHandler()
 {
-	tpLogNotify("%s BMP image support",tpGetVersionString());
+	tpLogNotify("%s TGA image support",tpGetVersionString());
 }
 
 bool tpImageHandler_TGA::getCapability( tpUInt capability,const tpString& name )
 {
 	switch (capability)
 	{
-		case TP_IMAGE_CAN_READ:
+		case kCanRead:
 			return name.afterLast('.') == "tga";
 			break;
 		default:

@@ -23,8 +23,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TPRENDERER_H
-#define TPRENDERER_H
+#ifndef TP_RENDERER_H
+#define TP_RENDERER_H
 
 
 #include <tp/node.h>

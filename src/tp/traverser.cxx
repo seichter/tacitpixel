@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,12 +24,3 @@
  */
 
 #include <tp/traverser.h>
-
-
-tpTraverser::tpTraverser() : tpReferenced(), m_framecount(0)
-{
-}
-
-tpTraverser::~tpTraverser() 
-{
-}

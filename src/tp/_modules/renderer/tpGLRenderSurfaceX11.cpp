@@ -17,12 +17,12 @@
 #include <tp/module.h>
 
 tpGLRenderSurfaceX11::tpGLRenderSurfaceX11( tpRenderSurfaceTraits* traits )
-: tpRenderSurface( traits ), dpy(0), win(0)
+	: tpRenderSurface( traits )
+	, dpy(0)
+	, win(0)
 {
 	doLinking( traits );
-
 	doCreate( traits );
-
 }
 
 static int __tempwnd_id = 0;

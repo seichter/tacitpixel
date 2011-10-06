@@ -1,6 +1,7 @@
 set(module_name tacit_jpg)
 
 include_directories(
+	${CMAKE_SOURCE_DIR}/src/tp/_thirdparty/libjpeg
 	${CMAKE_SOURCE_DIR}/include
 	${CMAKE_SOURCE_DIR}/src/_ext
 	${CMAKE_CURRENT_SOURCE_DIR}

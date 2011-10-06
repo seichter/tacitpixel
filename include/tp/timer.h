@@ -23,8 +23,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TPTIMER_H
-#define TPTIMER_H
+#ifndef TP_TIMER_H
+#define TP_TIMER_H
 
 #include <tp/globals.h>
 #include <tp/types.h>

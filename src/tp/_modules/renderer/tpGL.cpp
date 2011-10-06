@@ -474,7 +474,8 @@ void tpGL::loadLibraries()
 	mg_egl = new tpLibrary();
 	mg_ogl = new tpLibrary();
 
-	tpLogNotify("Twisted Pairs OpenGL runtime linker");
+	
+	tpLog::get().log(tpLog::kLogInfo,"OpenGL runtime linker");
 
 	// first try to load EGL
 //	if (!tpGL::mg_egl->open(tpString(L"libEGL")))
@@ -502,6 +503,7 @@ void tpGL::loadLibraries()
 //	if (!tpGL::mg_ogl->open(tpString(L"libGLES_CL")))
 	if (!tpGL::mg_ogl->open(tpString("OpenGL32")))
 	if (!tpGL::mg_ogl->open(tpString("/System/Library/Frameworks/OpenGL.framework/OpenGL")))
+	if (!tpGL::mg_ogl->open(tpString("/usr/lib/libGL.so")))
 	if (!tpGL::mg_ogl->open(tpString("/usr/lib/libGL.so.1")))
 	if (!tpGL::mg_ogl->open(tpString("/usr/lib/mesa/libGL.so.1")))
 	if (!tpGL::mg_ogl->open(tpString("/usr/lib/i386-linux-gnu/libGL.so.1")))	
