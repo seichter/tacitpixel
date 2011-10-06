@@ -35,38 +35,77 @@
 
 class TP_API tpImage : public tpReferenced {
 
-	tpSizedChunk m_data;
+	tpSizedChunk mData;
 
-	unsigned int m_width;
-	unsigned int m_height;
+	tpUInt mWidth;
+	tpUInt mHeight;
 	
-	tpUByte m_pixelformat;
-	tpUInt m_changecount;
+	tpUByte mPixelFormat;
+	tpUInt mChangeCount;
 
 public:
 	
 	TP_TYPE_DECLARE;
 	
+	/** C'tor */
 	tpImage();
 
-	unsigned int getWidth() const { return m_width; }
-	unsigned int getHeight() const { return m_height; }
-	tpUByte getPixelFormat() const { return m_pixelformat; }
+	/** get width of the image */
+	tpUInt getWidth() const { return mWidth; }
 
-	void allocate(unsigned int w, unsigned int h, tpUByte pixelformat = tpPixelFormat::kRGB888);
-	void copy(const void* data);
-	
-	bool isValid() const { return (m_data.getSize() && m_width && m_height); } 
+	/** get height of the image */
+	tpUInt getHeight() const { return mHeight; }
 
-	const void* getData() const { return m_data.getData(); }
-	void* getData() { return m_data.getData(); }
-	tpSizeT getDataSize() const { return m_data.getSize(); }
+	/** get the pixelformat */
+	tpUByte getPixelFormat() const { return mPixelFormat; }
+
+	/**
+	  * @brief allocate memory and setup structures for the storing an image
+	  * @param w width of the image
+	  * @param h height of the image
+	  * @param pixelformat layout of the pixels in the image
+	  */
+	void allocate(unsigned int w, unsigned int h, tpUByte pixelformat = tpPixelFormat::kRGB_888);
+
+	/**
+	  * @brief copy data into the internal buffer
+	  * @param data pointer to data
+	  */
+	void assign(const void* data);
 	
-	tpUInt getChangeCount() const { return m_changecount; }
-    void makeDirty() { ++m_changecount; }
+	/**
+	  * @brief check if image holds valid data
+	  * @return true if size and dimensions are set
+	  */
+	bool isValid() const { return (mData.getSize() && mWidth && mHeight); }
+
+	/** const pointer to buffer */
+	const void* getData() const { return mData.getData(); }
+
+	/** non const version of pointer to data */
+	void* getData() { return mData.getData(); }
+
+	/** get the size of the buffer */
+	tpSizeT getDataSize() const { return mData.getSize(); }
 	
+	/** return change count */
+	tpUInt getChangeCount() const { return mChangeCount; }
+
+	/** push the changecount - signal a changed image */
+	void makeDirty() { ++mChangeCount; }
+	
+	/**
+	  * @brief read an image from a file or url
+	  * @param name set the name for the image file
+	  * @return image file or NULL if there was an error
+	  */
 	static tpImage* read(const tpString& name);
 	
+	/**
+	  * @brief writes an image back to a file
+	  * @param name of the file
+	  * @return true if the file could be written
+	  */
 	bool write(const tpString& name) const;
 	
 protected:

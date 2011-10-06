@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,10 +35,10 @@
 
 
 tpImage::tpImage()
-	: m_width(0)
-	, m_height(0)
-	, m_pixelformat(0)
-	, m_changecount(0)
+	: mWidth(0)
+	, mHeight(0)
+	, mPixelFormat(0)
+	, mChangeCount(0)
 {
 }
 
@@ -51,19 +51,20 @@ void
 tpImage::allocate(unsigned int w, unsigned int h, tpUByte pixelformat )
 {
 	unsigned int size = (w * h * tpPixelFormat::getBitsPerPixel(pixelformat)) >> 3;
-	m_data.setSize(size);
+	mData.setSize(size);
 	if (size) 
 	{
-		m_width = w;
-		m_height = h;
-		m_pixelformat = pixelformat;
+		mWidth = w;
+		mHeight = h;
+		mPixelFormat = pixelformat;
 	}
 }
 
 void 
-tpImage::copy(const void* data)
+tpImage::assign(const void* data)
 {
-	m_data.copy(data);
+	mData.assign(data);
+	makeDirty();
 }
 
 //
@@ -84,13 +85,12 @@ tpImage::read( const tpString& name )
 
 		if (item->getType()->isOfType(tpImageHandler::getTypeInfo()))
 		{
-			//tpLogNotify("%s found %s",__FUNCTION__,item->getType()->getName().c_str());
+			tpLogNotify("%s found %s",__FUNCTION__,item->getType()->getName());
 
 			tpRefPtr<tpImageHandler> nf = static_cast<tpImageHandler*>(item.get());
 
 			if (nf.isValid() && nf->getCapability(tpImageHandler::kCanRead,name))
 			{
-
 				tpString filename = tpSystem::get()->findFile(name);
 
 				//result = reinterpret_cast<tpImage*>(g_imagecache.retrieve(filename));
@@ -98,7 +98,7 @@ tpImage::read( const tpString& name )
 				if (!result)
 				{
 
-					//tpLogNotify("%s using %s",__FUNCTION__,item->getType()->getName().c_str());
+					tpLogNotify("%s using %s",__FUNCTION__,item->getType()->getName());
 
 					result = nf->read(filename);
 
@@ -108,11 +108,10 @@ tpImage::read( const tpString& name )
 
 					}
 
-					//tpLogNotify("%s - 0x%x",__FUNCTION__,result);
+					tpLogNotify("%s - 0x%x",__FUNCTION__,result);
 				} else {
 
 					//tpLogNotify("%s cached '%s' (0x%x)",__FUNCTION__,filename.c_str(),result);
-
 				}
 			}
 		}
