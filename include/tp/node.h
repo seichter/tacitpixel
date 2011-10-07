@@ -41,7 +41,6 @@ typedef tpArray<tpRefPtr<tpNode> > tpRefNodeArray;
 typedef tpArray<tpNodeArray> tpNodeArrayArray;
 
 
-typedef tpArray<tpMat44r> tpMatrixArray;
 
 /*!
 	\class tpNode

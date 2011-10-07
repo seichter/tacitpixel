@@ -11,6 +11,7 @@
  */
 
 #include <tp/module.h>
+#include <tp/version.h>
 
 #import "tpGLRenderSurfaceCocoa.h"
 
@@ -110,8 +111,8 @@ tpGLRenderSurfaceCocoa::tpGLRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 
 	CGLSetCurrentContext(cgl_context);
 
-//	tpInt swap_interval = (true) ? 1 : 0;
-//	CGLSetParameter(cgl_context, kCGLCPSwapInterval, &swap_interval);
+	tpInt swap_interval = (true) ? 1 : 0;
+	CGLSetParameter(cgl_context, kCGLCPSwapInterval, &swap_interval);
 
 
 	/* set notification interfaces */
@@ -141,6 +142,17 @@ tpGLRenderSurfaceCocoa::~tpGLRenderSurfaceCocoa()
 void
 tpGLRenderSurfaceCocoa::frame()
 {
+
+}
+
+bool
+tpGLRenderSurfaceCocoa::makeCurrent()
+{
+	tpScopeLog<tpLog::kLogInfo> l(__FUNCTION__);
+
+	[oglcontext update];
+	[oglcontext makeCurrentContext];
+
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
 	NSEvent* event = [NSApp
@@ -156,17 +168,6 @@ tpGLRenderSurfaceCocoa::frame()
 
 	[pool release];
 
-	tpRenderSurface::frame();
-}
-
-bool
-tpGLRenderSurfaceCocoa::makeCurrent()
-{
-
-	[oglcontext update];
-	[oglcontext makeCurrentContext];
-
-
 	return true;
 }
 
@@ -174,7 +175,6 @@ bool
 tpGLRenderSurfaceCocoa::swapBuffers()
 {
 	[oglcontext flushBuffer];
-
 	return true;
 }
 
@@ -212,7 +212,7 @@ public:
 
 	tpRenderSurfaceFactoryCocoa() : tpRenderSurfaceFactory()
 	{
-		tpLogNotify("%s - added Cocoa Surface Factory");
+		tpLogNotify("%s Cocoa rendering surface",tpGetVersionString());
 	}
 protected:
 	tpRenderSurface* create( tpRenderSurfaceTraits* traits )

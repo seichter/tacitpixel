@@ -7,6 +7,8 @@
 #include <tp/stack.h>
 #include <tp/nodeops.h>
 #include <tp/primitive.h>
+#include <tp/camera.h>
+
 
 void report(const tpNodeArray& nodes)
 {
@@ -33,41 +35,26 @@ void report(const tpNodeArrayArray& nodepaths)
 	}
 }
 
-struct tpMatTraverser : tpTraverser {
-
-
-	unsigned char getDirection() const { return kUpward; }
-
-	void enter(tpNode* node)
+void report(const tpNodeMatrixMap& nodemap)
+{
+	for (tpNodeMatrixMap::const_iterator i = nodemap.begin();
+		 i != nodemap.end();
+		 ++i)
 	{
-		tpLog::get().printf("<node name='%s'>\n",node->getName().c_str());
+		tpString mStr; mStr << (*i).getValue();
 
-		tpTransform* aT = node->getType()->self_cast<tpTransform>(node);
+		printf("%s %s",(*i).getKey()->getName().c_str(),mStr.c_str());
 
-		if (aT)
-		{
-			tpMat44r m; m.identity();
-			aT->getMatrix(true,m);
-
-			tpString ms;
-			ms << m;
-
-			tpLog::get().printf(ms.c_str());
-
-
-		}
+		printf("\n");
 	}
+}
 
-	void leave(tpNode* node)
-	{
-		tpLog::get().printf("</node> <!-- '%s'-->\n\n",node->getName().c_str());
 
-		if (node->getParentsCount() == 0) {
-			tpLog::get().printf("ROOOT!!");
-		}
-	}
-
-};
+void report(const tpMat44r& mat)
+{
+	tpString mStr; mStr << mat;
+	printf("%s",mStr.c_str());
+}
 
 int main(int argc, char* argv[])
 {
@@ -94,6 +81,18 @@ int main(int argc, char* argv[])
 	// add a primitive
 	tfn_2->addChild(prim.get());
 
+	tpRefPtr<tpCamera> camera = new tpCamera();
+	camera->setProjectionPerspective(60.0f,1.3f,0.1f,1000.0f);
+	camera->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
+
+	tpMat44r mcam = camera->getViewInverse();
+	report(mcam);
+	mcam = camera->getView();
+	report(mcam);
+	mcam = camera->getProjection();
+	report(mcam);
+
+
 	tpNodeArray nodes = tpNodeOps::getNodesOfType(root.get(),tpTransform::getTypeInfo());
 	printf("Transforms: %d\n",nodes.getSize());
 
@@ -109,6 +108,10 @@ int main(int argc, char* argv[])
 
 	nodepaths = tpNodeOps::getNodePathsOfType(root.get(),tpPrimitive::getTypeInfo());
 	report(nodepaths);
+
+	tpNodeMatrixMap nodemap = tpNodeOps::getNodeMatrixMap(root.get(),tpPrimitive::getTypeInfo());
+	report(nodemap);
+
 
 	return 0;
 }

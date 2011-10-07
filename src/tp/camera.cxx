@@ -23,18 +23,21 @@
  * SUCH DAMAGE.
  */
 
-#include "tp/camera.h"
-#include "tp/matop.h"
+#include <tp/camera.h>
+#include <tp/matop.h>
 
 tpCamera::tpCamera() : tpReferenced()
 {
 	m_projection.identity();
 	m_view.identity();
+	update();
 }
 
 void tpCamera::setViewLookAt( const tpVec3r& eye, const tpVec3r& target, const tpVec3r& up )
 {
 	tpMat44Op::lookAt(eye,target,up,m_view);
+	m_view.transpose();
+	update();
 }
 
 void tpCamera::setProjectionPerspective( const tpReal& fov, const tpReal& aspect, const tpReal& n, const tpReal& f )
@@ -45,6 +48,11 @@ void tpCamera::setProjectionPerspective( const tpReal& fov, const tpReal& aspect
 void tpCamera::setProjectionFrustum( const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f )
 {
 	tpMat44Op::frustum(l,r,b,t,n,f,m_projection);
+}
+
+void tpCamera::update()
+{
+	m_view.getInverse(m_view_inverse);
 }
 
 TP_TYPE_REGISTER(tpCamera,tpReferenced,Camera);

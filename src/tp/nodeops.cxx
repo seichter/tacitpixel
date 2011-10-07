@@ -1,4 +1,5 @@
 #include <tp/nodeops.h>
+#include <tp/transform.h>
 
 struct tpLeafNodeCollector : tpTraverser {
 
@@ -133,6 +134,57 @@ tpNodeOps::getNodePathsOfType(const tpNode *node,const tpRTTI* rtti)
 		result.append(localresult);
 	}
 
+
+	return result;
+}
+
+/* static */
+tpNodeMatrixMap
+tpNodeOps::getNodeMatrixMap(const tpNode *node,const tpRTTI* rtti)
+{
+
+	tpNodeMatrixMap result;
+	tpNodeArray typednodes;
+
+	tpNodeTypeCollector ntc(typednodes,rtti);
+	const_cast<tpNode*>(node)->traverse(ntc);
+
+
+	tpNodeArrayArray nodearray;
+
+	for (tpNodeArray::iterator i = typednodes.begin();
+		 i != typednodes.end();
+		 ++i)
+
+	{
+		tpNodeArrayArray localresult;
+		tpNodePathCollector npc(localresult);
+		const_cast<tpNode*>(*i)->traverse(npc);
+
+		localresult.reverse();
+
+		nodearray.append(localresult);
+	}
+
+	for (tpNodeArrayArray::iterator i = nodearray.begin();
+		 i != nodearray.end();
+		 ++i)
+	{
+		tpMat44r m; m.identity();
+
+		for (tpNodeArray::iterator j = (*i).begin();
+			 j != (*i).end();
+			 ++j)
+		{
+			tpTransform* t = (*j)->getType()->self_cast<tpTransform>(*j);
+			if (t)
+			{
+				t->getMatrix(true,m);
+			}
+		}
+
+		result.add((*i).front(),m);
+	}
 
 	return result;
 }

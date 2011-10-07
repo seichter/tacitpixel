@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,25 +28,29 @@
 
 
 #include <tp/node.h>
+#include <tp/camera.h>
 
 class tpCamera;
+class tpRendererTraits;
+class tpRenderContext;
 
 
+struct tpRendererTraits {
 
-/**
- * \class tpRenderer 
- *
- * The scenegraph rendering layer.
- * 
- */
+	bool isFixedFunction;
+
+	tpRendererTraits() : isFixedFunction(true) {}
+
+	bool operator = (const tpRendererTraits& rhs) const {
+		return isFixedFunction == rhs.isFixedFunction;
+	}
+};
+
+typedef tpArray<tpRefPtr<tpCamera> > tpRefCameraArray;
+
+
 class TP_API tpRenderer : public tpReferenced {
 public:
-
-	enum {
-		kNull = 0,
-		kOpenGL,
-		kDirectX
-	};
 
 	TP_TYPE_DECLARE;
 
@@ -54,13 +58,26 @@ public:
 
 	tpRenderer(const tpRenderer& r);
 
-	virtual void operator()( tpNode* node, tpCamera* camera ) = 0;
+	tpRenderer& operator = (const tpRenderer& rhs);
 
-	virtual tpUInt implementsBackend() const = 0;
+	virtual void operator()(tpNode* node) = 0;
 
-	static tpRenderer* create(tpUInt backend);	
+	virtual const tpRendererTraits& getTraits() const = 0;
+
+	static tpRenderer* create(const tpRendererTraits& traits = tpRendererTraits());
+
+	tpCamera* getActiveCamera();
+
+	void setActiveCamera(tpUInt camera);
+
+	void addCamera(tpCamera* camera, bool makeActive = true);
+
+	void removeCamera(tpCamera *camera);
 
 protected:
+
+	tpRefCameraArray mCameras;
+	tpUInt mActiveCamera;
 
 	virtual ~tpRenderer();
 };

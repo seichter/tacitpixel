@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,8 +34,8 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-tpRenderSurfaceTraits::tpRenderSurfaceTraits() 
-	: title("GL Window"), 
+tpRenderSurfaceTraits::tpRenderSurfaceTraits()
+	: title("GL Window"),
 	size(tpVec2i(320,240)),
 	position(tpVec2i(0,0))
 {
@@ -136,131 +136,59 @@ tpRenderSurface* tpRenderSurface::create( tpRenderSurfaceTraits* traits /* =0 */
 
 	for (tpModuleList::const_iterator iter = modules.begin(); iter != modules.end(); ++iter)
 	{
-		if ((*iter)->getType()->isOfType(tpRenderSurfaceFactory::getTypeInfo())) 
+		if ((*iter)->getType()->isOfType(tpRenderSurfaceFactory::getTypeInfo()))
 		{
 			surface_factory = static_cast<tpRenderSurfaceFactory*>(iter->get());
 		}
 	}
 
-		
-	if (surface_factory) 
+
+	if (surface_factory)
 	{
 
 		surface = surface_factory->create( traits );
 
-		// this should be done by the user application
-		if (surface)
-		{
-			surface->setRenderer(surface->createDefaultRenderer());
-		}
-
 	} else {
-		
+
 		tpLogError("%s no render surface factory available",__FUNCTION__);
 	}
-	
+
 	return surface;
 }
 
-tpRenderSurface::tpRenderSurface( tpRenderSurfaceTraits* traits ) : m_done(false)
+
+tpRenderSurfaceCallbacks gs_callbacks;
+
+
+tpRenderSurface::tpRenderSurface()
+	: tpRenderContext()
+	, mDone(false)
 {
-	m_camera = new tpCamera();
+}
+
+
+tpRenderSurface::tpRenderSurface( tpRenderSurfaceTraits* traits )
+	: tpRenderContext()
+	, mDone(false)
+{
 }
 
 tpRenderSurface::~tpRenderSurface()
 {
-	m_camera = 0;
-	m_renderer = 0;
-	m_root = 0;
-	m_mouseadapter = 0;
 }
 
-tpString tpRenderSurface::getName() const
+tpString
+tpRenderSurface::getName() const
 {
 	return tpString("RenderSurface");
 }
 
-tpRenderer* tpRenderSurface::createDefaultRenderer() const
-{
-	return 0;
-}
-
-void tpRenderSurface::setRenderer( tpRenderer* renderer )
-{
-	m_renderer = renderer;
-}
-
-tpRenderer* tpRenderSurface::getRenderer()
-{
-	return m_renderer.get();
-}
-
-const tpRenderer* tpRenderSurface::getRenderer() const
-{
-	return m_renderer.get();
-}
-
-void tpRenderSurface::setSceneNode( tpNode* node )
-{
-	m_root = node;
-}
-
-tpNode* tpRenderSurface::getSceneNode()
-{
-	return m_root.get();
-}
-
-const tpNode* tpRenderSurface::getSceneNode() const
-{
-	return m_root.get();
-}
-
-void tpRenderSurface::frame()
-{	
-	if (this->makeCurrent() && !m_done && this->getRenderer())
-	{
-		(*this->getRenderer())(m_root.get(),m_camera.get());
-		this->swapBuffers();
-	}
-}
-
-void tpRenderSurface::setCamera( tpCamera* camera )
-{
-	m_camera = camera;
-}
-
-tpCamera* tpRenderSurface::getCamera()
-{
-	return m_camera.get();
-}
-
-const tpCamera* tpRenderSurface::getCamera() const
-{
-	return m_camera.get();
-}
-
-void tpRenderSurface::setDone( bool isDone /*= true*/ )
-{
-	m_done = isDone;
-}
-
-bool tpRenderSurface::isDone() const
-{
-	return m_done;
-}
-
-
-void tpRenderSurface::setMouseAdapter( tpMouseAdapter* mouseadapter )
-{
-	m_mouseadapter = mouseadapter;
-}
-
-tpMouseAdapter* tpRenderSurface::getMouseAdapter()
-{
-	return m_mouseadapter.get();
-}
-
-
 TP_TYPE_REGISTER(tpRenderSurfaceFactory,tpReferenced,RenderSurfaceFactory);
-TP_TYPE_REGISTER(tpRenderSurface,tpReferenced,RenderSurface);
+TP_TYPE_REGISTER(tpRenderContext,tpReferenced,RenderContext);
+TP_TYPE_REGISTER(tpRenderSurface,tpRenderContext,RenderSurface);
+
+tpRenderContext::tpRenderContext()
+	: tpReferenced()
+{
+}
 
