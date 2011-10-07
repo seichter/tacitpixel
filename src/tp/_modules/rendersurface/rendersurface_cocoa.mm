@@ -13,7 +13,7 @@
 #include <tp/module.h>
 #include <tp/version.h>
 
-#import "tpGLRenderSurfaceCocoa.h"
+#import "rendersurface_cocoa.h"
 
 
 @interface tpGLRenderSurfaceCocoaDelegate : NSObject

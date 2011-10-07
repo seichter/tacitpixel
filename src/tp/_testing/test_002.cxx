@@ -12,6 +12,7 @@
 #include <tp/transform.h>
 #include <tp/renderer.h>
 #include <tp/stringformater.h>
+#include <tp/thread.h>
 
 
 tpNode* createAxis()
@@ -60,7 +61,8 @@ void report(const tpMat44r& mat)
 
 int main(int argc, char* argv[])
 {
-	tpRefPtr<tpLibrary> mod_gl = tpLibrary::load("tacit_gl");
+	tpRefPtr<tpLibrary> mod_surface = tpLibrary::load("tacit_glsurface");
+	tpRefPtr<tpLibrary> mod_renderer = tpLibrary::load("tacit_glrenderer");
 	tpRefPtr<tpLibrary> mod_3ds = tpLibrary::load("tacit_3ds");
 	tpRefPtr<tpLibrary> mod_obj = tpLibrary::load("tacit_obj");
 	tpRefPtr<tpLibrary> mod_png = tpLibrary::load("tacit_png");
@@ -102,10 +104,6 @@ int main(int argc, char* argv[])
 	camera->setProjectionPerspective(60.0f,1.3f,0.1f,1000.0f);
 	camera->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
 
-	report(camera->getProjection());
-	report(camera->getView());
-	report(camera->getViewInverse());
-
 	camera->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
 	camera->setClearColor(tpVec4f(0.5f,0.5f,0.9f,1.0f));
 	camera->setViewport(tpVec4i(0,0,640,480));
@@ -121,6 +119,8 @@ int main(int argc, char* argv[])
 			(*renderer)(root.get());
 
 			rendersurface->swapBuffers();
+
+			tpThread::yield();
 		}
 
 		rendersurface = 0;

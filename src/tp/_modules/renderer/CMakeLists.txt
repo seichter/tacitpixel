@@ -1,4 +1,4 @@
-set(module_name tacit_gl)
+set(module_name tacit_glrenderer)
 
 
 include_directories(
@@ -38,7 +38,6 @@ option(TP_USE_X11 FALSE "Option to use X11")
 
 
 if(X11_FOUND AND TP_USE_X11)
-
 	set(TPGL_USE_X11 TRUE)
 	list(APPEND srcs
 		${CMAKE_CURRENT_SOURCE_DIR}/tpGLRenderSurfaceX11.cpp
@@ -61,8 +60,8 @@ endif()
 if(APPLE)
 	find_package(OpenGL)
 	list(APPEND srcs
-		${CMAKE_CURRENT_SOURCE_DIR}/tpGLRenderSurfaceCocoa.mm
-		${CMAKE_CURRENT_SOURCE_DIR}/tpGLRenderSurfaceCocoa.h
+#		${CMAKE_CURRENT_SOURCE_DIR}/tpGLRenderSurfaceCocoa.mm
+#		${CMAKE_CURRENT_SOURCE_DIR}/tpGLRenderSurfaceCocoa.h
 		)
 endif()
 

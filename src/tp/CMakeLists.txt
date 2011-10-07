@@ -164,7 +164,7 @@ if (UNIX AND NOT ANDROID)
 		dl)
 endif()
 
-if(HAVE_PTHREAD_H)
+if(HAVE_PTHREAD_H AND NOT ANDROID)
 	target_link_libraries(${tp_name}
 		pthread)
 endif()

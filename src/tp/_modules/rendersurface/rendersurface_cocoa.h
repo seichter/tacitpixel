@@ -15,8 +15,6 @@
 
 #include <Cocoa/Cocoa.h>
 
-#include "tpGLRenderer.h"
-
 #include <tp/rendersurface.h>
 #include <tp/log.h>
 
@@ -39,12 +37,6 @@ public:
 
 
 	tpVoid setCaption(const tpString& caption);
-
-
-	tpRenderer* createDefaultRenderer() const
-	{
-		return 0;
-	}
 
 	NSWindow* getWindow() { return window; }
 

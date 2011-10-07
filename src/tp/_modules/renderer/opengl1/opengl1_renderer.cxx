@@ -10,7 +10,10 @@
 
 #if defined(__APPLE__)
 #include <OpenGL/OpenGL.h>
+#else
+#include <GLES/gl.h>
 #endif
+
 
 struct tpGLRendererTraits : tpRendererTraits {
 };
@@ -34,8 +37,9 @@ public:
 	{
 		tpCamera* camera = getActiveCamera();
 
+		//glEnable(GL_AUTO_NORMAL);
+
 		glEnable(GL_NORMALIZE);
-		glEnable(GL_AUTO_NORMAL);
 		glShadeModel(GL_SMOOTH);
 
 		glEnable(GL_DEPTH_TEST);
@@ -50,11 +54,11 @@ public:
 
 		float amb_light[] = {0.2f, 0.2f, 0.2f, 1.0f};
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb_light);
-		glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 0.0f);
 		glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 0.0f);
+		//glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 0.0f);
 
 		//#define GL_SEPARATE_SPECULAR_COLOR 0x81FA
-		glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+		//glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 
 		tpUInt glclearflag(0);
 		if (camera->hasClearFlag(tpCamera::kClearColor))
@@ -90,11 +94,9 @@ public:
 		view *= modelmatrix;
 
 		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
 		glLoadMatrixf(camera->getProjection().data());
 
 		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
 		glLoadMatrixf(view.data());
 
 		glEnableClientState(GL_VERTEX_ARRAY);
