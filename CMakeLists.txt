@@ -22,5 +22,6 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/staging CACHE PATH "Installation di
 # traverse down
 add_subdirectory(src)
 add_subdirectory(etc)
+add_subdirectory(apps)
 
 

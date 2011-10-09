@@ -30,6 +30,7 @@ configure_file(config.h.in
 set(tp_hdrs
 	${tp_include_path}/tp/allocator.h
 	${tp_include_path}/tp/array.h
+	${tp_include_path}/tp/arguments.h
 	${tp_include_path}/tp/chunk.h
 	${tp_include_path}/tp/field.h
 	${tp_include_path}/tp/file.h
@@ -60,6 +61,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/scopeptr.h
 	${tp_include_path}/tp/stack.h
 	${tp_include_path}/tp/string.h
+	${tp_include_path}/tp/stringtokenizer.h
 	${tp_include_path}/tp/stringformater.h
 	${tp_include_path}/tp/stringutils.h
 	${tp_include_path}/tp/system.h
@@ -72,6 +74,7 @@ set(tp_hdrs
 
 
 set(tp_srcs
+	arguments.cxx
 	allocator.cxx
 	chunk.cxx
 	file.cxx
@@ -88,6 +91,7 @@ set(tp_srcs
 	rs232.cxx
 	socket.cxx
 	string.cxx
+	stringtokenizer.cxx
 	system.cxx
 	thread.cxx
 	timer.cxx

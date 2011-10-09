@@ -23,70 +23,46 @@
  * SUCH DAMAGE.
  */
 
-#include <tp/module.h>
-#include <tp/log.h>
-#include <tp/stringtokenizer.h>
-#include <tp/library.h>
+#ifndef TP_STRINGTOKENIZER_H
+#define TP_STRINGTOKENIZER_H 1
 
-tpModuleManager::tpModuleManager() : tpReferenced() {
-}
+#include <tp/string.h>
 
-tpModuleManager::~tpModuleManager()
+
+class TP_API tpStringTokenizer
 {
-	this->purge();
-}
+	tpString mCopy;
+	tpString mDelim;
 
-tpModuleManager* tpModuleManager::get( bool destroy )
-{
-	static tpRefPtr<tpModuleManager> s_modulemanager( (destroy) ? 0L : new tpModuleManager() );
+public:
 
-	return s_modulemanager.get();
-}
-
-tpVoid tpModuleManager::add( tpReferenced* module )
-{
-	m_modules.add(module);
-}
-
-
-tpVoid tpModuleManager::remove( tpReferenced* module )
-{
-	// we need to find the module and delete our own
-	// reference to it. This forces the module
-	// to be deleted in the correct context
-	tpSizeT idx = m_modules.find(module);
-	m_modules[idx] = 0;
-	m_modules.erase(idx);
-}
-
-
-const tpModuleList& tpModuleManager::getModules() const
-{
-	return m_modules;
-}
-
-void tpModuleManager::load(const tpString &list)
-{
-	tpStringTokenizer tkz(list,",");
-
-	while (!tkz.finished()) {
-		tpString name = "tacit_" + tkz.next();
-		tpLogNotify("token: %s",name.c_str());
-		//tpRefPtr<tpLibrary> lib = tpLibrary::load(name);
-		//if (lib.isValid()) mLibraries.add(lib.get());
-	}
-}
-
-void tpModuleManager::purge()
-{
-	for (tpRefLibraryArray::iterator i = mLibraries.begin();
-		 i != mLibraries.end();
-		 ++i)
+	tpStringTokenizer(const tpString& str, const tpString& delim)
+		: mCopy(str)
+		, mDelim(delim)
 	{
-		(*i) = 0;
 	}
-}
 
+	tpString next()
+	{
+		tpString res;
+		tpInt pos = mCopy.find(*mDelim.c_str(),false);
 
-//////////////////////////////////////////////////////////////////////////
+		if (pos > tpString::kNotFound)
+		{
+			res = mCopy.substr(0,pos);
+			mCopy = mCopy.substr( pos + mDelim.getLength(), mCopy.getLength() - pos - mDelim.getLength() );
+		} else {
+			res = mCopy;
+			mCopy.empty();
+		}
 
+		return res;
+	}
+
+	bool finished() const
+	{
+		return (0 == mCopy.getLength());
+	}
+};
+
+#endif

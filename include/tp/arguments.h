@@ -22,52 +22,26 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+#ifndef TP_ARGUMENTS_H
+#define TP_ARGUMENTS_H 1
 
-#include "tp/material.h"
-#include "tp/log.h"
+#include <tp/array.h>
+#include <tp/string.h>
 
-tpMaterial::tpMaterial(const tpString& name)
-	: tpObject(name)
-{
-	m_ambientcolor = tpVec4r(0.8,0.8,0.8,1.0);
-	m_diffusecolor = tpVec4r(0.2,0.2,0.2,1.0);
-	m_specularcolor = tpVec4r(1.0,1.0,1.0,1.0);
-	m_emissivecolor = tpVec4r(0.0,0.0,0.0,1.0);
-	m_shininess = 0.0f; // max 128 / 2
+class TP_API tpArguments {
+public:
 
-}
+	explicit tpArguments(int *argc, char* argv[]);
 
+	bool get(const tpString &param) const;
+	bool get(const tpString &param, tpString &value) const;
 
-tpMaterial::tpMaterial(const tpMaterial& node)
-	: tpObject(node)
-{
-	*this = node;
-}
+	const tpStringArray& get() const { return mArguments; }
 
+protected:
 
-tpObject* tpMaterial::clone()
-{
-	return new tpMaterial(*this);
-}
+	tpStringArray mArguments;
 
-tpMaterial& tpMaterial::operator = (const tpMaterial& mat)
-{
-	this->m_ambientcolor = mat.m_ambientcolor;
-	this->m_diffusecolor = mat.m_diffusecolor;
-	this->m_emissivecolor = mat.m_emissivecolor;
-	this->m_specularcolor = mat.m_specularcolor;
+};
 
-	this->m_transparency = mat.m_transparency;
-	this->m_shininess = mat.m_shininess;
-
-	return *this;
-}
-
-
-TP_TYPE_REGISTER(tpMaterial,tpObject,Material);
-
-static tpMaterial gs_defaultmaterial;
-tpMaterial* tpDefaultMaterial = &gs_defaultmaterial;
-
-
-
+#endif

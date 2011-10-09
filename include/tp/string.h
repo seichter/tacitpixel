@@ -52,7 +52,7 @@ public:
 	tpString();
 
 	//! copy constructor from plain c-string
-	tpString(const char* str, tpUShort encoding = ASCII);
+	tpString(const char* str);
 
 	//! copy constructor from tpString
 	tpString(const tpString& str);
@@ -60,20 +60,25 @@ public:
 	//! default d'tor
 	~tpString();
 
+	//! set contents from c-string
+	tpString& set(const char* str);
+
+	//! set content from a non-null terminated C string
+	tpString& set(const char* buffer, tpSizeT size);
+
+
 	//! clean contents of the string
 	void empty();
 
 	//! get the plain c-string
-	const char* c_str() const { return mBuffer.ptr<const char>(); }
+	const char* c_str() const { return &mBuffer[0]; }
 
 	//! get the plain c-string
-	char* c_str() { return mBuffer.ptr<char>(); }
+	char* c_str() { return &mBuffer[0]; }
 
-	//! set contents from c-string
-	tpString& set(const char* str, tpUByte encoding = ASCII);
+	const char& at(tpSizeT pos) const { return mBuffer[pos]; }
 
-	//! set content from a non-null terminated C string
-	tpString& set(const char* buffer, tpSizeT size, tpUByte encoding = ASCII);
+	char& at(tpSizeT pos) { return mBuffer[pos]; }
 
 	void toPascal(char** buffer) const;
 
@@ -131,9 +136,11 @@ public:
 	tpString beforeLast(const char& c) const;
 
 	//! find a sub string
-	int find(const char* sub) const;
+	int find(const char* substr) const;
 
-	tpString& subst( const tpChar& c, const tpChar& substc );
+	tpString& substitute( const tpChar& c, const tpChar& substc );
+
+	tpString substr( tpSizeT pos, tpSizeT len ) const;
 
 	static tpString format(const char* format, ...);
 
@@ -141,18 +148,18 @@ public:
 	T to() const { return T(0); }
 
 	template <typename T>
-	T& operator [] ( tpSizeT idx ) { return mBuffer.ptr<T>()[idx]; }
+	T& operator [] ( tpSizeT idx ) { return static_cast<T>(&mBuffer[idx]); }
 
 	template <typename T>
-	const T& operator [] ( tpSizeT idx ) const { return mBuffer.ptr<T>()[idx]; }
+	const T& operator [] ( tpSizeT idx ) const { return static_cast<T>(&mBuffer[idx]); }
 
 protected:
 
-	tpString& _assign(const char* str, tpUByte encoding = ASCII);
-	tpString& _append(const char* str, tpUByte encoding = ASCII);
+	tpString& _assign(const char* str);
+	tpString& _append(const char* str);
 	tpString& _truncate(tpSizeT pos);
 
-	tpChunk mBuffer;
+	tpArray<tpChar> mBuffer;
 	tpUShort mEncoding;
 
 };
@@ -278,44 +285,11 @@ inline tpString& tpString::operator += (const char* rs)
 
 
 /*
-
-template <typename T>
-class tpStringTokenizerNX
-{
-	tpStringBase<T> local;
-	tpStringBase<T> delim;
-
-public:
-
-	tpStringTokenizerNX(const tpStringBase<T>& str, const tpStringBase<T>& dlm) : local(str.mb_str()), delim(dlm.mb_str())
-	{
-	}
-
-	tpStringBase<T> next()
-	{
-		tpStringBase<T> res;
-		tpInt pos = local.find(*delim.mb_str(),false);
-
-		if (pos > -1)
-		{
-			res = local.substr(0,pos);
-			local = local.substr( pos + delim.getLength(), local.getLength() - pos - delim.getLength() );
-		} else {
-			res = local;
-			local.empty();
-		}
-
-		return res;
-	}
-
-	bool finished() const
-	{
-		return (0 == local.getLength());
-	}
-};
 */
 //#include <tpStringIO.h>
 
 #endif
+
+typedef tpArray<tpString> tpStringArray;
 
 #endif

@@ -243,7 +243,6 @@ void tpArray<T,Tidx>::copy( const T* orig, Tidx length, Tidx offset )
 {
 	resize(length);
 	for (Tidx i = 0; i < length; i++ ) { mData[i] = orig[i + offset]; }
-	mSize = length;
 }
 
 
