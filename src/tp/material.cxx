@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ tpMaterial::tpMaterial(const tpString& name)
 	m_specularcolor = tpVec4r(1.0,1.0,1.0,1.0);
 	m_emissivecolor = tpVec4r(0.0,0.0,0.0,1.0);
 	m_shininess = 0.0f; // max 128 / 2
-	
+
 }
 
 
@@ -48,22 +48,20 @@ tpMaterial::tpMaterial(const tpMaterial& node)
 tpObject* tpMaterial::clone()
 {
 	return new tpMaterial(*this);
-};
+}
 
 tpMaterial& tpMaterial::operator = (const tpMaterial& mat)
 {
 	this->m_ambientcolor = mat.m_ambientcolor;
 	this->m_diffusecolor = mat.m_diffusecolor;
-	this->m_emissivecolor = mat.m_emissivecolor;	
+	this->m_emissivecolor = mat.m_emissivecolor;
 	this->m_specularcolor = mat.m_specularcolor;
 
 	this->m_transparency = mat.m_transparency;
 	this->m_shininess = mat.m_shininess;
 
 	return *this;
-};
-
-
+}
 
 
 TP_TYPE_REGISTER(tpMaterial,tpObject,Material);

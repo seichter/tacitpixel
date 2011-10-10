@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,17 @@
 #include "tp/module.h"
 #include "tp/log.h"
 
+
+TP_TYPE_REGISTER(tpRenderer,tpReferenced,Renderer);
+
 tpRenderer::tpRenderer()
+	: tpReferenced()
+	, mActiveCamera(0)
+{
+}
+
+tpRenderer::tpRenderer(const tpRenderer& other)
+	: tpReferenced()
 {
 }
 
@@ -35,25 +45,74 @@ tpRenderer::~tpRenderer()
 {
 }
 
+tpRenderer & tpRenderer::operator =(const tpRenderer &rhs)
+{
+	if (this != &rhs) {
+		mCameras = rhs.mCameras;
+		mActiveCamera = rhs.mActiveCamera;
+	}
 
-tpRenderer* tpRenderer::create( tpUInt backend )
+	return *this;
+}
+
+
+tpCamera * tpRenderer::getActiveCamera()
+{
+	if (mCameras.isEmpty())
+	{
+		tpCamera* camera = new tpCamera();
+
+		camera->setProjectionPerspective(60.0f,1.3f,0.1f,1000.0f);
+		camera->setViewLookAt(tpVec3r(0,0,1),tpVec3r(0,0,0),tpVec3r(0,1,0));
+
+		addCamera(camera,true);
+	}
+
+	return mCameras[mActiveCamera].get();
+}
+
+void
+tpRenderer::setActiveCamera(tpUInt camera)
+{
+	if (camera < mCameras.getSize())
+	{
+		mActiveCamera = camera;
+	}
+}
+
+
+void
+tpRenderer::addCamera(tpCamera *camera,
+						   bool makeActive /*= true*/)
+{
+	if (makeActive) mActiveCamera = mCameras.getSize();
+	mCameras.add(camera);
+}
+
+void
+tpRenderer::removeCamera(tpCamera *camera)
+{
+	mCameras.erase(mCameras.find(camera));
+}
+
+tpRenderer* tpRenderer::create( const tpRendererTraits& traits )
 {
 
 	tpRenderer* renderer = 0;
 
 	//tpLogNotify("%s has %d module(s)",__FUNCTION__, tpModuleManager::instance()->getModules().getSize());
 
-	
+
 	tpModuleList modules = tpModuleManager::get()->getModules();
 
 	for (tpUInt i = 0; i < modules.getSize(); i++)
-	{		
+	{
 		tpRefPtr<tpReferenced> item = modules[i];
 
-		if (item->getType()->isOfType(tpRenderer::getTypeInfo())) 
+		if (item->getType()->isOfType(tpRenderer::getTypeInfo()))
 		{
 			renderer = static_cast<tpRenderer*>(item.get());
-			if ( renderer && renderer->implementsBackend() == backend )
+			if ( renderer->getTraits() = traits )
 			{
 				tpLogNotify( "%s loaded %s",__FUNCTION__, item->getType()->getName());
 
@@ -63,15 +122,13 @@ tpRenderer* tpRenderer::create( tpUInt backend )
 
 				renderer = 0;
 			}
-			
-		}
 
-	} 
+		}
+	}
 
 	return renderer;
-		
 }
 
 
-TP_TYPE_REGISTER(tpRenderer,tpReferenced,Renderer);
+
 

@@ -22,39 +22,26 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+#ifndef TP_ARGUMENTS_H
+#define TP_ARGUMENTS_H 1
 
-#include <tp/camera.h>
-#include <tp/matop.h>
+#include <tp/array.h>
+#include <tp/string.h>
 
-tpCamera::tpCamera() : tpReferenced()
-{
-	m_projection.identity();
-	m_view.identity();
-	update();
-}
+class TP_API tpArguments {
+public:
 
-void tpCamera::setViewLookAt( const tpVec3r& eye, const tpVec3r& target, const tpVec3r& up )
-{
-	tpMat44Op::lookAt(eye,target,up,m_view);
-	m_view.transpose();
-	update();
-}
+	explicit tpArguments(int *argc, char* argv[]);
 
-void tpCamera::setProjectionPerspective( const tpReal& fov, const tpReal& aspect, const tpReal& n, const tpReal& f )
-{
-	tpMat44Op::perspective(fov,aspect,n,f,m_projection);
-}
+	bool get(const tpString &param) const;
+	bool get(const tpString &param, tpString &value) const;
 
-void tpCamera::setProjectionFrustum( const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f )
-{
-	tpMat44Op::frustum(l,r,b,t,n,f,m_projection);
-}
+	const tpStringArray& get() const { return mArguments; }
 
-void tpCamera::update()
-{
-	m_view.getInverse(m_view_inverse);
-}
+protected:
 
-TP_TYPE_REGISTER(tpCamera,tpReferenced,Camera);
+	tpStringArray mArguments;
 
+};
 
+#endif

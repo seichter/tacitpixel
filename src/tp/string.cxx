@@ -36,17 +36,16 @@
 //
 tpString::tpString()
 {
-	this->empty();
 }
 
-tpString::tpString(const char* str, tpUShort encoding /* tpString::ASCII */) : mEncoding(encoding)
+tpString::tpString(const char* str)
 {
-	set( str, encoding, encoding );
+	set( str, tpStrLen(str) );
 }
 
 tpString::tpString(const tpString& str)
 {
-	set( str.c_str() );
+	if (str.getLength()) set( str.c_str() );
 }
 
 
@@ -57,41 +56,38 @@ tpString::~tpString()
 //////////////////////////////////////////////////////////////////////////
 
 tpString&
-tpString::set( const char* buffer, tpSizeT size, tpUByte encoding )
+tpString::set( const char* buffer, tpSizeT size )
 {
-	_assign(buffer);
-	_truncate(size);
+	if (buffer && size)
+	{
+		_assign(buffer);
+		_truncate(size);
+	}
 	return *this;
 }
 
 tpString&
-tpString::set( const char* str, tpUByte encoding )
+tpString::set( const char* str )
 {
 	_assign(str);
-
 	return *this;
 }
 
 
 tpString&
-tpString::_assign(const char* str, tpUByte encoding /* = ASCII*/)
+tpString::_assign(const char* str )
 {
-	tpUInt len = tpStrLen(str);
-
-	if (len)
+	if (str)
 	{
-		mBuffer.reserve<char>(len + 1);
-		memcpy(mBuffer.getData(),str,len + 1);
+		mBuffer.copy(str,tpStrLen(str)+1,0);
 	} else {
-		empty();
+		_truncate(0);
 	}
-
-
 	return *this;
 }
 
 tpString&
-tpString::_append(const char* str, tpUByte encoding /* = ASCII */)
+tpString::_append(const char* str )
 {
 	tpSizeT input_length = tpStrLen(str);
 
@@ -101,11 +97,11 @@ tpString::_append(const char* str, tpUByte encoding /* = ASCII */)
 
 		input_length++;
 
-		mBuffer.reserve<char>(local_length + input_length);
+		mBuffer.resize(local_length + input_length);
 
 		for (tpSizeT i = 0; i < input_length; ++i)
 		{
-			mBuffer.at<char>(i + local_length) = str[i];
+			mBuffer[i + local_length] = str[i];
 		}
 	}
 
@@ -115,9 +111,9 @@ tpString::_append(const char* str, tpUByte encoding /* = ASCII */)
 tpString&
 tpString::_truncate(tpSizeT pos)
 {
-	if (pos && pos > getLength())
+	if (pos < mBuffer.getSize())
 	{
-		mBuffer.at<char>(pos) = '\0';
+		mBuffer[pos] = '\0';
 	}
 
 	return *this;
@@ -133,9 +129,9 @@ tpString::truncate( tpSizeT pos )
 //////////////////////////////////////////////////////////////////////////
 
 tpString&
-tpString::subst( const tpChar& c, const tpChar& substc )
+tpString::substitute( const tpChar& c, const tpChar& substc )
 {
-	tpChar* cptr =  mBuffer.ptr<tpChar>();
+	tpChar* cptr =  this->c_str();
 	for (tpSizeT i = 0; i < getLength();i++)
 	{
 		if (*cptr == c) *cptr = substc; cptr++;
@@ -153,7 +149,8 @@ tpString::isEmpty() const
 void
 tpString::empty()
 {
-	mBuffer.empty();
+	mBuffer.clear();
+	if (mBuffer.getSize()) mBuffer[0] = '\0';
 }
 
 void
@@ -169,13 +166,13 @@ tpString::toPascal( char** buffer ) const
 tpSizeT
 tpString::getLength() const
 {
-	return tpStrLen(mBuffer.ptr<char>());
+	return (mBuffer.getSize()) ? tpStrLen(c_str()) : 0;
 }
 
 tpString&
 tpString::append(const tpString& other)
 {
-	return _append( other.c_str(), other.mEncoding );
+	return _append( other.c_str() );
 }
 
 tpString&
@@ -689,4 +686,12 @@ tpString::format(const char *format, ... )
 	va_end(argptr);
 
 	return tpString(buffer.getData());
+}
+
+tpString
+tpString::substr(tpSizeT pos, tpSizeT len) const
+{
+	tpString result;
+	result.set(&this->at(pos),len);
+	return result;
 }

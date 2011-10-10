@@ -11,8 +11,9 @@
 */
 
 
-#include <tp/imagehandler.h>
 #include <tp/image.h>
+#include <tp/imagehandler.h>
+#include <tp/pixelformat.h>
 
 #include <tp/log.h>
 #include <tp/module.h>
@@ -57,6 +58,9 @@ tpImageHandler_PNG::getCapability( tpUInt capability,const tpString& name )
 		return name.afterLast('.') == "png";
 		break;
 	}
+
+	tpLogNotify("PNG support can't read %s",name.c_str());
+
 	return false;
 }
 
@@ -72,11 +76,7 @@ tpImageHandler_PNG::read( const tpString& name )
 	png_byte header[8];
 
 	tpFile file;
-	file.open(name,"rb");
-
-	if (file.getState() != file.isGood()) return 0;
-
-	tpLogNotify("reading PNG file");
+	if (!file.open(name,"rb")) return 0;
 
 	FILE* fp = (FILE*)file.getHandle();
 
@@ -93,8 +93,6 @@ tpImageHandler_PNG::read( const tpString& name )
 	info_ptr = png_create_info_struct(png_ptr);
 	if (!info_ptr) return 0;
 
-	if (setjmp(png_jmpbuf(png_ptr))) return 0;
-
 	png_init_io(png_ptr, fp);
 	png_set_sig_bytes(png_ptr, 8);
 
@@ -108,32 +106,33 @@ tpImageHandler_PNG::read( const tpString& name )
 	number_of_passes = png_set_interlace_handling(png_ptr);
 	png_read_update_info(png_ptr, info_ptr);
 
-	/* read file */
-	if (setjmp(png_jmpbuf(png_ptr))) return 0;
-
 	row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * height);
 	for (int y=0; y<height; y++)
 		  row_pointers[y] = (png_byte*) malloc(png_get_rowbytes(png_ptr,info_ptr));
 
 	png_read_image(png_ptr, row_pointers);
 
-	//fclose(fp);
 	tpRefPtr<tpImage> image = new tpImage();
 
 	switch(png_get_color_type(png_ptr, info_ptr))
 	{
 	case PNG_COLOR_TYPE_RGB:
-		image->allocate(width,height,tpPixelFormat::kRGB888);
-		memcpy(image->getData(),row_pointers,image->getDataSize());
+		image->allocate(width,height,tpPixelFormat::kRGB_888);
+		image->assign(row_pointers[0]);
 		break;
 	case PNG_COLOR_TYPE_RGBA:
-		image->allocate(width,height,tpPixelFormat::kRGBA8888);
-		memcpy(image->getData(),row_pointers,image->getDataSize());
+		image->allocate(width,height,tpPixelFormat::kRGBA_8888);
+		image->assign(row_pointers[0]);
+		break;
+	case PNG_COLOR_TYPE_GRAY:
+		image->allocate(width,height,tpPixelFormat::kGray_8);
+		image->assign(row_pointers[0]);
 		break;
 	default:
 		image = 0;
 		break;
 	}
+
 	return image.release();
 }
 
@@ -144,42 +143,29 @@ tpImageHandler_PNG::write(const tpImage* img, const tpString& name)
 	/* create file */
 	FILE *fp = fopen(name.c_str(), "wb");
 	if (!fp) return false;
-			//abort_("[write_png_file] File %s could not be opened for writing", file_name);
-
-	png_infop info_ptr;
-	int number_of_passes;
-	png_bytep * row_pointers;
 
 	/* initialize stuff */
 	png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-
-	if (!png_ptr) return false;
-			// abort_("[write_png_file] png_create_write_struct failed");
-
-	info_ptr = png_create_info_struct(png_ptr);
-	if (!info_ptr) return false;
-			//abort_("[write_png_file] png_create_info_struct failed");
-
-	if (setjmp(png_jmpbuf(png_ptr))) return false;
-			//abort_("[write_png_file] Error during init_io");
-
+	png_infop info_ptr = png_create_info_struct(png_ptr);
 	png_init_io(png_ptr, fp);
 
-
-	/* write header */
-	if (setjmp(png_jmpbuf(png_ptr))) return false;
-			//abort_("[write_png_file] Error during writing header");
-
-
-	int bit_depth = tpPixelFormat::getBitsPerPixel(img->getPixelFormat());
-	int color_type = 0;
+	int bit_depth = 8; // in libpng bit_depths is per channel
+	png_byte color_type = 0;
 
 	switch (img->getPixelFormat())
 	{
-	case tpPixelFormat::kRGB888:
+	case tpPixelFormat::kGray_8:
+		color_type=PNG_COLOR_TYPE_GRAY;
+		break;
+	case tpPixelFormat::kRGB_888:
 		color_type=PNG_COLOR_TYPE_RGB;
 		break;
+	case tpPixelFormat::kRGBA_8888:
+		color_type=PNG_COLOR_TYPE_RGB_ALPHA;
+		break;
 	}
+
+	tpLogNotify("PNG %d bits %dx%d",bit_depth,img->getWidth(),img->getHeight());
 
 	png_set_IHDR(png_ptr, info_ptr, img->getWidth(), img->getHeight(),
 				 bit_depth, color_type, PNG_INTERLACE_NONE,
@@ -187,32 +173,17 @@ tpImageHandler_PNG::write(const tpImage* img, const tpString& name)
 
 	png_write_info(png_ptr, info_ptr);
 
+	png_bytep img_ptr = (png_bytep)img->getData();
 
-	/* write bytes */
-	if (setjmp(png_jmpbuf(png_ptr))) return false;
-			//abort_("[write_png_file] Error during writing bytes");
-
-	png_bytepp img_ptr = static_cast<png_bytepp>(const_cast<void*>(img->getData()));
-	png_write_image(png_ptr, img_ptr );
-
-
-	/* end write */
-	if (setjmp(png_jmpbuf(png_ptr))) return false;
-			//abort_("[write_png_file] Error during end of write");
-
+	png_write_image(png_ptr, &img_ptr );
 	png_write_end(png_ptr, NULL);
-
-//	/* cleanup heap allocation */
-//	for (int y=0; y<img->getHeight(); y++)
-//			free(row_pointers[y]);
-//	free(row_pointers);
 
 	fclose(fp);
 
 	return false;
 }
 
-TP_TYPE_REGISTER(tpImageHandler_PNG,tpImageHandler,ImageFactoryNull);
+TP_TYPE_REGISTER(tpImageHandler_PNG,tpImageHandler,ImageFactoryPNG);
 
 tpModuleInitializer<tpImageHandler_PNG> g_imagefactory_png;
 

@@ -23,38 +23,46 @@
  * SUCH DAMAGE.
  */
 
-#include <tp/camera.h>
-#include <tp/matop.h>
+#ifndef TP_STRINGTOKENIZER_H
+#define TP_STRINGTOKENIZER_H 1
 
-tpCamera::tpCamera() : tpReferenced()
+#include <tp/string.h>
+
+
+class TP_API tpStringTokenizer
 {
-	m_projection.identity();
-	m_view.identity();
-	update();
-}
+	tpString mCopy;
+	tpString mDelim;
 
-void tpCamera::setViewLookAt( const tpVec3r& eye, const tpVec3r& target, const tpVec3r& up )
-{
-	tpMat44Op::lookAt(eye,target,up,m_view);
-	m_view.transpose();
-	update();
-}
+public:
 
-void tpCamera::setProjectionPerspective( const tpReal& fov, const tpReal& aspect, const tpReal& n, const tpReal& f )
-{
-	tpMat44Op::perspective(fov,aspect,n,f,m_projection);
-}
+	tpStringTokenizer(const tpString& str, const tpString& delim)
+		: mCopy(str)
+		, mDelim(delim)
+	{
+	}
 
-void tpCamera::setProjectionFrustum( const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f )
-{
-	tpMat44Op::frustum(l,r,b,t,n,f,m_projection);
-}
+	tpString next()
+	{
+		tpString res;
+		tpInt pos = mCopy.find(*mDelim.c_str(),false);
 
-void tpCamera::update()
-{
-	m_view.getInverse(m_view_inverse);
-}
+		if (pos > tpString::kNotFound)
+		{
+			res = mCopy.substr(0,pos);
+			mCopy = mCopy.substr( pos + mDelim.getLength(), mCopy.getLength() - pos - mDelim.getLength() );
+		} else {
+			res = mCopy;
+			mCopy.empty();
+		}
 
-TP_TYPE_REGISTER(tpCamera,tpReferenced,Camera);
+		return res;
+	}
 
+	bool finished() const
+	{
+		return (0 == mCopy.getLength());
+	}
+};
 
+#endif

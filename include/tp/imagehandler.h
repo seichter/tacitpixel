@@ -27,6 +27,7 @@
 #define TP_IMAGEHANDLER_H 1
 
 
+#include <tp/rtti.h>
 #include <tp/referenced.h>
 #include <tp/string.h>
 

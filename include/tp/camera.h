@@ -83,6 +83,8 @@ public:
 
 protected:
 
+	void update();
+
 	tpUShort m_clearflags;
 	tpVec4f m_clearcolor;
 	tpVec4i m_viewport;

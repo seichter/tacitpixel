@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,13 +30,16 @@
 #include <tp/referenced.h>
 #include <tp/array.h>
 #include <tp/refptr.h>
+#include <tp/library.h>
+#include <tp/string.h>
 
 typedef tpArray< tpRefPtr< tpReferenced > > tpModuleList;
+typedef tpArray< tpRefPtr< tpLibrary > > tpRefLibraryArray;
 
 /**
  * \class tpModuleManager
  *
- * tpModuleManager is the big grand central for fetching external 
+ * tpModuleManager is the big grand central for fetching external
  * modules for Twisted Pair
  */
 class TP_API tpModuleManager : public tpReferenced {
@@ -48,15 +51,22 @@ protected:
 
 	tpModuleList m_modules;
 
+	tpRefLibraryArray mLibraries;
+
 public:
 
 	void add(tpReferenced* module);
 
 	void remove(tpReferenced* module );
 
-	const tpModuleList& getModules() const;	
+	const tpModuleList& getModules() const;
+
+	void load(const tpString& list);
 
 	static tpModuleManager* get(bool destroy = false);
+
+	void purge();
+
 };
 
 template <class T> class tpModuleInitializer {
@@ -82,22 +92,22 @@ protected:
 
 extern "C"
 {
-    typedef void (*tpModuleFunction)();
+	typedef void (*tpModuleFunction)();
 }
 
 struct tpModuleFunctionProxy
 {
-    tpModuleFunctionProxy(tpModuleFunction f) { f(); }
+	tpModuleFunctionProxy(tpModuleFunction f) { f(); }
 };
 
 #define TP_MODULE_USE(name) \
-    extern "C" void tpModule_##name(void); \
-    static tpModuleFunctionProxy tpModuleProxy_##name(&tpModule_##name);
+	extern "C" void tpModule_##name(void); \
+	static tpModuleFunctionProxy tpModuleProxy_##name(&tpModule_##name);
 
 #define TP_MODULE_REGISTER(name,klass) \
-    extern "C" void tpModule_##name(void) {} \
-    static tpModuleInitializer<klass> gs_module_##klass;
+	extern "C" void tpModule_##name(void) {} \
+	static tpModuleInitializer<klass> gs_module_##klass;
 
 #endif
 
- 
+

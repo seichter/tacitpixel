@@ -3,8 +3,11 @@
 
 #include <tp/node.h>
 #include <tp/stack.h>
+#include <tp/map.h>
+#include <tp/mat.h>
 
 typedef tpStack<tpNode*> tpNodeStack;
+typedef tpMap<tpNode*,tpMat44r> tpNodeMatrixMap;
 
 /**
   * This implements some essential traversal techniques that
@@ -43,6 +46,8 @@ struct tpNodeOps {
 	  * @param array of all nodes and their pathes to the root
 	  */
 	static tpNodeArrayArray getNodePathsOfType(const tpNode *node, const tpRTTI *rtti);
+
+	static tpNodeMatrixMap getNodeMatrixMap(const tpNode *node, const tpRTTI *rtti);
 };
 
 

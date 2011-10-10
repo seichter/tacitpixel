@@ -51,7 +51,8 @@ public:
 	/*! Check if this class has been inherited from another class
 		\param parent check if this is a child (inherited) class
 	 */
-	inline bool isOfType(const tpRTTI* query) const
+	inline bool
+	isOfType(const tpRTTI* query) const
 	{
 		const tpRTTI* iter = this;
 		while (iter)

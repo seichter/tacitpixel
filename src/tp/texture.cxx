@@ -73,7 +73,7 @@ tpUByte tpTexture::getSupportedTextureFormat( bool needalpha )
 	return tpPixelFormat::kRGB565;
 #endif
 	
-	return (needalpha) ? tpPixelFormat::kBGRA8888 : tpPixelFormat::kRGB888;
+	return (needalpha) ? tpPixelFormat::kBGRA_8888 : tpPixelFormat::kRGB_888;
 
 }
 

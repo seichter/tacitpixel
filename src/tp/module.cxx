@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,12 +25,15 @@
 
 #include <tp/module.h>
 #include <tp/log.h>
+#include <tp/stringtokenizer.h>
+#include <tp/library.h>
 
 tpModuleManager::tpModuleManager() : tpReferenced() {
 }
-	
+
 tpModuleManager::~tpModuleManager()
 {
+	this->purge();
 }
 
 tpModuleManager* tpModuleManager::get( bool destroy )
@@ -38,7 +41,7 @@ tpModuleManager* tpModuleManager::get( bool destroy )
 	static tpRefPtr<tpModuleManager> s_modulemanager( (destroy) ? 0L : new tpModuleManager() );
 
 	return s_modulemanager.get();
-} 
+}
 
 tpVoid tpModuleManager::add( tpReferenced* module )
 {
@@ -49,7 +52,7 @@ tpVoid tpModuleManager::add( tpReferenced* module )
 tpVoid tpModuleManager::remove( tpReferenced* module )
 {
 	// we need to find the module and delete our own
-	// reference to it. This forces the module 
+	// reference to it. This forces the module
 	// to be deleted in the correct context
 	tpSizeT idx = m_modules.find(module);
 	m_modules[idx] = 0;
@@ -60,6 +63,28 @@ tpVoid tpModuleManager::remove( tpReferenced* module )
 const tpModuleList& tpModuleManager::getModules() const
 {
 	return m_modules;
+}
+
+void tpModuleManager::load(const tpString &list)
+{
+	tpStringTokenizer tkz(list,",");
+
+	while (!tkz.finished()) {
+		tpString name = "tacit_" + tkz.next();
+		tpLogNotify("token: %s",name.c_str());
+		//tpRefPtr<tpLibrary> lib = tpLibrary::load(name);
+		//if (lib.isValid()) mLibraries.add(lib.get());
+	}
+}
+
+void tpModuleManager::purge()
+{
+	for (tpRefLibraryArray::iterator i = mLibraries.begin();
+		 i != mLibraries.end();
+		 ++i)
+	{
+		(*i) = 0;
+	}
 }
 
 

@@ -129,8 +129,8 @@ tpImage* tpImageHandler_BMP::read( const tpString& name )
 	fclose(_file);
 
 	tpImage* img = new tpImage();
-	img->allocate(width,height,tpPixelFormat::kRGB888);
-	img->copy(buffer);
+	img->allocate(width,height,tpPixelFormat::kRGB_888);
+	img->assign(buffer);
 
 	free(buffer);
 

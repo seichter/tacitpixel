@@ -53,99 +53,52 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
-
-class tpCallbackAdapter : public tpReferenced {
-public:
-	tpCallbackAdapter() {}
-
-protected:
-	virtual ~tpCallbackAdapter() {};
-};
-
-class tpMouseAdapter : public tpCallbackAdapter {
-public:
-
-	tpMouseAdapter() {};
+struct tpRenderSurfaceCallbacks {
 
 	virtual void onMouseMotion( tpInt& x, tpInt& y, tpUByte& button, tpUByte& pressed ) {};
 
 	virtual void onMouseWheel( tpInt& x_dir, tpInt& y_dir ) {};
 
-protected:
-
-	virtual ~tpMouseAdapter() {};
 };
 
 
+class TP_API tpRenderContext : public tpReferenced  {
+public:
+
+	TP_TYPE_DECLARE;
+
+	tpRenderContext();
+
+	virtual bool makeCurrent() = 0;
+	virtual bool swapBuffers() = 0;
+
+};
+
 //////////////////////////////////////////////////////////////////////////
 
-class tpRenderer;
-class tpNode;
-class tpCamera;
-
-class TP_API tpRenderSurface : public tpReferenced {
+class TP_API tpRenderSurface : public tpRenderContext {
 public:
 
 	TP_TYPE_DECLARE;
 
 	static tpRenderSurface* create( tpRenderSurfaceTraits* traits = 0);
 
-
-	virtual bool makeCurrent() = 0;
-	virtual bool swapBuffers() = 0;
 	virtual bool show(bool doShow) = 0;
-
-	virtual void frame();
 
 	virtual tpString getName() const;
 
-	virtual tpRenderer* createDefaultRenderer() const;
+	virtual void setCaption(const tpString& ) {};
 
+	void setDone(bool isDone = true) { mDone = isDone; }
 
-	virtual void setCaption(const tpString& caption) {};
-
-
-	void setRenderer(tpRenderer* renderer);
-
-	tpRenderer* getRenderer();
-
-	const tpRenderer* getRenderer() const;
-
-
-	void setSceneNode(tpNode* node);
-
-	tpNode* getSceneNode();
-
-	const tpNode* getSceneNode() const;
-
-
-	void setCamera(tpCamera* camera);
-
-	tpCamera* getCamera();
-
-	const tpCamera* getCamera() const;
-
-	void setDone(bool isDone = true);
-
-	bool isDone() const;
-
-
-	void setMouseAdapter(tpMouseAdapter* mouseadapter);
-
-	tpMouseAdapter* getMouseAdapter();
-
+	bool isDone() const { return mDone; }
 
 protected:
 
+	tpRenderSurface();
 	tpRenderSurface( tpRenderSurfaceTraits* traits );
 
-	tpRefPtr<tpRenderer> m_renderer;
-	tpRefPtr<tpNode> m_root;
-	tpRefPtr<tpCamera> m_camera;
-
-	bool m_done;
-
-	tpRefPtr<tpMouseAdapter> m_mouseadapter;
+	bool mDone;
 
 	virtual ~tpRenderSurface();
 };

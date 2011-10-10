@@ -121,4 +121,16 @@ struct tpScopeLogLevel
 	}
 };
 
+template <tpUShort level>
+struct tpScopeLog {
+	const char* info;
+	explicit tpScopeLog(const char* i) : info(i) {
+		tpLog::get().log(level,info);
+	}
+
+	~tpScopeLog() {
+		tpLog::get().log(level,info);
+	}
+};
+
 #endif

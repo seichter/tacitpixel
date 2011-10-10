@@ -126,7 +126,7 @@ public:
 	 *
 	 * @param ptr pointer to memory to be copied from
 	 */
-	void copy(const void* ptr);
+	void assign(const void* ptr);
 
 protected:
 

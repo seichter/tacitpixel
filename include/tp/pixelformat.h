@@ -30,16 +30,16 @@
 struct tpPixelFormat {
 
 	enum {
-		kRGB888,
-		kBGR888,
-		kRGBA8888,
-		kBGRA8888,
-		kRGB565,
-		kBGR565,
-		kRGB555,
-		kBGR555,
-		kGREY8,
-		kYUV420
+		kRGB_888,
+		kBGR_888,
+		kRGBA_8888,
+		kBGRA_8888,
+		kRGB_565,
+		kBGR_565,
+		kRGB_555,
+		kBGR_555,
+		kGray_8,
+		kYUV_420
 	};
 
 	inline static
@@ -47,18 +47,18 @@ struct tpPixelFormat {
 	{
 		switch (format)
 		{
-			case kRGB888:
-			case kBGR888:
+			case kRGB_888:
+			case kBGR_888:
 				return 24;
-			case kRGBA8888:
-			case kBGRA8888:
+			case kRGBA_8888:
+			case kBGRA_8888:
 				return 32;
-			case kYUV420:
+			case kYUV_420:
 				return 12;
-			case kRGB565:
-			case kRGB555:
+			case kRGB_565:
+			case kRGB_555:
 				return 16;
-			case kGREY8:
+			case kGray_8:
 				return 8;
 			default:
 				break;

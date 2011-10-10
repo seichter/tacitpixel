@@ -43,11 +43,11 @@ tpImage* tpJPEGLoader(const tpString& filename)
     
     jpeg_start_decompress ( &cinfo );
     
-	tpUShort pix_format = tpPixelFormat::kRGB888;
+	tpUShort pix_format = tpPixelFormat::kRGB_888;
 
 	tpImage* img = new tpImage();
 	//img->create(0,cinfo.image_width,cinfo.image_height,TP_RGB);
-	img->allocate(cinfo.image_width,cinfo.image_height, tpPixelFormat::kRGB888);
+	img->allocate(cinfo.image_width,cinfo.image_height, tpPixelFormat::kRGB_888);
         
     _imgsize = cinfo.image_width * cinfo.image_height * 3;
        
@@ -111,25 +111,25 @@ bool tpJPEGLoader_Save(const tpString& filename,const tpImage* img)
 			
 		switch (img->getPixelFormat())
 		{
-			case tpPixelFormat::kRGB888:
+			case tpPixelFormat::kRGB_888:
 				stride = cinfo.image_width * 3;
 				cinfo.input_components = 3;              //Color components per pixel
 		        cinfo.in_color_space   = JCS_RGB;      //Colorspace of input image
 				break;
 				
-			case tpPixelFormat::kRGBA8888:
+			case tpPixelFormat::kRGBA_8888:
 				stride = cinfo.image_width * 4;
 				cinfo.input_components = 4;              //Color components per pixel
-		        cinfo.in_color_space   = JCS_RGB;        //Colorspace of input image
+				cinfo.in_color_space   = JCS_RGB;        //Colorspace of input image
 				break;
 
-			case tpPixelFormat::kGREY8:
+			case tpPixelFormat::kGray_8:
 				stride = cinfo.image_width;
 				cinfo.input_components = 1;              //Color components per pixel
 		        cinfo.in_color_space   = JCS_GRAYSCALE;      //Colorspace of input image
 				break;
 		
-			case tpPixelFormat::kYUV420:
+			case tpPixelFormat::kYUV_420:
 				stride = cinfo.image_width * 3;
 				cinfo.input_components = 2;              //Color components per pixel
 		        cinfo.in_color_space   = JCS_YCbCr;      //Colorspace of input image

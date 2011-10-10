@@ -61,6 +61,12 @@ public:
 };
 
 
+struct tpAttributeStorage {
+	tpSizedChunk mStorage;
+	tpArray<tpUShort> mOffsets;
+	tpArray<tpSizeT> mSizes;
+};
+
 class TP_API tpAttributeBuffer : public tpReferenced
 {
 	tpArrayr mAttributes;
