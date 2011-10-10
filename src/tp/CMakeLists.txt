@@ -58,8 +58,10 @@ set(tp_hdrs
 	${tp_include_path}/tp/rs232.h
 	${tp_include_path}/tp/rtti.h
 	${tp_include_path}/tp/socket.h
+	${tp_include_path}/tp/sort.h
 	${tp_include_path}/tp/scopeptr.h
 	${tp_include_path}/tp/stack.h
+	${tp_include_path}/tp/stream.h
 	${tp_include_path}/tp/string.h
 	${tp_include_path}/tp/stringtokenizer.h
 	${tp_include_path}/tp/stringformater.h
