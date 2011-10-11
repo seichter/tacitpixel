@@ -1,8 +1,27 @@
 set(module_name tacit_png)
 
+
+find_package(PNG)
+
+set(module_libs)
+
+if(PNG_FOUND)
+	# if we found a implementation use it
+	option(TP_USE_SYSTEM_PNG ON)
+	if (TP_USE_SYSTEM_PNG)
+		include_directories(${PNG_INCLUDE_DIR})
+		set(module_libs ${PNG_LIBRARIES})
+	endif()
+else()
+	# otherwise skip it
+	include_directories(
+		${CMAKE_SOURCE_DIR}/src/tp/_thirdparty/zlib
+		${CMAKE_SOURCE_DIR}/src/tp/_thirdparty/libpng
+		)
+	set(module_libs png z)
+endif()
+
 include_directories(
-	${CMAKE_SOURCE_DIR}/src/tp/_thirdparty/zlib
-	${CMAKE_SOURCE_DIR}/src/tp/_thirdparty/libpng
 	${CMAKE_SOURCE_DIR}/include
 	${CMAKE_SOURCE_DIR}/src/_ext
 	${CMAKE_CURRENT_SOURCE_DIR}
@@ -30,7 +49,7 @@ set_target_properties(${module_name}
 	
 	
 target_link_libraries(${module_name}
-	tacit png z
+	tacit ${module_libs}
 	)
 	
 if(APPLE)
