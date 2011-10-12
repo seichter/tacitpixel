@@ -11,7 +11,7 @@
 
 // need to force C linking
 extern "C" {
-#include "libjpeg/jpeglib.h"
+#include "jpeglib.h"
 };
 
 
@@ -119,7 +119,7 @@ bool tpJPEGLoader_Save(const tpString& filename,const tpImage* img)
 				
 			case tpPixelFormat::kRGBA_8888:
 				stride = cinfo.image_width * 4;
-				cinfo.input_components = 4;              //Color components per pixel
+				cinfo.input_components = 3;              //Color components per pixel
 				cinfo.in_color_space   = JCS_RGB;        //Colorspace of input image
 				break;
 
@@ -170,7 +170,7 @@ public:
 
 	tpImageFactoryJPEG() : tpImageHandler() 
 	{
-		tpLogNotify("%s JPEG image support",tpGetVersionString());
+		tpLogNotify("%s JPEG image support (libjpeg %d)",tpGetVersionString(),JPEG_LIB_VERSION);
 	}
 
 	bool getCapability(tpUInt capability,const tpString& name)

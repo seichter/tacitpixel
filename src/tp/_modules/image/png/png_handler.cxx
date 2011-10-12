@@ -110,6 +110,9 @@ tpImageHandler_PNG::read( const tpString& name )
 	for (int y=0; y<height; y++)
 		  row_pointers[y] = (png_byte*) malloc(png_get_rowbytes(png_ptr,info_ptr));
 
+
+	tpLogNotify("PNG row stride %d",png_get_rowbytes(png_ptr,info_ptr));
+
 	png_read_image(png_ptr, row_pointers);
 
 	tpRefPtr<tpImage> image = new tpImage();
@@ -122,7 +125,7 @@ tpImageHandler_PNG::read( const tpString& name )
 		break;
 	case PNG_COLOR_TYPE_RGBA:
 		image->allocate(width,height,tpPixelFormat::kRGBA_8888);
-		image->assign(row_pointers[0]);
+		image->assign(&row_pointers[0]);
 		break;
 	case PNG_COLOR_TYPE_GRAY:
 		image->allocate(width,height,tpPixelFormat::kGray_8);
@@ -165,18 +168,32 @@ tpImageHandler_PNG::write(const tpImage* img, const tpString& name)
 		break;
 	}
 
-	tpLogNotify("PNG %d bits %dx%d",bit_depth,img->getWidth(),img->getHeight());
+	tpLogNotify("PNG %dx%d@%d",img->getWidth(),img->getHeight(),bit_depth);
+
 
 	png_set_IHDR(png_ptr, info_ptr, img->getWidth(), img->getHeight(),
 				 bit_depth, color_type, PNG_INTERLACE_NONE,
 				 PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
+	png_bytepp row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * img->getHeight());
+	for (int y=0; y<img->getHeight(); y++)
+		  row_pointers[y] = (png_byte*) malloc(png_get_rowbytes(png_ptr,info_ptr));
+
+
+	tpLogNotify("%d == %d",sizeof(png_bytep) * img->getHeight() * img->getHeight(),img->getDataSize());
+
+	//memcpy(row_pointers,img->getData(),img->getDataSize());
+
+
 	png_write_info(png_ptr, info_ptr);
 
 	png_bytep img_ptr = (png_bytep)img->getData();
+	png_write_image(png_ptr, row_pointers );
 
-	png_write_image(png_ptr, &img_ptr );
-	png_write_end(png_ptr, NULL);
+	png_write_end(png_ptr, info_ptr);
+
+	//!wrong
+	free(row_pointers);
 
 	fclose(fp);
 
