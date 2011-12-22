@@ -1,13 +1,24 @@
 set(module_name tacit_jpg)
 
 include_directories(
-	${CMAKE_SOURCE_DIR}/src/tp/_thirdparty/libjpeg
 	${CMAKE_SOURCE_DIR}/include
-	${CMAKE_SOURCE_DIR}/src/_ext
 	${CMAKE_CURRENT_SOURCE_DIR}
 	)
-	
-	
+
+set(module_libs)
+
+option(TP_USE_SYSTEM_JPEG "Use system provided libjpeg" ON)
+find_package(JPEG)
+if(JPEG_FOUND AND ${TP_USE_SYSTEM_JPEG})
+	include_directories( ${JPEG_INCLUDE_DIR} )
+	set(module_libs ${JPEG_LIBRARY})
+	message(STATUS "Using system libjpeg")
+else()
+	include_directories(${CMAKE_SOURCE_DIR}/src/tp/_thirdparty/libjpeg)
+	set(module_libs jpeg)
+endif()
+
+
 if(MSVC)
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
@@ -29,7 +40,7 @@ set_target_properties(${module_name}
 	
 	
 target_link_libraries(${module_name}
-	tacit jpeg
+	tacit ${module_libs}
 	)
 	
 if(APPLE)
