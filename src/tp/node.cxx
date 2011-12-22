@@ -104,12 +104,41 @@ tpNode::removeChild(tpNode* node)
 }
 
 
+void
+tpNode::setUpdateFlags(tpUInt flag,bool add /*= true*/)
+{
+	// transform needs to be promoted downwards
+	if (flag & kUpdateTransform)
+	{
+		for (tpRefNodeArray::iterator i = mChildren.begin();
+			 i != mChildren.end();
+			 ++i)
+		{
+			tpUInt flag = (*i)->getUpdateFlags() | kUpdateTransform;
+			(*i)->setUpdateFlags(flag);
+		}
+	}
+
+	if (flag & kUpdateBound)
+	{
+		for (tpNodeArray::iterator i = mParents.begin();
+			 i != mParents.end();
+			 ++i)
+		{
+			tpUInt flag = (*i)->getUpdateFlags() | kUpdateTransform;
+			(*i)->setUpdateFlags(flag);
+		}
+	}
+}
+
 TP_TYPE_REGISTER(tpNode,tpObject,Node);
 
 
 tpNode* tpNode::read(const tpString& file)
 {
 	tpNode* result(0);
+
+	tpLogNotify("%s %d '%s'",__FUNCTION__,__LINE__,file.c_str());
 
 	if (file.isEmpty()) return 0;
 
@@ -121,7 +150,7 @@ tpNode* tpNode::read(const tpString& file)
 
 		if (item->getType()->isOfType(tpNodeHandler::getTypeInfo()))
 		{
-			//tpLogNotify("%s found %s",__FUNCTION__,item->getType()->getName().c_str());
+			tpLogNotify("%s found %s",__FUNCTION__,item->getType()->getName());
 
 			tpNodeHandler* nf = reinterpret_cast<tpNodeHandler*>(item.get());
 

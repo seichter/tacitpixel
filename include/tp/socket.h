@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
 #include <tp/referenced.h>
 #include <tp/string.h>
 #include <tp/io.h>
+#include <tp/map.h>
 
 #if defined(WIN32) || defined(WINCE)
 	#include <winsock.h>
@@ -93,19 +94,18 @@ public:
 
 
 	//! write to socket
-	virtual int write(void* data,unsigned int datalength) = 0;
+	virtual int write(const void* data,unsigned int datalength) = 0;
 
 	//! read from socket
 	virtual int read(void* data,unsigned int datalength) = 0;
 
 	static tpSocketState sendRaw(tpSocket* socket,
-		void* indata,
+		const void* indata,
 		tpUInt datalength,
 		tpUInt *total);
 
-	void setTimeOut(tpUInt timeout){m_timeout = timeout;};
-
-	tpUInt getTimeOut() const {return m_timeout;};
+	void setTimeOut(tpUInt timeout) {m_timeout = timeout;}
+	tpUInt getTimeOut() const {return m_timeout;}
 
 protected:
 	//! default d'tor
@@ -151,7 +151,7 @@ public:
 
 
 	//! write to the socket
-	virtual int write(void* data,unsigned int datalength);
+	virtual int write(const void* data,unsigned int datalength);
 	//! read from socket
 	virtual int read(void* data,unsigned int datalength);
 
@@ -170,6 +170,8 @@ protected:
 
 };
 
+
+typedef tpMap<tpUInt,tpString> tpReceiverMap;
 
 /*
 	\class tpUDPSocket
@@ -196,25 +198,22 @@ public:
 
 
 	//! write to the peer
-	virtual int write(void* data,unsigned int datalength);
+	virtual int write(const void* data,unsigned int datalength);
 	//! read from peer
 	virtual int read(void* data,unsigned int datalength);
 
 
 	//! send to remote address
-	int sendTo(void *data,unsigned int datalength,
-		const char* remoteaddress, unsigned int remoteport);
+	int send(const void *data,unsigned int datalength,const tpPair<tpUInt,tpString>& receiver);
 
 	//! receive from remote address
-	int receiveFrom(void *data,unsigned int datalength,
-		tpString& remoteaddress, unsigned int &remoteport);
-
-	//! set TTL
-	void setMulticastTTL(unsigned int TTL);
+	int receiveFrom(void *data,unsigned int datalength, tpString& remoteaddress, unsigned int &remoteport);
 
 	//! set broadcast
 	void setBroadcast(const tpString&,unsigned int);
 
+	//! set TTL
+	void setMulticastTTL(unsigned int TTL);
 
 	//! join a multicast group
 	void joinGroup(const tpString& multicastGroup);
@@ -223,8 +222,7 @@ public:
 
 protected:
 
-	tpString m_remoteaddress;
-	tpUInt m_remoteport;
+	tpReceiverMap mReceivers;
 
 };
 

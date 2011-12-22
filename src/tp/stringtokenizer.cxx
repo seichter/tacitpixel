@@ -18,7 +18,7 @@ tpStringTokenizer::next()
 	tpString res;
 	tpInt pos = mCopy.find(*mDelim.c_str(),false);
 
-	if (pos > tpString::kNotFound)
+	if (pos != tpString::kNotFound)
 	{
 		res = mCopy.substr(0,pos);
 		mCopy = mCopy.substr( pos + mDelim.getLength(), mCopy.getLength() - pos - mDelim.getLength() );

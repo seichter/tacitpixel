@@ -53,11 +53,19 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
-struct tpRenderSurfaceCallbacks {
+class tpRenderSurfaceCallback : public tpReferenced {
+public:
 
-	virtual void onMouseMotion( tpInt& x, tpInt& y, tpUByte& button, tpUByte& pressed ) {};
+	enum {
+		kMouseNone,
+		kMouseMove,
+		kMouseUp,
+		kMouseDown
+	};
 
-	virtual void onMouseWheel( tpInt& x_dir, tpInt& y_dir ) {};
+	virtual bool onMouseMotion( const tpInt& h, const tpInt& v) { return false; }
+
+	virtual bool onMouseClick( const tpInt& h, const tpInt& v, const tpUShort& state ) { return false; }
 
 };
 
@@ -93,12 +101,17 @@ public:
 
 	bool isDone() const { return mDone; }
 
+	void setCallback(tpRenderSurfaceCallback* callback) { mCallback = callback; }
+
+	const tpRenderSurfaceCallback* getCallback() const { return mCallback.get(); }
+
 protected:
 
 	tpRenderSurface();
 	tpRenderSurface( tpRenderSurfaceTraits* traits );
 
 	bool mDone;
+	tpRefPtr<tpRenderSurfaceCallback> mCallback;
 
 	virtual ~tpRenderSurface();
 };

@@ -44,10 +44,10 @@ public:
 	TP_TYPE_DECLARE;
 
 	enum {
-		kClearColor = (1 << 0),
-		kClearDepth = (1 << 1),
-		kClearAccum = (1 << 2),
-		kClearStencil = (1 << 3)
+		kClearColor		= (1 << 0),
+		kClearDepth		= (1 << 1),
+		kClearAccum		= (1 << 2),
+		kClearStencil	= (1 << 3)
 	};
 
 	tpCamera();
@@ -62,22 +62,22 @@ public:
 	void setClearFlags(const tpUShort& val) { m_clearflags = val; }
 	bool hasClearFlag(const tpUShort& val) const { return (0 != (m_clearflags & val)); }
 
-	const tpMat44r& getProjection() const { return m_projection; }
-	void setProjection(const tpMat44r& val) { m_projection = val; }
+	const tpMat44r& getProjection() const { return mProjection; }
+	void setProjection(const tpMat44r& val) { mProjection = val; }
 
 
 	void setProjectionOrtho(const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f ) {
-		tpMat44Op::ortho(l,r,b,t,n,f,m_projection);
+		tpMat44Op::ortho(l,r,b,t,n,f,mProjection);
 	}
 
 	void setProjectionFrustum(const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f );
 
 	void setProjectionPerspective(const tpReal& fov, const tpReal& aspect, const tpReal& n, const tpReal& f );
 
-	const tpMat44r& getView() const { return m_view; }
-	void setView(const tpMat44r& val) { m_view = val; m_view.getInverse(m_view_inverse); }
+	const tpMat44r& getView() const { return mView; }
+	void setView(const tpMat44r& val) { mView = val; update(); }
 
-	tpMat44r getViewInverse() const { return m_view_inverse; }
+	tpMat44r getViewInverse() const { return mViewInverse; }
 
 	void setViewLookAt(const tpVec3r& eye, const tpVec3r& target, const tpVec3r& up);
 
@@ -89,9 +89,9 @@ protected:
 	tpVec4f m_clearcolor;
 	tpVec4i m_viewport;
 
-	tpMat44r	m_view;
-	tpMat44r m_view_inverse;
-	tpMat44r	m_projection;
+	tpMat44r	mView;
+	tpMat44r	mViewInverse;
+	tpMat44r	mProjection;
 };
 
 
