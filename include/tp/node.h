@@ -35,12 +35,10 @@
 #include <tp/traverser.h>
 #include <tp/matrix.h>
 
-
+typedef tpRefPtr<tpNode> tpRefNode;
 typedef tpArray<tpNode*> tpNodeArray;
-typedef tpArray<tpRefPtr<tpNode> > tpRefNodeArray;
+typedef tpArray<tpRefNode> tpRefNodeArray;
 typedef tpArray<tpNodeArray> tpNodeArrayArray;
-
-
 
 /*!
 	\class tpNode
@@ -51,6 +49,13 @@ class TP_API tpNode : public tpObject {
 public:
 
 	static const int kNotFound = -1;
+
+	enum {
+		kUpdateNone			= 0,
+		kUpdateBound		= (1 << 1),
+		kUpdateTransform	= (1 << 2),
+		kUpdateAll			= (kUpdateBound | kUpdateTransform)
+	};
 
 	TP_TYPE_DECLARE;
 
@@ -111,12 +116,19 @@ public:
 	//! read a node from a file
 	static tpNode* read(const tpString& file);
 
+	//! get update flags
+	const tpUInt getUpdateFlags() const { return mUpdateFlags; }
+
+	void setUpdateFlags(tpUInt flag,bool add = true);
+
 protected:
 
 	virtual ~tpNode();
 
 	tpRefNodeArray mChildren;
 	tpNodeArray mParents;
+
+	tpUInt mUpdateFlags;
 
 };
 

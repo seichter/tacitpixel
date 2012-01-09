@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -82,20 +82,18 @@ public:
 
 	//! return the name
 	const tpString& getName() const { return m_name; }
-	
+
 	//! field system get a copy
 	tpFields getFields() { return m_fields; }
-	
+
 	//! const ret field system
 	const tpFields& getFields() const { return m_fields; }
 
 protected:
-	
+
 	virtual ~tpObject();
-	
+
 	tpString m_name;
-	tpString m_serializerhint;
-	
 	tpFields m_fields;
 
 };

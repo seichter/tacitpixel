@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,17 +39,18 @@ enum {
 class TP_API tpSystem : public tpReferenced {
 
 	tpSystem();
+	tpSystem(const tpSystem& o) {}
 
 public:
-	
+
 	static tpSystem* get();
-	
+
 	tpString getResourcePath();
 
 	tpString getPluginPath();
-	
+
 	tpString getExecutablePath(bool removeExecName = false);
-	
+
 	tpString getCWD() const;
 
 	tpUByte getEndian() const;
@@ -57,8 +58,10 @@ public:
 	void getDisplaySize(tpInt* w, tpInt* h);
 
 	tpString findFile(const tpString& filename);
-	
+
 	tpString getTime() const;
+
+	tpString getEnv(const tpString &name) const;
 
 };
 

@@ -29,6 +29,11 @@
 #include "tp/node.h"
 
 
+struct tpPrimitiveAttribute {
+
+};
+
+
 tpPrimitive::tpPrimitive(tpUByte meshtype,tpUShort attributes)
 	: tpRenderable() ,
 	m_primitivetype(meshtype),
@@ -157,7 +162,7 @@ tpVec3r tpGetNormal(const tpArray<tpReal>& vertices)
 
 	return normal;
 
-};
+}
 
 
 void tpPrimitive::flipNormals()
@@ -168,7 +173,8 @@ void tpPrimitive::flipNormals()
 	{
 		*n_ptr++ *= -1;
 		*n_ptr++ *= -1;
-		*n_ptr++ *= -1;	}
+		*n_ptr++ *= -1;
+	}
 }
 
 

@@ -157,9 +157,6 @@ tpRenderSurface* tpRenderSurface::create( tpRenderSurfaceTraits* traits /* =0 */
 }
 
 
-tpRenderSurfaceCallbacks gs_callbacks;
-
-
 tpRenderSurface::tpRenderSurface()
 	: tpRenderContext()
 	, mDone(false)

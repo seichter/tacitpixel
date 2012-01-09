@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,8 +37,8 @@
 
 enum tpFieldState
 {
-    TP_FIELD_UNCHANGED = 0,
-    TP_FIELD_CHANGED
+	TP_FIELD_UNCHANGED = 0,
+	TP_FIELD_CHANGED
 };
 
 
@@ -50,24 +50,27 @@ class tpFieldConnector;
 	\class tpField
 	\brief is a generic property of scenegraph nodes
 
-	
+
 */
 
 class tpField : public tpReferenced {
 public:
 
 	//! standard c'tor
-	tpField(const tpString& name = "unnamed") : tpReferenced(), m_name(name) {}
+	explicit tpField(const tpString& name = "unnamed") : tpReferenced(), mName(name) {}
 
 	//! get a name
-	const tpString& getName() const { return m_name; }
+	const tpString& getName() const { return mName; }
+
+	//! set a name
+	void setName(const tpString& name) { mName = name; }
 
 protected:
-	
+
 	//! d'tor
 	virtual ~tpField() {}
-	
-	tpString	m_name;
+
+	tpString	mName;
 };
 
 
@@ -79,7 +82,7 @@ typedef tpArray< tpRefPtr<tpField> > tpFields;
 */
 
 
-template <class T> class tpRefField : public tpField 
+template <class T> class tpRefField : public tpField
 {
 public:
 
@@ -90,23 +93,23 @@ public:
 	tpRefField(const tpRefField& field) { *this = field; }
 
 	//! assignment operator
-	tpRefField<T>& operator = (const tpRefField<T>& rhs) { m_name = rhs.getName(); m_value = rhs.getValue(); }
+	tpRefField<T>& operator = (const tpRefField<T>& rhs) { mName = rhs.getName(); m_value = rhs.getValue(); }
 
 
 	//! return stored value
 	const T& getValue() const;
-	
+
 	//! set value
 	void setValue(const T& val);
 
 protected:
-	
+
 	T& m_value;
 };
 
 
 
-template <class T> class tpRefPtrField : public tpField 
+template <class T> class tpRefPtrField : public tpField
 {
 	//! c'tor
 	tpRefPtrField() {};
@@ -143,11 +146,11 @@ template <class T> class tpMultiField : public tpField
 public:
 	//! standard c'tor
 	tpMultiField();
-	
+
 	//! copy c'tor
 	tpMultiField(const tpMultiField& field);
 
-	//! return of the values 
+	//! return of the values
 	const tpArray<T>& getValue() const;
 
 	//! set the whole value set
@@ -156,7 +159,7 @@ public:
 	//! add a single value
 	void addValue(const T& val);
 
-	//! remove a value 
+	//! remove a value
 	void removeValue(const T& val);
 
 	//! clean the whole value set
@@ -179,7 +182,7 @@ protected:
 
 // -----------------------------------------------------------------------------------------------
 
-template <class T> 
+template <class T>
 inline tpSingleField<T>::tpSingleField() : tpField()
 {};
 
@@ -198,7 +201,7 @@ inline tpSingleField<T>::tpSingleField(const T& val,
 };
 
 
-template <class T> 
+template <class T>
 inline const T& tpSingleField<T>::getValue() const
 {
 	return m_value;
@@ -211,7 +214,7 @@ template <class T> inline void tpSingleField<T>::setValue(const T& val)
 };
 
 
-template <class T> 
+template <class T>
 inline tpSingleField<T>& tpSingleField<T>::operator = (const tpSingleField<T>& v)
 {
 	m_value = v.m_value;
@@ -226,34 +229,34 @@ inline tpSingleField<T>& tpSingleField<T>::operator = (const tpSingleField<T>& v
 template <class T> inline tpMultiField<T>::tpMultiField() : tpField()
 {};
 
-template <class T> inline tpMultiField<T>::tpMultiField(const tpMultiField& field) 
+template <class T> inline tpMultiField<T>::tpMultiField(const tpMultiField& field)
 : tpField(),
 m_value(field.m_value)
 {
 };
 
-template <class T> 
+template <class T>
 inline const tpArray<T>& tpMultiField<T>::getValue() const
 {
 	return m_value;
 };
 
 
-template <class T> 
+template <class T>
 inline void tpMultiField<T>::setValue(const tpArray<T>& val)
 {
 	m_value = val;
 	evaluate();
 };
 
-template <class T> 
+template <class T>
 inline void tpMultiField<T>::addValue(const T& val)
 {
 	m_value += val;
 	evaluate();
 };
 
-template <class T> 
+template <class T>
 inline void tpMultiField<T>::removeValue(const T& val)
 {
 	tpLong idx = m_value.find(val);
@@ -264,21 +267,21 @@ inline void tpMultiField<T>::removeValue(const T& val)
 	};
 };
 
-template <class T> 
+template <class T>
 inline void tpMultiField<T>::empty()
 {
 	m_value.empty();
 	evaluate();
 };
 
-template <class T> 
+template <class T>
 inline tpULong tpMultiField<T>::getSize() const
 {
 	return m_value.getSize();
 };
 
 
-template <class T> 
+template <class T>
 inline const T& tpMultiField<T>::operator[] (tpSizeT index)
 {
 	return m_value[index];
@@ -287,26 +290,26 @@ inline const T& tpMultiField<T>::operator[] (tpSizeT index)
 
 
 
-template <class T> 
+template <class T>
 inline tpBool operator==(const tpSingleField<T>& l, const tpSingleField<T>& r)
 {
   return r.getValue() == l.getValue();
 }
 
-template <class T> 
+template <class T>
 inline tpBool operator!=(const tpSingleField<T>& l, const tpSingleField<T>& r)
 {
   return !operator == (l,r);
 }
 
 
-template <class T> 
+template <class T>
 inline tpBool operator==(const tpMultiField<T>& l, const tpMultiField<T>& r)
 {
   return r.getValue() == l.getValue();
 }
 
-template <class T> 
+template <class T>
 inline tpBool operator!=(const tpMultiField<T>& l, const tpMultiField<T>& r)
 {
   return !operator == (l,r);
@@ -317,26 +320,26 @@ inline tpBool operator!=(const tpMultiField<T>& l, const tpMultiField<T>& r)
 
 class TP_SG_API tpSFFloat : public tpSingleField<tpFloat>
 {
-public:		
+public:
 	tpSFFloat();
 };
 
 
 class TP_SG_API tpSFDouble : public tpSingleField<tpDouble>
 {
-public:		
+public:
 	tpSFDouble();
 };
 
 class TP_SG_API tpSFInt : public tpSingleField<tpInt>
 {
-public:		
+public:
 	tpSFInt();
 };
 
 class TP_SG_API tpSFUInt : public tpSingleField<tpUInt>
 {
-public:		
+public:
 	tpSFUInt();
 };
 
@@ -368,19 +371,19 @@ public:
 
 class TP_SG_API tpSFVec3f : public tpSingleField<tpVec3f>
 {
-public:			
+public:
 	tpSFVec3f();
 };
 
 class TP_SG_API tpSFVec3d : public tpSingleField<tpVec3d>
 {
-public:		
+public:
 	tpSFVec3d();
 };
 
 class TP_SG_API tpSFRotation : public tpSingleField<tpVec4d>
 {
-public:			
+public:
 	tpSFRotation();
 };
 
@@ -402,7 +405,7 @@ typedef tpSingleField<tpVec4f> tpSFColor;
 
 class TP_SG_API tpSFVec4f : public tpSingleField<tpVec4f>
 {
-public:			
+public:
 	tpSFVec4f(){};
 };
 

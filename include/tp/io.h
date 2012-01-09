@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,13 +45,13 @@ public:
 		kBad =	1 << 3
 	};
 
-	tpIO() : m_state(kGood) {}
+	tpIO() : mState(kGood) {}
 	virtual ~tpIO() {}
 
 	virtual tpIO& read(char* buffer,tpSizeT buffer_size) = 0;
 	virtual tpIO& write(const char* buffer, tpSizeT buffer_size) = 0;
-	
-	
+
+
 
 	virtual tpIO& seek(tpSizeT pos,tpUByte rel = kSeekSet) = 0;
 	virtual tpSizeT tell() const = 0;
@@ -60,20 +60,20 @@ public:
 
 	virtual void sync() = 0;
 
-	bool isGood() const { return  (kGood == m_state); }
-	bool isFail() const { return (0 == m_state && kFail); }
-	bool isBad() const { return  (0 == m_state && kBad); }
-	bool isEOF() const { return  (0 == m_state && kEOF); }
+	bool isGood() const { return  (kGood == mState); }
+	bool isFail() const { return (0 == mState && kFail); }
+	bool isBad() const { return  (0 == mState && kBad); }
+	bool isEOF() const { return  (0 == mState && kEOF); }
 
-	void clear(tpUByte state = kGood) { m_state = state; }
+	void clear(tpUByte state = kGood) { mState = state; }
 
-	tpUByte getState() const { return m_state; }
+	tpUByte getState() const { return mState; }
 
 	void rewind() { seek(0,kSeekSet); clear(kGood); }
 
 protected:
 
-	tpUByte m_state;
+	tpUByte mState;
 
 };
 

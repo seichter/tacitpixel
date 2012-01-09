@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,12 +27,14 @@
 #define TP_STREAM_H
 
 
-class TP_API tpStreamBuffer {
-public:
-	
-	tpStreamBuffer(tpStream& stream,tpUByte mode);
-	
+#include <tp/globals.h>
+#include <tp/types.h>
+#include <tp/io.h>
 
+class TP_API tpStream : public tpIO {
+public:
 };
+
+
 
 #endif

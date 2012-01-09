@@ -16,12 +16,16 @@
 #import "rendersurface_cocoa.h"
 
 
-@interface tpGLRenderSurfaceCocoaDelegate : NSObject
+@interface tpGLRenderSurfaceCocoaDelegate : NSResponder
 {
 	tpGLRenderSurfaceCocoa* rendersurface;
-
-
 };
+- (BOOL)acceptsFirstResponder;
+- (BOOL)becomeFirstResponder;
+- (BOOL)resignFirstResponder;
+
+-(void) mouseMoved:(NSEvent*)theEvent;
+
 @end
 
 @implementation tpGLRenderSurfaceCocoaDelegate;
@@ -52,6 +56,26 @@
 
 	if (rendersurface) rendersurface->setDone(true);
 
+}
+
+-(void) mouseMoved:(NSEvent*)theEvent
+{
+	tpLogNotify("Moved!");
+}
+
+- (BOOL)acceptsFirstResponder
+{
+	return YES;
+}
+
+- (BOOL)becomeFirstResponder
+{
+	return YES;
+}
+
+- (BOOL)resignFirstResponder
+{
+	return YES;
 }
 
 @end
@@ -101,9 +125,9 @@ tpGLRenderSurfaceCocoa::tpGLRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 	[format release];
 
 	[window center];
-	[window setDelegate:[NSApp delegate]];
+	//[window setDelegate:[NSApp delegate]];
 	[oglcontext setView:[window contentView]];
-	[window setAcceptsMouseMovedEvents:TRUE];
+	[window setAcceptsMouseMovedEvents:YES];
 	[window makeKeyAndOrderFront:nil];
 	[window isMainWindow];
 
@@ -111,6 +135,7 @@ tpGLRenderSurfaceCocoa::tpGLRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 
 	CGLSetCurrentContext(cgl_context);
 
+	// @todo implement way to handle this via traits
 	tpInt swap_interval = (true) ? 1 : 0;
 	CGLSetParameter(cgl_context, kCGLCPSwapInterval, &swap_interval);
 
@@ -119,6 +144,7 @@ tpGLRenderSurfaceCocoa::tpGLRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 	tpGLRenderSurfaceCocoaDelegate* mdelegate = [[tpGLRenderSurfaceCocoaDelegate alloc] init];
 	[mdelegate setRenderSurface:this];
 	delegate = mdelegate;
+
 
 	/* title */
 	if (traits) this->setCaption(traits->getTitle());
@@ -148,8 +174,6 @@ tpGLRenderSurfaceCocoa::frame()
 bool
 tpGLRenderSurfaceCocoa::makeCurrent()
 {
-	tpScopeLog<tpLog::kLogInfo> l(__FUNCTION__);
-
 	[oglcontext update];
 	[oglcontext makeCurrentContext];
 

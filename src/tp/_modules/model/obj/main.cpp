@@ -40,13 +40,13 @@ tpNode* tpOBJ(const tpString& filename)
 	}
 
 	// regenerate the model structure
-	//glmUnitize(model);
+	glmUnitize(model);
 	glmFacetNormals(model);
 	// should make the crease angle an option
 	glmVertexNormals(model,89);
 	glmLinearTexture(model);
 
-	tpNode* root = new tpNode();
+	tpRefNode root = new tpNode();
 
 	group = model->groups;
 
@@ -168,9 +168,9 @@ tpNode* tpOBJ(const tpString& filename)
 
 	glmDelete(model);
 
-	return root;
+	return root.release();
 
-};
+}
 
 class tpOBJHandler : public tpNodeHandler {
 public:
