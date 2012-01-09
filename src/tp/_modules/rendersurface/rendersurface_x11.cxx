@@ -10,9 +10,7 @@
 *
 */
 
-#include "tpGLRenderSurfaceX11.h"
-#include "tpGLRenderer.h"
-#include "tpGL.h"
+#include "rendersurface_x11.h"
 
 #include <tp/module.h>
 
@@ -503,4 +501,18 @@ TP_TYPE_REGISTER(tpGLRenderSurfaceX11,tpRenderSurface,GLRenderSurfaceX11);
 TP_MODULE_REGISTER(x11surface,tpRenderSurfaceFactoryX11);
 
 
+bool tpRenderContextGLX::makeCurrent()
+{
+	return true;
+}
+
+bool tpRenderContextGLX::swapBuffers()
+{
+	return true;
+}
+
+bool tpRenderContextEGL::makeCurrent()
+{
+	return true;
+}
 

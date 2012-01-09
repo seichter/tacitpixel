@@ -25,14 +25,29 @@
 #elif defined(__unix)
 //#include <GL/gl.h>
 //#include <GL/glext.h>
+#include <GL/glx.h>
 #endif
 
 
-#include "tpGL.h"
+//#include "tpGL.h"
 
 #include <tp/rendersurface.h>
 #include <tp/log.h>
 
+
+class tpRenderContextGLX : public tpRenderContext {
+
+	bool makeCurrent();
+	bool swapBuffers();
+
+};
+
+class tpRenderContextEGL : public tpRenderContext {
+
+	bool makeCurrent();
+	bool swapBuffers();
+
+};
 
 class tpGLRenderSurfaceX11 : public tpRenderSurface {
 public:
@@ -45,19 +60,13 @@ public:
 
 	tpString getString(tpUInt glenum);
 
-	bool makeCurrent();
-	bool swapBuffers();
 
 	virtual tpVoid frame();
 
 	virtual tpString getName() const { return tpString("Twisted Pair OpenGL surface 1.0"); }	
 
-	tpRenderer* createDefaultRenderer() const;
-
 
 protected:
-
-	tpRefPtr<tpMouseAdapter> m_mouseadapter;
 
 	virtual ~tpGLRenderSurfaceX11();
 
