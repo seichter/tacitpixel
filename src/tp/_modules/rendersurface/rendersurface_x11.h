@@ -13,18 +13,16 @@
 #ifndef TPGLRENDERSURFACEX11_H
 #define TPGLRENDERSURFACEX11_H
 
-
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
-
 
 #if defined(__APPLE__)
 #include <OpenGL/gl.h>
 #include <OpenGL/glext.h>
 #elif defined(__unix)
-//#include <GL/gl.h>
-//#include <GL/glext.h>
+#include <GL/gl.h>
+#include <GL/glext.h>
 #include <GL/glx.h>
 #endif
 
