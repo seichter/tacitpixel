@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,8 @@
 #endif
 
 
-tpUByte tpSystem::getEndian() const
+tpUByte
+tpSystem::getEndian() const
 {
 	int i = 1;
 	char *p = (char *)&i;
@@ -61,18 +62,30 @@ tpUByte tpSystem::getEndian() const
 	return TP_SYS_LITTLEENDIAN;
 }
 
-tpString tpSystem::getCWD() const 
+
+
+
+tpString
+tpSystem::getCWD() const
 {
 #if defined(_WIN32)
 	char* wd = _getcwd(0,0);
 #else
 	char* wd = getcwd(0, 0);
 #endif
-	
+
 	tpString ret(wd);
-	
+
 	free(wd);
-	
+
+	return ret;
+}
+
+tpString
+tpSystem::getEnv(const tpString& name) const
+{
+	tpString ret;
+	ret = getenv(name.c_str());
 	return ret;
 }
 
@@ -83,28 +96,28 @@ tpSystem::getResourcePath()
 	const unsigned int MAXPATHLEN = 2048;
 	static char path[MAXPATHLEN];
 	memset(&path[0],0,MAXPATHLEN);
-	
-	
+
+
 #if defined(__APPLE__)
 	CFURLRef bundleURL;
 	CFStringRef pathStr;
 	CFBundleRef mainBundle = CFBundleGetMainBundle();
-	
+
 	bundleURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
 	pathStr = CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
 	CFStringGetCString(pathStr, path, MAXPATHLEN, kCFStringEncodingASCII);
-	
+
 	result.set(&path[0]);
-	
+
 	CFRelease(pathStr);
 	CFRelease(bundleURL);
-	
+
 #elif defined(_WIN32) || defined(_WIN64) || defined(_WIN32_WCE)
-	
+
 	result = getExecutablePath(true);
-	
+
 #endif
-	
+
 	return result;
 }
 
@@ -116,37 +129,35 @@ tpSystem::getPluginPath()
 	const unsigned int MAXPATHLEN = 2048;
 	static char path[MAXPATHLEN];
 	memset(&path[0],0,MAXPATHLEN);
-	
-	
+
+
 #if defined(__APPLE__)
 
 	result = getExecutablePath(true);
-	
+
 	CFBundleRef mainBundle = CFBundleGetMainBundle();
 	CFURLRef bundleURL = CFBundleCopyBuiltInPlugInsURL(mainBundle);
 	CFStringRef pathStr = CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
-	
+
 	CFStringGetCString(pathStr, path, MAXPATHLEN, kCFStringEncodingASCII);
-	
-	printf("--- %s --- '%s'\n",path,result.c_str());
-	
+
 	result.set(&path[0]);
-	
+
 	CFRelease(pathStr);
 	CFRelease(bundleURL);
-	
-	
-	
+
+
+
 #elif defined(_WIN32) || defined(_WIN64) || defined(_WIN32_WCE)
-	
+
 	result = getExecutablePath(true);
 
 #else
 
 	result = getExecutablePath(true) + tpString("/../") + tpString("lib");
-	
+
 #endif
-	
+
 	return result;
 }
 
@@ -165,13 +176,13 @@ tpString tpSystem::getExecutablePath(bool removeExecName)
 
 	bundleURL = CFBundleCopyExecutableURL(mainBundle);
 	pathStr = CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
- 	CFStringGetCString(pathStr, path, MAXPATHLEN, kCFStringEncodingASCII);
+	CFStringGetCString(pathStr, path, MAXPATHLEN, kCFStringEncodingASCII);
 
 	result.set(&path[0]);
-	
+
 	CFRelease(pathStr);
 	CFRelease(bundleURL);
-	
+
 #elif defined(_WIN32) || defined(_WIN64) || defined(_WIN32_WCE)
 	static TCHAR lpFname[MAXPATHLEN];
 	DWORD ret = GetModuleFileName( NULL, &lpFname[0], MAXPATHLEN );
@@ -185,8 +196,8 @@ tpString tpSystem::getExecutablePath(bool removeExecName)
 	}
 
 #else
-	
-    readlink("/proc/self/exe", path, sizeof(path));
+
+	readlink("/proc/self/exe", path, sizeof(path));
 	result.set(path);
 
 	if (removeExecName)
@@ -232,7 +243,7 @@ tpString tpSystem::findFile( const tpString& filename )
 		//getchar();
 		FILE* f = fopen(res.c_str(),"rb");
 		if (f) {
-			fclose(f); 
+			fclose(f);
 			break;
 		} else res = "";
 	}
@@ -257,15 +268,15 @@ tpSystem::getTime() const
 
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );
-	
+
 	char buffer[80];
-	
+
 	strftime (buffer,80,"%X %x",timeinfo);
 
 	tpString res(buffer);
-	
+
 	return res;
-	
+
 }
 
 

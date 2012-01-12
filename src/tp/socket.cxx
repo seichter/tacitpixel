@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -61,16 +61,18 @@ static void fillAddr(const char* address,
 	}
 	addr.sin_addr.s_addr = *((unsigned long *) host->h_addr_list[0]);
 	addr.sin_port = htons(port);     // Assign port in network byte order
-};
+}
 
 tpSocket::tpSocket()
-    : tpReferenced(), m_socketdesc(-1)
+	: tpReferenced()
+	, m_socketdesc(-1)
 {
 }
 
 
 tpSocket::tpSocket(const tpSocket& socket)
-    : tpReferenced() ,m_socketdesc(socket.m_socketdesc)
+	: tpReferenced()
+	, m_socketdesc(socket.m_socketdesc)
 {
 }
 
@@ -138,7 +140,7 @@ tpSocket::doInit(unsigned int port,bool blocking)
 
 
 
-tpSocketState tpSocket::sendRaw(tpSocket* socket,void* indata,tpUInt datalength,tpUInt *total)
+tpSocketState tpSocket::sendRaw(tpSocket* socket,const void* indata,tpUInt datalength,tpUInt *total)
 {
 	int put = 0;
 	*total = 0;
@@ -266,7 +268,7 @@ bool tpTCPSocket::connect(const tpString& remotehost, unsigned int remoteport)
 			return false;
 		} else
 		{
-            m_sockaddr.sin_addr.s_addr = **((int **) host->h_addr_list);
+			m_sockaddr.sin_addr.s_addr = **((int **) host->h_addr_list);
 			// m_sockaddr.sin_port = htons(remoteport);
 		};
 
@@ -329,7 +331,7 @@ tpTCPSocket* tpTCPSocket::accept(int timeout)
 };
 
 
-int tpTCPSocket::write(void* data,unsigned int datalength)
+int tpTCPSocket::write(const void* data,unsigned int datalength)
 {
 	tpUInt total = 0;
 	tpSocketState state;
@@ -379,52 +381,53 @@ tpString tpTCPSocket::getRemoteAddress() const
 
 
 tpUDPSocket::tpUDPSocket()
-	: tpSocket(),
-	m_remoteaddress("localhost"),
-	m_remoteport(0)
+	: tpSocket()
 {
-};
+}
 
 tpUDPSocket::tpUDPSocket(const tpUDPSocket& socket)
 	: tpSocket(socket)
+	, mReceivers(socket.mReceivers)
 {
-	m_remoteaddress = socket.m_remoteaddress;
-	m_remoteport = socket.m_remoteport;
-};
+}
 
 tpUDPSocket::tpUDPSocket(unsigned int localport) :
-	tpSocket(),
-	m_remoteaddress(""),
-	m_remoteport(0)
+	tpSocket()
 {
-
 	setLocalPort(localport);
-};
+}
 
-
-
-void tpUDPSocket::setBroadcast(const tpString& remoteaddress,unsigned int remoteport)
+int
+tpUDPSocket::write(const void* data,unsigned int datalength)
 {
+	tpInt result(0);
 
-	m_remoteaddress = remoteaddress;
-	m_remoteport = remoteport;
-};
+	for (tpReceiverMap::iterator i = mReceivers.begin();
+		 i != mReceivers.end();
+		 ++i)
+	{
+		result += this->send(data,datalength,(*i));
+	}
 
+	return result;
+}
 
-int tpUDPSocket::write(void* data,unsigned int datalength)
+int
+tpUDPSocket::read(void* data,unsigned int datalength)
 {
-	return this->sendTo(data,datalength,m_remoteaddress.c_str(),m_remoteport);
-};
+	tpString aReceiver;
+	tpUInt aPort;
+	tpInt result(0);
 
+	// @todo should map or otherwise handle the information about
+	// the incoming traffic
+	result = this->receiveFrom(data,datalength,aReceiver,aPort);
 
-int tpUDPSocket::read(void* data,unsigned int datalength)
-{
-	return this->receiveFrom(data,datalength,m_remoteaddress,m_remoteport);
-};
+	return result;
+}
 
-
-
-bool tpUDPSocket::setLocalPort(unsigned int localport)
+bool
+tpUDPSocket::setLocalPort(unsigned int localport)
 {
 
 	if (!doInit(localport)) return false;
@@ -441,33 +444,34 @@ bool tpUDPSocket::setLocalPort(unsigned int localport)
 	{
 		tpLogError("tpUDPSocket::setLocalPort() : could not bind to port %d",localport);
 		return false;
-	};
+	}
+
 	tpLogNotify("tpUDPSocket::setLocalPort() : successfully bind to port %d",localport);
 	return true;
-};
+}
 
 
 
 // send to remote
-int tpUDPSocket::sendTo(void *data, unsigned int datalength,
-		const char* remoteaddress, unsigned int remoteport)
+int
+tpUDPSocket::send(const void *data, unsigned int datalength,const tpPair<tpUInt,tpString>& receiver)
 {
 
 	sockaddr_in destAddr;
-	fillAddr(remoteaddress, remoteport, destAddr);
+	fillAddr(receiver.getValue().c_str(), receiver.getKey(), destAddr);
 
 	// Write out the whole buffer as a single message.
 	return sendto(m_socketdesc,
 		(const char*) data,
 		datalength, 0,
-             	(sockaddr*)&destAddr,
-             	sizeof(struct sockaddr_in));
+				(sockaddr*)&destAddr,
+				sizeof(struct sockaddr_in));
 
-};
+}
 
 // receive from remote
-int tpUDPSocket::receiveFrom(void *data, unsigned int datalength,
-	tpString& remoteaddress, unsigned int &remoteport)
+int
+tpUDPSocket::receiveFrom(void *data, unsigned int datalength, tpString& remoteaddress, unsigned int &remoteport)
 {
 
 	sockaddr_in clntAddr;
@@ -476,7 +480,6 @@ int tpUDPSocket::receiveFrom(void *data, unsigned int datalength,
 	int rtn;
 
 	struct timeval timeout_value;
-
 	timeout_value.tv_sec = m_timeout / 1000;
 	timeout_value.tv_usec = (m_timeout % 1000) * 1000;
 
@@ -488,43 +491,45 @@ int tpUDPSocket::receiveFrom(void *data, unsigned int datalength,
 	if (0 == ::select(1,&fds,NULL,NULL,&timeout_value))	return -2;
 
 	rtn = ::recvfrom(m_socketdesc, (char*)data, datalength, 0, (sockaddr *) &clntAddr,
-                      (socklen_t *) &addrLen);
+					  (socklen_t *) &addrLen);
 
 	remoteaddress = inet_ntoa(clntAddr.sin_addr);
 	remoteport = ntohs(clntAddr.sin_port);
 
 	return rtn;
-};
-
+}
 
 
 
 // set TTL
-void tpUDPSocket::setMulticastTTL(unsigned int TTL)
+void
+tpUDPSocket::setMulticastTTL(unsigned int TTL)
 {
 	if (setsockopt(m_socketdesc, IPPROTO_IP, IP_MULTICAST_TTL,
 			(char *) &TTL, sizeof(TTL)) < 0)
 	{
 		tpLogError("tpUDPSocket::setMulticastTTL() set failed (setsockopt())");
 
-	};
-};
+	}
+}
 
 // multicasting
-void tpUDPSocket::joinGroup(const tpString& multicastGroup)
+void
+tpUDPSocket::joinGroup(const tpString& multicastGroup)
 {
 	struct ip_mreq multicastRequest;
 	multicastRequest.imr_multiaddr.s_addr = inet_addr(multicastGroup.c_str());
 	multicastRequest.imr_interface.s_addr = htonl(INADDR_ANY);
 	if (setsockopt(m_socketdesc, IPPROTO_IP, IP_ADD_MEMBERSHIP,
-                 (char *) &multicastRequest,
+				 (char *) &multicastRequest,
 				 sizeof(multicastRequest)) < 0)
 	{
 		tpLogError("tpUDPSocket::joinGroup() failed");
 	}
 }
 
-void tpUDPSocket::leaveGroup(const tpString& multicastGroup)
+void
+tpUDPSocket::leaveGroup(const tpString& multicastGroup)
 {
 
 	struct ip_mreq multicastRequest;
@@ -532,10 +537,10 @@ void tpUDPSocket::leaveGroup(const tpString& multicastGroup)
 	multicastRequest.imr_interface.s_addr = htonl(INADDR_ANY);
 
 	if (setsockopt(m_socketdesc, IPPROTO_IP, IP_DROP_MEMBERSHIP,
-       (char *) &multicastRequest, sizeof(multicastRequest)) < 0)
+	   (char *) &multicastRequest, sizeof(multicastRequest)) < 0)
 	{
 		tpLogError("tpUDPSocket::leaveGroup() failed");
-	};
+	}
 }
 
 TP_TYPE_REGISTER(tpSocket,tpReferenced,Socket);

@@ -34,35 +34,15 @@ class TP_API tpStringTokenizer
 	tpString mCopy;
 	tpString mDelim;
 
+	tpStringTokenizer();
+
 public:
 
-	tpStringTokenizer(const tpString& str, const tpString& delim)
-		: mCopy(str)
-		, mDelim(delim)
-	{
-	}
+	tpStringTokenizer(const tpString& str, const tpString& delim);
 
-	tpString next()
-	{
-		tpString res;
-		tpInt pos = mCopy.find(*mDelim.c_str(),false);
+	tpString next();
 
-		if (pos > tpString::kNotFound)
-		{
-			res = mCopy.substr(0,pos);
-			mCopy = mCopy.substr( pos + mDelim.getLength(), mCopy.getLength() - pos - mDelim.getLength() );
-		} else {
-			res = mCopy;
-			mCopy.empty();
-		}
-
-		return res;
-	}
-
-	bool finished() const
-	{
-		return (0 == mCopy.getLength());
-	}
+	bool finished() const;
 };
 
 #endif

@@ -71,9 +71,8 @@ void tpModuleManager::load(const tpString &list)
 
 	while (!tkz.finished()) {
 		tpString name = "tacit_" + tkz.next();
-		tpLogNotify("token: %s",name.c_str());
-		//tpRefPtr<tpLibrary> lib = tpLibrary::load(name);
-		//if (lib.isValid()) mLibraries.add(lib.get());
+		tpRefPtr<tpLibrary> lib = tpLibrary::load(name);
+		if (lib.isValid()) mLibraries.add(lib.get());
 	}
 }
 

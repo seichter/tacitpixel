@@ -36,7 +36,9 @@ int main(int argc, char* argv[])
 		tpThread::sleep(5);
 	}
 
-	thread.join();
+	
+	// join thread into main thread
+	// thread.join();
 
 	tpString out;
 

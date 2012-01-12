@@ -79,7 +79,7 @@ tpFile::read(char* buffer,tpSizeT buffersize)
 	m_gcount = fread(buffer,sizeof(char),buffersize,_F(m_handle));
 	if (getCount() != buffersize)
 	{
-		if (feof(_F(m_handle))) m_state |= kEOF;
+		if (feof(_F(m_handle))) mState |= kEOF;
 	}
 	return *this;
 }
@@ -90,7 +90,7 @@ tpFile::write(const char* buffer, tpSizeT buffersize)
 	m_gcount = fwrite(buffer,sizeof(char),buffersize,_F(m_handle));
 	if (getCount() != buffersize)
 	{
-		if (feof(_F(m_handle))) m_state |= kEOF;
+		if (feof(_F(m_handle))) mState |= kEOF;
 	}
 	return *this;
 }

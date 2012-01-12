@@ -15,12 +15,26 @@ if(APPLE)
 
 endif()
 
+
+find_package(X11)
+
+option(TP_USE_X11 FALSE "Option to use X11")
+
+if(X11_FOUND AND TP_USE_X11)
+	set(TPGL_USE_X11 TRUE)
+	list(APPEND srcs
+		rendersurface_x11.cxx
+		rendersurface_x11.h
+		)
+	include_directories(${X11_INCLUDE_DIR})
+endif()
+
 add_library(${module_name} MODULE ${srcs})
 
 set_target_properties(${module_name}
 	PROPERTIES
 	PREFIX ""
-	PROJECT_LABEL "Plugin OpenGL"
+	PROJECT_LABEL "Plugin OpenGL RenderSurface"
 )
 
 target_link_libraries(${module_name}

@@ -21,8 +21,8 @@ set_source_files_properties(${shader_srcs}
 
 set(srcs
 	opengl1/opengl1_renderer.cxx
-#	tpGL.h
-#	tpGL.cpp
+	tpGL.h
+	tpGL.cpp
 #	tpGLRenderer.h
 #	tpGLRenderer.cpp
 #	tpGLShader.cpp
@@ -33,8 +33,6 @@ set(srcs
 
 
 list(APPEND srcs ${shader_srcs})
-find_package(X11)
-option(TP_USE_X11 FALSE "Option to use X11")
 
 
 if(X11_FOUND AND TP_USE_X11)
@@ -45,6 +43,7 @@ if(X11_FOUND AND TP_USE_X11)
 		)
 	include_directories(${X11_INCLUDE_DIR})
 endif()
+
 
 #
 # Render Surface Implementations
@@ -110,7 +109,7 @@ endif()
 set_target_properties(${module_name}
 	PROPERTIES
 	PREFIX ""
-	PROJECT_LABEL "Plugin OpenGL"
+	PROJECT_LABEL "Plugin OpenGL Renderer"
 )
 
 if(CMAKE_CROSSCOMPILING AND MSVC)
