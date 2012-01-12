@@ -41,7 +41,7 @@ struct tpRendererTraits {
 
 	tpRendererTraits() : isFixedFunction(true) {}
 
-	bool operator = (const tpRendererTraits& rhs) const {
+	bool operator == (const tpRendererTraits& rhs) const {
 		return isFixedFunction == rhs.isFixedFunction;
 	}
 };

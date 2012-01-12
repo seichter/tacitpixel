@@ -112,15 +112,11 @@ tpRenderer* tpRenderer::create( const tpRendererTraits& traits )
 		if (item->getType()->isOfType(tpRenderer::getTypeInfo()))
 		{
 			renderer = static_cast<tpRenderer*>(item.get());
-			if ( renderer->getTraits() = traits )
+			if ( renderer->getTraits() == traits )
 			{
 				tpLogNotify( "%s loaded %s",__FUNCTION__, item->getType()->getName());
 
 				return renderer;
-
-			} else {
-
-				renderer = 0;
 			}
 
 		}

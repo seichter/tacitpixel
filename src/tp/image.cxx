@@ -32,8 +32,6 @@
 #include <tp/system.h>
 #include <tp/imagehandler.h>
 
-
-
 tpImage::tpImage()
 	: mWidth(0)
 	, mHeight(0)
@@ -46,11 +44,13 @@ tpImage::~tpImage()
 {
 }
 
-
 void 
 tpImage::allocate(unsigned int w, unsigned int h, tpUByte pixelformat )
 {
-	unsigned int size = (w * h * tpPixelFormat::getBitsPerPixel(pixelformat)) >> 3;
+	tpUInt size = w * h * (tpPixelFormat::getBitsPerPixel(pixelformat) >> 3);
+
+	tpLogNotify("tpImage::allocate() %dx%d @%d",w,h,tpPixelFormat::getBitsPerPixel(pixelformat));
+
 	mData.setSize(size);
 	if (size) 
 	{
@@ -64,7 +64,7 @@ void
 tpImage::assign(const void* data)
 {
 	mData.assign(data);
-	makeDirty();
+	setDirty();
 }
 
 //
@@ -146,7 +146,6 @@ tpImage::write( const tpString& name ) const
 	}
 
 	return result;
-
 }
 
 

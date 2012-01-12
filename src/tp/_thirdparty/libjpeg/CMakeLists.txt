@@ -48,6 +48,10 @@ set(jpeg_srcs
 	jutils.c
 	jmemmgr.c
 	jmemansi.c
+	jerror.h
+	jconfig.h
+	jpeglib.h
+	jversion.h
 	)
 
 add_library(jpeg STATIC ${jpeg_srcs})

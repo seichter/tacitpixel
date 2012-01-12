@@ -45,7 +45,7 @@ class TP_API tpImage : public tpReferenced {
 
 public:
 	
-	TP_TYPE_DECLARE;
+	TP_TYPE_DECLARE
 	
 	/** C'tor */
 	tpImage();
@@ -92,7 +92,7 @@ public:
 	tpUInt getChangeCount() const { return mChangeCount; }
 
 	/** push the changecount - signal a changed image */
-	void makeDirty() { ++mChangeCount; }
+	void setDirty() { ++mChangeCount; }
 	
 	/**
 	  * @brief read an image from a file or url
