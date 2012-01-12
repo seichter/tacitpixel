@@ -22,8 +22,8 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#ifndef TP_ARGUMENTS_H
-#define TP_ARGUMENTS_H 1
+#ifndef _TP_ARGUMENTS_H_
+#define _TP_ARGUMENTS_H_ 1
 
 #include <tp/array.h>
 #include <tp/string.h>

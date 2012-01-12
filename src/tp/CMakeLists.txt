@@ -50,7 +50,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/matop.h
 	${tp_include_path}/tp/module.h
 	${tp_include_path}/tp/mutex.h
-	${tp_include_path}/tp/opengl.h
+#	${tp_include_path}/tp/opengl.h
 	${tp_include_path}/tp/pixelformat.h
 	${tp_include_path}/tp/pair.h
 	${tp_include_path}/tp/quat.h
@@ -90,7 +90,7 @@ set(tp_srcs
 	library.cxx
 	module.cxx
 	mutex.cxx
-	opengl.cxx
+#	opengl.cxx
 	referenced.cxx
 	rs232.cxx
 	socket.cxx

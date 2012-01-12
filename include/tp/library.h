@@ -23,8 +23,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TPDYNAMICLIBRARY_H
-#define TPDYNAMICLIBRARY_H
+#ifndef _TP_DYNAMICLIBRARY_H_
+#define _TP_DYNAMICLIBRARY_H_
 
 
 #include <tp/globals.h>

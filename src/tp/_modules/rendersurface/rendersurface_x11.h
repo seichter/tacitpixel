@@ -91,9 +91,9 @@ private:
 	Atom wmDeleteWindow;
 		
 
-	EGLContext egl_context;
-	EGLSurface egl_surface;
-	EGLDisplay egl_display;
+//	EGLContext egl_context;
+//	EGLSurface egl_surface;
+//	EGLDisplay egl_display;
 
 
 

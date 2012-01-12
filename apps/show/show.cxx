@@ -13,7 +13,7 @@
 
 int main(int argc,char* argv[])
 {
-	tpModuleManager::get()->load("glsurface,glrenderer,obj");
+	tpModuleManager::get()->load("gl,glsurface,glrenderer,obj");
 
 	tpString file,plugins;
 	tpArguments args(&argc,argv);

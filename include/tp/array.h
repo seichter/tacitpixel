@@ -22,8 +22,8 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#ifndef TP_ARRAY_H
-#define TP_ARRAY_H
+#ifndef _TP_ARRAY_H_
+#define _TP_ARRAY_H_
 
 #include <tp/types.h>
 #include <tp/utils.h>

@@ -28,6 +28,7 @@
 
 #include <tp/vec.h>
 #include <tp/fixed.h>
+#include <tp/utils.h>
 
 template <tpUInt R, tpUInt C, typename T> class tpMat {
 public:
@@ -57,15 +58,14 @@ public:
 
 	tpMat<R,C,T>& all(const T& val = T(0)) { for (int i = 0; i < tpMat<R,C,T>::cells; ++i) m[i] = val; return *this; }
 
+	int getDiagonalSize() const { return tpMin(R,C); }
+
 	tpMat<R,C,T>& identity()
 	{
-		if (isSquare())
+		all(0);
+		for (int i = 0; i < getDiagonalSize(); ++i)
 		{
-			all(0);
-			for (int i = 0; i < R; ++i)
-			{
-				m[i*C+i] = T(1);
-			}
+			m[i*C+i] = T(1);
 		}
 		return *this;
 	}

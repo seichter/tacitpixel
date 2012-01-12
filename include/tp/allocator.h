@@ -23,7 +23,7 @@
  * SUCH DAMAGE.
  */
 #ifndef _TP_ALLOCATOR_H_
-#define _TP_ALLOCATOR_H_
+#define _TP_ALLOCATOR_H_ 1
 
 #include <tp/types.h>
 
