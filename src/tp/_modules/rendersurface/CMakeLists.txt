@@ -19,7 +19,6 @@ endif()
 find_package(X11)
 
 option(TP_USE_X11 FALSE "Option to use X11")
-
 if(X11_FOUND AND TP_USE_X11)
 	set(TPGL_USE_X11 TRUE)
 	list(APPEND srcs
@@ -27,6 +26,13 @@ if(X11_FOUND AND TP_USE_X11)
 		rendersurface_x11.h
 		)
 	include_directories(${X11_INCLUDE_DIR})
+endif()
+
+if(WIN32)
+	list(APPEND srcs
+		rendersurface_w32.cpp
+		rendersurface_w32.h
+		)
 endif()
 
 add_library(${module_name} MODULE ${srcs})

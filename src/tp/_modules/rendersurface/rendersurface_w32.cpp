@@ -10,13 +10,13 @@
 *
 */
 
-#include "tpGLRenderSurfaceWin32.h"
-#include "tpGLRenderer.h"
+#include "rendersurface_w32.h"
 
 #include <tp/system.h>
 #include <tp/camera.h>
 #include <tp/module.h>
 #include <tp/version.h>
+#include <tp/gl.h>
 
 #define WM_CREATED (WM_USER+1)
 
@@ -109,9 +109,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		tpInt mouse_x = LOWORD(lParam);
 		tpInt mouse_y = HIWORD(lParam);
 
-		if (rendersurface->getMouseAdapter()) 
+		if (rendersurface->getCallback()) 
 		{
-			rendersurface->getMouseAdapter()->onMouseMotion(mouse_x,mouse_y,mouse_button,mouse_state);
+			rendersurface->getCallback()->onMouseMotion(mouse_x,mouse_y,mouse_button,mouse_state);
 		}
 		break;
 	}

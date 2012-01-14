@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,63 +23,39 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TPMAP_H
-#define TPMAP_H
+#ifndef TP_RTL_H
+#define TP_RTL_H
+
+#include <tp/referenced.h>
+#include <tp/library.h>
+#include <tp/refptr.h>
+#include <tp/string.h>
+#include <tp/map.h>
 
 
-#include <tp/globals.h>
-#include <tp/array.h>
-#include <tp/pair.h>
+class TP_API tpRTL : public tpReferenced {
+protected:
 
-
-/*!
-	\class tpMap
-	\brief simple container with key=value mapping
-*/
-
-template <typename K, typename V>
-class tpMap : public tpArray< tpPair<K,V> >
-{
+	tpRefPtr<tpLibrary> mLibrary;
+	
 public:
 
-	typedef tpPair<K,V> element_type;
-	typedef tpPair<K,V>* iterator;
-	typedef const tpPair<K,V>* const_iterator;
+	tpRefPtr<tpLibrary> getLibrary() const { return mLibrary; }
 
-	void add(const K& k, const V& v) { tpArray< tpPair<K,V> >::add(tpPair<K,V>(k,v)); }
+	/**
+	 * Opens library and loads signatures
+	 * 
+	 * @param name filename of the library to load
+	 * @return true if successful
+	 */
+	bool open(const tpString& name);
 
-	tpMap<K,V>& push(const K& k, const V& v) { this->add(k,v); return *this; }
-
-	bool containsKey(const K& k) const
-	{
-		for (const_iterator i = this->begin();
-			 i != this->end();
-			 ++i)
-		{
-			if (k == (*i).getKey()) return true;
-		}
-
-		return false;
-	}
-
-	bool containsValue(const V& v) const
-	{
-		for (const_iterator i = this->begin();
-			 i != this->end();
-			 ++i)
-		{
-			if (v == (*i).getValue()) return true;
-		}
-
-		return false;
-	}
+	/**
+	 * Closes the library and clears all pointers
+	 */
+	void close();
 
 };
-
-
-
-
-
 
 
 #endif

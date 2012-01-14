@@ -13,8 +13,8 @@
 #ifndef TPGLRENDERSURFACEWIN32_H
 #define TPGLRENDERSURFACEWIN32_H
 
-
-#include "tpGL.h"
+#define WIN32_LEAN_AND_MEAN 1
+#include <Windows.h>
 
 #include <tp/rendersurface.h>
 #include <tp/log.h>
@@ -38,10 +38,6 @@ public:
 	virtual tpVoid frame();
 
 	virtual tpString getName() const { return tpString("Twisted Pair OpenGL surface 1.0"); }	
-
-	tpRenderer* createDefaultRenderer() const;
-
-
 
 protected:
 

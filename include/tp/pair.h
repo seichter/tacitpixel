@@ -51,6 +51,8 @@ public:
 	const V& getValue() const { return mValue; }
 	V& getValue() { return mValue; }
 
+	void setValue(const V& v) { mValue=v;}
+
 protected:
 
 	K mKey;

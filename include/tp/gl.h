@@ -21,13 +21,10 @@
 
 #if defined(_WIN32) || defined(_WIN32_WCE)
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-
-typedef struct HDC__		*HDC;
-typedef struct HBITMAP__	*HBITMAP;
-typedef struct HWND__		*HWND;
-typedef struct HGLRC__		*HGLRC;
+typedef struct HDC		HDC;
+typedef struct HBITMAP	HBITMAP;
+typedef struct HWND		HWND;
+typedef struct HGLRC	HGLRC;
 
 typedef HDC NativeDisplayType;
 typedef HBITMAP NativePixmapType;

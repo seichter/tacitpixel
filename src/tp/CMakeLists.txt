@@ -32,9 +32,12 @@ set(tp_hdrs
 	${tp_include_path}/tp/array.h
 	${tp_include_path}/tp/arguments.h
 	${tp_include_path}/tp/chunk.h
+	${tp_include_path}/tp/event.h	
 	${tp_include_path}/tp/field.h
 	${tp_include_path}/tp/file.h
 	${tp_include_path}/tp/globals.h
+	${tp_include_path}/tp/egl.h
+	${tp_include_path}/tp/gl.h
 	${tp_include_path}/tp/hash.h
 	${tp_include_path}/tp/image.h
 	${tp_include_path}/tp/imagehandler.h
@@ -57,6 +60,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/referenced.h
 	${tp_include_path}/tp/refptr.h
 	${tp_include_path}/tp/rs232.h
+	${tp_include_path}/tp/rtl.h
 	${tp_include_path}/tp/rtti.h
 	${tp_include_path}/tp/socket.h
 	${tp_include_path}/tp/sort.h
@@ -80,8 +84,11 @@ set(tp_srcs
 	arguments.cxx
 	allocator.cxx
 	chunk.cxx
+	egl.cxx
+	event.cxx
 	file.cxx
 	filename.cxx
+#	gl.cxx
 	hash.cxx
 	image.cxx
 	imagehandler.cxx
@@ -93,6 +100,7 @@ set(tp_srcs
 #	opengl.cxx
 	referenced.cxx
 	rs232.cxx
+	rtl.cxx
 	socket.cxx
 	string.cxx
 	stringtokenizer.cxx

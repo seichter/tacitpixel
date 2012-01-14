@@ -43,9 +43,12 @@ typedef tpUInt64 tpTimerTick;
 class TP_API tpTimer {
 public:
 
-	const static tpDouble kTimeMicroSeconds = 1e6;
-	const static tpDouble kTimeMilliSeconds = 1e3;
-	const static tpDouble kTimeSeconds      = 1;
+	enum {
+		kTimeMicroSeconds,
+		kTimeMilliSeconds,
+		kTimeSeconds
+	};
+
 
 	/**
 	  * @brief c'tor - will reset the timer (call ::start())
@@ -67,7 +70,7 @@ public:
 	  * @param scale is the scale of the returned value
 	  * @return time in units
 	  */
-	tpDouble getElapsed(tpDouble scale = kTimeSeconds) const;
+	tpDouble getElapsed(tpUInt scale) const;
 
 protected:
 

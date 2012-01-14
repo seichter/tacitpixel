@@ -82,8 +82,8 @@ tpThread::start()
 #if defined(_WIN32)
 	mThreadHandle = new tpThreadHandle();
 	CreateThread( 0, 0,
-		static_cast<LPTHREAD_START_ROUTINE>(tpThreadHandle::dispatch),
-		this,0,static_cast<LPDWORD>(mThreadHandle->handle));
+		reinterpret_cast<LPTHREAD_START_ROUTINE>(tpThreadHandle::dispatch),
+		this,0,reinterpret_cast<LPDWORD>(mThreadHandle->handle));
 #elif defined(HAVE_PTHREAD_H)
 	mThreadHandle = new tpThreadHandle();
 	pthread_create(&mThreadHandle->handle,0L,tpThreadHandle::dispatch,static_cast<void*>(this));

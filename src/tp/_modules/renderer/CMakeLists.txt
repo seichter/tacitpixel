@@ -21,8 +21,6 @@ set_source_files_properties(${shader_srcs}
 
 set(srcs
 	opengl1/opengl1_renderer.cxx
-	tpGL.h
-	tpGL.cpp
 #	tpGLRenderer.h
 #	tpGLRenderer.cpp
 #	tpGLShader.cpp
@@ -50,8 +48,8 @@ endif()
 #
 if(WIN32)
 	list(APPEND srcs
-		${CMAKE_CURRENT_SOURCE_DIR}/tpGLRenderSurfaceWin32.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/tpGLRenderSurfaceWin32.h
+#		${CMAKE_CURRENT_SOURCE_DIR}/tpGLRenderSurfaceWin32.cpp
+#		${CMAKE_CURRENT_SOURCE_DIR}/tpGLRenderSurfaceWin32.h
 		)
 endif()
 

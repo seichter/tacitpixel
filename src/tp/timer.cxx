@@ -34,12 +34,14 @@
 #endif
 
 
-tpTimer::tpTimer() : mSecondsPerTick(1.0 / tpDouble(1000000)) {
+tpTimer::tpTimer() 
+	: mSecondsPerTick(1.0 / tpDouble(1000000)) 
+{
 #if defined(_WIN32)
 	LARGE_INTEGER _freq;
 	if(QueryPerformanceFrequency(&_freq))
 	{
-		m_secondsPerTick = 1.0/(tpDouble)_freq.QuadPart;
+		mSecondsPerTick = 1.0/(tpDouble)_freq.QuadPart;
 	}
 #endif
 
@@ -56,11 +58,25 @@ void tpTimer::start()
 	getCurrentTick(mStart);
 }
 
-tpDouble tpTimer::getElapsed( tpDouble scale /*= TP_TIME_SEC*/ ) const
+tpDouble tpTimer::getElapsed( tpUInt scale ) const
 {
 	tpTimerTick r;
 	getCurrentTick(r);
-	return tpDouble((r - mStart) * mSecondsPerTick * scale);
+
+	tpDouble outputScale = 1.;
+	switch (scale) {
+		case kTimeMicroSeconds:
+			outputScale = 1e6;
+			break;
+		case kTimeMilliSeconds:
+			outputScale = 1e3;
+			break;
+		case kTimeSeconds:
+		default:
+			outputScale = 1.;
+	}
+
+	return tpDouble((r - mStart) * mSecondsPerTick * outputScale);
 }
 
 /* static */
