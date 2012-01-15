@@ -88,6 +88,7 @@ set(tp_srcs
 	event.cxx
 	file.cxx
 	filename.cxx
+	functoid.cxx
 #	gl.cxx
 	hash.cxx
 	image.cxx

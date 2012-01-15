@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,22 +29,24 @@
 #include <tp/referenced.h>
 #include <tp/library.h>
 #include <tp/refptr.h>
-#include <tp/string.h>
-#include <tp/map.h>
-
+#include <tp/functoid.h>
 
 class TP_API tpRTL : public tpReferenced {
 protected:
 
 	tpRefPtr<tpLibrary> mLibrary;
-	
+	tpFunctoidArray mFunctions;
+
 public:
 
 	tpRefPtr<tpLibrary> getLibrary() const { return mLibrary; }
 
+	tpFunctoidArray getFunctions() const { return mFunctions; }
+
+
 	/**
 	 * Opens library and loads signatures
-	 * 
+	 *
 	 * @param name filename of the library to load
 	 * @return true if successful
 	 */

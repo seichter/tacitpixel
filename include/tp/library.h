@@ -72,7 +72,9 @@ public:
 	/**
 	 * Get an address from the library. This function 
 	 * returns a raw pointer to the address of the 
-	 * function.
+	 * function. Be warned, always cast to the correct 
+	 * type right at that call. These addresses can't
+	 * be stored or copied.
 	 *	
 	 * \param funcName name of the function/symbol
 	 * \return address if successful, otherwise 0x0

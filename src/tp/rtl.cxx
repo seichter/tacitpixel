@@ -11,6 +11,7 @@ bool tpRTL::open( const tpString& name )
 
 	if (mLibrary.isValid())
 	{
+		tpFunctoid::load(mLibrary.get(),mFunctions);
 
 		return true;
 	}
