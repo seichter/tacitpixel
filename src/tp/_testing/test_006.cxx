@@ -11,9 +11,6 @@
 #include <tp/egl.h>
 #include <tp/log.h>
 
-
-
-
 int main(int argc, char* argv[])
 {
 
