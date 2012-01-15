@@ -38,6 +38,8 @@ struct TP_API tpRunnable {
 	  * @brief needs to be overwritten and should contain the time critical code
 	  */
 	virtual void run() = 0;
+
+	virtual ~tpRunnable() {};
 };
 
 /** structure holding the handle of the threading implementation */

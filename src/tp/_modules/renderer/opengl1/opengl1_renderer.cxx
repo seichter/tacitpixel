@@ -12,7 +12,7 @@
 #include <OpenGL/OpenGL.h>
 #else
 //#include <GLES/gl.h>
-#include <Windows.h>
+//#include <Windows.h>
 #include <GL/gl.h>
 #endif
 

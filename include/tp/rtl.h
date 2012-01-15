@@ -41,7 +41,7 @@ public:
 
 	tpRefPtr<tpLibrary> getLibrary() const { return mLibrary; }
 
-	tpFunctoidArray getFunctions() const { return mFunctions; }
+	tpFunctoidArray& getFunctions() { return mFunctions; }
 
 
 	/**

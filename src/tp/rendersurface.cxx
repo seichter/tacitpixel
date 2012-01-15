@@ -180,12 +180,21 @@ tpRenderSurface::getName() const
 	return tpString("RenderSurface");
 }
 
-TP_TYPE_REGISTER(tpRenderSurfaceFactory,tpReferenced,RenderSurfaceFactory);
-TP_TYPE_REGISTER(tpRenderContext,tpReferenced,RenderContext);
-TP_TYPE_REGISTER(tpRenderSurface,tpRenderContext,RenderSurface);
-
 tpRenderContext::tpRenderContext()
 	: tpReferenced()
 {
 }
+
+tpRenderTarget::tpRenderTarget()
+	: tpReferenced()
+	, nativedisplay(0L)
+	, nativewindow(0L)
+{
+}
+
+TP_TYPE_REGISTER(tpRenderSurfaceFactory,tpReferenced,RenderSurfaceFactory);
+TP_TYPE_REGISTER(tpRenderContext,tpReferenced,RenderContext);
+TP_TYPE_REGISTER(tpRenderSurface,tpRenderContext,RenderSurface);
+TP_TYPE_REGISTER(tpRenderTarget,tpReferenced,RenderTarget);
+
 

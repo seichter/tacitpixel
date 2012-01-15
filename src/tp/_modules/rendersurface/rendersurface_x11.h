@@ -33,19 +33,6 @@
 #include <tp/log.h>
 
 
-class tpRenderContextGLX : public tpRenderContext {
-
-	bool makeCurrent();
-	bool swapBuffers();
-
-};
-
-class tpRenderContextEGL : public tpRenderContext {
-
-	bool makeCurrent();
-	bool swapBuffers();
-
-};
 
 class tpGLRenderSurfaceX11 : public tpRenderSurface {
 public:

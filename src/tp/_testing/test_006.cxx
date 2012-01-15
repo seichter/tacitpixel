@@ -21,12 +21,20 @@ int main(int argc, char* argv[])
 
 	tpEGL::get()->open(file);
 
-	tpInt major(0),minor(0);
+	int major, minor;
 
 	EGLDisplay d = tpEGL::a().GetDisplay.f(0);
 	tpEGL::a().Initialize.f(d,&major,&minor);
+	tpString EGLVendor = tpEGL::a().QueryString.f(d,EGL_VENDOR);
+	tpString EGLAPIs = tpEGL::a().QueryString.f(d,EGL_CLIENT_APIS);
 
-	tpLogMessage("EGL initialized with %d.%d",major,minor);
+	tpLogMessage("EGL %d.%d",major,minor);
+	tpLogMessage("\tVendor",EGLVendor.c_str());
+	tpLogMessage("\tAPIs",EGLAPIs.c_str());
+
+	tpRenderContextEGL eglctx;
+	tpRenderTarget egltrg;
+	eglctx.create(&egltrg);
 
 	return 0;
 }

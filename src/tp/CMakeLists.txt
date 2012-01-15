@@ -35,6 +35,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/event.h	
 	${tp_include_path}/tp/field.h
 	${tp_include_path}/tp/file.h
+	${tp_include_path}/tp/functoid.h
 	${tp_include_path}/tp/globals.h
 	${tp_include_path}/tp/egl.h
 	${tp_include_path}/tp/gl.h

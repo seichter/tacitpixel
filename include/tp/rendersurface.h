@@ -69,6 +69,34 @@ public:
 
 };
 
+class tpRenderContext;
+
+class TP_API tpRenderTarget : public tpReferenced {
+protected:
+
+	tpRawPtr nativedisplay;
+	tpRawPtr nativewindow;
+
+public:
+
+	TP_TYPE_DECLARE;
+
+	enum {
+		kPbuffer = 0,
+		kPixmap,
+		kWindow
+	};
+
+	tpRenderTarget();
+	tpUChar getTargetType() const { return kPbuffer; }
+
+	tpRawPtr getWindow() { return nativewindow; }
+	tpRawPtr getDisplay() { return nativedisplay; }
+
+	virtual tpInt getWidth() const { return 0; }
+	virtual tpInt getHeight() const { return 0; }
+
+};
 
 class TP_API tpRenderContext : public tpReferenced  {
 public:
@@ -77,8 +105,12 @@ public:
 
 	tpRenderContext();
 
+	virtual bool create(tpRenderTarget* target) = 0;
+
 	virtual bool makeCurrent() = 0;
 	virtual bool swapBuffers() = 0;
+
+
 
 };
 
