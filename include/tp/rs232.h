@@ -37,7 +37,7 @@
 #include <tp/string.h>
 
 
-#if defined(__unix) || defined(__APPLE__)
+#if defined(__unix) || defined(__APPLE__) || defined(__BEOS__) || defined(__HAIKU__)
 #if defined(__sgi)
   #include <term.h>
 #endif

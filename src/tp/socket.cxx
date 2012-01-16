@@ -40,7 +40,7 @@
 	typedef int socklen_t;
 #endif
 
-#if defined(__unix) || defined(__APPLE__)
+#if defined(__unix) || defined(__APPLE__) || defined(__BEOS__) || defined(__HAIKU__)
 #include <sys/time.h>
 #endif
 

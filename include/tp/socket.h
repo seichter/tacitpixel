@@ -37,7 +37,7 @@
 	#include <winsock.h>
 #endif
 
-#if defined(__unix) || defined(__APPLE__)
+#if defined(__unix) || defined(__APPLE__) || defined(__BEOS__) || defined(__HAIKU__)
   #include <sys/types.h>
   #include <sys/socket.h>
   #include <netinet/in.h>
@@ -58,7 +58,7 @@
 
 
 
-#if defined(__unix) || defined(__APPLE__)
+#if defined(__unix) || defined(__APPLE__) || defined(__BEOS__) || defined(__HAIKU__)
 	#define INVALID_SOCKET -1
 #endif
 

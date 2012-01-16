@@ -36,7 +36,7 @@
 #elif defined(__APPLE__)
 	#include <CoreFoundation/CoreFoundation.h>
 	#include <unistd.h>
-#elif defined(__unix)
+#elif defined(__unix) || defined(__HAIKU__)
 	#include <unistd.h>
 #else
 	// Unknown platform

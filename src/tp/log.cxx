@@ -80,7 +80,7 @@ void tpSetGlobalNotifyLevel(tpUInt level)
 	#endif
 #elif defined(ANDROID)
 	#define tpVSNPRINTF snprintf
-#elif defined(__unix) || defined(__APPLE__)
+#elif defined(__unix) || defined(__APPLE__) || defined(__BEOS__) || defined(__HAIKU__)
 	#define tpVSNPRINTF vsnprintf
 #elif defined(__SYMBIAN32__)
 	#define tpVSNPRINTF snprintf

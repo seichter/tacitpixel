@@ -31,7 +31,7 @@
 #include <string.h>       // ::memset, ::strdup, ::strerror
 #include <iostream>
 
-#if defined(__unix) || defined(__APPLE__)
+#if defined(__unix) || defined(__APPLE__) || defined(__HAIKU__) || defined(__BEOS__)
 	#include <unistd.h>       // ::close, ::ioctl, ::read, ::write
 	#include <sys/ioctl.h>
 	#include <termios.h>
