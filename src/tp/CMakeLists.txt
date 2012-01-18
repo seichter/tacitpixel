@@ -32,7 +32,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/array.h
 	${tp_include_path}/tp/arguments.h
 	${tp_include_path}/tp/chunk.h
-	${tp_include_path}/tp/event.h	
+	${tp_include_path}/tp/event.h
 	${tp_include_path}/tp/field.h
 	${tp_include_path}/tp/file.h
 	${tp_include_path}/tp/functoid.h
@@ -80,6 +80,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/version.h
 	)
 
+file(GLOB tp_impl_srcs ${CMAKE_CURRENT_SOURCE_DIR}/_impl/*.*)
 
 set(tp_srcs
 	arguments.cxx
@@ -162,6 +163,7 @@ add_library(${tp_name} SHARED
 	${tp_hdrs}
 	${tp_hdrs_sg}
 	${tp_srcs_sg}
+	${tp_impl_srcs}
 	)
 
 set_target_properties(${tp_name}
@@ -174,6 +176,8 @@ target_link_libraries(${tp_name} jpeg)
 if(APPLE)
 	target_link_libraries(${tp_name}
 		"-framework CoreFoundation"
+		"-framework Cocoa"
+		"-framework OpenGL"
 		)
 endif()
 

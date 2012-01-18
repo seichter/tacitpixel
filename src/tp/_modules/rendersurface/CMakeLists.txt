@@ -35,15 +35,15 @@ if(WIN32)
 		)
 endif()
 
-add_library(${module_name} MODULE ${srcs})
-
-set_target_properties(${module_name}
-	PROPERTIES
-	PREFIX ""
-	PROJECT_LABEL "Plugin OpenGL RenderSurface"
-)
-
-target_link_libraries(${module_name}
-	tacit ${ext_libs}
-	)
+#add_library(${module_name} MODULE ${srcs})
+#
+#set_target_properties(${module_name}
+#	PROPERTIES
+#	PREFIX ""
+#	PROJECT_LABEL "Plugin OpenGL RenderSurface"
+#)
+#
+#target_link_libraries(${module_name}
+#	tacit ${ext_libs}
+#	)
 

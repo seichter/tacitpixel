@@ -106,9 +106,9 @@ public:
 	EGLContext context;
 
 	bool create(tpRenderTarget *target);
+	void destroy();
 
 	bool makeCurrent();
-
 	bool swapBuffers();
 };
 

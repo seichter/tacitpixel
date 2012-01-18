@@ -125,9 +125,16 @@ tpRenderSurfaceTraits& tpRenderSurfaceTraits::setFullscreen( bool val /*= true*/
 
 //////////////////////////////////////////////////////////////////////////
 
+#if defined(_WIN32)
+#elif defined(__APPLE__)
+	#include "_impl/rendersurface_cocoa.h"
+#endif
+
+
 tpRenderSurface* tpRenderSurface::create( tpRenderSurfaceTraits* traits /* =0 */)
 {
 	tpRenderSurface* surface(0);
+#if 0
 	tpRenderSurfaceFactory* surface_factory(0);
 
 	tpLogNotify("%d modules",tpModuleManager::get()->getModules().getSize());
@@ -152,6 +159,12 @@ tpRenderSurface* tpRenderSurface::create( tpRenderSurfaceTraits* traits /* =0 */
 
 		tpLogError("%s no render surface factory available",__FUNCTION__);
 	}
+
+#endif
+
+#if defined(__APPLE__)
+	surface = new tpRenderSurfaceCocoa(traits);
+#endif
 
 	return surface;
 }
@@ -187,8 +200,6 @@ tpRenderContext::tpRenderContext()
 
 tpRenderTarget::tpRenderTarget()
 	: tpReferenced()
-	, nativedisplay(0L)
-	, nativewindow(0L)
 {
 }
 
@@ -196,5 +207,8 @@ TP_TYPE_REGISTER(tpRenderSurfaceFactory,tpReferenced,RenderSurfaceFactory);
 TP_TYPE_REGISTER(tpRenderContext,tpReferenced,RenderContext);
 TP_TYPE_REGISTER(tpRenderSurface,tpRenderContext,RenderSurface);
 TP_TYPE_REGISTER(tpRenderTarget,tpReferenced,RenderTarget);
+
+
+
 
 

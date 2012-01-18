@@ -154,3 +154,9 @@ bool tpRenderContextEGL::create(tpRenderTarget* target) {
 	return false;
 
 }
+
+void tpRenderContextEGL::destroy() {
+
+	//\todo implement!
+
+}

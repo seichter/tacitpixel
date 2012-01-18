@@ -72,11 +72,6 @@ public:
 class tpRenderContext;
 
 class TP_API tpRenderTarget : public tpReferenced {
-protected:
-
-	tpRawPtr nativedisplay;
-	tpRawPtr nativewindow;
-
 public:
 
 	TP_TYPE_DECLARE;
@@ -90,8 +85,8 @@ public:
 	tpRenderTarget();
 	tpUChar getTargetType() const { return kPbuffer; }
 
-	tpRawPtr getWindow() { return nativewindow; }
-	tpRawPtr getDisplay() { return nativedisplay; }
+	virtual tpRawPtr getWindow() { return 0L; }
+	virtual tpRawPtr getDisplay() { return 0L; }
 
 	virtual tpInt getWidth() const { return 0; }
 	virtual tpInt getHeight() const { return 0; }
@@ -106,6 +101,7 @@ public:
 	tpRenderContext();
 
 	virtual bool create(tpRenderTarget* target) = 0;
+	virtual void destroy() = 0;
 
 	virtual bool makeCurrent() = 0;
 	virtual bool swapBuffers() = 0;
