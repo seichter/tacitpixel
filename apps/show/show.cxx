@@ -47,11 +47,11 @@ int main(int argc,char* argv[])
 		rendersurface->show(true);
 		while (!rendersurface->isDone())
 		{
-			if (rendersurface->makeCurrent())
+//			if (rendersurface->makeCurrent())
 			{
 				(*renderer)(root.get());
 			}
-			rendersurface->swapBuffers();
+//			rendersurface->swapBuffers();
 		}
 	}
 

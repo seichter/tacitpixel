@@ -26,20 +26,6 @@
 #include <tp/log.h>
 
 
-class tpRenderContextCocoa : public tpRenderContext {
-
-	NSOpenGLContext* oglcontext;
-
-public:
-
-	TP_TYPE_DECLARE;
-
-	virtual bool create(tpRenderTarget *target);
-	virtual bool makeCurrent();
-	virtual bool swapBuffers();
-	virtual void destroy();
-
-};
 
 
 class tpRenderSurfaceCocoa : public tpRenderSurface {
@@ -57,6 +43,8 @@ public:
 //	virtual tpString getString(tpUInt glenum);
 
 	virtual bool show(bool doShow);
+
+	virtual void update();
 
 	void setCaption(const tpString& caption);
 
