@@ -112,7 +112,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
-class TP_API tpRenderSurface : public tpRenderContext {
+class TP_API tpRenderSurface : public tpReferenced {
 public:
 
 	TP_TYPE_DECLARE;
@@ -128,6 +128,8 @@ public:
 	void setDone(bool isDone = true) { mDone = isDone; }
 
 	bool isDone() const { return mDone; }
+
+	virtual void update() = 0;
 
 	void setCallback(tpRenderSurfaceCallback* callback) { mCallback = callback; }
 

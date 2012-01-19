@@ -92,11 +92,13 @@ int main(int argc, char* argv[])
 
 
 	tpRefPtr<tpRenderSurface> rendersurface = tpRenderSurface::create(&traits);
+
+
 	tpRefPtr<tpRenderer> renderer = tpRenderer::create();
 
 	if (!renderer.isValid()) {
 		tpLogError("Could not initialize renderer");
-		exit(-1);
+//		exit(-1);
 	}
 
 	tpRefPtr<tpCamera> camera = renderer->getActiveCamera();
@@ -114,11 +116,13 @@ int main(int argc, char* argv[])
 
 		while (rendersurface->isDone() == false) {
 
-			rendersurface->makeCurrent();
+			rendersurface->update();
 
-			(*renderer)(root.get());
+//			rendersurface->makeCurrent();
 
-			rendersurface->swapBuffers();
+//			(*renderer)(root.get());
+
+//			rendersurface->swapBuffers();
 
 			tpThread::yield();
 		}
