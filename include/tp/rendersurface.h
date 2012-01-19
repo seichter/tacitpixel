@@ -115,7 +115,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
-class TP_API tpRenderSurface : public tpReferenced {
+class TP_API tpRenderSurface : public tpRenderTarget {
 public:
 
 	TP_TYPE_DECLARE;

@@ -175,14 +175,14 @@ tpRenderSurface* tpRenderSurface::create( tpRenderSurfaceTraits* traits /* =0 */
 
 
 tpRenderSurface::tpRenderSurface()
-	: tpReferenced()
+	: tpRenderTarget()
 	, mDone(false)
 {
 }
 
 
 tpRenderSurface::tpRenderSurface( tpRenderSurfaceTraits* traits )
-	: tpReferenced()
+	: tpRenderTarget()
 	, mDone(false)
 {
 }
@@ -209,8 +209,8 @@ tpRenderTarget::tpRenderTarget()
 
 TP_TYPE_REGISTER(tpRenderSurfaceFactory,tpReferenced,RenderSurfaceFactory);
 TP_TYPE_REGISTER(tpRenderContext,tpReferenced,RenderContext);
-TP_TYPE_REGISTER(tpRenderSurface,tpReferenced,RenderSurface);
 TP_TYPE_REGISTER(tpRenderTarget,tpReferenced,RenderTarget);
+TP_TYPE_REGISTER(tpRenderSurface,tpRenderTarget,RenderSurface);
 
 
 
