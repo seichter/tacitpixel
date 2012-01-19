@@ -10,6 +10,8 @@
  *
  */
 
+#if defined(TP_USE_COCOA)
+
 #include <tp/module.h>
 #include <tp/version.h>
 
@@ -267,3 +269,4 @@ void tpRenderContextCocoa::destroy()
 TP_TYPE_REGISTER(tpRenderContextCocoa,tpRenderContext,RenderContextCocoa);
 TP_TYPE_REGISTER(tpRenderSurfaceCocoa,tpRenderSurface,RenderSurfaceCocoa);
 
+#endif

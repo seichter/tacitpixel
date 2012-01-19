@@ -13,6 +13,7 @@
 #ifndef TPGLRENDERSURFACECOCOA_H
 #define TPGLRENDERSURFACECOCOA_H
 
+#if defined(TP_USE_COCOA)
 
 #ifdef __OBJC__
 	#import <Cocoa/Cocoa.h>
@@ -71,5 +72,6 @@ protected:
 
 };
 
+#endif
 
 #endif

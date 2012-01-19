@@ -80,7 +80,9 @@ set(tp_hdrs
 	${tp_include_path}/tp/version.h
 	)
 
-file(GLOB tp_impl_srcs ${CMAKE_CURRENT_SOURCE_DIR}/_impl/*.*)
+if (APPLE)
+
+endif()
 
 set(tp_srcs
 	arguments.cxx
