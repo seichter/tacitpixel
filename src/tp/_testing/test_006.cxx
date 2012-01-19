@@ -24,14 +24,16 @@ int main(int argc, char* argv[])
 	tpEGL::get()->open(file);
 
 	tpRefPtr<tpRenderSurface> surface = tpRenderSurface::create();
+
+	surface->setCaption("Tacit Pixel EGL Test");
 	surface->show(true);
 
 	tpRenderContextEGL egl_context;
 
 	egl_context.create(surface.get());
 
-	while (!surface->isDone()) {
-
+	while (surface->isValid()) {
+		surface->update();
 	}
 
 	return 0;

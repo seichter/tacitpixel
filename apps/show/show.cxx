@@ -45,7 +45,7 @@ int main(int argc,char* argv[])
 	if (rendersurface.isValid() && renderer.isValid())
 	{
 		rendersurface->show(true);
-		while (!rendersurface->isDone())
+		while (rendersurface->isValid())
 		{
 //			if (rendersurface->makeCurrent())
 			{

@@ -12,6 +12,8 @@ protected:
 	Window win;
 	Atom wmDeleteWindow;
 
+	virtual ~tpRenderSurfaceX11();
+
 public:
 
 	TP_TYPE_DECLARE
@@ -26,6 +28,8 @@ public:
 
 	tpRawPtr getDisplay() { return dpy; }
 	tpRawPtr getWindow() { return reinterpret_cast<tpRawPtr>(win); }
+
+	void destroy();
 };
 
 

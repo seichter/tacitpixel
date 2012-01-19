@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
 	{
 		rendersurface->show(true);
 
-		while (rendersurface->isDone() == false) {
+		while (rendersurface->isValid()) {
 
 			rendersurface->update();
 

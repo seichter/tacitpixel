@@ -126,7 +126,37 @@ tpRenderSurfaceX11::setCaption(const tpString& caption)
 void
 tpRenderSurfaceX11::update()
 {
+	XEvent event;
+	XNextEvent(dpy,&event);
 
+	switch (event.type) {
+	case ConfigureNotify:
+		tpLogNotify("%s - configure",__FUNCTION__);
+		break;
+	case ButtonPress:
+		tpLogNotify("%s - button pressed",__FUNCTION__);
+		break;
+	case DestroyNotify:
+	case ClientMessage:
+		tpLogNotify("%s - request to close",__FUNCTION__);
+		this->mDone = true;
+		break;
+	default:
+		tpLogNotify("%s - got an unknown event %d",__FUNCTION__,event.type);
+		break;
+	}
+}
+
+void
+tpRenderSurfaceX11::destroy()
+{
+	XDestroyWindow(dpy,win);
+	XCloseDisplay(dpy);
+}
+
+tpRenderSurfaceX11::~tpRenderSurfaceX11()
+{
+	destroy();
 }
 
 TP_TYPE_REGISTER(tpRenderSurfaceX11,tpRenderSurface,RenderSurfaceX11);

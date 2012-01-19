@@ -16,8 +16,9 @@ tpEGL::tpEGL()
 			.push(&MakeCurrent,"eglMakeCurrent")
 			.push(&SwapBuffers,"eglSwapBuffers")
 			.push(&QuerySurface,"eglQueryContext")
-			.push(&QuerySurface,"eglQuerySurface")
+			.push(&GetConfigAttrib,"eglGetConfigAttrib")
 			.push(&QueryString,"eglQueryString")
+			.push(&BindAPI,"eglBindAPI")
 			;
 }
 
@@ -41,7 +42,8 @@ bool tpRenderContextEGL::create(tpRenderTarget* target) {
 
 	tpArray<EGLint> attributes;
 
-	attributes.add(EGL_RENDERABLE_TYPE).add(EGL_OPENGL_ES2_BIT);
+//	attributes.add(EGL_RENDERABLE_TYPE).add(EGL_OPENGL_ES2_BIT);
+	attributes.add(EGL_RENDERABLE_TYPE).add(EGL_OPENGL_BIT);
 
 	switch (target->getTargetType())
 	{
@@ -82,10 +84,10 @@ bool tpRenderContextEGL::create(tpRenderTarget* target) {
 		);
 	}
 
+	tpEGL::a().BindAPI.f(EGL_OPENGL_BIT);
+
 	tpArray<EGLint> context_attributes;
 	EGLConfig config = 0L;
-
-
 
 	EGLint num_config = 1;
 	/* get an appropriate EGL frame buffer configuration */
@@ -95,9 +97,43 @@ bool tpRenderContextEGL::create(tpRenderTarget* target) {
 	} else
 	{
 		tpLogNotify("%s - eglChooseConfig returned %d configuration(s)",__FUNCTION__,num_config);
-		EGLBoolean status;
-		int attribute, *value;
+
+		EGLint red_,green_,blue_,alpha_;
+
+		tpEGL::a().GetConfigAttrib.f(display,config,EGL_RED_SIZE,&red_);
+		tpEGL::a().GetConfigAttrib.f(display,config,EGL_GREEN_SIZE,&green_);
+		tpEGL::a().GetConfigAttrib.f(display,config,EGL_BLUE_SIZE,&blue_);
+		tpEGL::a().GetConfigAttrib.f(display,config,EGL_ALPHA_SIZE,&alpha_);
+
+		tpLogNotify("%s config has %d:%d:%d:%d format",__FUNCTION__,red_,green_,blue_,alpha_);
+
 		//status = tpGL::eglGetConfigAttrib(display, config, attribute, value);
+	}
+
+
+
+//	context_attributes.add(EGL_CONFIG_ID).add(0);
+//	context_attributes.add(EGL_CONTEXT_CLIENT_VERSION).add(2);
+//	context_attributes.add(EGL_NONE).add(EGL_NONE);
+
+	/* create an EGL rendering context */
+	context = tpEGL::a().CreateContext.f(display, config, EGL_NO_CONTEXT,/*(const EGLint*)&context_attributes.front()*/0L);
+	if (EGL_NO_CONTEXT == context)
+	{
+		tpLogError("%s - eglCreateContext failed (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
+
+	} else {
+
+		tpLogMessage("%s - eglCreateContext successful",__FUNCTION__);
+
+		makeCurrent();
+
+		tpInt w(0),h(0);
+		tpEGL::a().QuerySurface.f(display,surface,EGL_WIDTH,&w);
+		tpEGL::a().QuerySurface.f(display,surface,EGL_HEIGHT,&h);
+
+		tpLogMessage("%s - actual surface area %dx%d",__FUNCTION__,w,h);
+
 	}
 
 	/* create an EGL window surface */
@@ -106,7 +142,7 @@ bool tpRenderContextEGL::create(tpRenderTarget* target) {
 	{
 		surface = tpEGL::a().CreateWindowSurface.f(display,config,target->getWindow(),NULL);
 
-		if (surface != 0)
+		if (EGL_NO_SURFACE == surface)
 		{
 			tpLogError("%s - eglCreateWindowSurface failed (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
 		}
@@ -118,23 +154,6 @@ bool tpRenderContextEGL::create(tpRenderTarget* target) {
 		{
 			tpLogError("%s - eglCreatePbufferSurface failed (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
 		}
-	}
-
-	context_attributes.add(EGL_CONFIG_ID).add(0);
-	//context_attributes.add(EGL_CONTEXT_CLIENT_VERSION).add(2);
-	context_attributes.add(EGL_NONE).add(EGL_NONE);
-
-	/* create an EGL rendering context */
-	context = tpEGL::a().CreateContext.f(display, config, EGL_NO_CONTEXT,(const EGLint*)&context_attributes.front());
-	if (EGL_NO_CONTEXT == context)
-	{
-		tpLogError("%s - eglCreateContext failed (%0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
-
-	} else {
-
-		tpLogMessage("%s - eglCreateContext successful",__FUNCTION__);
-
-		return true;
 	}
 
 
