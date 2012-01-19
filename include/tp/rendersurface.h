@@ -69,7 +69,27 @@ public:
 
 };
 
-class tpRenderContext;
+
+class tpRenderTarget;
+
+class TP_API tpRenderContext : public tpReferenced  {
+public:
+
+	TP_TYPE_DECLARE;
+
+	tpRenderContext();
+
+	virtual bool create(tpRenderTarget* target) = 0;
+	virtual void destroy() = 0;
+
+	virtual bool makeCurrent() = 0;
+	virtual bool swapBuffers() = 0;
+
+
+};
+
+
+//////////////////////////////////////////////////////////////////////////
 
 class TP_API tpRenderTarget : public tpReferenced {
 public:
@@ -90,23 +110,6 @@ public:
 
 	virtual tpInt getWidth() const { return 0; }
 	virtual tpInt getHeight() const { return 0; }
-
-};
-
-class TP_API tpRenderContext : public tpReferenced  {
-public:
-
-	TP_TYPE_DECLARE;
-
-	tpRenderContext();
-
-	virtual bool create(tpRenderTarget* target) = 0;
-	virtual void destroy() = 0;
-
-	virtual bool makeCurrent() = 0;
-	virtual bool swapBuffers() = 0;
-
-
 
 };
 
