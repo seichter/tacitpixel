@@ -8,10 +8,14 @@ set(tp_include_path ${CMAKE_CURRENT_SOURCE_DIR}/../../include)
 
 include_directories(${tp_include_path} _thirdparty ${CMAKE_BINARY_DIR}/include)
 
+find_package(X11)
+find_package(OpenGL)
+#find_package(Cocoa)
+
 include(CheckIncludeFiles)
 
-CHECK_INCLUDE_FILES(stdint.h HAVE_STDINT_H)
-CHECK_INCLUDE_FILES(malloc.h HAVE_MALLOC_H)
+CHECK_INCLUDE_FILES("stdint.h" HAVE_STDINT_H)
+CHECK_INCLUDE_FILES("malloc.h" HAVE_MALLOC_H)
 CHECK_INCLUDE_FILES("sys/param.h;sys/mount.h" HAVE_SYS_MOUNT_H)
 CHECK_INCLUDE_FILES("pthread.h" HAVE_PTHREAD_H)
 CHECK_INCLUDE_FILES("dlfcn.h" HAVE_DLFCN_H)
@@ -19,6 +23,11 @@ CHECK_INCLUDE_FILES("time.h" HAVE_TIME_H)
 CHECK_INCLUDE_FILES("stdio.h" HAVE_STDIO_H)
 
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
+
+
+set(tp_impl_srcs)
+set(tp_impl_libs)
+
 
 message(STATUS "Build ${TP_VERSION_BUILD}")
 
@@ -81,8 +90,32 @@ set(tp_hdrs
 	)
 
 if (APPLE)
+	list(APPEND tp_impl_srcs
+		_impl/rendersurface_cocoa.mm
+		_impl/rendersurface_cocoa.h
+		_impl/rendercontext_cocoa.mm
+		_impl/rendercontext_cocoa.h
+		)
+endif()
+
+if(X11_FOUND)
+
+	find_package(OpenGL)
+
+	list(APPEND tp_impl_srcs
+		_impl/rendersurface_x11.cxx
+		_impl/rendersurface_x11.h
+		_impl/rendercontext_glx.cxx
+		_impl/rendercontext_glx.h
+		)
+
+	list(APPEND tp_impl_libs
+		${X11_LIBRARIES}
+		${OPENGL_LIBRARIES}
+		)
 
 endif()
+
 
 set(tp_srcs
 	arguments.cxx
@@ -167,6 +200,9 @@ add_library(${tp_name} SHARED
 	${tp_srcs_sg}
 	${tp_impl_srcs}
 	)
+
+
+target_link_libraries(${tp_name} ${tp_impl_libs})
 
 set_target_properties(${tp_name}
 	PROPERTIES
