@@ -32,95 +32,7 @@
 #include "tp/timer.h"
 #include "tp/module.h"
 
-//////////////////////////////////////////////////////////////////////////
 
-tpRenderSurfaceTraits::tpRenderSurfaceTraits()
-	: title("GL Window"),
-	size(tpVec2i(320,240)),
-	position(tpVec2i(0,0))
-{
-}
-
-tpVec2i tpRenderSurfaceTraits::getSize() const
-{
-	return size;
-}
-
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setSize( tpVec2i val )
-{
-	size = val; return *this;
-}
-
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setSize( tpInt width, tpInt height )
-{
-	return setSize(tpVec2i(width,height));
-}
-
-tpString tpRenderSurfaceTraits::getTitle() const
-{
-	return title;
-}
-
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setTitle( const tpString& val )
-{
-	title = val; return *this;
-}
-
-bool tpRenderSurfaceTraits::useDefaultSize()
-{
-	return (size[0] < 0 || size[1] < 0);
-}
-
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setDefaultSize()
-{
-	return setSize(-1,-1);
-}
-
-tpVec2i tpRenderSurfaceTraits::getPosition() const
-{
-	return position;
-}
-
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setPosition( tpVec2i val )
-{
-	position = val;
-	return *this;
-}
-
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setPosition( tpInt x, tpInt y )
-{
-	return setPosition( tpVec2i( x, y ) );
-}
-
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setDefaultPosition()
-{
-	return setPosition(-1,-1);
-}
-
-bool tpRenderSurfaceTraits::useDefaultPosition()
-{
-	return (position[0] < 0 || position[1] < 0);
-}
-
-void* tpRenderSurfaceTraits::getWindowHandle() const
-{
-	return window_handle;
-}
-
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setWindowHandle( void* val )
-{
-	window_handle = val; return *this;
-}
-
-bool tpRenderSurfaceTraits::isFullscreen() const
-{
-	return fullscreen;
-}
-
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setFullscreen( bool val /*= true*/ )
-{
-	fullscreen = val; return *this;
-}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -205,6 +117,96 @@ tpRenderContext::tpRenderContext()
 tpRenderTarget::tpRenderTarget()
 	: tpReferenced()
 {
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+tpRenderSurfaceTraits::tpRenderSurfaceTraits()
+    : title("GL Window"),
+    size(tpVec2i(320,240)),
+    position(tpVec2i(0,0))
+{
+}
+
+tpVec2i tpRenderSurfaceTraits::getSize() const
+{
+    return size;
+}
+
+tpRenderSurfaceTraits& tpRenderSurfaceTraits::setSize( tpVec2i val )
+{
+    size = val; return *this;
+}
+
+tpRenderSurfaceTraits& tpRenderSurfaceTraits::setSize( tpInt width, tpInt height )
+{
+    return setSize(tpVec2i(width,height));
+}
+
+tpString tpRenderSurfaceTraits::getTitle() const
+{
+    return title;
+}
+
+tpRenderSurfaceTraits& tpRenderSurfaceTraits::setTitle( const tpString& val )
+{
+    title = val; return *this;
+}
+
+bool tpRenderSurfaceTraits::useDefaultSize()
+{
+    return (size[0] < 0 || size[1] < 0);
+}
+
+tpRenderSurfaceTraits& tpRenderSurfaceTraits::setDefaultSize()
+{
+    return setSize(-1,-1);
+}
+
+tpVec2i tpRenderSurfaceTraits::getPosition() const
+{
+    return position;
+}
+
+tpRenderSurfaceTraits& tpRenderSurfaceTraits::setPosition( tpVec2i val )
+{
+    position = val;
+    return *this;
+}
+
+tpRenderSurfaceTraits& tpRenderSurfaceTraits::setPosition( tpInt x, tpInt y )
+{
+    return setPosition( tpVec2i( x, y ) );
+}
+
+tpRenderSurfaceTraits& tpRenderSurfaceTraits::setDefaultPosition()
+{
+    return setPosition(-1,-1);
+}
+
+bool tpRenderSurfaceTraits::useDefaultPosition()
+{
+    return (position[0] < 0 || position[1] < 0);
+}
+
+void* tpRenderSurfaceTraits::getWindowHandle() const
+{
+    return window_handle;
+}
+
+tpRenderSurfaceTraits& tpRenderSurfaceTraits::setWindowHandle( void* val )
+{
+    window_handle = val; return *this;
+}
+
+bool tpRenderSurfaceTraits::isFullscreen() const
+{
+    return fullscreen;
+}
+
+tpRenderSurfaceTraits& tpRenderSurfaceTraits::setFullscreen( bool val /*= true*/ )
+{
+    fullscreen = val; return *this;
 }
 
 TP_TYPE_REGISTER(tpRenderSurfaceFactory,tpReferenced,RenderSurfaceFactory);

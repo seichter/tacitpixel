@@ -107,19 +107,22 @@ public:
 
 	virtual bool show(bool doShow) = 0;
 
+    virtual void update() = 0;
+
 	virtual tpString getName() const;
 
-	virtual void setCaption(const tpString& ) {};
+    virtual void setCaption(const tpString& ) {}
 
 	bool isValid() const { return !mDone; }
 
 	void setDone(bool done = true) { mDone = done; }
 
-	virtual void update() = 0;
 
 	void setCallback(tpRenderSurfaceCallback* callback) { mCallback = callback; }
 
 	const tpRenderSurfaceCallback* getCallback() const { return mCallback.get(); }
+
+    bool hasRenderContext() const { return mContext.isValid(); }
 
 protected:
 
@@ -127,7 +130,9 @@ protected:
 	tpRenderSurface( tpRenderSurfaceTraits* traits );
 
 	bool mDone;
+
 	tpRefPtr<tpRenderSurfaceCallback> mCallback;
+    tpRefPtr<tpRenderContext> mContext;
 
 	virtual ~tpRenderSurface();
 };

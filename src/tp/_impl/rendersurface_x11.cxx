@@ -10,6 +10,8 @@
 *
 */
 
+#include <tp/config.h>
+
 #if defined(TP_USE_X11)
 
 #include "rendersurface_x11.h"
