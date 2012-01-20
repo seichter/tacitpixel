@@ -103,7 +103,7 @@ public:
 	};
 
 	tpRenderTarget();
-	tpUChar getTargetType() const { return kPbuffer; }
+	tpUChar getTargetType() const { return kWindow; }
 
 	virtual tpRawPtr getWindow() { return 0L; }
 	virtual tpRawPtr getDisplay() { return 0L; }
@@ -122,15 +122,15 @@ public:
 
 	static tpRenderSurface* create( tpRenderSurfaceTraits* traits = 0);
 
+	virtual void destroy() = 0;
+
 	virtual bool show(bool doShow) = 0;
 
 	virtual tpString getName() const;
 
 	virtual void setCaption(const tpString& ) {};
 
-	void setDone(bool isDone = true) { mDone = isDone; }
-
-	bool isDone() const { return mDone; }
+	bool isValid() const { return !mDone; }
 
 	virtual void update() = 0;
 

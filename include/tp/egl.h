@@ -13,6 +13,7 @@
 
 typedef int EGLint;
 typedef unsigned int EGLBoolean;
+typedef unsigned short EGLenum;
 
 typedef void *EGLConfig;
 typedef void *EGLContext;
@@ -145,6 +146,8 @@ public:
 	typedef EGLBoolean (__TP_CALL * eglSwapBuffersT)(EGLDisplay display,EGLSurface surface);
 	typedef EGLBoolean (__TP_CALL * eglQuerySurfaceT)(const EGLDisplay display, EGLSurface surface, EGLint attribute, EGLint * value);
 	typedef EGLBoolean (__TP_CALL * eglQueryContextT)(EGLDisplay display, EGLContext surface, EGLint attribute, EGLint * value);
+	typedef EGLBoolean (__TP_CALL * eglGetConfigAttribT)(EGLDisplay,EGLConfig,EGLint,EGLint * value);
+	typedef EGLBoolean (__TP_CALL * eglBindAPIT)(EGLenum api);
 	typedef const char* (__TP_CALL * eglQueryStringT)(EGLDisplay dpy,int);
 
 	// functoids
@@ -161,6 +164,9 @@ public:
 	tpFunctoidImpl<eglQuerySurfaceT> QuerySurface;
 	tpFunctoidImpl<eglQueryContextT> QueryContext;
 	tpFunctoidImpl<eglQueryStringT> QueryString;
+	tpFunctoidImpl<eglGetConfigAttribT> GetConfigAttrib;
+	tpFunctoidImpl<eglBindAPIT> BindAPI;
+
 
 	static tpEGL* get(bool destroy = false);
 

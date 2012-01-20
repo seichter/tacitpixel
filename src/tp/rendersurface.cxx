@@ -136,6 +136,7 @@ tpRenderSurfaceTraits& tpRenderSurfaceTraits::setFullscreen( bool val /*= true*/
 tpRenderSurface* tpRenderSurface::create( tpRenderSurfaceTraits* traits /* =0 */)
 {
 	tpRenderSurface* surface(0);
+
 #if 0
 	tpRenderSurfaceFactory* surface_factory(0);
 
@@ -161,7 +162,6 @@ tpRenderSurface* tpRenderSurface::create( tpRenderSurfaceTraits* traits /* =0 */
 
 		tpLogError("%s no render surface factory available",__FUNCTION__);
 	}
-
 #endif
 
 #if defined(TP_USE_COCOA)
