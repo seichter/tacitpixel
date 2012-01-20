@@ -1,3 +1,5 @@
+#if defined(TP_USE_X11)
+
 #include "rendercontext_glx.h"
 
 #include <tp/log.h>
@@ -57,3 +59,5 @@ tpRenderContextGLX::destroy() {
 }
 
 TP_TYPE_REGISTER(tpRenderContextGLX,tpRenderContext,RenderContextX11);
+
+#endif

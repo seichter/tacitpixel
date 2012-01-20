@@ -10,6 +10,8 @@
 *
 */
 
+#if defined(TP_USE_X11)
+
 #include "rendersurface_x11.h"
 
 #include <tp/log.h>
@@ -131,6 +133,8 @@ tpRenderSurfaceX11::update()
 
 TP_TYPE_REGISTER(tpRenderSurfaceX11,tpRenderSurface,RenderSurfaceX11);
 
+
+#if defined(TP_USE_X11)
 
 ////////////////////////////////////////////////////////////////////////////
 

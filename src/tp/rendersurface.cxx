@@ -126,9 +126,9 @@ tpRenderSurfaceTraits& tpRenderSurfaceTraits::setFullscreen( bool val /*= true*/
 //////////////////////////////////////////////////////////////////////////
 
 #if defined(_WIN32)
-#elif defined(__APPLE__)
+#elif defined(TP_USE_COCOA)
 	#include "_impl/rendersurface_cocoa.h"
-#else
+#elif defined(TP_USE_X11)
 	#include "_impl/rendersurface_x11.h"
 #endif
 
@@ -164,9 +164,9 @@ tpRenderSurface* tpRenderSurface::create( tpRenderSurfaceTraits* traits /* =0 */
 
 #endif
 
-#if defined(__APPLE__)
+#if defined(TP_USE_COCOA)
 	surface = new tpRenderSurfaceCocoa(traits);
-#else
+#elif defined(TP_USE_X11)
 	surface = new tpRenderSurfaceX11(traits);
 #endif
 

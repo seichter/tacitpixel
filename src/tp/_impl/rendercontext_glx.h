@@ -1,6 +1,8 @@
 #ifndef TPRENDERCONTEXTGLX_H
 #define TPRENDERCONTEXTGLX_H
 
+#if defined(TP_USE_X11)
+
 #include <tp/rendersurface.h>
 
 #include <GL/glx.h>
@@ -27,5 +29,6 @@ public:
 	void destroy();
 };
 
+#endif
 
 #endif
