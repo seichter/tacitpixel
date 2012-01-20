@@ -32,6 +32,7 @@ TP_TYPE_REGISTER(tpRenderer,tpReferenced,Renderer);
 
 tpRenderer::tpRenderer()
 	: tpReferenced()
+	, mCameras(tpRefCameraArray())
 	, mActiveCamera(0)
 {
 }

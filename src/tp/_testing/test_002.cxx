@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
 
 	if (!renderer.isValid()) {
 		tpLogError("Could not initialize renderer");
-//		exit(-1);
+		exit(-1);
 	}
 
 	tpRefPtr<tpCamera> camera = renderer->getActiveCamera();

@@ -353,6 +353,30 @@ tpString::beforeLast(const char& c) const
 }
 
 
+tpString
+tpString::format(const char* format,...)
+{
+	tpString res;
+	tpChunk buffer;
+
+	va_list argptr;
+	va_start(argptr, format);
+
+	int count = ::snprintf(0,0,format,argptr);
+
+	buffer.setSize(count + 1);
+
+	snprintf(buffer.ptr<tpChar>(),count + 1,format, argptr);
+
+	buffer.at<tpChar>(count) = '\0';
+
+	res.set(buffer.ptr<tpChar>());
+
+	va_end(argptr);
+
+	return res;
+}
+
 #if 0
 
 
@@ -667,26 +691,26 @@ TP_API tpString tpStringFormat( const tpString& format, ... )
 
 }
 
-/*static*/ tpString
-tpString::format(const char *format, ... )
-{
-	va_list argptr;
-	va_start(argptr, format);
+///*static*/ tpString
+//tpString::format(const char *format, ... )
+//{
+//	va_list argptr;
+//	va_start(argptr, format);
 
-	tpArray<char> buffer;
-	buffer.resize(1024);
+//	tpArray<char> buffer;
+//	buffer.resize(1024);
 
-#ifndef _WIN32
-	vsnprintf(&buffer[0],buffer.getSize(),format, argptr);
-#elif (__SYMBIAN32__)
-	snprintf(&buffer[0],buffer.getSize(),format, argptr);
-#else
-	_vsnprintf(&buffer[0],buffer.getSize(),format,argptr);
-#endif
-	va_end(argptr);
+//#ifndef _WIN32
+//	vsnprintf(&buffer[0],buffer.getSize(),format, argptr);
+//#elif (__SYMBIAN32__)
+//	snprintf(&buffer[0],buffer.getSize(),format, argptr);
+//#else
+//	_vsnprintf(&buffer[0],buffer.getSize(),format,argptr);
+//#endif
+//	va_end(argptr);
 
-	return tpString(buffer.getData());
-}
+//	return tpString(buffer.getData());
+//}
 
 tpString
 tpString::substr(tpSizeT pos, tpSizeT len) const
