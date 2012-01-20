@@ -39,4 +39,8 @@
 #define TP_VERSION_MINOR @TP_VERSION_MINOR@
 #define TP_VERSION_BUILD @TP_VERSION_BUILD@
 
+
+#cmakedefine TP_USE_COCOA
+#cmakedefine TP_USE_X11
+
 #endif

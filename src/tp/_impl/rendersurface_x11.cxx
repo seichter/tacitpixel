@@ -164,7 +164,7 @@ tpRenderSurfaceX11::~tpRenderSurfaceX11()
 TP_TYPE_REGISTER(tpRenderSurfaceX11,tpRenderSurface,RenderSurfaceX11);
 
 
-#if defined(TP_USE_X11)
+#endif
 
 ////////////////////////////////////////////////////////////////////////////
 

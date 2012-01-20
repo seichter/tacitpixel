@@ -31,10 +31,6 @@ set(tp_impl_libs)
 
 message(STATUS "Build ${TP_VERSION_BUILD}")
 
-configure_file(config.h.in
-	${CMAKE_BINARY_DIR}/include/tp/config.h
-	@ONLY IMMEDIATE
-	)
 
 set(tp_hdrs
 	${tp_include_path}/tp/allocator.h
@@ -90,29 +86,45 @@ set(tp_hdrs
 	)
 
 if (APPLE)
-	list(APPEND tp_impl_srcs
-		_impl/rendersurface_cocoa.mm
-		_impl/rendersurface_cocoa.h
-		_impl/rendercontext_cocoa.mm
-		_impl/rendercontext_cocoa.h
-		)
+
+	option(TP_USE_COCOA "Use Cocoa as a rendersurface backend" OFF)
+
+	if (TP_USE_COCOA)
+		list(APPEND tp_impl_srcs
+			_impl/rendersurface_cocoa.mm
+			_impl/rendersurface_cocoa.h
+			_impl/rendercontext_cocoa.mm
+			_impl/rendercontext_cocoa.h
+			)
+
+		list(APPEND tp_impl_libs
+			"-framework Cocoa"
+			"-framework OpenGL"
+			)
+	endif()
 endif()
 
 if(X11_FOUND)
 
-	find_package(OpenGL)
+	option(TP_USE_X11 "Use X11 as a rendersurface backend" OFF)
 
-	list(APPEND tp_impl_srcs
-		_impl/rendersurface_x11.cxx
-		_impl/rendersurface_x11.h
-		_impl/rendercontext_glx.cxx
-		_impl/rendercontext_glx.h
-		)
+	if(TP_USE_X11)
 
-	list(APPEND tp_impl_libs
-		${X11_LIBRARIES}
-		${OPENGL_LIBRARIES}
-		)
+		find_package(OpenGL)
+
+		list(APPEND tp_impl_srcs
+			_impl/rendersurface_x11.cxx
+			_impl/rendersurface_x11.h
+			_impl/rendercontext_glx.cxx
+			_impl/rendercontext_glx.h
+			)
+
+		list(APPEND tp_impl_libs
+			${X11_LIBRARIES}
+			${OPENGL_LIBRARIES}
+			)
+
+	endif()
 
 endif()
 
@@ -171,6 +183,7 @@ set(tp_hdrs_sg
 	${tp_include_path}/tp/primitive.h
 	${tp_include_path}/tp/renderable.h
 	${tp_include_path}/tp/renderer.h
+	${tp_include_path}/tp/rendercontext.h
 	${tp_include_path}/tp/rendersurface.h
 	${tp_include_path}/tp/texture.h
 	${tp_include_path}/tp/transform.h
@@ -187,11 +200,19 @@ set(tp_srcs_sg
 	primitive.cxx
 	renderable.cxx
 	renderer.cxx
+	rendercontext.cxx
 	rendersurface.cxx
 	texture.cxx
 	transform.cxx
 	traverser.cxx
 	)
+
+
+configure_file(config.h.in
+	${CMAKE_BINARY_DIR}/include/tp/config.h
+	@ONLY IMMEDIATE
+	)
+
 
 add_library(${tp_name} SHARED
 	${tp_srcs}
@@ -214,8 +235,6 @@ target_link_libraries(${tp_name} jpeg)
 if(APPLE)
 	target_link_libraries(${tp_name}
 		"-framework CoreFoundation"
-		"-framework Cocoa"
-		"-framework OpenGL"
 		)
 endif()
 

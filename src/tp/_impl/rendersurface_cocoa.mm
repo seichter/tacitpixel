@@ -10,13 +10,12 @@
  *
  */
 
+#import "rendersurface_cocoa.h"
+
 #if defined(TP_USE_COCOA)
 
 #include <tp/module.h>
 #include <tp/version.h>
-
-#import "rendersurface_cocoa.h"
-
 
 @interface tpGLRenderSurfaceCocoaDelegate : NSResponder
 {
@@ -129,10 +128,19 @@ tpRenderSurfaceCocoa::tpRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 }
 
 
+void
+tpRenderSurfaceCocoa::destroy()
+{
+	//\todo implement!
+}
+
+
 tpRenderSurfaceCocoa::~tpRenderSurfaceCocoa()
 {
 	window = NULL;
 }
+
+
 
 //void
 //tpRenderSurfaceCocoa::frame()

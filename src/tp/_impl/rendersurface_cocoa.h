@@ -13,6 +13,8 @@
 #ifndef TPGLRENDERSURFACECOCOA_H
 #define TPGLRENDERSURFACECOCOA_H
 
+#include <tp/config.h>
+
 #if defined(TP_USE_COCOA)
 
 #ifdef __OBJC__
@@ -36,14 +38,9 @@ public:
 
 	tpRenderSurfaceCocoa( tpRenderSurfaceTraits* traits );
 
-//	virtual bool makeCurrent();
-//	virtual bool swapBuffers();
-
-//	virtual void frame();
-
-//	virtual tpString getString(tpUInt glenum);
-
 	virtual bool show(bool doShow);
+
+	virtual void destroy();
 
 	virtual void update();
 

@@ -1,6 +1,8 @@
 #ifndef TPRENDERSURFACE_X11_H
 #define TPRENDERSURFACE_X11_H
 
+#if defined(TP_USE_X11)
+
 #include <tp/rendersurface.h>
 
 #include <X11/Xlib.h>
@@ -32,5 +34,6 @@ public:
 	void destroy();
 };
 
+#endif
 
 #endif
