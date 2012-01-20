@@ -31,6 +31,7 @@
 #include <tp/refptr.h>
 #include <tp/string.h>
 #include <tp/vec.h>
+#include <tp/rendercontext.h>
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -68,26 +69,6 @@ public:
 	virtual bool onMouseClick( const tpInt& h, const tpInt& v, const tpUShort& state ) { return false; }
 
 };
-
-
-class tpRenderTarget;
-
-class TP_API tpRenderContext : public tpReferenced  {
-public:
-
-	TP_TYPE_DECLARE;
-
-	tpRenderContext();
-
-	virtual bool create(tpRenderTarget* target) = 0;
-	virtual void destroy() = 0;
-
-	virtual bool makeCurrent() = 0;
-	virtual bool swapBuffers() = 0;
-
-
-};
-
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -131,6 +112,8 @@ public:
 	virtual void setCaption(const tpString& ) {};
 
 	bool isValid() const { return !mDone; }
+
+	void setDone(bool done = true) { mDone = done; }
 
 	virtual void update() = 0;
 
