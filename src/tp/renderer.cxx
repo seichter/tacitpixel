@@ -101,10 +101,9 @@ tpRenderer* tpRenderer::create( const tpRendererTraits& traits )
 
 	tpRenderer* renderer = 0;
 
-	//tpLogNotify("%s has %d module(s)",__FUNCTION__, tpModuleManager::instance()->getModules().getSize());
-
-
 	tpModuleList modules = tpModuleManager::get()->getModules();
+
+    tpLogNotify("%s has %d module(s)",__FUNCTION__,modules.getSize());
 
 	for (tpUInt i = 0; i < modules.getSize(); i++)
 	{

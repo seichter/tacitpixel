@@ -35,3 +35,17 @@ tpStringTokenizer::finished() const
 {
 	return (0 == mCopy.getLength());
 }
+
+
+/*static */
+tpStringArray
+tpStringTokenizer::split(const tpString& str, const tpString& delim)
+{
+    tpStringTokenizer tkz(str,delim);
+    tpStringArray res;
+    while (!tkz.finished())
+    {
+        res.add(tkz.next());
+    }
+    return res;
+}

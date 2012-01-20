@@ -15,6 +15,7 @@
 #if defined(TP_USE_X11)
 
 #include "rendersurface_x11.h"
+#include "rendercontext_glx.h"
 
 #include <tp/log.h>
 
@@ -154,6 +155,8 @@ tpRenderSurfaceX11::update()
 void
 tpRenderSurfaceX11::destroy()
 {
+    tpRenderSurface::setContext(0);
+
 	XDestroyWindow(dpy,win);
 	XCloseDisplay(dpy);
 }
@@ -161,6 +164,17 @@ tpRenderSurfaceX11::destroy()
 tpRenderSurfaceX11::~tpRenderSurfaceX11()
 {
 	destroy();
+}
+
+void
+tpRenderSurfaceX11::setContext(tpRenderContext* context)
+{
+    if (context == 0)
+    {
+        context = new tpRenderContextGLX();
+    }
+
+    tpRenderSurface::setContext(context);
 }
 
 TP_TYPE_REGISTER(tpRenderSurfaceX11,tpRenderSurface,RenderSurfaceX11);

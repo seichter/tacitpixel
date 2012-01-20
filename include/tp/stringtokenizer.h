@@ -43,6 +43,8 @@ public:
 	tpString next();
 
 	bool finished() const;
+
+    static tpStringArray split(const tpString& str, const tpString& delim);
 };
 
 #endif

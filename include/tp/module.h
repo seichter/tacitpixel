@@ -72,22 +72,22 @@ public:
 template <class T> class tpModuleInitializer {
 public:
 
-	tpModuleInitializer() : m_module(0)
+    tpModuleInitializer() : mModule(0)
 	{
-		m_module = new T;
-		tpModuleManager::get()->add(m_module.get());
+        mModule = new T;
+        tpModuleManager::get()->add(mModule.get());
 	}
 
 	~tpModuleInitializer()
 	{
-		tpModuleManager::get()->remove(m_module.get());
+        tpModuleManager::get()->remove(mModule.get());
 	}
 
-	T* get() { return m_module.get(); }
+    T* get() { return mModule.get(); }
 
 protected:
 
-	tpRefPtr<T> m_module;
+    tpRefPtr<T> mModule;
 };
 
 extern "C"

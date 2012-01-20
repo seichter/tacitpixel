@@ -117,12 +117,15 @@ public:
 
 	void setDone(bool done = true) { mDone = done; }
 
+    virtual void setContext(tpRenderContext *context);
+
+    virtual tpRenderContext *getContext();
 
 	void setCallback(tpRenderSurfaceCallback* callback) { mCallback = callback; }
 
 	const tpRenderSurfaceCallback* getCallback() const { return mCallback.get(); }
 
-    bool hasRenderContext() const { return mContext.isValid(); }
+    bool hasContext() const { return mContext.isValid(); }
 
 protected:
 

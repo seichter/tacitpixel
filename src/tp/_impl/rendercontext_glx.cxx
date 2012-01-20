@@ -1,8 +1,16 @@
-#if defined(TP_USE_X11)
-
 #include "rendercontext_glx.h"
 
+#if defined(TP_USE_X11)
+
+#include <tp/rendersurface.h>
 #include <tp/log.h>
+
+tpRenderContextGLX::tpRenderContextGLX()
+    : tpRenderContext()
+    , display(0)
+    , window(0)
+{
+}
 
 bool
 tpRenderContextGLX::create(tpRenderTarget *target)
@@ -40,6 +48,36 @@ tpRenderContextGLX::create(tpRenderTarget *target)
 		if (vi == NULL) tpLogError("no appropriate RGB visual with depth buffer");
 		vi = glXChooseVisual(display, screen, &configuration[0]);
 	}
+
+    glxcontext = glXCreateContext(display,vi,0,True);
+
+    if (glxcontext) {
+
+        if (this->makeCurrent())
+        {
+            mVersion = this->getString(GL_VERSION);
+            mVendor = this->getString(GL_VENDOR);
+            mRenderer = this->getString(GL_RENDERER);
+            mExtensions = this->getString(GL_EXTENSIONS);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void
+tpRenderContextGLX::wait(tpUInt e) {
+    switch (e) {
+    case kWaitUI:
+        glXWaitX();
+        break;
+    case kWaitGL:
+        glXWaitGL();
+        break;
+    default:
+        break;
+    }
 }
 
 bool
@@ -56,6 +94,13 @@ tpRenderContextGLX::swapBuffers() {
 void
 tpRenderContextGLX::destroy() {
 	// \todo implement!
+}
+
+tpString
+tpRenderContextGLX::getString(const tpUInt& e)
+{
+    const tpChar* str = reinterpret_cast<const tpChar*>(glGetString(e));
+    return tpString(str);
 }
 
 TP_TYPE_REGISTER(tpRenderContextGLX,tpRenderContext,RenderContextX11);

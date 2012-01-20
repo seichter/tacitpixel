@@ -53,7 +53,7 @@ public:
 	/**
 	  * @brief c'tor - will reset the timer (call ::start())
 	  */
-	tpTimer();
+    explicit tpTimer();
 
 	/**
 	  * @brief d'tor

@@ -110,23 +110,37 @@ if(X11_FOUND)
 
 	if(TP_USE_X11)
 
-		find_package(OpenGL)
-
 		list(APPEND tp_impl_srcs
 			_impl/rendersurface_x11.cxx
 			_impl/rendersurface_x11.h
-			_impl/rendercontext_glx.cxx
-			_impl/rendercontext_glx.h
 			)
 
 		list(APPEND tp_impl_libs
 			${X11_LIBRARIES}
-			${OPENGL_LIBRARIES}
 			)
+
+		# only now we add GLX
+		if(OPENGL_FOUND)
+			list(APPEND tp_impl_srcs
+				_impl/rendercontext_glx.cxx
+				_impl/rendercontext_glx.h
+				)
+		endif()
 
 	endif()
 
 endif()
+
+if(OPENGL_FOUND)
+	list(APPEND tp_impl_srcs
+		_impl/renderer_gl1.cxx
+		_impl/renderer_gl1.h
+		)
+	list(APPEND tp_impl_libs
+		${OPENGL_LIBRARIES}
+		)
+endif()
+
 
 
 set(tp_srcs

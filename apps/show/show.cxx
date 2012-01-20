@@ -8,12 +8,15 @@
 #include <tp/node.h>
 #include <tp/renderer.h>
 #include <tp/rendersurface.h>
+#include <tp/thread.h>
+#include <tp/timer.h>
+
 
 #include <cstdio>
 
 int main(int argc,char* argv[])
 {
-	tpModuleManager::get()->load("gl,glsurface,glrenderer,obj");
+    tpModuleManager::get()->load("obj,3ds,jpeg");
 
 	tpString file,plugins;
 	tpArguments args(&argc,argv);
@@ -23,13 +26,17 @@ int main(int argc,char* argv[])
 
 	tpRefNode root = tpNode::read(file);
 
-	if (!root.isValid()) return -1;
+    if (!root.isValid()) {
+        tpLogError("Can't load file");
+        return -1;
+    }
 
 	tpRenderSurfaceTraits traits;
 	traits.setSize(640,480).setPosition(10,10).setTitle("Tacit Pixel 3");
 
 	tpRefPtr<tpRenderer> renderer = tpRenderer::create();
 	tpRefPtr<tpRenderSurface> rendersurface = tpRenderSurface::create(&traits);
+    rendersurface->setContext(0);
 
 	if (!renderer.isValid() || !rendersurface.isValid()) return -1;
 
@@ -42,16 +49,35 @@ int main(int argc,char* argv[])
 	camera->setClearColor(tpVec4f(0.5f,0.5f,0.9f,1.0f));
 	camera->setViewport(tpVec4i(0,0,640,480));
 
+    tpUInt frames = 0;
+    tpDouble time = 0;
+
+    tpTimer timer;
+
 	if (rendersurface.isValid() && renderer.isValid())
 	{
 		rendersurface->show(true);
 		while (rendersurface->isValid())
 		{
-//			if (rendersurface->makeCurrent())
+            timer.start();
+
+            if (rendersurface->getContext()->makeCurrent())
 			{
 				(*renderer)(root.get());
-			}
-//			rendersurface->swapBuffers();
+
+                rendersurface->getContext()->swapBuffers();
+                frames++;
+            }
+
+            time += timer.getElapsed(tpTimer::kTimeSeconds);
+
+            if (time > 5) {
+                tpLogNotify("fps %3.3f",(float)frames/time);
+                time = 0;
+                frames = 0;
+            }
+
+            tpThread::yield();
 		}
 	}
 

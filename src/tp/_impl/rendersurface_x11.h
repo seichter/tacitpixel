@@ -31,6 +31,8 @@ public:
 	tpRawPtr getDisplay() { return dpy; }
 	tpRawPtr getWindow() { return reinterpret_cast<tpRawPtr>(win); }
 
+    void setContext(tpRenderContext* context);
+
 	void destroy();
 };
 

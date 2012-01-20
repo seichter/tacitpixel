@@ -1,9 +1,11 @@
 #ifndef TPRENDERCONTEXTGLX_H
 #define TPRENDERCONTEXTGLX_H
 
+#include <tp/config.h>
+
 #if defined(TP_USE_X11)
 
-#include <tp/rendersurface.h>
+#include <tp/rendercontext.h>
 
 #include <GL/glx.h>
 #include <X11/Xlib.h>
@@ -21,12 +23,22 @@ public:
 
 	TP_TYPE_DECLARE
 
+    tpRenderContextGLX();
+
 	bool create(tpRenderTarget *target);
 
+    void wait(tpUInt e);
 	bool makeCurrent();
 	bool swapBuffers();
 
 	void destroy();
+
+
+    tpString getString(const tpUInt& e);
+
+protected:
+
+    virtual ~tpRenderContextGLX() {}
 };
 
 #endif

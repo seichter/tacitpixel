@@ -45,7 +45,8 @@
 #endif
 
 
-tpRenderSurface* tpRenderSurface::create( tpRenderSurfaceTraits* traits /* =0 */)
+tpRenderSurface*
+tpRenderSurface::create( tpRenderSurfaceTraits* traits /* =0 */)
 {
 	tpRenderSurface* surface(0);
 
@@ -85,7 +86,6 @@ tpRenderSurface* tpRenderSurface::create( tpRenderSurfaceTraits* traits /* =0 */
 	return surface;
 }
 
-
 tpRenderSurface::tpRenderSurface()
 	: tpRenderTarget()
 	, mDone(false)
@@ -103,16 +103,27 @@ tpRenderSurface::~tpRenderSurface()
 {
 }
 
+
+void
+tpRenderSurface::setContext(tpRenderContext* context)
+{
+    mContext = context;
+    if (mContext.isValid()) mContext->create(this);
+}
+
+tpRenderContext*
+tpRenderSurface::getContext()
+{
+    return mContext.get();
+}
+
+
 tpString
 tpRenderSurface::getName() const
 {
 	return tpString("RenderSurface");
 }
 
-tpRenderContext::tpRenderContext()
-	: tpReferenced()
-{
-}
 
 tpRenderTarget::tpRenderTarget()
 	: tpReferenced()
