@@ -33,57 +33,27 @@
 #include "tp/module.h"
 
 
-
-
 //////////////////////////////////////////////////////////////////////////
-
-#if defined(_WIN32)
-#elif defined(TP_USE_COCOA)
-	#include "_impl/rendersurface_cocoa.h"
-#elif defined(TP_USE_X11)
-	#include "_impl/rendersurface_x11.h"
-#endif
-
 
 tpRenderSurface*
 tpRenderSurface::create( tpRenderSurfaceTraits* traits /* =0 */)
 {
-	tpRenderSurface* surface(0);
-
-#if 0
 	tpRenderSurfaceFactory* surface_factory(0);
 
-	tpLogNotify("%d modules",tpModuleManager::get()->getModules().getSize());
+    const tpModuleList& modules = tpModuleManager::get()->getModules();
 
-	const tpModuleList& modules = tpModuleManager::get()->getModules();
-
-	for (tpModuleList::const_iterator iter = modules.begin(); iter != modules.end(); ++iter)
+    for (tpModuleList::const_iterator iter = modules.begin();
+         iter != modules.end();
+         ++iter)
 	{
 		if ((*iter)->getType()->isOfType(tpRenderSurfaceFactory::getTypeInfo()))
 		{
 			surface_factory = static_cast<tpRenderSurfaceFactory*>(iter->get());
+            return surface_factory->create( traits );
 		}
 	}
 
-
-	if (surface_factory)
-	{
-
-		surface = surface_factory->create( traits );
-
-	} else {
-
-		tpLogError("%s no render surface factory available",__FUNCTION__);
-	}
-#endif
-
-#if defined(TP_USE_COCOA)
-	surface = new tpRenderSurfaceCocoa(traits);
-#elif defined(TP_USE_X11)
-	surface = new tpRenderSurfaceX11(traits);
-#endif
-
-	return surface;
+    return 0L;
 }
 
 tpRenderSurface::tpRenderSurface()
@@ -133,6 +103,36 @@ tpRenderTarget::getContext()
     return mContext.get();
 }
 
+//////////////////////////////////////////////////////////////////////////
+
+tpRenderBuffer::tpRenderBuffer()
+{
+}
+
+tpRenderBuffer::~tpRenderBuffer()
+{
+}
+
+/*static*/ tpRenderBuffer*
+tpRenderBuffer::create(const tpSize& size, const tpUInt pixelformat) {
+
+    tpRenderBufferFactory* factory(0);
+
+    const tpModuleList& modules = tpModuleManager::get()->getModules();
+
+    for (tpModuleList::const_iterator iter = modules.begin();
+         iter != modules.end();
+         ++iter)
+    {
+        if ((*iter)->getType()->isOfType(tpRenderBufferFactory::getTypeInfo()))
+        {
+            factory = static_cast<tpRenderBufferFactory*>(iter->get());
+            return factory->create( size, pixelformat );
+        }
+    }
+
+    return 0L;
+}
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -225,8 +225,10 @@ tpRenderSurfaceTraits& tpRenderSurfaceTraits::setFullscreen( bool val /*= true*/
 }
 
 TP_TYPE_REGISTER(tpRenderSurfaceFactory,tpReferenced,RenderSurfaceFactory);
+TP_TYPE_REGISTER(tpRenderBufferFactory,tpReferenced,RenderBufferFactory);
 TP_TYPE_REGISTER(tpRenderTarget,tpReferenced,RenderTarget);
 TP_TYPE_REGISTER(tpRenderSurface,tpRenderTarget,RenderSurface);
+TP_TYPE_REGISTER(tpRenderBuffer,tpRenderTarget,RenderBuffer);
 
 
 

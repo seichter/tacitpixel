@@ -30,37 +30,45 @@ tpRenderContextGLX::create(tpRenderTarget *target)
 		tpLogNotify("%s - GLX Extension %d.%d",__FUNCTION__,glx_major,glx_minor);
 	}
 
-	const unsigned int depth_bits = 24;
+    if (target->getType()->isOfType(tpRenderSurface::getTypeInfo()))
+    {
 
-	tpArray<int> configuration;
-	configuration
-			.add(GLX_DOUBLEBUFFER)
-			.add(GLX_RGBA)
-			.add(GLX_DEPTH_SIZE).add(depth_bits)
-			.add(None);
+        const unsigned int depth_bits = 24;
 
-	XVisualInfo* vi = 0;
+        tpArray<int> configuration;
+        configuration
+                .add(GLX_DOUBLEBUFFER)
+                .add(GLX_RGBA)
+                .add(GLX_DEPTH_SIZE).add(depth_bits)
+                .add(None);
 
-	vi = glXChooseVisual(display, screen, &configuration[0]);
+        XVisualInfo* vi = 0;
 
-	if (vi == NULL)
-	{
-		if (vi == NULL) tpLogError("no appropriate RGB visual with depth buffer");
-		vi = glXChooseVisual(display, screen, &configuration[0]);
-	}
+        vi = glXChooseVisual(display, screen, &configuration[0]);
 
-    glxcontext = glXCreateContext(display,vi,0,True);
-
-    if (glxcontext) {
-
-        if (this->makeCurrent())
+        if (vi == NULL)
         {
-            mVersion = this->getString(GL_VERSION);
-            mVendor = this->getString(GL_VENDOR);
-            mRenderer = this->getString(GL_RENDERER);
-            mExtensions = this->getString(GL_EXTENSIONS);
-            return true;
+            if (vi == NULL) tpLogError("no appropriate RGB visual with depth buffer");
+            vi = glXChooseVisual(display, screen, &configuration[0]);
         }
+
+        glxcontext = glXCreateContext(display,vi,0,True);
+
+        if (glxcontext) {
+
+            if (this->makeCurrent())
+            {
+                mVersion = this->getString(GL_VERSION);
+                mVendor = this->getString(GL_VENDOR);
+                mRenderer = this->getString(GL_RENDERER);
+                mExtensions = this->getString(GL_EXTENSIONS);
+                return true;
+            }
+        }
+    } else {
+
+        //window = glXCreateGLXPixmap(display,vi,window);
+
     }
 
     return false;

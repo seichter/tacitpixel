@@ -32,24 +32,30 @@
 #include <tp/string.h>
 #include <tp/vec.h>
 #include <tp/rendercontext.h>
+#include <tp/image.h>
 
 
 //////////////////////////////////////////////////////////////////////////
 
+class tpRenderBuffer;
 class tpRenderSurface;
 class tpRenderSurfaceTraits;
 
 class TP_API tpRenderSurfaceFactory : public tpReferenced {
 protected:
-
 	friend class tpRenderSurface;
-
 public:
-
 	TP_TYPE_DECLARE;
-
 	virtual tpRenderSurface* create( tpRenderSurfaceTraits* ) = 0;
+};
 
+
+class TP_API tpRenderBufferFactory : public tpReferenced {
+protected:
+    friend class tpRenderBuffer;
+public:
+    TP_TYPE_DECLARE;
+    virtual tpRenderBuffer* create( const tpSize& size, tpUInt pixelformat ) = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -104,6 +110,29 @@ protected:
     tpRefPtr<tpRenderContext> mContext;
 
 };
+
+//////////////////////////////////////////////////////////////////////////
+
+class TP_API tpRenderBuffer : public tpRenderTarget {
+public:
+
+    TP_TYPE_DECLARE;
+
+    static tpRenderBuffer* create(const tpSize& size, const tpUInt pixelformat);
+
+    virtual void destroy() = 0;
+    virtual void copy(tpImage& image) = 0;
+
+    virtual tpRawPtr getDisplay() = 0;
+    virtual tpRawPtr getBuffer() = 0;
+
+protected:
+
+    tpRenderBuffer();
+    virtual ~tpRenderBuffer();
+};
+
+
 
 //////////////////////////////////////////////////////////////////////////
 

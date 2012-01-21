@@ -86,7 +86,13 @@ typedef void* tpRawPtr;
 
 struct tpSize {
 	tpUInt width, height;
+
+    tpSize(tpUInt w, tpUInt h)
+        : width(w)
+        , height(h)
+    {}
 };
+
 
 struct tpPoint {
 	tpInt x, y;

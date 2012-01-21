@@ -19,6 +19,7 @@
 
 #include <tp/log.h>
 #include <tp/image.h>
+#include <tp/module.h>
 
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
@@ -178,32 +179,31 @@ tpRenderSurfaceX11::setContext(tpRenderContext* context)
     tpRenderTarget::setContext(context);
 }
 
-TP_TYPE_REGISTER(tpRenderSurfaceX11,tpRenderSurface,RenderSurfaceX11);
 
-
-#endif
 
 ////////////////////////////////////////////////////////////////////////////
 
-//class tpRenderSurfaceFactoryX11 : public tpRenderSurfaceFactory {
-//public:
+class tpRenderSurfaceFactoryX11 : public tpRenderSurfaceFactory {
+public:
 
-//	TP_TYPE_DECLARE;
+    TP_TYPE_DECLARE;
 
-//	tpRenderSurfaceFactoryX11() : tpRenderSurfaceFactory()
-//	{
-//		//tpLogMessage("%s - added X11 Surface Factory");
-//	}
+    tpRenderSurfaceFactoryX11() : tpRenderSurfaceFactory()
+    {
+        tpLogNotify("%s - added X11 Surface Factory",__FUNCTION__);
+    }
 
-//	tpRenderSurface* create( tpRenderSurfaceTraits* traits )
-//	{
-//		return new tpGLRenderSurfaceX11( traits );
-//	}
-//};
+    tpRenderSurface* create( tpRenderSurfaceTraits* traits )
+    {
+        return new tpRenderSurfaceX11( traits );
+    }
+};
+
+TP_TYPE_REGISTER(tpRenderSurfaceX11,tpRenderSurface,RenderSurfaceX11);
+TP_TYPE_REGISTER(tpRenderSurfaceFactoryX11,tpRenderSurfaceFactory,RenderSurfaceFactoryX11);
+TP_MODULE_REGISTER(x11surface,tpRenderSurfaceFactoryX11);
 
 
-//TP_TYPE_REGISTER(tpRenderSurfaceFactoryX11,tpRenderSurfaceFactory,RenderSurfaceFactoryX11);
-
-//TP_MODULE_REGISTER(x11surface,tpRenderSurfaceFactoryX11);
+#endif
 
 

@@ -18,6 +18,13 @@ int main(int argc, char* argv[]) {
 
 	window->show(true);
 
+    tpRefPtr<tpRenderBuffer> pixmap = tpRenderBuffer::create(tpSize(320,240),tpPixelFormat::kRGB_888);
+
+    tpRefPtr<tpImage> pixmap_output = new tpImage();
+    //pixmap->copy(*pixmap_output);
+
+    pixmap_output->write("test_007.jpg");
+
     tpRefPtr<tpRenderer> renderer = tpRenderer::create();
 
 	while (window->isValid()) {
@@ -27,6 +34,9 @@ int main(int argc, char* argv[]) {
 
         tpThread::yield();
 	}
+
+
+
 
 	tpLogNotify("Done");
 
