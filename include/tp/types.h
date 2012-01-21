@@ -115,6 +115,11 @@ typedef uint64_t tpUInt64;
 typedef int64_t tpInt64;
 typedef uint32_t tpUInt32;
 typedef int32_t tpInt32;
+typedef uint16_t tpUInt16;
+typedef int16_t tpInt16;
+typedef uint8_t tpUInt8;
+typedef int8_t tpInt8;
+
 
 #elif defined(_WIN32)
 

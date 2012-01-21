@@ -89,8 +89,19 @@ public:
 	virtual tpRawPtr getWindow() { return 0L; }
 	virtual tpRawPtr getDisplay() { return 0L; }
 
-	virtual tpInt getWidth() const { return 0; }
-	virtual tpInt getHeight() const { return 0; }
+
+    virtual void setContext(tpRenderContext *context);
+
+    virtual tpRenderContext *getContext();
+
+    bool hasContext() const { return mContext.isValid(); }
+
+//	virtual tpInt getWidth() const { return 0; }
+//	virtual tpInt getHeight() const { return 0; }
+
+protected:
+
+    tpRefPtr<tpRenderContext> mContext;
 
 };
 
@@ -117,15 +128,9 @@ public:
 
 	void setDone(bool done = true) { mDone = done; }
 
-    virtual void setContext(tpRenderContext *context);
+    void setCallback(tpRenderSurfaceCallback* callback) { mCallback = callback; }
 
-    virtual tpRenderContext *getContext();
-
-	void setCallback(tpRenderSurfaceCallback* callback) { mCallback = callback; }
-
-	const tpRenderSurfaceCallback* getCallback() const { return mCallback.get(); }
-
-    bool hasContext() const { return mContext.isValid(); }
+    const tpRenderSurfaceCallback* getCallback() const { return mCallback.get(); }
 
 protected:
 
@@ -135,7 +140,6 @@ protected:
 	bool mDone;
 
 	tpRefPtr<tpRenderSurfaceCallback> mCallback;
-    tpRefPtr<tpRenderContext> mContext;
 
 	virtual ~tpRenderSurface();
 };

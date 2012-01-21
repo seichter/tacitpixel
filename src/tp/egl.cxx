@@ -56,8 +56,8 @@ bool tpRenderContextEGL::create(tpRenderTarget* target) {
 			attributes.back() = EGL_OPENGL_ES_BIT;
 
 			attributes.add(EGL_SURFACE_TYPE).add(EGL_PBUFFER_BIT);
-			attributes.add(EGL_WIDTH).add(target->getWidth());
-			attributes.add(EGL_HEIGHT).add(target->getHeight());
+//			attributes.add(EGL_WIDTH).add(target->getWidth());
+//			attributes.add(EGL_HEIGHT).add(target->getHeight());
 			break;
 	}
 

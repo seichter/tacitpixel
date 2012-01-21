@@ -18,6 +18,7 @@
 #include "rendercontext_glx.h"
 
 #include <tp/log.h>
+#include <tp/image.h>
 
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
@@ -155,7 +156,7 @@ tpRenderSurfaceX11::update()
 void
 tpRenderSurfaceX11::destroy()
 {
-    tpRenderSurface::setContext(0);
+    tpRenderTarget::setContext(0);
 
 	XDestroyWindow(dpy,win);
 	XCloseDisplay(dpy);
@@ -174,7 +175,7 @@ tpRenderSurfaceX11::setContext(tpRenderContext* context)
         context = new tpRenderContextGLX();
     }
 
-    tpRenderSurface::setContext(context);
+    tpRenderTarget::setContext(context);
 }
 
 TP_TYPE_REGISTER(tpRenderSurfaceX11,tpRenderSurface,RenderSurfaceX11);

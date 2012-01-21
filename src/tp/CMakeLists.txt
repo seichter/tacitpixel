@@ -113,6 +113,8 @@ if(X11_FOUND)
 		list(APPEND tp_impl_srcs
 			_impl/rendersurface_x11.cxx
 			_impl/rendersurface_x11.h
+			_impl/renderbuffer_x11.cxx
+			_impl/renderbuffer_x11.h
 			)
 
 		list(APPEND tp_impl_libs
@@ -270,7 +272,5 @@ if (WIN32)
 endif()
 
 add_subdirectory(_modules)
-
-
-
 add_subdirectory(_testing)
+

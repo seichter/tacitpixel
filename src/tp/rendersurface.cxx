@@ -104,20 +104,6 @@ tpRenderSurface::~tpRenderSurface()
 }
 
 
-void
-tpRenderSurface::setContext(tpRenderContext* context)
-{
-    mContext = context;
-    if (mContext.isValid()) mContext->create(this);
-}
-
-tpRenderContext*
-tpRenderSurface::getContext()
-{
-    return mContext.get();
-}
-
-
 tpString
 tpRenderSurface::getName() const
 {
@@ -125,10 +111,28 @@ tpRenderSurface::getName() const
 }
 
 
+//////////////////////////////////////////////////////////////////////////
+
+
 tpRenderTarget::tpRenderTarget()
-	: tpReferenced()
+    : tpReferenced()
+    , mContext(0)
 {
 }
+
+void
+tpRenderTarget::setContext(tpRenderContext* context)
+{
+    mContext = context;
+    if (mContext.isValid()) mContext->create(this);
+}
+
+tpRenderContext*
+tpRenderTarget::getContext()
+{
+    return mContext.get();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 
