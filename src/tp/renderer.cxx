@@ -67,6 +67,7 @@ tpCamera * tpRenderer::getActiveCamera()
 		camera->setViewLookAt(tpVec3r(0,0,1),tpVec3r(0,0,0),tpVec3r(0,1,0));
 
 		addCamera(camera,true);
+		mActiveCamera = 0;
 	}
 
 	return mCameras[mActiveCamera].get();
@@ -103,7 +104,7 @@ tpRenderer* tpRenderer::create( const tpRendererTraits& traits )
 
 	tpModuleList modules = tpModuleManager::get()->getModules();
 
-    tpLogNotify("%s has %d module(s)",__FUNCTION__,modules.getSize());
+	tpLogNotify("%s has %d module(s)",__FUNCTION__,modules.getSize());
 
 	for (tpUInt i = 0; i < modules.getSize(); i++)
 	{

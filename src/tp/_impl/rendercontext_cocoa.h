@@ -14,6 +14,7 @@
 class tpRenderContextCocoa : public tpRenderContext {
 
 	NSOpenGLContext* oglcontext;
+	CGLContextObj cglcontext;
 
 public:
 
@@ -24,6 +25,7 @@ public:
 	virtual bool swapBuffers();
 	virtual void destroy();
 
+	tpString getString(const tpUInt &e);
 };
 
 #endif

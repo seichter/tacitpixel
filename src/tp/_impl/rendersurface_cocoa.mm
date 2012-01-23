@@ -14,8 +14,11 @@
 
 #if defined(TP_USE_COCOA)
 
+#import "rendercontext_cocoa.h"
+
 #include <tp/module.h>
 #include <tp/version.h>
+
 
 @interface tpGLRenderSurfaceCocoaDelegate : NSResponder
 {
@@ -140,44 +143,6 @@ tpRenderSurfaceCocoa::~tpRenderSurfaceCocoa()
 	window = NULL;
 }
 
-
-
-//void
-//tpRenderSurfaceCocoa::frame()
-//{
-
-//}
-
-//bool
-//tpRenderSurfaceCocoa::makeCurrent()
-//{
-//	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-
-//	NSEvent* event = [NSApp
-//		nextEventMatchingMask:NSAnyEventMask
-//		untilDate:nil
-//		inMode:NSDefaultRunLoopMode
-//		dequeue:YES];
-
-//	if (event)
-//	{
-//		[NSApp sendEvent:event];
-//	}
-
-//	[pool release];
-
-//	return true;
-//}
-
-
-//tpString tpRenderSurfaceCocoa::getString(tpUInt glenum)
-//{
-//	makeCurrent();
-//	tpString result;
-//	//result.set(reinterpret_cast<const tpChar*>(tpGL::GetString(glenum)));
-//	return result;
-//}
-
 bool tpRenderSurfaceCocoa::show(bool doShow)
 {
 	[window setIsVisible:(BOOL)doShow];
@@ -212,34 +177,42 @@ tpRenderSurfaceCocoa::setCaption(const tpString& caption)
 	[name release];
 }
 
+void
+tpRenderSurfaceCocoa::setContext(tpRenderContext* context)
+{
+	if (context == 0)
+	{
+		context = new tpRenderContextCocoa();
+	}
+
+	tpRenderTarget::setContext(context);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////
 
-//class tpRenderSurfaceFactoryCocoa : public tpRenderSurfaceFactory {
-//public:
+class tpRenderSurfaceFactoryCocoa : public tpRenderSurfaceFactory {
+public:
 
-//	TP_TYPE_DECLARE;
+	TP_TYPE_DECLARE;
 
-//	tpRenderSurfaceFactoryCocoa() : tpRenderSurfaceFactory()
-//	{
-//		tpLogNotify("%s Cocoa rendering surface",tpGetVersionString());
-//	}
-//protected:
-//	tpRenderSurface* create( tpRenderSurfaceTraits* traits )
-//	{
-//		return new tpGLRenderSurfaceCocoa( traits );
-//	}
-//};
+	tpRenderSurfaceFactoryCocoa() : tpRenderSurfaceFactory()
+	{
+		tpLogNotify("%s Cocoa rendering surface",tpGetVersionString());
+	}
+protected:
+	tpRenderSurface* create( tpRenderSurfaceTraits* traits )
+	{
+		return new tpRenderSurfaceCocoa( traits );
+	}
+};
 
 ////////////////////////////////////////////////////////////////////////////
 
 
-//TP_TYPE_REGISTER(tpRenderSurfaceFactoryCocoa,tpRenderSurfaceFactory,RenderSurfaceFactoryCocoa);
-//TP_TYPE_REGISTER(tpGLRenderSurfaceCocoa,tpRenderSurface,GLRenderSurfaceCocoa);
-
-//TP_MODULE_REGISTER(cocoasurface,tpRenderSurfaceFactoryCocoa);
-
-
+TP_TYPE_REGISTER(tpRenderSurfaceFactoryCocoa,tpRenderSurfaceFactory,RenderSurfaceFactoryCocoa);
 TP_TYPE_REGISTER(tpRenderSurfaceCocoa,tpRenderSurface,RenderSurfaceCocoa);
+
+TP_MODULE_REGISTER(cocoasurface,tpRenderSurfaceFactoryCocoa)
 
 #endif

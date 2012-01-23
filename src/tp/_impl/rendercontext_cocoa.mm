@@ -3,7 +3,6 @@
 
 bool tpRenderContextCocoa::create(tpRenderTarget *target)
 {
-
 	NSOpenGLPixelFormatAttribute window_attribs[] =
 	{
 		NSOpenGLPFANoRecovery,
@@ -25,34 +24,75 @@ bool tpRenderContextCocoa::create(tpRenderTarget *target)
 
 	[format release];
 
-	CGLContextObj cgl_context = (CGLContextObj) [oglcontext CGLContextObj];
+	cglcontext = (CGLContextObj) [oglcontext CGLContextObj];
 
-	CGLSetCurrentContext(cgl_context);
+	CGLSetCurrentContext(cglcontext);
 
 	// @todo implement way to handle this via traits
 	tpInt swap_interval = (true) ? 1 : 0;
-	CGLSetParameter(cgl_context, kCGLCPSwapInterval, &swap_interval);
+	CGLSetParameter(cglcontext, kCGLCPSwapInterval, &swap_interval);
 
 	NSWindow* window = (NSWindow*)target->getWindow();
 
-	[oglcontext setView:[window contentView]];
+	if (this->makeCurrent())
+	{
+		mVersion = this->getString(GL_VERSION);
+		mVendor = this->getString(GL_VENDOR);
+		mRenderer = this->getString(GL_RENDERER);
+		mExtensions = this->getString(GL_EXTENSIONS);
 
-	return true;
+		[oglcontext setView:[window contentView]];
+
+		return true;
+	}
+
+	return false;
 }
 
-bool tpRenderContextCocoa::makeCurrent()
+bool
+tpRenderContextCocoa::makeCurrent()
 {
-	[oglcontext makeCurrentContext];
+	CGLError error = CGLLockContext((CGLContextObj)[oglcontext CGLContextObj]);
+
+	if (kCGLNoError == error )
+	{
+		[oglcontext makeCurrentContext];
+		return true;
+	} else {
+
+		tpLogError("CGL error %s",CGLErrorString(error));
+	}
+
+	return false;
 }
 
-bool tpRenderContextCocoa::swapBuffers()
+bool
+tpRenderContextCocoa::swapBuffers()
 {
 	[oglcontext flushBuffer];
+
+	CGLError error = CGLUnlockContext((CGLContextObj)[oglcontext CGLContextObj]);
+
+	if (kCGLNoError == error) {
+		return true;
+	} else {
+		tpLogError("CGL error %s",CGLErrorString(error));
+	}
+
+	return false;
 }
 
-void tpRenderContextCocoa::destroy()
+void
+tpRenderContextCocoa::destroy()
 {
 	[oglcontext release];
+}
+
+tpString
+tpRenderContextCocoa::getString(const tpUInt& e)
+{
+	const tpChar* str = reinterpret_cast<const tpChar*>(glGetString(e));
+	return tpString(str);
 }
 
 TP_TYPE_REGISTER(tpRenderContextCocoa,tpRenderContext,RenderContextCocoa);

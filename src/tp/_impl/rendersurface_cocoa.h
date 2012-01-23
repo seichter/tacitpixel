@@ -29,8 +29,6 @@
 #include <tp/log.h>
 
 
-
-
 class tpRenderSurfaceCocoa : public tpRenderSurface {
 public:
 
@@ -47,6 +45,8 @@ public:
 	void setCaption(const tpString& caption);
 
 	tpRawPtr getWindow() { return window; }
+
+	void setContext(tpRenderContext *context);
 
 protected:
 

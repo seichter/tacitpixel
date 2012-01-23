@@ -11,12 +11,9 @@
 #include <tp/thread.h>
 #include <tp/timer.h>
 
-
-#include <cstdio>
-
 int main(int argc,char* argv[])
 {
-    tpModuleManager::get()->load("obj,3ds,jpeg");
+	tpModuleManager::get()->load("obj,3ds,jpeg");
 
 	tpString file,plugins;
 	tpArguments args(&argc,argv);
@@ -26,19 +23,19 @@ int main(int argc,char* argv[])
 
 	tpRefNode root = tpNode::read(file);
 
-    if (!root.isValid()) {
-        tpLogError("Can't load file");
-        return -1;
-    }
+	if (!root.isValid()) {
+		tpLogError("Can't load file");
+		return -1;
+	}
 
 	tpRenderSurfaceTraits traits;
 	traits.setSize(640,480).setPosition(10,10).setTitle("Tacit Pixel 3");
 
 	tpRefPtr<tpRenderer> renderer = tpRenderer::create();
 	tpRefPtr<tpRenderSurface> rendersurface = tpRenderSurface::create(&traits);
-    rendersurface->setContext(0);
+	rendersurface->setContext(0);
 
-	if (!renderer.isValid() || !rendersurface.isValid()) return -1;
+	if (!renderer.isValid() || !rendersurface.isValid() || !rendersurface->hasContext()) return -1;
 
 	tpRefPtr<tpCamera> camera = renderer->getActiveCamera();
 
@@ -49,35 +46,37 @@ int main(int argc,char* argv[])
 	camera->setClearColor(tpVec4f(0.5f,0.5f,0.9f,1.0f));
 	camera->setViewport(tpVec4i(0,0,640,480));
 
-    tpUInt frames = 0;
-    tpDouble time = 0;
+	tpUInt frames = 0;
+	tpDouble time = 0;
 
-    tpTimer timer;
+	tpTimer timer;
 
 	if (rendersurface.isValid() && renderer.isValid())
 	{
 		rendersurface->show(true);
 		while (rendersurface->isValid())
 		{
-            timer.start();
+			timer.start();
 
-            if (rendersurface->getContext()->makeCurrent())
+			if (rendersurface->getContext()->makeCurrent())
 			{
 				(*renderer)(root.get());
 
-                rendersurface->getContext()->swapBuffers();
-                frames++;
-            }
+				rendersurface->getContext()->swapBuffers();
+				frames++;
+			}
 
-            time += timer.getElapsed(tpTimer::kTimeSeconds);
+			time += timer.getElapsed(tpTimer::kTimeSeconds);
 
-            if (time > 5) {
-                tpLogNotify("fps %3.3f",(float)frames/time);
-                time = 0;
-                frames = 0;
-            }
+			if (time > 5) {
+				tpLogNotify("fps %3.3f",(float)frames/time);
+				time = 0;
+				frames = 0;
+			}
 
-            tpThread::yield();
+			rendersurface->update();
+
+			tpThread::yield();
 		}
 	}
 
