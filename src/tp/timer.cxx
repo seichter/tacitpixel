@@ -83,9 +83,15 @@ tpDouble tpTimer::getElapsed( tpUInt scale ) const
 void tpTimer::getCurrentTick(tpTimerTick& val) {
 #if defined(__unix) || defined(__APPLE__)
 
-	timeval tv;
-	gettimeofday(&tv, 0);
-	val = (tpTimerTick)(tv.tv_sec * 1000000 + tv.tv_usec);
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME,&ts);
+    val  = ts.tv_sec;
+    val *= 1000000;
+    val += ts.tv_nsec / 1000;
+
+//	timeval tv;
+//	gettimeofday(&tv, 0);
+//	val = (tpTimerTick)(tv.tv_sec * 1000000 + tv.tv_usec);
 
 #elif defined(_WIN32)
 

@@ -30,15 +30,12 @@
 #include <tp/stringutils.h>
 #include <tp/hash.h>
 
-/*!
-	\class tpRTTI
-	\brief runtime type information (RTTI)
-
-	This class circumvents compilers with a weak or not working RTTI
-	implementation. If you derive a class for rendering
-	into the scenegraph you have to provide type information.
-*/
-
+/**
+  * This class implements a extremly simplified RTTI system that
+  * allows to introspect or implement features otherwise only
+  * possible with compiler support usually not available on mobile
+  * platforms or on quite old compilers.
+  */
 class TP_API tpRTTI
 {
 public:
@@ -46,7 +43,10 @@ public:
 		\param name name of the class
 		\param parent parent class of this one, NULL if it is a base class
 	 */
-	explicit tpRTTI(const tpChar* name,tpRTTI* parent) : m_hash(tpAdler32((tpUChar*)name,tpStrLen(name))), m_parent(parent), m_name(name) {}
+    explicit tpRTTI(const tpChar* name,tpRTTI* parent)
+        : mHash(tpAdler32((tpUChar*)name,tpStrLen(name)))
+        , mParent(parent)
+        , mName(name) {}
 
 	/*! Check if this class has been inherited from another class
 		\param parent check if this is a child (inherited) class
@@ -58,7 +58,7 @@ public:
 		while (iter)
 		{
 			if (query == iter) return true;
-			iter = iter->m_parent;
+            iter = iter->mParent;
 		}
 		return false;
 	}
@@ -77,17 +77,27 @@ public:
 	 */
 	bool operator == (tpRTTI* query) const
 	{
-		return (query->m_hash == this->m_hash);
+        return (query->mHash == this->mHash);
 	}
 
-	const char* getName() const { return m_name; }
+    /**
+      * Get name (without namespace usually) of the current class
+      *
+      * @return name of the class this object is an instance off
+      */
+    const char* getName() const { return mName; }
 
-	const tpULong& getID() const { return m_hash; }
+    /**
+      * returns a hash based of the name
+      *
+      * @return a UID
+      */
+    const tpULong& getID() const { return mHash; }
 
 protected:
-	tpULong  m_hash;
-	tpRTTI*  m_parent;
-	const char* m_name;
+    tpULong  mHash;
+    tpRTTI*  mParent;
+    const char* mName;
 };
 
 #define TP_TYPE_DECLARE \

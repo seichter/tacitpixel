@@ -5,10 +5,4 @@
 #include <tp/globals.h>
 #include <tp/types.h>
 
-class TP_API tpEventBase {
-
-};
-
-
-
 #endif

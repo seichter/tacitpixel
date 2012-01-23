@@ -72,10 +72,12 @@ public:
 	  */
 	tpDouble getElapsed(tpUInt scale) const;
 
+    //! static function to get the current time
+    static void getCurrentTick(tpTimerTick& val);
+
+
 protected:
 
-	//! static function to get the current time
-	static void getCurrentTick(tpTimerTick& val);
 
 	tpTimerTick mStart;
 	tpDouble mSecondsPerTick;

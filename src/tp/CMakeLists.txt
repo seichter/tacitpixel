@@ -256,7 +256,7 @@ endif()
 
 if (UNIX AND NOT ANDROID)
 	target_link_libraries(${tp_name}
-		dl)
+		dl rt)
 endif()
 
 if(HAVE_PTHREAD_H AND NOT ANDROID)
