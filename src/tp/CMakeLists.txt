@@ -20,7 +20,13 @@ CHECK_INCLUDE_FILES("sys/param.h;sys/mount.h" HAVE_SYS_MOUNT_H)
 CHECK_INCLUDE_FILES("pthread.h" HAVE_PTHREAD_H)
 CHECK_INCLUDE_FILES("dlfcn.h" HAVE_DLFCN_H)
 CHECK_INCLUDE_FILES("time.h" HAVE_TIME_H)
+CHECK_INCLUDE_FILES("sys/time.h" HAVE_SYS_TIME_H)
 CHECK_INCLUDE_FILES("stdio.h" HAVE_STDIO_H)
+
+include(CheckSymbolExists)
+check_symbol_exists(clock_gettime sys/time.h HAVE_CLOCK_GETTIME)
+check_symbol_exists(gettimeofday sys/time.h HAVE_GETTIMEOFDAY)
+
 
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
@@ -254,9 +260,8 @@ if(APPLE)
 		)
 endif()
 
-if (UNIX AND NOT ANDROID)
-	target_link_libraries(${tp_name}
-		dl rt)
+if (HAVE_CLOCK_GETTIME)
+	target_link_libraries(${tp_name} rt)
 endif()
 
 if(HAVE_PTHREAD_H AND NOT ANDROID)

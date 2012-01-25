@@ -24,18 +24,23 @@
  */
 
 #include <tp/timer.h>
+#include <tp/config.h>
 
-#if defined(WIN32) || defined(WINCE)
-#	include <windows.h>
+#if defined(HAVE_TIME_H)
 #	include <time.h>
-#elif defined(__unix) || defined(__APPLE__)
-#	include <time.h>
+#endif
+
+#if defined(HAVE_SYS_TIME_H)
 #	include <sys/time.h>
 #endif
 
+#if defined(WIN32) || defined(WINCE)
+#	include <windows.h>
+#endif
 
-tpTimer::tpTimer() 
-	: mSecondsPerTick(1.0 / tpDouble(1000000)) 
+
+tpTimer::tpTimer()
+	: mSecondsPerTick(1.0 / tpDouble(1000000))
 {
 #if defined(_WIN32)
 	LARGE_INTEGER _freq;
@@ -81,26 +86,23 @@ tpDouble tpTimer::getElapsed( tpUInt scale ) const
 
 /* static */
 void tpTimer::getCurrentTick(tpTimerTick& val) {
-#if defined(__unix) || defined(__APPLE__)
 
-    struct timespec ts;
-    clock_gettime(CLOCK_REALTIME,&ts);
-    val  = ts.tv_sec;
-    val *= 1000000;
-    val += ts.tv_nsec / 1000;
-
-//	timeval tv;
-//	gettimeofday(&tv, 0);
-//	val = (tpTimerTick)(tv.tv_sec * 1000000 + tv.tv_usec);
-
-#elif defined(_WIN32)
-
+#if defined(_WIN32)
 	LARGE_INTEGER _value;
 
 	if ( QueryPerformanceCounter(&_value) )
 	{
 		val = _value.QuadPart;
 	}
-
+#elif defined(HAVE_CLOCK_GETTIME)
+	struct timespec ts;
+	clock_gettime(CLOCK_REALTIME,&ts);
+	val  = ts.tv_sec;
+	val *= 1000000;
+	val += ts.tv_nsec / 1000;
+#elif defined(HAVE_GETTIMEOFDAY)
+	timeval tv;
+	gettimeofday(&tv, 0);
+	val = (tpTimerTick)(tv.tv_sec * 1000000 + tv.tv_usec);
 #endif
 }
