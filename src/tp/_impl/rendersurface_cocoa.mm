@@ -64,7 +64,6 @@
 
 -(void) mouseMoved:(NSEvent*)theEvent
 {
-	tpLogNotify("Moved!");
 }
 
 - (BOOL)acceptsFirstResponder
@@ -105,17 +104,16 @@ tpRenderSurfaceCocoa::tpRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 			  backing:NSBackingStoreBuffered
 			  defer:false];
 
-	[window center];
-	//[window setDelegate:[NSApp delegate]];
-	[window setAcceptsMouseMovedEvents:YES];
-	[window makeKeyAndOrderFront:nil];
-	[window isMainWindow];
-
 	/* set notification interfaces */
 	tpGLRenderSurfaceCocoaDelegate* mdelegate = [[tpGLRenderSurfaceCocoaDelegate alloc] init];
 	[mdelegate setRenderSurface:this];
 	delegate = mdelegate;
 
+	[window center];
+	[window setAcceptsMouseMovedEvents:TRUE];
+	[window makeKeyAndOrderFront:nil];
+	[window isMainWindow];
+	[window setDelegate:[NSApp delegate]];
 
 	/* title */
 	if (traits) this->setCaption(traits->getTitle());
@@ -159,11 +157,66 @@ void tpRenderSurfaceCocoa::update()
 		inMode:NSDefaultRunLoopMode
 		dequeue:YES];
 
-	if (event)
+	if (nil != event)
 	{
-		[NSApp sendEvent:event];
-	}
+		NSRect size = [window contentRectForFrameRect:[window frame]];
+		NSPoint point = [window mouseLocationOutsideOfEventStream];
 
+		tpRenderSurfaceEvent e(this);
+		e.setMousePosition(point.x,point.y);
+
+
+		bool submit(false);
+		switch([(NSEvent *)event type])
+		{
+
+		case NSLeftMouseDown:
+		{
+			e.setMouseState(tpRenderSurfaceEvent::kMouseDown);
+			e.setMouseKey(tpRenderSurfaceEvent::kMouseKeyLeft);
+			submit = true;
+			break;
+		}
+		case NSLeftMouseUp:
+		{
+			e.setMouseState(tpRenderSurfaceEvent::kMouseUp);
+			e.setMouseKey(tpRenderSurfaceEvent::kMouseKeyLeft);
+			submit = true;
+			break;
+		}
+		case NSKeyDown:
+		{
+			NSString* str = [event characters];
+			tpString s([str UTF8String]);
+			e.setKeyState(tpRenderSurfaceEvent::kKeyDown);
+			e.setKeyCode((unsigned int)s.c_str()[0]);
+
+			submit = true;
+			break;
+		}
+		case NSKeyUp:
+		{
+			NSString* str = [event characters];
+			tpString s([str UTF8String]);
+			e.setKeyState(tpRenderSurfaceEvent::kKeyUp);
+			e.setKeyCode((unsigned int)s.c_str()[0]);
+
+			submit = true;
+			break;
+		}
+		case NSMouseMoved:
+			submit = true;
+			break;
+		case NSFlagsChanged:
+		default:
+			break;
+		}
+
+		// we only peek into the events - put it back into the queue
+		[NSApp sendEvent:event];
+
+		if (submit) this->getEventHandler().process(e);
+	}
 	[pool release];
 
 }

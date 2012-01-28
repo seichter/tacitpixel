@@ -16,6 +16,7 @@
 #include <tp/primitive.h>
 #include <tp/transform.h>
 #include <tp/log.h>
+#include <tp/version.h>
 
 #include "lib3ds/types.h"
 #include "lib3ds/vector.h"
@@ -58,31 +59,31 @@ tpTransform* createMeshNew( Lib3dsFile* file, Lib3dsMesh* mesh )
 
 
 
-tpTransform* createMesh( Lib3dsFile* file, Lib3dsMesh* mesh )
+tpTransform* createMesh( Lib3dsFile* file, Lib3dsMesh* mesh_3ds )
 {
 
 	// get the translation of the mesh
-	tpTransform *_transform = new tpTransform(mesh->name);
+	tpTransform *_transform = new tpTransform(mesh_3ds->name);
 	tpString mesh_name = "Unnamed";
 
 
-	tpLogNotify("%s - 0x%x - 0x%x",__FUNCTION__,file,mesh);
+	tpLogNotify("%s - 0x%x - 0x%x",__FUNCTION__,file,mesh_3ds);
 
 
 	Lib3dsMatrix M;
 
-	lib3ds_matrix_copy(M, mesh->matrix);
+	lib3ds_matrix_copy(M, mesh_3ds->matrix);
 	lib3ds_matrix_inv(M);
 
 	tpMat44r _mat;
-	_mat.copyFrom(&mesh->matrix[0][0]);
+	_mat.copyFrom(&mesh_3ds->matrix[0][0]);
 
 	//_mat.setFromRaw((float*)&mesh->matrix[0][0]);
 
 	_transform->setMatrix(_mat);
 
 	Lib3dsVector *normalL = 0;
-	normalL = (Lib3dsVector*)malloc(3 * sizeof(Lib3dsVector) * mesh->faces);
+	normalL = (Lib3dsVector*)malloc(3 * sizeof(Lib3dsVector) * mesh_3ds->faces);
 
 	if (!normalL || !_transform )
 	{
@@ -90,7 +91,7 @@ tpTransform* createMesh( Lib3dsFile* file, Lib3dsMesh* mesh )
 		return NULL;
 	}
 
-	lib3ds_mesh_calculate_normals(mesh, normalL);
+	lib3ds_mesh_calculate_normals(mesh_3ds, normalL);
 
 
 #if 0
@@ -174,35 +175,35 @@ TP_TEXTURE_CLAMP : TP_TEXTURE_REPEAT;
 #else
 
 	tpPrimitive	*_mesh = new tpPrimitive(tpPrimitive::kTriangles);
-	for (tpUInt p = 0; p < mesh->faces; ++p)
+	tpMaterial *_material = new tpMaterial;
+
+
+	for (tpUInt p = 0; p < mesh_3ds->faces; ++p)
 	{
 
-		Lib3dsFace *f = &mesh->faceL[p];
-		Lib3dsMaterial *mat=0;
-		Lib3dsTextureMap *_texture=0;
+		Lib3dsFace *face_3ds = &mesh_3ds->faceL[p];
+		Lib3dsMaterial *material_3ds = 0;
+		Lib3dsTextureMap *texture_3ds = 0;
 
-		if (f->material[0]) {
-			mat = lib3ds_file_material_by_name(file, f->material);
-		}
+		if (face_3ds->material[0] && material_3ds == 0) {
 
-		if ( mat ) {
+			material_3ds = lib3ds_file_material_by_name(file, face_3ds->material);
 
-			tpMaterial *_material = new tpMaterial(f->material);
-			//_material->setName(tpString(mat->name,64));
+			_material->setName(tpString(material_3ds->name));
 
-			tpLogNotify("%s - %s",__FUNCTION__,mat->name);
+			tpLogNotify("%s - %s",__FUNCTION__,material_3ds->name);
 
 			_material->setAmbientColor(tpVec4f(0.0f,0.0f,0.0f,1.0f));
-			_material->setDiffuseColor(tpVec4f(mat->diffuse[0],
-				mat->diffuse[1],
-				mat->diffuse[2],
-				mat->diffuse[3]));
-			_material->setSpecularColor(tpVec4f(mat->specular[0],
-				mat->specular[1],
-				mat->specular[2],
-				mat->specular[3]));
+			_material->setDiffuseColor(tpVec4f(material_3ds->diffuse[0],
+				material_3ds->diffuse[1],
+				material_3ds->diffuse[2],
+				material_3ds->diffuse[3]));
+			_material->setSpecularColor(tpVec4f(material_3ds->specular[0],
+				material_3ds->specular[1],
+				material_3ds->specular[2],
+				material_3ds->specular[3]));
 
-			tpFloat s = (tpFloat)pow(2.0, (double)10.0f * mat->shininess);
+			tpFloat s = (tpFloat)pow(2.0, (double)10.0f * material_3ds->shininess);
 
 			s = tpClamp(s,0.0f,128.0f);
 
@@ -210,12 +211,12 @@ TP_TEXTURE_CLAMP : TP_TEXTURE_REPEAT;
 
 			_mesh->setMaterial(_material);
 
-			if (mat->texture1_map.name)
+			if (material_3ds->texture1_map.name)
 			{
 
-				tpLogNotify("%s Face:%d image '%s'",__FUNCTION__,p,mat->texture1_map.name);
+				tpLogNotify("%s Face:%d image '%s'",__FUNCTION__,p,material_3ds->texture1_map.name);
 
-				tpString txture_name = mat->texture1_map.name;
+				tpString txture_name = material_3ds->texture1_map.name;
 
 				tpTexture* txture = 0;
 
@@ -226,44 +227,42 @@ TP_TEXTURE_CLAMP : TP_TEXTURE_REPEAT;
 					txture = new tpTexture();
 					//g_texturecache.add(txture_name,txture);
 
-					tpString fname = mat->texture1_map.name;
+					tpString fname = material_3ds->texture1_map.name;
 
 					tpImage* img = tpImage::read(fname);
 
 					if (img && txture) {
 
-						txture->setName(mat->texture1_map.name);
+						txture->setName(material_3ds->texture1_map.name);
 
-						tpUInt wrapmode = ( (mat->texture1_map.flags)&LIB3DS_NO_TILE ) ?
+						tpUInt wrapmode = ( (material_3ds->texture1_map.flags)&LIB3DS_NO_TILE ) ?
 							TP_TEXTURE_CLAMP : TP_TEXTURE_REPEAT;
 
 						txture->setImage(img);
 						txture->setWrap(wrapmode,wrapmode);
 
 						_mesh->setTexture(txture);
-
 					}
 
 				}
-
-
 
 			}
 
 		}
 
-		tpVec3r normal(f->normal[0],f->normal[1],f->normal[2]);
+		tpVec3r normal(face_3ds->normal[0],face_3ds->normal[1],face_3ds->normal[2]);
 
 		for (tpUInt i = 0; i < 3; i++)
 		{
 
+
 			tpVec3r vertice(
-				mesh->pointL[f->points[i]].pos[0],
-				mesh->pointL[f->points[i]].pos[1],
-				mesh->pointL[f->points[i]].pos[2]
+				mesh_3ds->pointL[face_3ds->points[i]].pos[0],
+				mesh_3ds->pointL[face_3ds->points[i]].pos[1],
+				mesh_3ds->pointL[face_3ds->points[i]].pos[2]
 			);
 
-			_mesh->addVertex(vertice);
+			_mesh->addVertex(vertice,normal);
 #if 0
 			_mesh->addNormal(normal);
 
@@ -278,7 +277,9 @@ TP_TEXTURE_CLAMP : TP_TEXTURE_REPEAT;
 
 		}
 
-		//tpLogMessage("%s - created mesh %d",__FUNCTION__,_mesh->getVertexCount());
+		tpLogMessage("%s - created mesh %d",__FUNCTION__,_mesh->getVertexCount());
+		tpVec3f max_aabb; tpVec3f min_aabb;
+		_mesh->getAABB(min_aabb,max_aabb);
 
 		//tpLogNotify("%s %.1f / %.1f / %.f",__FUNCTION__,normal[0],normal[1],normal[2]);
 
@@ -409,32 +410,28 @@ tpNode* load(const tpString& filename)
 	return _root;
 }
 
-#if 0
 
-class tpNodeFactory3DS : public tpNodeFactory {
+class tpNodeHandler_3DS : public tpNodeHandler {
 public:
 
 	TP_TYPE_DECLARE;
 
-	tpNodeFactory3DS() : tpNodeFactory()
+	tpNodeHandler_3DS() : tpNodeHandler()
 	{
-		tpLogNotify("Twisted Pairs 3DS loader 1.0");
+		tpLogNotify("%s 3DS model file support",tpGetVersionString());
 	}
 
-	tpBool getCapabilities(tpUInt capability, const tpString& name)
+	tpUByte getCapabilities(const tpString& name)
 	{
-		switch (capability)
-		{
-			case TP_NODE_CAN_READ:
-				return name.afterLast('.') == "3ds";
-				break;
-
+		tpString extension = name.afterLast('.');
+		if (extension == "3ds") {
+			return kRead;
 		}
-
-		return false;
+		return 0;
 	}
 
-	~tpNodeFactory3DS()
+
+	~tpNodeHandler_3DS()
 	{
 	}
 
@@ -446,9 +443,9 @@ public:
 
 };
 
-TP_TYPE_REGISTER(tpNodeFactory3DS,tpNodeFactory,NodeFactory3DS);
-TP_MODULE_REGISTER(3ds,tpNodeFactory3DS)
 
-#endif
+TP_TYPE_REGISTER(tpNodeHandler_3DS,tpNodeHandler,NodeHandler_3ds);
+tpModuleInitializer<tpNodeHandler_3DS> g_nodefactory_3ds;
+
 
 

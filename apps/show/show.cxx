@@ -11,6 +11,36 @@
 #include <tp/thread.h>
 #include <tp/timer.h>
 
+struct tpSurfaceHandler {
+
+	tpRefPtr<tpCamera> camera;
+	tpVec3r campos;
+
+	tpSurfaceHandler(tpCamera* camera_)
+		: camera(camera_)
+		, campos(tpVec3r(2,2,2))
+	{}
+
+	void onRenderSurface(tpRenderSurfaceEvent& e) {
+
+//		tpLogMessage("Mouse: %d %d (%d) [%d] Key: %d %d",
+//					 e.getMousePosition()[0],e.getMousePosition()[1],
+//					 e.getMouseKey(),e.getMouseState(),
+//					 e.getKeyCode(),e.getKeyState());
+
+		if (e.getKeyCode() == 27 && e.getKeyState() == tpRenderSurfaceEvent::kKeyUp) {
+			e.getRenderSurface()->setDone();
+		}
+
+		if (e.getMouseState() == tpRenderSurfaceEvent::kMouseDown) {
+			campos[0] += 0.5;
+			camera->setViewLookAt(campos,tpVec3r(0,0,0),tpVec3r(0,1,0));
+		}
+
+		e.setHandled(true);
+	}
+};
+
 int main(int argc,char* argv[])
 {
 	tpModuleManager::get()->load("obj,3ds,jpeg");
@@ -53,7 +83,13 @@ int main(int argc,char* argv[])
 
 	if (rendersurface.isValid() && renderer.isValid())
 	{
+		tpSurfaceHandler handler(camera.get());
+
+		rendersurface->getEventHandler().attach<tpRenderSurfaceEvent,tpSurfaceHandler>(&handler,&tpSurfaceHandler::onRenderSurface);
+
 		rendersurface->show(true);
+
+
 		while (rendersurface->isValid())
 		{
 			timer.start();

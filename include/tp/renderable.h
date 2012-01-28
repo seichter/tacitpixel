@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -61,6 +61,8 @@ public:
 	//! set if this material is renderable is for culling only
 	void setCulling(bool flag) { m_culling = flag; }
 	bool getCulling() const { return m_culling; }
+
+
 
 
 protected:

@@ -33,6 +33,7 @@
 #include <tp/vec.h>
 #include <tp/rendercontext.h>
 #include <tp/image.h>
+#include <tp/event.h>
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -52,27 +53,90 @@ public:
 
 class TP_API tpRenderBufferFactory : public tpReferenced {
 protected:
-    friend class tpRenderBuffer;
+	friend class tpRenderBuffer;
 public:
-    TP_TYPE_DECLARE;
-    virtual tpRenderBuffer* create( const tpSize& size, tpUInt pixelformat ) = 0;
+	TP_TYPE_DECLARE;
+	virtual tpRenderBuffer* create( const tpSize& size, tpUInt pixelformat ) = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////
 
-class tpRenderSurfaceCallback : public tpReferenced {
+//class tpRenderSurfaceCallback : public tpReferenced {
+//public:
+
+//	enum {
+//		kMouseNone,
+//		kMouseMove,
+//		kMouseUp,
+//		kMouseDown
+//	};
+
+//	virtual bool onMouseMotion( const tpInt& h, const tpInt& v) { return false; }
+
+//	virtual bool onMouseClick( const tpInt& h, const tpInt& v, const tpUShort& state ) { return false; }
+
+//};
+
+
+class tpRenderSurfaceEvent : public tpEvent {
+
+	tpUInt mMouseKey;
+	tpUInt mMouseState;
+	tpVec2i mMousePosition;
+
+	tpULong mKeyCode;
+	tpUInt mKeyState;
+
+	tpRenderSurface* mRenderSurface;
+
 public:
 
 	enum {
-		kMouseNone,
+		kMouseNone = 0,
 		kMouseMove,
 		kMouseUp,
 		kMouseDown
 	};
 
-	virtual bool onMouseMotion( const tpInt& h, const tpInt& v) { return false; }
+	enum {
+		kMouseKeyNone = 0,
+		kMouseKeyLeft,
+		kMouseKeyMiddle,
+		kMouseKeyRight
+	};
 
-	virtual bool onMouseClick( const tpInt& h, const tpInt& v, const tpUShort& state ) { return false; }
+	enum {
+		kKeyNone = 0,
+		kKeyUp,
+		kKeyDown
+	};
+
+	tpRenderSurfaceEvent(tpRenderSurface* surface)
+		: mRenderSurface(surface)
+		, mMouseKey(0)
+		, mMouseState(0)
+		, mMousePosition(tpVec2i(-1,-1))
+		, mKeyCode(0)
+		, mKeyState(0)
+	{}
+
+	tpUInt getMouseKey() const { return mMouseKey; }
+	void setMouseKey(tpUInt key) { mMouseKey = key; }
+
+	tpUInt getMouseState() const { return mMouseState; }
+	void setMouseState(tpUInt state) { mMouseState = state; }
+
+	tpVec2i getMousePosition() const { return mMousePosition; }
+	void setMousePosition(int v1, int v2) { mMousePosition = tpVec2i(v1,v2); }
+
+	tpULong getKeyCode() const { return mKeyCode; }
+	void setKeyCode(tpULong code) { mKeyCode = code; }
+
+	tpUInt getKeyState() const { return mKeyState; }
+	void setKeyState(tpUInt state) { mKeyState = state; }
+
+	tpRenderSurface* getRenderSurface() { return mRenderSurface; }
+	void setRenderSurface(tpRenderSurface* surface) { mRenderSurface = surface; }
 
 };
 
@@ -96,18 +160,18 @@ public:
 	virtual tpRawPtr getDisplay() { return 0L; }
 
 
-    virtual void setContext(tpRenderContext *context);
+	virtual void setContext(tpRenderContext *context);
 
-    virtual tpRenderContext *getContext();
+	virtual tpRenderContext *getContext();
 
-    bool hasContext() const { return mContext.isValid(); }
+	bool hasContext() const { return mContext.isValid(); }
 
 //	virtual tpInt getWidth() const { return 0; }
 //	virtual tpInt getHeight() const { return 0; }
 
 protected:
 
-    tpRefPtr<tpRenderContext> mContext;
+	tpRefPtr<tpRenderContext> mContext;
 
 };
 
@@ -116,20 +180,20 @@ protected:
 class TP_API tpRenderBuffer : public tpRenderTarget {
 public:
 
-    TP_TYPE_DECLARE;
+	TP_TYPE_DECLARE;
 
-    static tpRenderBuffer* create(const tpSize& size, const tpUInt pixelformat);
+	static tpRenderBuffer* create(const tpSize& size, const tpUInt pixelformat);
 
-    virtual void destroy() = 0;
-    virtual void copy(tpImage& image) = 0;
+	virtual void destroy() = 0;
+	virtual void copy(tpImage& image) = 0;
 
-    virtual tpRawPtr getDisplay() = 0;
-    virtual tpRawPtr getBuffer() = 0;
+	virtual tpRawPtr getDisplay() = 0;
+	virtual tpRawPtr getBuffer() = 0;
 
 protected:
 
-    tpRenderBuffer();
-    virtual ~tpRenderBuffer();
+	tpRenderBuffer();
+	virtual ~tpRenderBuffer();
 };
 
 
@@ -147,28 +211,27 @@ public:
 
 	virtual bool show(bool doShow) = 0;
 
-    virtual void update() = 0;
+	virtual void update() = 0;
 
 	virtual tpString getName() const;
 
-    virtual void setCaption(const tpString& ) {}
+	virtual void setCaption(const tpString& ) {}
+	virtual tpString getCaption() {}
 
 	bool isValid() const { return !mDone; }
 
 	void setDone(bool done = true) { mDone = done; }
 
-    void setCallback(tpRenderSurfaceCallback* callback) { mCallback = callback; }
-
-    const tpRenderSurfaceCallback* getCallback() const { return mCallback.get(); }
+	tpEventHandler& getEventHandler() { return mEventHandler; }
 
 protected:
 
 	tpRenderSurface();
 	tpRenderSurface( tpRenderSurfaceTraits* traits );
 
-	bool mDone;
+	tpEventHandler mEventHandler;
 
-	tpRefPtr<tpRenderSurfaceCallback> mCallback;
+	bool mDone;
 
 	virtual ~tpRenderSurface();
 };

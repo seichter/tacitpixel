@@ -40,6 +40,7 @@ struct tpConsoleLog : tpLogCallback
 	void operator()(const char* cstr)
 	{
 		::fputs(cstr,stdout);
+		::fflush(stdout);
 	}
 };
 

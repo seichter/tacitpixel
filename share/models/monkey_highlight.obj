@@ -1,6 +1,6 @@
 # Blender v2.60 (sub 0) OBJ File: 'monkey.blend'
 # www.blender.org
-mtllib monkey.mtl
+mtllib monkey_highlight.mtl
 o Monkey
 v 0.720703 0.185546 -0.492188
 v 0.720704 0.185546 0.492187
@@ -2014,7 +2014,7 @@ v -0.340699 -0.048950 -0.807983
 v -0.340698 -0.048950 0.807984
 v -0.376953 0.318726 -0.864380
 v -0.376952 0.318726 0.864380
-usemtl 
+usemtl Material.002
 s off
 f 1 504 1552 501
 f 1 501 1506 502

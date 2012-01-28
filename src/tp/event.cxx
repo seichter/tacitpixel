@@ -9,8 +9,24 @@ tpEvent::tpEvent()
 	tpTimer::getCurrentTick(mTick);
 }
 
+tpEvent::tpEvent(const tpEvent& e) {
+	*this = e;
+}
 
+tpEvent&
+tpEvent::operator = (const tpEvent& e) {
+	if (this != &e) {
+		mSender = e.mSender;
+		mHandled = e.mHandled;
+		mTick = e.mTick;
+	}
 
+	return *this;
+}
+
+tpEvent::~tpEvent() {
+
+}
 
 
 
@@ -18,7 +34,7 @@ bool
 tpEventHandler::process(tpEvent& e)
 {
 	for (tpEventProxyArray::iterator it = mHandlers.begin();
-		 it != mHandlers.end();
+		 it != mHandlers.end() && !e.getHandled();
 		 ++it)
 	{
 		if ((*it)->corresponds(e)) {
@@ -45,6 +61,7 @@ TP_TYPE_REGISTER(tpSpecialEvent,tpEvent,SpecialEvent);
 void SpecialEventHandler(tpSpecialEvent& e)
 {
 	tpLogNotify("Special Event!");
+	e.setHandled();
 }
 
 void SomeEventHandler(tpEvent& e)

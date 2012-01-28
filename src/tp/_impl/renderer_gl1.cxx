@@ -97,8 +97,23 @@ public:
 		if (error) tpLogError("glGetError() 0x%x (%d)",error,error);
 	}
 
+	void operator ()(const tpMaterial* mat)
+	{
+		const tpMaterial* actual_mat = (mat) ? mat : tpDefaultMaterial;
+
+		//glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
+
+		//glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, actual_mat->getEmissiveColor().getData() );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, actual_mat->getAmbientColor().getData() );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, actual_mat->getDiffuseColor().getData() );
+		//glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, actual_mat->getSpecularColor().getData() );
+		//glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, actual_mat->getShininess() );
+	}
+
 	void operator()(const tpPrimitive& prim,const tpMat44r& modelmatrix)
 	{
+		(*this)(prim.getMaterial());
+
 		tpCamera* camera = getActiveCamera();
 		tpMat44r view = camera->getViewInverse();
 		view *= modelmatrix;
