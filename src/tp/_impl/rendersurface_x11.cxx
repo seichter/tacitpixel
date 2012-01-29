@@ -133,24 +133,37 @@ tpRenderSurfaceX11::setCaption(const tpString& caption)
 void
 tpRenderSurfaceX11::update()
 {
-	XEvent event;
-	XNextEvent(dpy,&event);
 
-	switch (event.type) {
-	case ConfigureNotify:
-		tpLogNotify("%s - configure",__FUNCTION__);
-		break;
-	case ButtonPress:
-		tpLogNotify("%s - button pressed",__FUNCTION__);
-		break;
-	case DestroyNotify:
-	case ClientMessage:
-		tpLogNotify("%s - request to close",__FUNCTION__);
-		this->mDone = true;
-		break;
-	default:
-		tpLogNotify("%s - got an unknown event %d",__FUNCTION__,event.type);
-		break;
+	if (XPending(dpy)) {
+	
+		XEvent event;
+		XNextEvent(dpy,&event);
+
+		switch (event.type) {
+		case ConfigureNotify:
+			tpLogNotify("%s - configure",__FUNCTION__);
+			break;
+		case KeyPress:
+		case KeyRelease:
+			{
+				tpRenderSurfaceEvent e(this);
+				XKeyEvent* ke = (XKeyEvent*)&event;
+				e.setKeyCode(ke->keycode);
+				tpLogNotify("%s - key pressed (%d)",__FUNCTION__,XKeycodeToKeysym(dpy,ke->keycode,0));			
+			}
+			break;
+		case ButtonPress:
+			tpLogNotify("%s - button pressed",__FUNCTION__);
+			break;
+		case DestroyNotify:
+		case ClientMessage:
+			tpLogNotify("%s - request to close",__FUNCTION__);
+			this->setDone();
+			break;
+		default:
+			tpLogNotify("%s - got an unknown event %d",__FUNCTION__,event.type);
+			break;
+		}
 	}
 }
 
