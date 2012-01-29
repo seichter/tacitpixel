@@ -20,7 +20,7 @@
 #include <tp/version.h>
 
 // include OBJ loader
-#include "glm.h"
+#include <glm/glm.h>
 
 #define TRIS(x) (model->triangles[(x)])
 
@@ -102,7 +102,7 @@ tpNode* tpOBJ(const tpString& filename)
 			}
 
 
-			if (group->material)
+			if (1)//group->material)
 			{
 				GLMmaterial* material;
 
