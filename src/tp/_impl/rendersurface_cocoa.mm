@@ -20,6 +20,7 @@
 #include <tp/version.h>
 
 
+
 @interface tpGLRenderSurfaceCocoaDelegate : NSResponder
 {
 	tpRenderSurfaceCocoa* rendersurface;
@@ -29,6 +30,7 @@
 - (BOOL)resignFirstResponder;
 
 -(void) mouseMoved:(NSEvent*)theEvent;
+-(void) windowDidMove: (NSNotification*)notification;
 
 @end
 
@@ -48,6 +50,19 @@
 		name:NSWindowWillCloseNotification
 		object:(NSWindow*)arendersurface->getWindow()];
 
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		selector:@selector(windowDidMove:)
+		name:NSWindowDidMoveNotification
+		object:(NSWindow*)arendersurface->getWindow()];
+
+	[[NSNotificationCenter defaultCenter]
+		addObserver:self
+		selector:@selector(windowDidResize:)
+		name:NSWindowDidResizeNotification
+		object:(NSWindow*)arendersurface->getWindow()];
+
+
 	rendersurface = arendersurface;
 }
 
@@ -64,6 +79,16 @@
 
 -(void) mouseMoved:(NSEvent*)theEvent
 {
+}
+
+-(void) windowDidMove: (NSNotification*)notification
+{
+	tpLogMessage("Move!");
+}
+
+-(void) windowDidResize: (NSNotification*)notification
+{
+	tpLogMessage("Resize!");
 }
 
 - (BOOL)acceptsFirstResponder
@@ -107,6 +132,7 @@ tpRenderSurfaceCocoa::tpRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 	/* set notification interfaces */
 	tpGLRenderSurfaceCocoaDelegate* mdelegate = [[tpGLRenderSurfaceCocoaDelegate alloc] init];
 	[mdelegate setRenderSurface:this];
+
 	delegate = mdelegate;
 
 	[window center];

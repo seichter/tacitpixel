@@ -138,6 +138,10 @@ tpNode* tpOBJ(const tpString& filename)
 						__FUNCTION__,
 						material->specular[0],material->specular[1],material->specular[2],material->specular[3]);
 
+				tpLogNotify("%s - Shininess %3.3f",
+						__FUNCTION__,
+						material->shininess);
+
 				if (material->texturename)
 				{
 					tpTexture* texture = new tpTexture;

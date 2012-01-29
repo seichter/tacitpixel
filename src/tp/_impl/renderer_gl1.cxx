@@ -47,28 +47,28 @@ public:
 	{
 		tpCamera* camera = getActiveCamera();
 
-		//glEnable(GL_AUTO_NORMAL);
-
 		glEnable(GL_NORMALIZE);
+		glEnable(GL_RESCALE_NORMAL);
+
 		glShadeModel(GL_SMOOTH);
-
 		glEnable(GL_DEPTH_TEST);
-		glFrontFace(GL_CCW);
-		glEnable(GL_LINE_SMOOTH);
-		glEnable(GL_COLOR_MATERIAL);
-
 
 		// hack
 		glEnable(GL_LIGHTING);
 		glEnable(GL_LIGHT0);
 
 		float amb_light[] = {0.2f, 0.2f, 0.2f, 1.0f};
+
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb_light);
-		glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 0.0f);
-		//glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 0.0f);
+		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE,1);
+		glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,1);
+
+		float blueish[] = { 0.9f, 0.8f, 0.8f, 1 };
+		glLightfv(GL_LIGHT0,GL_DIFFUSE,blueish);
+		glLightfv(GL_LIGHT0,GL_SPECULAR,blueish);
 
 		//#define GL_SEPARATE_SPECULAR_COLOR 0x81FA
-		//glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+//		glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 
 		tpUInt glclearflag(0);
 		if (camera->hasClearFlag(tpCamera::kClearColor))
@@ -76,6 +76,7 @@ public:
 			glClearColor(camera->getClearColor()[0],camera->getClearColor()[1],camera->getClearColor()[2],camera->getClearColor()[3] );
 			glclearflag |= GL_COLOR_BUFFER_BIT;
 		}
+
 		if (camera->hasClearFlag(tpCamera::kClearDepth))
 		{
 			glclearflag |= GL_DEPTH_BUFFER_BIT;
@@ -101,13 +102,13 @@ public:
 	{
 		const tpMaterial* actual_mat = (mat) ? mat : tpDefaultMaterial;
 
-		//glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
+		glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
 
-		//glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, actual_mat->getEmissiveColor().getData() );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, actual_mat->getAmbientColor().getData() );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, actual_mat->getDiffuseColor().getData() );
-		//glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, actual_mat->getSpecularColor().getData() );
-		//glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, actual_mat->getShininess() );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, actual_mat->getSpecularColor().getData() );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, actual_mat->getEmissiveColor().getData() );
+		glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, actual_mat->getShininess() );
 	}
 
 	void operator()(const tpPrimitive& prim,const tpMat44r& modelmatrix)
@@ -124,31 +125,27 @@ public:
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixf(view.data());
 
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, prim.getVertices().getData());
 
 		if (prim.hasAttribute(tpPrimitive::kAttributeNormals))
 		{
-			//tpLogNotify("%s %d normals",__FUNCTION__,prim.getNormals().getSize());
 			glEnableClientState(GL_NORMAL_ARRAY);
 			glNormalPointer(GL_FLOAT, 0, prim.getNormals().getData());
 		}
 
 		if (prim.hasAttribute(tpPrimitive::kAttributeUV))
 		{
-			//tpLogNotify("%s %d texcoords",__FUNCTION__,mesh->getTexCoords().getSize());
-			//float tex[] = {0,0, 0,1, 1,0, 1,1};
 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 			glTexCoordPointer(2, GL_FLOAT, 0, prim.getTexCoords().getData());
 		}
 
 		if (prim.hasAttribute(tpPrimitive::kAttributeColors))
 		{
-			//tpLogNotify("%s %d color",__FUNCTION__,prim.getColors().getSize());
-			//float tex[] = {0,0, 0,1, 1,0, 1,1};
 			glEnableClientState(GL_COLOR_ARRAY);
 			glColorPointer(4, GL_FLOAT, 0, prim.getColors().getData());
 		}
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, 0, prim.getVertices().getData());
 
 		glDrawArrays(prim.getPrimitiveType(),0,prim.getVertexCount());
 
