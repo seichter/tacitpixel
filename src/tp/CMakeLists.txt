@@ -10,6 +10,7 @@ include_directories(${tp_include_path} _thirdparty ${CMAKE_BINARY_DIR}/include)
 
 find_package(X11)
 find_package(OpenGL)
+find_package(OpenAL)
 #find_package(Cocoa)
 
 include(CheckIncludeFiles)
@@ -56,6 +57,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/imageop.h
 	${tp_include_path}/tp/io.h
 	${tp_include_path}/tp/log.h
+	${tp_include_path}/tp/logutils.h
 	${tp_include_path}/tp/list.h
 	${tp_include_path}/tp/library.h
 	${tp_include_path}/tp/map.h
@@ -90,6 +92,31 @@ set(tp_hdrs
 	${tp_include_path}/tp/vec.h
 	${tp_include_path}/tp/version.h
 	)
+
+if(OPENGL_FOUND)
+	set(TP_USE_OPENGL ON)
+	list(APPEND tp_impl_srcs
+		_impl/renderer_gl1.cxx
+		_impl/renderer_gl1.h
+		)
+	include_directories(${OPENGL_INCLUDE_DIRS})
+	list(APPEND tp_impl_libs
+		${OPENGL_LIBRARIES}
+		)
+endif()
+
+if(OPENAL_FOUND)
+	set(TP_USE_OPENAL ON)
+#	list(APPEND tp_impl_srcs
+#		_impl/renderer_gl1.cxx
+#		_impl/renderer_gl1.h
+#		)
+#	include_directories(${OPENGL_INCLUDE_DIRS})
+#	list(APPEND tp_impl_libs
+#		${OPENGL_LIBRARIES}
+#		)
+endif()
+
 
 if (APPLE)
 
@@ -139,15 +166,6 @@ if(X11_FOUND)
 
 endif()
 
-if(OPENGL_FOUND)
-	list(APPEND tp_impl_srcs
-		_impl/renderer_gl1.cxx
-		_impl/renderer_gl1.h
-		)
-	list(APPEND tp_impl_libs
-		${OPENGL_LIBRARIES}
-		)
-endif()
 
 
 
@@ -224,6 +242,7 @@ set(tp_srcs_sg
 	renderer.cxx
 	rendercontext.cxx
 	rendersurface.cxx
+	sound.cxx
 	texture.cxx
 	transform.cxx
 	traverser.cxx
@@ -278,4 +297,9 @@ endif()
 
 add_subdirectory(_modules)
 add_subdirectory(_testing)
+
+option(TP_BUILD_UNITTESTS "Build unit tests" OFF)
+if(TP_BUILD_UNITTESTS)
+	add_subdirectory(_unit)
+endif()
 

@@ -47,5 +47,8 @@
 
 #cmakedefine TP_USE_COCOA
 #cmakedefine TP_USE_X11
+#cmakedefine TP_USE_OPENGL
+#cmakedefine TP_USE_OPENAL
+
 
 #endif
