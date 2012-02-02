@@ -6,6 +6,8 @@
 #include <tp/primitive.h>
 #include <tp/version.h>
 #include <tp/log.h>
+#include <tp/logutils.h>
+
 
 //#if defined(__APPLE__)
 //    #include <OpenGL/OpenGL.h>
@@ -16,13 +18,12 @@
 //#include <GL/gl.h>
 //#endif
 
-#if defined(TP_USE_X11)
-	#include <GL/gl.h>
-	#include <GL/glx.h>
-#endif
-
-#if defined(TP_USE_COCOA)
-	#include <OpenGL/gl.h>
+#if defined(TP_USE_OPENGL)
+	#if defined(__APPLE__)
+		#include <OpenGL/gl.h>
+	#else
+		#include <GL/gl.h>
+	#endif
 #endif
 
 struct tpGLRendererTraits : tpRendererTraits {
@@ -47,28 +48,34 @@ public:
 	{
 		tpCamera* camera = getActiveCamera();
 
-		glEnable(GL_NORMALIZE);
-		glEnable(GL_RESCALE_NORMAL);
-
+//		glEnable(GL_NORMALIZE);
+//		glEnable(GL_RESCALE_NORMAL);
 		glShadeModel(GL_SMOOTH);
+//		glShadeModel(GL_FLAT);
+		glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
+
+
 		glEnable(GL_DEPTH_TEST);
 
 		// hack
 		glEnable(GL_LIGHTING);
 		glEnable(GL_LIGHT0);
 
-		float amb_light[] = {0.2f, 0.2f, 0.2f, 1.0f};
+//		float amb_light[] = {0.2f, 0.2f, 0.2f, 1.0f};
 
-		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb_light);
-		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE,1);
-		glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,1);
+//		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb_light);
+//		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE,1);
+//		glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,1);
 
-		float blueish[] = { 0.9f, 0.8f, 0.8f, 1 };
-		glLightfv(GL_LIGHT0,GL_DIFFUSE,blueish);
-		glLightfv(GL_LIGHT0,GL_SPECULAR,blueish);
+//		float blueish[] = { 0.9f, 0.8f, 0.8f, 1 };
+//		glLightfv(GL_LIGHT0,GL_DIFFUSE,blueish);
+//		glLightfv(GL_LIGHT0,GL_SPECULAR,blueish);
 
 		//#define GL_SEPARATE_SPECULAR_COLOR 0x81FA
 //		glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+
+		float pos_light[] = {2.f,2.f,2.f,1.f};
+		glLightfv(GL_LIGHT0,GL_POSITION,pos_light);
 
 		tpUInt glclearflag(0);
 		if (camera->hasClearFlag(tpCamera::kClearColor))
@@ -116,16 +123,17 @@ public:
 		(*this)(prim.getMaterial());
 
 		tpCamera* camera = getActiveCamera();
-		tpMat44r view = camera->getViewInverse();
-		view *= modelmatrix;
 
-		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(camera->getProjection().data());
-
+		// we are using our own transformation stack
 		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(view.data());
 
+//		 hence just compile the modelviewprojection matrix (prepared for OpenGL 2.0 / ES 2.0)
+		tpMat<4,4,float> mvp = modelmatrix * camera->getViewInverse() * camera->getProjection();
 
+		// load on the stack
+		glLoadMatrixf(mvp.data());
+
+		// render scene
 		if (prim.hasAttribute(tpPrimitive::kAttributeNormals))
 		{
 			glEnableClientState(GL_NORMAL_ARRAY);
