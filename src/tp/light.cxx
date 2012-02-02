@@ -30,21 +30,28 @@
 tpArray<tpUInt> tpLight::msLightID = tpArray<tpUInt>();
 
 tpLight::tpLight()
-	: tpObject(),
-	mAmbientColor(tpVec4f(0.0f,0.0f,0.0f,1.0f)),
-	mDiffuseColor(tpVec4f(0.0f,0.0f,0.0f,1.0f)),
-	mSpecularColor(tpVec4f(0.0f,0.0f,0.0f,1.0f)),
-
-	mPosition(tpVec3f(0.0f,0.0f,1.0f)),
-	mOrientation(tpVec3f(0.0f,0.0f,-1.0f))
-
+	: tpNode()
+	, mAmbientColor(tpVec4f(0.0f,0.0f,0.0f,1.0f))
+	, mDiffuseColor(tpVec4f(0.0f,0.0f,0.0f,1.0f))
+	, mSpecularColor(tpVec4f(0.0f,0.0f,0.0f,1.0f))
+	, mPosition(tpVec3f(0.0f,0.0f,1.0f))
+	, mOrientation(tpVec3f(0.0f,0.0f,-1.0f))
+	, mExponent(0)
+	, mCutOff(128)
+	, mConstantAttenuation(1)
+	, mLinearAttenuation(0)
+	, mQuadraticAttenuation(0)
 {
 	tpInt _id = msLightID.getSize();
-	while (msLightID.find(_id) ) {
+	while (-1 != msLightID.find(_id) ) {
 		++_id;
 	}
 	msLightID.add(_id);
 	mID = _id;
+	if (mID == 0) {
+		// OpenGL defaults for ID0
+		mDiffuseColor = mSpecularColor = tpVec4f(1.0f,1.0f,1.0f,1.0f);
+	}
 }
 
 tpLight::~tpLight()
@@ -52,5 +59,5 @@ tpLight::~tpLight()
 	msLightID.erase(mID);
 }
 
-TP_TYPE_REGISTER(tpLight,tpObject,Light);
+TP_TYPE_REGISTER(tpLight,tpNode,Light);
 

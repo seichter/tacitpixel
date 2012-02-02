@@ -13,6 +13,7 @@
 #include <tp/timer.h>
 #include <tp/primitive.h>
 #include <tp/vec.h>
+#include <tp/light.h>
 
 struct tpSurfaceHandler {
 
@@ -110,6 +111,12 @@ int main(int argc,char* argv[])
 
 	camera->setClearColor(tpVec4f(0.5f,0.5f,0.9f,1.0f));
 	camera->setViewport(tpVec4i(0,0,640,480));
+
+	tpRefPtr<tpLight> l = new tpLight();
+	l->setPosition(tpVec3f(5,5,5));
+	l->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
+
+	root->addChild(l.get());
 
 	tpUInt frames = 0;
 	tpDouble time = 0;

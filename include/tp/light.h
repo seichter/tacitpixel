@@ -26,12 +26,12 @@
 #ifndef TPLIGHT_H
 #define TPLIGHT_H
 
+#include <tp/node.h>
 #include <tp/array.h>
-#include <tp/object.h>
 #include <tp/vec.h>
 
 
-class TP_API tpLight : public tpObject {
+class TP_API tpLight : public tpNode {
 public:
 
 	TP_TYPE_DECLARE
@@ -65,11 +65,11 @@ protected:
 	tpVec3f mOrientation;
 
 	/* light model */
-	tpInt mExponent;
-	tpInt mCutOff;
-	tpInt mConstantAttenuation;
-	tpInt mLinearAttenuation;
-	tpInt mQuadraticAttenuation;
+	tpFloat mExponent;
+	tpFloat mCutOff;
+	tpFloat mConstantAttenuation;
+	tpFloat mLinearAttenuation;
+	tpFloat mQuadraticAttenuation;
 
 	/* ID management */
 	tpUInt mID;

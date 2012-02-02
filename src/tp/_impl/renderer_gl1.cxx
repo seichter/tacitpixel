@@ -7,6 +7,8 @@
 #include <tp/version.h>
 #include <tp/log.h>
 #include <tp/logutils.h>
+#include <tp/light.h>
+#include <tp/timer.h>
 
 
 //#if defined(__APPLE__)
@@ -39,43 +41,34 @@ public:
 		tpLogNotify("%s OpenGL 1.x renderer",tpGetVersionString());
 	}
 
-	TP_TYPE_DECLARE;
+	TP_TYPE_DECLARE
 
 	static tpGLRendererTraits mRendererTraits;
 	const tpRendererTraits& getTraits() const { return mRendererTraits; }
 
 	void operator()(tpNode* node)
 	{
+
+		tpTimer t;
+
 		tpCamera* camera = getActiveCamera();
+
+		glShadeModel(GL_SMOOTH);
+		glEnable(GL_DEPTH_TEST);
+
 
 //		glEnable(GL_NORMALIZE);
 //		glEnable(GL_RESCALE_NORMAL);
-		glShadeModel(GL_SMOOTH);
 //		glShadeModel(GL_FLAT);
 		glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
 
 
-		glEnable(GL_DEPTH_TEST);
 
-		// hack
-		glEnable(GL_LIGHTING);
-		glEnable(GL_LIGHT0);
-
-//		float amb_light[] = {0.2f, 0.2f, 0.2f, 1.0f};
-
-//		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb_light);
-//		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE,1);
-//		glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,1);
-
-//		float blueish[] = { 0.9f, 0.8f, 0.8f, 1 };
-//		glLightfv(GL_LIGHT0,GL_DIFFUSE,blueish);
-//		glLightfv(GL_LIGHT0,GL_SPECULAR,blueish);
 
 		//#define GL_SEPARATE_SPECULAR_COLOR 0x81FA
-//		glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+		glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 
-		float pos_light[] = {2.f,2.f,2.f,1.f};
-		glLightfv(GL_LIGHT0,GL_POSITION,pos_light);
+
 
 		tpUInt glclearflag(0);
 		if (camera->hasClearFlag(tpCamera::kClearColor))
@@ -91,6 +84,24 @@ public:
 
 		if (glclearflag) glClear(glclearflag);
 
+
+		// setup lights
+		tpNodeMatrixMap nodemap_lights = tpNodeOps::getNodeMatrixMap(node,tpLight::getTypeInfo());
+
+		if (nodemap_lights.getSize())
+		{
+			// hack
+			glEnable(GL_LIGHTING);
+
+			for (tpNodeMatrixMap::iterator i = nodemap_lights.begin();
+				 i != nodemap_lights.end();
+				 ++i)
+			{
+				(*this)(*static_cast<tpLight*>((*i).getKey()),(*i).getValue());
+			}
+		}
+
+		// render nodes
 		tpNodeMatrixMap nodemap_primitives = tpNodeOps::getNodeMatrixMap(node,tpPrimitive::getTypeInfo());
 
 		for (tpNodeMatrixMap::iterator i = nodemap_primitives.begin();
@@ -103,6 +114,36 @@ public:
 
 		GLint error = glGetError();
 		if (error) tpLogError("glGetError() 0x%x (%d)",error,error);
+
+//		tpLogNotify("%s %d lights %d nodes %3.3fms",
+//					__FUNCTION__,nodemap_lights.getSize(),nodemap_primitives.getSize(),
+//					t.getElapsed(tpTimer::kTimeMilliSeconds));
+	}
+
+	void operator ()(const tpLight& light, const tpMat44r& modelmatrix)
+	{
+
+		tpCamera* camera = getActiveCamera();
+
+		// just compile the modelviewprojection matrix (prepared for OpenGL 2.0 / ES 2.0)
+		tpMat<4,4,float> mvp = modelmatrix * camera->getViewInverse() * camera->getProjection();
+
+		// HACK!
+		mvp.at(11) += light.getPosition()[0];
+		mvp.at(12) += light.getPosition()[1];
+		mvp.at(13) += light.getPosition()[2];
+
+		// load model view
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(mvp.data());
+
+		GLenum lid = light.getID()+GL_LIGHT0;
+		glEnable(lid);
+		glLightfv(lid,GL_POSITION,light.getPosition().getData());
+		glLightfv(lid,GL_AMBIENT,light.getAmbientColor().getData());
+		glLightfv(lid,GL_DIFFUSE,light.getDiffuseColor().getData());
+		glLightfv(lid,GL_SPECULAR,light.getSpecularColor().getData());
+
 	}
 
 	void operator ()(const tpMaterial* mat)
