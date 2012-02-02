@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,42 +38,42 @@ public:
 
 	tpLight();
 
-	tpUInt getID() const { return m_id; }
+	tpUInt getID() const { return mID; }
 
-	void setAmbientColor(const tpVec4f& color) { m_ambient = color; }
-	void setDiffuseColor(const tpVec4f& color) { m_diffuse = color; }
-	void setSpecularColor(const tpVec4f& color) { m_specular = color; }
-	
-	const tpVec4f& getAmbientColor() const { return m_ambient; }
-	const tpVec4f& getDiffuseColor() const { return m_diffuse; }
-	const tpVec4f& getSpecularColor() const { return m_specular; }
+	void setAmbientColor(const tpVec4f& color) { mAmbientColor = color; }
+	void setDiffuseColor(const tpVec4f& color) { mDiffuseColor = color; }
+	void setSpecularColor(const tpVec4f& color) { mSpecularColor = color; }
 
-	void setPosition(const tpVec3f& position) { m_position = position; }
-	const tpVec3f& getPosition() const { return m_position; }
+	const tpVec4f& getAmbientColor() const { return mAmbientColor; }
+	const tpVec4f& getDiffuseColor() const { return mDiffuseColor; }
+	const tpVec4f& getSpecularColor() const { return mSpecularColor; }
+
+	void setPosition(const tpVec3f& position) { mPosition = position; }
+	const tpVec3f& getPosition() const { return mPosition; }
 
 protected:
 
 	virtual ~tpLight();
-	
-	/* colors */	
-	tpVec4f m_ambient;
-	tpVec4f m_diffuse;
-	tpVec4f m_specular;
-	
+
+	/* colors */
+	tpVec4f mAmbientColor;
+	tpVec4f mDiffuseColor;
+	tpVec4f mSpecularColor;
+
 	/* position & orientation */
-	tpVec3f m_position;
-	tpVec3f m_direction;
-	
+	tpVec3f mPosition;
+	tpVec3f mOrientation;
+
 	/* light model */
-	tpInt m_exponent;
-	tpInt m_cutoff;
-	tpInt m_constant_attenuation;
-	tpInt m_linear_attenuation;
-	tpInt m_quadratic_attenuation;
-	
+	tpInt mExponent;
+	tpInt mCutOff;
+	tpInt mConstantAttenuation;
+	tpInt mLinearAttenuation;
+	tpInt mQuadraticAttenuation;
+
 	/* ID management */
-	tpUInt m_id;
-	static tpArray<tpUInt> ms_lightids;
+	tpUInt mID;
+	static tpArray<tpUInt> msLightID;
 
 };
 

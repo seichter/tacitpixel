@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,29 +27,29 @@
 #include <tp/log.h>
 
 
-tpArray<tpUInt> tpLight::ms_lightids = tpArray<tpUInt>();
+tpArray<tpUInt> tpLight::msLightID = tpArray<tpUInt>();
 
 tpLight::tpLight()
 	: tpObject(),
-	m_ambient(tpVec4f(0.0f,0.0f,0.0f,1.0f)),
-	m_diffuse(tpVec4f(0.0f,0.0f,0.0f,1.0f)),
-	m_specular(tpVec4f(0.0f,0.0f,0.0f,1.0f)),
+	mAmbientColor(tpVec4f(0.0f,0.0f,0.0f,1.0f)),
+	mDiffuseColor(tpVec4f(0.0f,0.0f,0.0f,1.0f)),
+	mSpecularColor(tpVec4f(0.0f,0.0f,0.0f,1.0f)),
 
-	m_position(tpVec3f(0.0f,0.0f,1.0f)),
-	m_direction(tpVec3f(0.0f,0.0f,-1.0f))
+	mPosition(tpVec3f(0.0f,0.0f,1.0f)),
+	mOrientation(tpVec3f(0.0f,0.0f,-1.0f))
 
 {
-	tpInt _id = ms_lightids.getSize();
-	while (ms_lightids.find(_id) ) {
+	tpInt _id = msLightID.getSize();
+	while (msLightID.find(_id) ) {
 		++_id;
 	}
-	ms_lightids.add(_id);
-	m_id = _id;
+	msLightID.add(_id);
+	mID = _id;
 }
 
 tpLight::~tpLight()
 {
-	ms_lightids.erase(m_id);
+	msLightID.erase(mID);
 }
 
 TP_TYPE_REGISTER(tpLight,tpObject,Light);
