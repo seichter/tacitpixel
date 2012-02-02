@@ -362,11 +362,16 @@ tpString::format(const char* format,...)
 	va_list argptr;
 	va_start(argptr, format);
 
-	int count = ::snprintf(0,0,format,argptr);
+	int count = vsnprintf(0,0,format,argptr);
+
+	va_end(argptr);
+
 
 	buffer.setSize(count + 1);
 
-	snprintf(buffer.ptr<tpChar>(),count + 1,format, argptr);
+	va_start(argptr, format);
+
+	vsnprintf(buffer.ptr<tpChar>(),count + 1,format, argptr);
 
 	buffer.at<tpChar>(count) = '\0';
 
