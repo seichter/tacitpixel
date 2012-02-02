@@ -62,10 +62,6 @@ tpCamera * tpRenderer::getActiveCamera()
 	if (mCameras.isEmpty())
 	{
 		tpCamera* camera = new tpCamera();
-
-		camera->setProjectionPerspective(60.0f,1.3f,0.1f,1000.0f);
-		camera->setViewLookAt(tpVec3r(0,0,1),tpVec3r(0,0,0),tpVec3r(0,1,0));
-
 		addCamera(camera,true);
 		mActiveCamera = 0;
 	}
