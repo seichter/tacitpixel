@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
 		tpThread::sleep(5);
 	}
 
-	
+
 	// join thread into main thread
 	// thread.join();
 
@@ -44,12 +44,12 @@ int main(int argc, char* argv[])
 
 	tpMat44r mat; tpMat44r s;
 
-	mat.all(0).identity();
+	mat.fill(0).identity();
 	mat(0,1) = 3.3; mat(1,0) = 5.5;
 	mat.transpose().invert();
 
-	mat.all(0).identity();
-	s.all(0).identity();
+	mat.identity();
+	s.identity();
 
 	mat.setCellIdValue();
 	s.setCellIdValue();
