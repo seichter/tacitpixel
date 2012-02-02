@@ -108,12 +108,25 @@ public:
 	//! swap components in the vector
 	tpVec<T,N>& swapComponent(tpUInt c1,tpUInt c2);
 
-	inline tpVec<T,N> operator - () const
+	inline const tpVec<T,N> operator - () const
 	{
 		tpVec<T,N> r;
 		for (int i = 0; i < N; ++i) { r.vec[i] = -this->vec[i]; }
 		return r;
 	}
+
+	tpVec<T,N>& operator -= (const tpVec<T,N>& rhs) const
+	{
+		for (int i = 0; i < N; ++i) { this->vec[i] -= rhs.vec[i]; }
+		return *this;
+	}
+
+	tpVec<T,N>& operator += (const tpVec<T,N>& rhs) const
+	{
+		for (int i = 0; i < N; ++i) { this->vec[i] += rhs.vec[i]; }
+		return *this;
+	}
+
 
 	//! assignment operator
 	tpVec& operator = (const tpVec& rs);
@@ -151,22 +164,6 @@ tpVec<T,N>::tpVec(const tpVec& v)
 template <class T,tpUInt N> inline
 tpVec<T,N>::~tpVec()
 {
-}
-
-template <class T,tpUInt N> inline
-const tpVec<T,N> tpVec<T,N>::operator - (const tpVec<T,N>& rhs) const
-{
-	tpVec<T,N> out(*this);
-	out -= rhs;
-	return out;
-}
-
-template <class T,tpUInt N> inline
-const tpVec<T,N> tpVec<T,N>::operator + (const tpVec<T,N>& rhs) const
-{
-	tpVec<T,N> out(*this);
-	out += rhs;
-	return out;
 }
 
 template <class T,tpUInt N> inline
@@ -268,20 +265,36 @@ template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::scaleUniform(T scale)
 	return *this;
 }
 
-template <class T,tpUInt N> inline tpVec<T,N> tpVec<T,N>::operator* (T scale) const
+template <class T,tpUInt N> inline
+tpVec<T,N> tpVec<T,N>::operator* (T scale) const
 {
 	tpVec<T,N> v = *this;
 	v.scaleUniform(scale);
 	return v;
 }
 
-template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::swapComponent(tpUInt c1,tpUInt c2)
+template <class T,tpUInt N> inline
+tpVec<T,N>& tpVec<T,N>::swapComponent(tpUInt c1,tpUInt c2)
 {
 	T _swp = vec[c1];
 	vec[c1] = vec[c2];
 	vec[c2] = _swp;
 
 	return *this;
+}
+
+// Generic Operators ---------------------------------------------------------
+
+template <class T, tpUInt N> inline
+const tpVec<T,N> tpVec<T,N>::operator + (const tpVec<T,N>& r) const
+{
+	return tpVec<T,N>(*this)+=r;
+}
+
+template <class T, tpUInt N> inline
+const tpVec<T,N> tpVec<T,N>::operator - (const tpVec<T,N>& r) const
+{
+	return tpVec<T,N>(*this)-=r;
 }
 
 
