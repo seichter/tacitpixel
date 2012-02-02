@@ -210,6 +210,20 @@ void tpRenderSurfaceCocoa::update()
 			submit = true;
 			break;
 		}
+		case NSRightMouseDown:
+		{
+			e.setMouseState(tpRenderSurfaceEvent::kMouseDown);
+			e.setMouseKey(tpRenderSurfaceEvent::kMouseKeyRight);
+			submit = true;
+			break;
+		}
+		case NSRightMouseUp:
+		{
+			e.setMouseState(tpRenderSurfaceEvent::kMouseUp);
+			e.setMouseKey(tpRenderSurfaceEvent::kMouseKeyRight);
+			submit = true;
+			break;
+		}
 		case NSKeyDown:
 		{
 			NSString* str = [event characters];
