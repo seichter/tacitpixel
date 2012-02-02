@@ -6,7 +6,9 @@ set(tp_name tacit)
 
 set(tp_include_path ${CMAKE_CURRENT_SOURCE_DIR}/../../include)
 
-include_directories(${tp_include_path} _thirdparty ${CMAKE_BINARY_DIR}/include)
+include_directories(${tp_include_path}
+	_thirdparty
+	${CMAKE_BINARY_DIR}/include)
 
 find_package(X11)
 find_package(OpenGL)
@@ -50,6 +52,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/functoid.h
 	${tp_include_path}/tp/globals.h
 	${tp_include_path}/tp/egl.h
+	${tp_include_path}/tp/font.h
 	${tp_include_path}/tp/gl.h
 	${tp_include_path}/tp/hash.h
 	${tp_include_path}/tp/image.h
@@ -178,6 +181,7 @@ set(tp_srcs
 	file.cxx
 	filename.cxx
 	functoid.cxx
+	font.cxx
 #	gl.cxx
 	hash.cxx
 	image.cxx
