@@ -4,8 +4,8 @@
 #include <tp/string.h>
 #include <tp/mat.h>
 
-inline tpString&
-operator << (tpString& out, const tpMat44r& m)
+template <typename T, tpUInt R, tpUInt C>
+tpString& operator << (tpString& out, const tpMat<R,C,T>& m)
 {
 	// we are using MatLab style
 	tpString result("[ ");
@@ -16,10 +16,25 @@ operator << (tpString& out, const tpMat44r& m)
 			result += tpString::format("%3.3f",m(r,c));
 			if (c != m.cols - 1) result += ", ";
 		}
-		if (r != m.rows - 1) result += ";\n";
+		if (r != m.rows - 1) result += "; ";
 	}
-	result += " ]\n";
+	result += " ]";
 	return out.append(result);
 }
+
+template <typename T, tpUInt C>
+tpString& operator << (tpString& out, const tpVec<T,C>& v)
+{
+	// we are using MatLab style
+	tpString result("[ ");
+	for (int c = 0; c < v.dimensions;++c)
+	{
+		result += tpString::format("%3.3f",v[c]);
+		if (c != v.dimensions - 1) result += "; ";
+	}
+	result += " ]";
+	return out.append(result);
+}
+
 
 #endif

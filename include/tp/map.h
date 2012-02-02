@@ -74,6 +74,16 @@ public:
 		return false;
 	}
 
+	V& getByKey(const K& keyvalue) {
+
+		for (iterator i = this->begin();
+			 i != this->end();
+			 ++i)
+		{
+			if (keyvalue == (*i).getKey()) return (*i).getValue();
+		}
+	}
+
 };
 
 

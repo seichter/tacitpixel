@@ -82,8 +82,6 @@ public:
 	  */
 	static tpLog& get();
 
-	void operator << (const char* input) { this->printf("%s",input); }
-
 protected:
 
 	tpLog();
@@ -102,7 +100,6 @@ TP_API void tpLogNotify(const char* szFormat, ...);
 
 //! set the global notification level
 TP_API void tpSetGlobalNotifyLevel(tpUShort level);
-
 
 /**
   * @brief helper for changing the log level in a scope
@@ -132,5 +129,6 @@ struct tpScopeLog {
 		tpLog::get().log(level,info);
 	}
 };
+
 
 #endif

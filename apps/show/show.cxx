@@ -2,6 +2,7 @@
 #include <tp/string.h>
 #include <tp/arguments.h>
 #include <tp/log.h>
+#include <tp/logutils.h>
 #include <tp/module.h>
 #include <tp/sort.h>
 #include <tp/stringtokenizer.h>
@@ -10,6 +11,8 @@
 #include <tp/rendersurface.h>
 #include <tp/thread.h>
 #include <tp/timer.h>
+#include <tp/primitive.h>
+#include <tp/vec.h>
 
 struct tpSurfaceHandler {
 
@@ -33,13 +36,41 @@ struct tpSurfaceHandler {
 		}
 
 		if (e.getMouseState() == tpRenderSurfaceEvent::kMouseDown) {
-			campos[0] += 0.5;
+
+			if (e.getMouseKey() == tpRenderSurfaceEvent::kMouseKeyLeft) {
+				campos[0] += 0.5;
+			} else {
+				campos[0] -= 0.5;
+			}
+
+			tpLogNotify("Camera pos: %3.1f %3.1f %3.1f",campos[0],campos[2],campos[2]);
+
 			camera->setViewLookAt(campos,tpVec3r(0,0,0),tpVec3r(0,1,0));
 		}
 
 		e.setHandled(true);
 	}
 };
+
+tpNode*
+createAxis()
+{
+	tpPrimitive* axis = new tpPrimitive(tpPrimitive::kLines,
+										tpPrimitive::kAttributeVertex | tpPrimitive::kAttributeColors);
+
+
+	axis->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(1,1,1,1));
+	axis->addVertex(tpVec3r(1,0,0),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(1,0,0,1));
+
+	axis->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(1,1,1,1));
+	axis->addVertex(tpVec3r(0,1,0),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(0,1,0,1));
+
+	axis->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(1,1,1,1));
+	axis->addVertex(tpVec3r(0,0,1),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(0,0,1,1));
+
+	return axis;
+
+}
 
 int main(int argc,char* argv[])
 {
@@ -51,7 +82,8 @@ int main(int argc,char* argv[])
 	if (args.get("--plugins",plugins)) {}
 	if (args.get("--file",file)) {}
 
-	tpRefNode root = tpNode::read(file);
+
+	tpRefNode root = (file == "axis") ? createAxis() :  tpNode::read(file);
 
 	if (!root.isValid()) {
 		tpLogError("Can't load file");
@@ -68,9 +100,12 @@ int main(int argc,char* argv[])
 	if (!renderer.isValid() || !rendersurface.isValid() || !rendersurface->hasContext()) return -1;
 
 	tpRefPtr<tpCamera> camera = renderer->getActiveCamera();
+	camera->setName("Default");
+
 
 	camera->setProjectionPerspective(60.0f,1.3f,0.1f,1000.0f);
 	camera->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
+
 	camera->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
 
 	camera->setClearColor(tpVec4f(0.5f,0.5f,0.9f,1.0f));
