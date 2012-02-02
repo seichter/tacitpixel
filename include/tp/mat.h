@@ -56,13 +56,13 @@ public:
 
 	bool isSquare() const { return C == R; }
 
-	tpMat<R,C,T>& all(const T& val = T(0)) { for (int i = 0; i < tpMat<R,C,T>::cells; ++i) m[i] = val; return *this; }
+	tpMat<R,C,T>& fill(const T& val) { for (int i = 0; i < tpMat<R,C,T>::cells; ++i) m[i] = val; return *this; }
 
 	int getDiagonalSize() const { return tpMin(R,C); }
 
 	tpMat<R,C,T>& identity()
 	{
-		all(0);
+		this->fill(0);
 		for (int i = 0; i < getDiagonalSize(); ++i)
 		{
 			m[i*C+i] = T(1);
@@ -97,6 +97,7 @@ public:
 	inline tpMat<R,C,T>
 	multiply(const tpMat<R,C,T>& rhs) const
 	{
+
 		tpMat<R,C,T> res;
 		for (tpUInt r = 0; r < R; ++r)
 		{
@@ -154,7 +155,19 @@ public:
 
 	tpMat<R,C,T>& operator *= (const T& rhs);
 
-	tpMat<R,C,T>& copyFrom(const T* ptr) { for (int i = 0; i < tpMat::cells; ++i) { this->at(i) = ptr[i]; } return *this; }
+	tpMat<R,C,T>& copyFrom(const T* src) { for (int i = 0; i < tpMat::cells; ++i) { this->m[i] = src[i]; } return *this; }
+
+	tpMat<R,C,T> operator * (const tpMat<R,C,T>& r) const {
+		return this->multiply(r);
+	}
+
+	static tpMat<R,C,T>
+	Identity()
+	{
+		tpMat<R,C,T> r; r.fill(0);
+		for (register int i = 0; i < r.getDiagonalSize(); ++i) r(i,i) = T(1);
+		return r;
+	}
 
 protected:
 
@@ -177,6 +190,7 @@ tpMat<R,C,T>& tpMat<R,C,T>::operator = (const tpMat<R,C,T>& rhs)
 	{
 		for (register tpUInt i = 0; i < tpMat<R,C,T>::cells; i++) {
 			this->m[i] = rhs.m[i];
+
 		}
 	}
 	return *this;
@@ -462,10 +476,15 @@ tpFixed32 tpMat<1,1,tpFixed32>::getDeterminant() const
 
 // predefined matricies
 
-class tpMat44r : public tpMat44<tpReal> {};
-class tpMat44d : public tpMat44<tpDouble> {};
-class tpMat44f : public tpMat44<tpFloat> {};
-class tpMat44x : public tpMat44<tpFixed32> {};
+//class tpMat44r : public tpMat44<tpReal> {};
+//class tpMat44d : public tpMat44<tpDouble> {};
+//class tpMat44f : public tpMat44<tpFloat> {};
+//class tpMat44x : public tpMat44<tpFixed32> {};
+
+typedef tpMat44<tpReal> tpMat44r;
+typedef tpMat44<tpDouble> tpMat44d;
+typedef tpMat44<tpFloat> tpMat44f;
+typedef tpMat44<tpFixed32> tpMat44x;
 
 
 class tpVector3d : public tpMat<1,3,tpDouble> {};

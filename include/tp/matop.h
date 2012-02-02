@@ -27,7 +27,6 @@
 #define TP_MATOP_H
 
 #include <tp/mat.h>
-
 /**
   * @brief just a stub for typical OpenGL matrix operations
   */
@@ -40,15 +39,16 @@ struct tpMat44Op {
 	  * @param up vector describing the upright direction
 	  * @param matOut output of the calculation
 	  */
-	template <typename T>
+	template <typename T> inline
 	static void lookAt(const tpVec3<T>& eye, const tpVec3<T>& target, const tpVec3<T>& up,tpMat<4,4,T>& matOut)
 	{
-		tpVec3<T> L(target - eye);
+		tpVec3<T> L(target); L-= eye;
 		L.normalize();
 		tpVec3<T> S = L.cross(up);
 		S.normalize();
 		tpVec3<T> Ud = S.cross(L);
 		Ud.normalize();
+
 
 		matOut(0,0) = S[0];
 		matOut(1,0) = S[1];
@@ -85,26 +85,17 @@ struct tpMat44Op {
 	template <typename T>
 	static void frustum(T Left,T Right,T Bottom,T Top, T Near, T Far,tpMat44<T>& matOut)
 	{
-		// set column-wise
-		matOut.at( 0) = (T) 2	* Near/(Right-Left);
-		matOut.at( 4) = (T) 0;
-		matOut.at( 8) = (T) (Right+Left)/(Right-Left);
-		matOut.at(12) = (T) 0;
+		matOut.fill(0);
 
-		matOut.at( 1) = (T) 0;
-		matOut.at( 5) = (T) 2 * Near/(Top-Bottom);
-		matOut.at( 9) = (T) (Top+Bottom)/(Top-Bottom);
-		matOut.at(13) = (T) 0;
+		matOut(0,0) = 2 * Near/(Right-Left);
+		matOut(1,1) = 2 * Near/(Top-Bottom);
 
-		matOut.at( 2) = (T) 0;
-		matOut.at( 6) = (T) 0;
-		matOut.at(10) = (T) -(Far+Near)/(Far-Near);
-		matOut.at(14) = (T) -	2*Far*Near	/ Far-Near;
+		matOut(0,2) = (Right+Left)/(Right-Left);	//A
+		matOut(1,2) = (Top+Bottom)/(Top-Bottom);	//B
+		matOut(2,2) = - (Far+Near)/(Far-Near);		//C
+		matOut(3,2) = -(2 * (Far*Near))/(Far-Near);	//D
 
-		matOut.at( 3) = (T) 0;
-		matOut.at( 7) = (T) 0;
-		matOut.at(11) = (T) -1;
-		matOut.at(15) = (T) 0;
+		matOut(2,3) = -1;
 	}
 
 
@@ -120,11 +111,10 @@ struct tpMat44Op {
 	static void perspective(T FovY, T Aspect, T Near, T Far, tpMat44<T>& matOut)
 	{
 
-		T xmin, xmax, ymin, ymax;
-		ymax = Near * (T)tan( FovY * TP_PI / T(360) );
-		ymin = -ymax;
-		xmin = ymin * Aspect;
-		xmax = ymax * Aspect;
+		T ymax = Near * (T)tan( FovY * TP_PI / T(360) );
+		T ymin = -ymax;
+		T xmin = ymin * Aspect;
+		T xmax = ymax * Aspect;
 
 		tpMat44Op::frustum( xmin, xmax, ymin, ymax, Near, Far, matOut );
 	}
@@ -142,26 +132,16 @@ struct tpMat44Op {
 	template <typename T>
 	static void ortho(T Left, T Right, T Bottom, T Top, T Near, T Far, tpMat44<T>& matOut)
 	{
+		matOut.fill(0);
+		matOut(0,0) =  2 / (Right-Left);
+		matOut(1,1) =  2 / (Top-Bottom);
+		matOut(2,2) = -2 / (Far-Near);
 
-		matOut.at( 0) = (T) 2	* (Right-Left);
-		matOut.at( 4) = (T) 0;
-		matOut.at( 8) = (T) 0;
-		matOut.at(12) = (T) -(Right + Left)/(Right - Left);
+		matOut(0,3) = (Right+Left)/(Right-Left);
+		matOut(1,3) = (Top+Bottom)/(Top-Bottom);
+		matOut(2,3) = (Far+Near)/(Far-Near);
 
-		matOut.at( 1) = (T) 0;
-		matOut.at( 5) = (T) 2 / (Top-Bottom);
-		matOut.at( 9) = (T) 0;
-		matOut.at(13) = (T) -(Top + Bottom)/(Top - Bottom);
-
-		matOut.at( 2) = (T) 0;
-		matOut.at( 6) = (T) 0;
-		matOut.at(10) = (T) - 2 / (Far - Near);
-		matOut.at(14) = (T) -(Far + Near) / (Far - Near);
-
-		matOut.at( 3) = (T) 0;
-		matOut.at( 7) = (T) 0;
-		matOut.at(11) = (T) 0;
-		matOut.at(15) = (T) 1;
+		matOut(3,3) = 1;
 	}
 
 };
