@@ -25,12 +25,36 @@
 
 #include <tp/camera.h>
 #include <tp/matop.h>
+#include <tp/logutils.h>
 
-tpCamera::tpCamera() : tpReferenced()
+tpCamera::tpCamera()
+	: tpObject()
 {
-	mProjection.identity();
-	mView.identity();
+	// default OpenGL
+	setProjectionOrtho(-1,1,-1,1,1,-1);
+	setViewLookAt(tpVec3r(0,0,0),tpVec3r(0,0,-1),tpVec3r(0,1,0));
 	update();
+}
+
+tpCamera::tpCamera(const tpCamera& cam)
+{
+	tpCamera::tpCamera();
+	*this = cam;
+}
+
+tpCamera&
+tpCamera::operator = (const tpCamera& cam) {
+	if (&cam != this) {
+		mProjection = cam.mProjection;
+		mView = cam.mView;
+		mViewInverse = cam.mViewInverse;
+	}
+	return *this;
+}
+
+
+tpCamera::~tpCamera()
+{
 }
 
 void tpCamera::setViewLookAt( const tpVec3r& eye, const tpVec3r& target, const tpVec3r& up )
@@ -39,6 +63,7 @@ void tpCamera::setViewLookAt( const tpVec3r& eye, const tpVec3r& target, const t
 	mView.transpose();
 	update();
 }
+
 
 void tpCamera::setProjectionPerspective( const tpReal& fov, const tpReal& aspect, const tpReal& n, const tpReal& f )
 {
@@ -50,11 +75,16 @@ void tpCamera::setProjectionFrustum( const tpReal& l, const tpReal& r, const tpR
 	tpMat44Op::frustum(l,r,b,t,n,f,mProjection);
 }
 
+void
+tpCamera::setProjectionOrtho(const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f ) {
+	tpMat44Op::ortho(l,r,b,t,n,f,mProjection);
+}
+
 void tpCamera::update()
 {
 	mView.getInverse(mViewInverse);
 }
 
-TP_TYPE_REGISTER(tpCamera,tpReferenced,Camera);
+TP_TYPE_REGISTER(tpCamera,tpObject,Camera);
 
 

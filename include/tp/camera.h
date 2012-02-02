@@ -26,7 +26,7 @@
 #define TP_CAMERA_H 1
 
 
-#include <tp/referenced.h>
+#include <tp/object.h>
 #include <tp/mat.h>
 #include <tp/matop.h>
 #include <tp/vec.h>
@@ -38,10 +38,10 @@
 	pass a pointer to a camera (tpCamera) to the
 	respective renderengine (tpRenderEngine)
  */
-class TP_API tpCamera : public tpReferenced {
+class TP_API tpCamera : public tpObject {
 public:
 
-	TP_TYPE_DECLARE;
+	TP_TYPE_DECLARE
 
 	enum {
 		kClearColor		= (1 << 0),
@@ -51,24 +51,24 @@ public:
 	};
 
 	tpCamera();
+	tpCamera(const tpCamera &cam);
+	tpCamera &operator =(const tpCamera &cam);
 
-	const tpVec4i& getViewport() const { return m_viewport; }
-	void setViewport(const tpVec4i& val) { m_viewport = val; }
+	const tpVec4i& getViewport() const { return mViewport; }
+	void setViewport(const tpVec4i& val) { mViewport = val; }
 
-	const tpVec4f& getClearColor() const { return m_clearcolor; }
-	void setClearColor(const tpVec4f& val) { m_clearcolor = val; }
+	const tpVec4f& getClearColor() const { return mClearColor; }
+	void setClearColor(const tpVec4f& val) { mClearColor = val; }
 
-	const tpUShort& getClearFlags() const { return m_clearflags; }
-	void setClearFlags(const tpUShort& val) { m_clearflags = val; }
-	bool hasClearFlag(const tpUShort& val) const { return (0 != (m_clearflags & val)); }
+	const tpUShort& getClearFlags() const { return mClearFlags; }
+	void setClearFlags(const tpUShort& val) { mClearFlags = val; }
+	bool hasClearFlag(const tpUShort& val) const { return (0 != (mClearFlags & val)); }
 
 	const tpMat44r& getProjection() const { return mProjection; }
 	void setProjection(const tpMat44r& val) { mProjection = val; }
 
 
-	void setProjectionOrtho(const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f ) {
-		tpMat44Op::ortho(l,r,b,t,n,f,mProjection);
-	}
+	void setProjectionOrtho(const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f );
 
 	void setProjectionFrustum(const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f );
 
@@ -77,17 +77,20 @@ public:
 	const tpMat44r& getView() const { return mView; }
 	void setView(const tpMat44r& val) { mView = val; update(); }
 
-	tpMat44r getViewInverse() const { return mViewInverse; }
+	const tpMat44r& getViewInverse() const { return mViewInverse; }
 
 	void setViewLookAt(const tpVec3r& eye, const tpVec3r& target, const tpVec3r& up);
 
+
 protected:
+
+	virtual ~tpCamera();
 
 	void update();
 
-	tpUShort m_clearflags;
-	tpVec4f m_clearcolor;
-	tpVec4i m_viewport;
+	tpUShort mClearFlags;
+	tpVec4f mClearColor;
+	tpVec4i mViewport;
 
 	tpMat44r	mView;
 	tpMat44r	mViewInverse;
