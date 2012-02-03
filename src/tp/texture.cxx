@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,10 +26,11 @@
 #include "tp/texture.h"
 
 
-tpTexture::tpTexture(const tpString& name  /* = TP_NONAME */) :
-	tpObject(name),
-	m_wrap(tpVec2<tpUInt>(TP_TEXTURE_CLAMP,TP_TEXTURE_CLAMP)),
-	m_image(0)
+tpTexture::tpTexture(const tpString& name  /* = TP_NONAME */)
+	: tpObject(name)
+	, mWrap(tpVec3<tpUInt>(kWrapModeClamp,kWrapModeClamp,kWrapModeClamp))
+	, mImage(0)
+	, mFormat(kFormatRGB)
 {
 }
 
@@ -37,48 +38,23 @@ tpTexture::~tpTexture()
 {
 }
 
-
-tpImage* tpTexture::getImage()
-{
-	return m_image.get();
-}
-
-
 void tpTexture::setImage( tpImage* image )
 {
-    m_image = image;
+	mImage = image;
 }
 
 
-void tpTexture::setWrap(tpUInt wrap_u,tpUInt wrap_v)
+void
+tpTexture::setWrapMode(tpUInt wrap_u,tpUInt wrap_v,tpUInt wrap_w)
 {
-	this->m_wrap[0] = wrap_u;
-	this->m_wrap[1] = wrap_v;
+	this->mWrap = tpVec3<tpUInt>(wrap_u,wrap_v,wrap_w);
 }
 
 
-tpVec2<tpUInt> tpTexture::getWrap() const
+tpVec3<tpUInt> tpTexture::getWrapMode() const
 {
-	return m_wrap;
+	return mWrap;
 }
 
-void tpTexture::createTexture( tpUByte pixelformat )
-{
-	//m_image = new tpImageClone(pixelformat);
-}
-
-tpUByte tpTexture::getSupportedTextureFormat( bool needalpha )
-{
-#if 0 //defined(_WIN32_WCE)
-	return tpPixelFormat::kRGB565;
-#endif
-	
-	return (needalpha) ? tpPixelFormat::kBGRA_8888 : tpPixelFormat::kRGB_888;
-
-}
-
-void tpTexture::cloneSupportedTextureFormat( tpImage& img )
-{
-}
 
 TP_TYPE_REGISTER(tpTexture,tpObject,Texture);

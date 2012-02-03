@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,12 +31,14 @@
 #include <tp/image.h>
 #include <tp/vec.h>
 
-enum tpTextureWrap
-{
-	TP_TEXTURE_CLAMP,
-	TP_TEXTURE_REPEAT
-};
+//enum tpTextureWrap
+//{
+//	TP_TEXTURE_CLAMP,
+//	TP_TEXTURE_REPEAT
+//};
 
+
+class tpTextureObject;
 
 /*!
 	\class tpTexture
@@ -47,42 +49,81 @@ enum tpTextureWrap
 
 */
 
+
 class TP_API tpTexture : public tpObject
 {
 public:
 
-	TP_TYPE_DECLARE;
+	TP_TYPE_DECLARE
+
+	enum {
+		kWrapModeClamp,
+		kWrapModeRepeat
+	};
+
+	enum {
+		kFilterNearest		= (1 << 1),
+		kFilterLinear		= (1 << 2),
+		kFilterMipMapNearest= (1 << 3),
+		kFilterMipMapLinear	= (1 << 4)
+	};
+
+	enum {
+
+		kFormatAlpha,
+		kFormatLuminance,
+		kFormatRGB,
+		kFormatBGR,
+		kFormatRGBA,
+		kFormatBGRA
+	};
 
 	tpTexture(const tpString& name = "");
 
-	void createTexture(tpUByte pixelformat);
-
-	/*! 
-	 * returns a pointer to the image.
-	 */
-	tpImage* getImage();
+	tpImage* getImage() { return mImage.get(); }
+	const tpImage* getImage() const { return mImage.get(); }
 
 
 	void setImage(tpImage* image);
 
-	void setWrap(tpUInt wrap_u,tpUInt wrap_v);
+	void setWrapMode(tpUInt wrap_u,tpUInt wrap_v = kWrapModeClamp, tpUInt wrap_w = kWrapModeClamp);
+	tpVec3<tpUInt> getWrapMode() const;
 
-	tpVec2<tpUInt> getWrap() const;
+	void setFormat(tpUInt format) { mFormat = format; }
+	tpUInt getFormat() const { return mFormat; }
 
-	static tpUByte getSupportedTextureFormat(bool needalpha);
+	void setTextureObject(tpTextureObject* object) { mObject = object; }
 
-
-	void cloneSupportedTextureFormat( tpImage& img );
+	const tpTextureObject* getTextureObject() const { return mObject.get(); }
+	tpTextureObject* getTextureObject() { return mObject.get(); }
 
 protected:
 
-	/*! Destructor.
-	 */
 	virtual ~tpTexture();
 
-	tpVec2<tpUInt> m_wrap;
+	tpUInt mFormat;
+	tpVec3<tpUInt> mWrap;
 
-	tpRefPtr<tpImage> m_image;
+	tpRefPtr<tpImage> mImage;
+	tpRefPtr<tpTextureObject> mObject;
+
+};
+
+
+class tpTextureObject : public tpReferenced {
+public:
+
+	virtual void create(const tpTexture& texture) = 0;
+
+	virtual void update(const tpTexture& texture) = 0;
+
+	virtual void use() = 0;
+
+	virtual void destroy() = 0;
+
+protected:
+
+	virtual ~tpTextureObject() {}
 
 };
 

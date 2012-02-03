@@ -40,6 +40,17 @@ typedef tpArray<tpNode*> tpNodeArray;
 typedef tpArray<tpRefNode> tpRefNodeArray;
 typedef tpArray<tpNodeArray> tpNodeArrayArray;
 
+
+class tpRenderer;
+class tpNode;
+
+class TP_API tpRenderNode : public tpReferenced {
+public:
+	virtual void operator()(tpNode* node,tpRenderer* renderer) = 0;
+protected:
+	virtual ~tpRenderNode();
+};
+
 /*!
 	\class tpNode
 	\brief abstract traversable Node for the scenegraph
@@ -57,7 +68,7 @@ public:
 		kUpdateAll			= (kUpdateBound | kUpdateTransform)
 	};
 
-	TP_TYPE_DECLARE;
+	TP_TYPE_DECLARE
 
 	//! standard c'tor
 	tpNode(const tpString& name = "");
@@ -121,12 +132,17 @@ public:
 
 	void setUpdateFlags(tpUInt flag,bool add = true);
 
+	void setRenderNode(tpRenderNode* rn) { mRenderNode = rn; }
+	tpRenderNode* getRenderNode() { return mRenderNode.get(); }
+
 protected:
 
 	virtual ~tpNode();
 
 	tpRefNodeArray mChildren;
 	tpNodeArray mParents;
+
+	tpRefPtr<tpRenderNode> mRenderNode;
 
 	tpUInt mUpdateFlags;
 

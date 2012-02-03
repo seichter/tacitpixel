@@ -177,7 +177,10 @@ public:
 
 	bool hasAttribute(tpUByte attrib) const { return (0 != (m_attributes & attrib)); }
 
+	void clearAll();
 
+
+	void toString(tpString &s) const;
 protected:
 
 	virtual ~tpPrimitive();

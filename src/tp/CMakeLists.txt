@@ -94,6 +94,8 @@ set(tp_hdrs
 	${tp_include_path}/tp/types.h
 	${tp_include_path}/tp/vec.h
 	${tp_include_path}/tp/version.h
+	${tp_include_path}/tp/viewer.h
+
 	)
 
 if(OPENGL_FOUND)
@@ -202,6 +204,7 @@ set(tp_srcs
 	thread.cxx
 	timer.cxx
 	version.cxx
+	viewer.cxx
 	)
 
 #

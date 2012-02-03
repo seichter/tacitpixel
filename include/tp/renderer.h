@@ -52,7 +52,7 @@ typedef tpArray<tpRefPtr<tpCamera> > tpRefCameraArray;
 class TP_API tpRenderer : public tpReferenced {
 public:
 
-	TP_TYPE_DECLARE;
+	TP_TYPE_DECLARE
 
 	tpRenderer();
 

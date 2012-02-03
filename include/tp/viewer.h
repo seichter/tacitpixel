@@ -23,33 +23,36 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TPFONT_H
-#define TPFONT_H
+#ifndef TPVIEWER_H
+#define TPVIEWER_H
 
 #include <tp/referenced.h>
 #include <tp/refptr.h>
-#include <tp/scopeptr.h>
-#include <tp/image.h>
-#include <tp/file.h>
-#include <tp/primitive.h>
-#include <tp/string.h>
+#include <tp/rendersurface.h>
+#include <tp/renderer.h>
+#include <tp/camera.h>
 
-struct tpFontRasterizer;
+class tpViewer : public tpReferenced {
 
-class tpFont : public tpReferenced {
-protected:
-	tpRefPtr<tpImage> mImage;
-	tpScopePtr<tpFontRasterizer> mRasterizer;
+	tpRefPtr<tpRenderSurface> mSurface;
+	tpRefPtr<tpRenderer> mRenderer;
+	tpRefPtr<tpCamera> mCamera;
+	tpRefPtr<tpNode> mScene;
 
 public:
 
-	tpFont();
+	tpViewer();
 
-	tpImage* getImage();
+	bool create(const tpString &title = "tpViewer", tpUInt w = 640, tpUInt h = 480, tpUInt x = 0, tpUInt y = 0, tpUInt flags = 0);
 
-	bool load(const tpString &name);
+	void frame();
 
-	void text(const tpString &text, tpPrimitive &p);
+	void run();
+
+	virtual void onSurfaceEvent(tpRenderSurfaceEvent &e);
+
+	void setScene(tpNode *scene);
+	tpNode *getScene();
 
 };
 

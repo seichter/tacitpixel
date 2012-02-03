@@ -190,6 +190,7 @@ void tpRenderSurfaceCocoa::update()
 
 		tpRenderSurfaceEvent e(this);
 		e.setMousePosition(point.x,point.y);
+		e.setRenderSurface(this);
 
 
 		bool submit(false);

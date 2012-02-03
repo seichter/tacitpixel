@@ -177,6 +177,14 @@ void tpPrimitive::flipNormals()
 	}
 }
 
+void tpPrimitive::clearAll()
+{
+	m_vertices.clear();
+	m_texcoords.clear();
+	m_normals.clear();
+	m_colors.clear();
+}
+
 
 tpUInt tpPrimitive::getVertexCount() const {
 	return m_vertices.getSize() / 3;
@@ -188,6 +196,12 @@ tpUInt tpPrimitive::getTexCoordsCount() const {
 
 tpUInt tpPrimitive::getNormalsCount() const {
 	return m_normals.getSize() / 3;
+}
+
+void tpPrimitive::toString(tpString& s) const {
+	for (int i = 0; i < m_vertices.getSize();++i) {
+		s += tpString::format("%3.3f %3.3f %3.3f",m_vertices[i*3],m_vertices[i*3+1],m_vertices[i*3+2]);
+	}
 }
 
 

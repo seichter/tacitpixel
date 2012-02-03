@@ -54,9 +54,10 @@ public:
 	void setTexture(tpTexture* texture) { m_texture = texture; }
 	//! get a pointer to the texture
 	const tpTexture* getTexture() const { return m_texture.get(); }
+	tpTexture* getTexture() { return m_texture.get(); }
 
 	//! check if this material has a texture
-	bool hasTexture() { return m_texture.isValid(); }
+	bool hasTexture() const { return m_texture.isValid(); }
 
 	//! set if this material is renderable is for culling only
 	void setCulling(bool flag) { m_culling = flag; }

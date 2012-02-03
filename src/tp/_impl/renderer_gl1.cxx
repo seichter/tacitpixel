@@ -28,6 +28,78 @@
 	#endif
 #endif
 
+
+class tpTextureObjectGL : public tpTextureObject {
+protected:
+
+	GLuint mGLID;
+	tpUInt mChangeCount;
+public:
+	tpTextureObjectGL()
+		: mGLID(0)
+		, mChangeCount(0)
+	{}
+
+	GLint getFormat(const tpTexture& texture) {
+		switch (texture.getFormat()) {
+		case tpTexture::kFormatAlpha:
+			return GL_ALPHA;
+		case tpTexture::kFormatLuminance:
+			return GL_LUMINANCE;
+		case tpTexture::kFormatRGB:
+			return GL_RGB;
+		case tpTexture::kFormatRGBA:
+			return GL_RGBA;
+		case tpTexture::kFormatBGR:
+			return GL_BGR;
+		case tpTexture::kFormatBGRA:
+			return GL_BGRA;
+
+		}
+	}
+
+	GLint getInternalFormat(const tpTexture& texture) {
+		// some graphics cards insist on the symbolic name - screw them!
+		return tpPixelFormat::getBitsPerPixel(texture.getImage()->getPixelFormat() >> 3);
+	}
+
+	void create(const tpTexture &texture) {
+		glGenTextures(1,&mGLID);
+	}
+
+	void update(const tpTexture &texture) {
+
+		if (texture.getImage()->getChangeCount() != mChangeCount) {
+
+			// bind!
+			this->use();
+
+			GLint format = getFormat(texture);
+
+			// subload
+			if (mChangeCount > 0) {
+
+				glTexSubImage2D(mGLID,0,0,0,texture.getImage()->getWidth(),texture.getImage()->getHeight(),format,GL_UNSIGNED_BYTE,texture.getImage()->getData());
+
+			// first load
+			} else {
+				GLint internalFormat = getInternalFormat(texture);
+				glTexImage2D(mGLID,0,internalFormat,texture.getImage()->getWidth(),texture.getImage()->getHeight(),0,format,GL_UNSIGNED_BYTE,texture.getImage()->getData());
+			}
+			mChangeCount = texture.getImage()->getChangeCount();
+		}
+	}
+
+	void use() {
+		glBindTexture(GL_TEXTURE_2D,mGLID);
+	}
+
+	void destroy() {
+		glDeleteTextures(1,&mGLID);
+	}
+
+};
+
 struct tpGLRendererTraits : tpRendererTraits {
 };
 
@@ -53,23 +125,6 @@ public:
 
 		tpCamera* camera = getActiveCamera();
 
-		glShadeModel(GL_SMOOTH);
-		glEnable(GL_DEPTH_TEST);
-
-
-//		glEnable(GL_NORMALIZE);
-//		glEnable(GL_RESCALE_NORMAL);
-//		glShadeModel(GL_FLAT);
-		glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
-
-
-
-
-		//#define GL_SEPARATE_SPECULAR_COLOR 0x81FA
-		glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
-
-
-
 		tpUInt glclearflag(0);
 		if (camera->hasClearFlag(tpCamera::kClearColor))
 		{
@@ -84,6 +139,25 @@ public:
 
 		if (glclearflag) glClear(glclearflag);
 
+
+		// ok, now we can bail out if there are actually no nodes
+		if (0 == node) return;
+
+
+		glShadeModel(GL_SMOOTH);
+		glEnable(GL_DEPTH_TEST);
+
+
+//		glEnable(GL_NORMALIZE);
+//		glEnable(GL_RESCALE_NORMAL);
+//		glShadeModel(GL_FLAT);
+		glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
+
+
+
+
+		//#define GL_SEPARATE_SPECULAR_COLOR 0x81FA
+		glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 
 		// setup lights
 		tpNodeMatrixMap nodemap_lights = tpNodeOps::getNodeMatrixMap(node,tpLight::getTypeInfo());
@@ -146,6 +220,17 @@ public:
 
 	}
 
+	void operator ()(tpTexture* tex) {
+
+		if (0 == tex->getTextureObject()) {
+			tpTextureObjectGL* newtexobj = new tpTextureObjectGL();
+			newtexobj->create(*tex);
+			tex->setTextureObject(newtexobj);
+		}
+
+		tex->getTextureObject()->use();
+	}
+
 	void operator ()(const tpMaterial* mat)
 	{
 		const tpMaterial* actual_mat = (mat) ? mat : tpDefaultMaterial;
@@ -161,7 +246,11 @@ public:
 
 	void operator()(const tpPrimitive& prim,const tpMat44r& modelmatrix)
 	{
-		(*this)(prim.getMaterial());
+		if (prim.hasTexture()) {
+			(*this)(const_cast<tpTexture*>(prim.getTexture()));
+		} else {
+			(*this)(prim.getMaterial());
+		}
 
 		tpCamera* camera = getActiveCamera();
 
