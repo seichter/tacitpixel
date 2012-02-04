@@ -28,19 +28,18 @@
 	#endif
 #endif
 
-
 class tpTextureObjectGL : public tpTextureObject {
 protected:
 
 	GLuint mGLID;
-	tpUInt mChangeCount;
+	tpInt mChangeCount;
 public:
 	tpTextureObjectGL()
 		: mGLID(0)
-		, mChangeCount(0)
+		, mChangeCount(-1)
 	{}
 
-	GLint getFormat(const tpTexture& texture) {
+	GLenum getFormat(const tpTexture& texture) {
 		switch (texture.getFormat()) {
 		case tpTexture::kFormatAlpha:
 			return GL_ALPHA;
@@ -54,13 +53,15 @@ public:
 			return GL_BGR;
 		case tpTexture::kFormatBGRA:
 			return GL_BGRA;
-
 		}
+
+		tpLogError("%s invalid image format for texture",__FUNCTION__);
+		return 0;
 	}
 
 	GLint getInternalFormat(const tpTexture& texture) {
 		// some graphics cards insist on the symbolic name - screw them!
-		return tpPixelFormat::getBitsPerPixel(texture.getImage()->getPixelFormat() >> 3);
+		return (tpPixelFormat::getBitsPerPixel(texture.getImage()->getPixelFormat())/8);
 	}
 
 	void create(const tpTexture &texture) {
@@ -72,26 +73,54 @@ public:
 		if (texture.getImage()->getChangeCount() != mChangeCount) {
 
 			// bind!
-			this->use();
+			this->activate();
 
-			GLint format = getFormat(texture);
+			GLenum format = getFormat(texture);
 
 			// subload
-			if (mChangeCount > 0) {
+			if (mChangeCount >= 0) {
 
-				glTexSubImage2D(mGLID,0,0,0,texture.getImage()->getWidth(),texture.getImage()->getHeight(),format,GL_UNSIGNED_BYTE,texture.getImage()->getData());
+//				glActiveTexture(GL_TEXTURE0);
+
+				glTexSubImage2D(GL_TEXTURE_2D,0,0,0,texture.getImage()->getWidth(),texture.getImage()->getHeight(),format,GL_UNSIGNED_BYTE,texture.getImage()->getData());
 
 			// first load
 			} else {
+
 				GLint internalFormat = getInternalFormat(texture);
-				glTexImage2D(mGLID,0,internalFormat,texture.getImage()->getWidth(),texture.getImage()->getHeight(),0,format,GL_UNSIGNED_BYTE,texture.getImage()->getData());
+
+				//
+				tpLogNotify("%s 0x%x 0x%x %dx%d",__FUNCTION__,format,internalFormat,texture.getImage()->getWidth(),texture.getImage()->getHeight());
+
+//				glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+
+//				glTexImage2D(GL_TEXTURE_2D,0,internalFormat,texture.getImage()->getWidth(),texture.getImage()->getHeight(),0,format,GL_UNSIGNED_BYTE,texture.getImage()->getData());
+				glTexImage2D(GL_TEXTURE_2D,0,GL_LUMINANCE,texture.getImage()->getWidth(),texture.getImage()->getHeight(),0,GL_LUMINANCE,GL_UNSIGNED_BYTE,texture.getImage()->getData());
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+//				tpGL::TexParameteri(tpGL::TEXTURE_2D,tpGL::TEXTURE_MIN_FILTER,tpGL::LINEAR);
+//				tpGL::TexParameteri(tpGL::TEXTURE_2D,tpGL::TEXTURE_MAG_FILTER,tpGL::LINEAR);
+
+//				tpGL::TexParameteri(tpGL::TEXTURE_2D,tpGL::TEXTURE_WRAP_S, tpGL::REPEAT);
+//				tpGL::TexParameteri(tpGL::TEXTURE_2D,tpGL::TEXTURE_WRAP_T, tpGL::REPEAT);
+
 			}
+
 			mChangeCount = texture.getImage()->getChangeCount();
 		}
 	}
 
-	void use() {
+	void activate() {
+		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D,mGLID);
+	}
+
+	void deactivate() {
+		glDisable(GL_TEXTURE_2D);
 	}
 
 	void destroy() {
@@ -154,10 +183,8 @@ public:
 		glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
 
 
-
-
 		//#define GL_SEPARATE_SPECULAR_COLOR 0x81FA
-		glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+//		glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 
 		// setup lights
 		tpNodeMatrixMap nodemap_lights = tpNodeOps::getNodeMatrixMap(node,tpLight::getTypeInfo());
@@ -228,7 +255,8 @@ public:
 			tex->setTextureObject(newtexobj);
 		}
 
-		tex->getTextureObject()->use();
+		tex->getTextureObject()->update(*tex);
+		tex->getTextureObject()->activate();
 	}
 
 	void operator ()(const tpMaterial* mat)
@@ -303,6 +331,11 @@ public:
 		{
 			glDisableClientState(GL_COLOR_ARRAY);
 		}
+
+		if (prim.hasTexture()) {
+			const_cast<tpTexture*>(prim.getTexture())->getTextureObject()->deactivate();
+		}
+
 	}
 };
 

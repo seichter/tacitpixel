@@ -49,7 +49,7 @@ tpLight::tpLight()
 	msLightID.add(_id);
 	mID = _id;
 	if (mID == 0) {
-		// OpenGL defaults for ID0
+		// use OpenGL defaults for ID0
 		mDiffuseColor = mSpecularColor = tpVec4f(1.0f,1.0f,1.0f,1.0f);
 	}
 }

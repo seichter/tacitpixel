@@ -38,9 +38,7 @@ struct tpFontRasterizer;
 
 class tpFont : public tpReferenced {
 protected:
-	tpRefPtr<tpImage> mImage;
 	tpScopePtr<tpFontRasterizer> mRasterizer;
-
 public:
 
 	tpFont();

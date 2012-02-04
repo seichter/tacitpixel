@@ -198,9 +198,11 @@ tpUInt tpPrimitive::getNormalsCount() const {
 	return m_normals.getSize() / 3;
 }
 
-void tpPrimitive::toString(tpString& s) const {
-	for (int i = 0; i < m_vertices.getSize();++i) {
-		s += tpString::format("%3.3f %3.3f %3.3f",m_vertices[i*3],m_vertices[i*3+1],m_vertices[i*3+2]);
+void
+tpPrimitive::toString(tpString& s) const {
+	for (int i = 0; i < getVertexCount();++i) {
+		tpLogNotify("v (%d) %3.3f %3.3f %3.3f",i,m_vertices[i*3],m_vertices[i*3+1],m_vertices[i*3+2]);
+//		s.append(tpString::format("v (%d) %3.3f %3.3f %3.3f",i*3,m_vertices[i*3],m_vertices[i*3+1],m_vertices[i*3+2]));
 	}
 }
 
@@ -232,6 +234,19 @@ tpPrimitive* tpPrimitiveFactory::create( tpUShort primitive_type )
 		res->addVertex(tpVec3r(0,1,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,1,0,1));
 		res->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,0,1,1));
 		res->addVertex(tpVec3r(0,0,1),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,0,1,1));
+		break;
+
+	case kPlane:
+		res = new tpPrimitive(tpPrimitive::kTriangleStrip,
+			tpPrimitive::kAttributeVertex | tpPrimitive::kAttributeColors
+			);
+
+		res->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(0,0,0,1)); // v0
+		res->addVertex(tpVec3r(1,0,0),tpVec3r(0,0,1),tpVec2r(1,1),tpVec4r(1,0,0,1)); // v1
+		res->addVertex(tpVec3r(0,1,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,1,0,1)); // v3
+		res->addVertex(tpVec3r(1,1,0),tpVec3r(0,0,1),tpVec2r(1,0),tpVec4r(1,1,1,1)); // v2
+
+		break;
 	}
 
 

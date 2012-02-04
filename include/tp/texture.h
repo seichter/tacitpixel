@@ -117,7 +117,8 @@ public:
 
 	virtual void update(const tpTexture& texture) = 0;
 
-	virtual void use() = 0;
+	virtual void activate() = 0;
+	virtual void deactivate() = 0;
 
 	virtual void destroy() = 0;
 

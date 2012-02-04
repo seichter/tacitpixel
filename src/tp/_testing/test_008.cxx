@@ -2,8 +2,10 @@
 #include <tp/logutils.h>
 #include <tp/font.h>
 #include <tp/module.h>
+#include <tp/light.h>
 
 #include <tp/viewer.h>
+#include <tp/transform.h>
 
 class tpMyViewer : public tpViewer {
 public:
@@ -30,17 +32,24 @@ int main(int argc,char* argv[])
 	tpRefPtr<tpPrimitive> prim = new tpPrimitive();
 	font->text("Test",*prim);
 
-
-	tpString vs;
-	prim->toString(vs);
-
-	tpLogNotify("Vertices: %d\n",prim->getVertexCount(),vs.c_str());
-
 	tpRefPtr<tpNode> root = new tpNode("Root");
 
 	tpPrimitive* axis = tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kAxis);
 
+	tpTransform* t = new tpTransform;
+	t->addChild(prim.get());
+
+
+	tpMat44r m; m.identity();  m.scale(.1,.1,.1);
+	t->setMatrix(m);
+
+	tpRefPtr<tpLight> light = new tpLight();
+	light->setPosition(tpVec3f(5,5,5));
+	light->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
+
+	root->addChild(light.get());
 	root->addChild(axis);
+	root->addChild(t);
 
 	tpRefPtr<tpMyViewer> viewer = new tpMyViewer();
 
