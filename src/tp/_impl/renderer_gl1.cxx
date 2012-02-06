@@ -60,6 +60,11 @@ public:
 	}
 
 	GLint getInternalFormat(const tpTexture& texture) {
+
+		if (texture.getFormat() == tpTexture::kFormatAlpha) {
+			return GL_ALPHA;
+		}
+
 		// some graphics cards insist on the symbolic name - screw them!
 		return (tpPixelFormat::getBitsPerPixel(texture.getImage()->getPixelFormat())/8);
 	}
@@ -74,6 +79,9 @@ public:
 
 			// bind!
 			this->activate();
+
+			glEnable(GL_BLEND);
+			glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			GLenum format = getFormat(texture);
 
@@ -92,15 +100,14 @@ public:
 				//
 				tpLogNotify("%s 0x%x 0x%x %dx%d",__FUNCTION__,format,internalFormat,texture.getImage()->getWidth(),texture.getImage()->getHeight());
 
-//				glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+				glPixelStorei(GL_UNPACK_ALIGNMENT,1);
 
-//				glTexImage2D(GL_TEXTURE_2D,0,internalFormat,texture.getImage()->getWidth(),texture.getImage()->getHeight(),0,format,GL_UNSIGNED_BYTE,texture.getImage()->getData());
-				glTexImage2D(GL_TEXTURE_2D,0,GL_LUMINANCE,texture.getImage()->getWidth(),texture.getImage()->getHeight(),0,GL_LUMINANCE,GL_UNSIGNED_BYTE,texture.getImage()->getData());
+				glTexImage2D(GL_TEXTURE_2D,0,internalFormat,texture.getImage()->getWidth(),texture.getImage()->getHeight(),0,format,GL_UNSIGNED_BYTE,texture.getImage()->getData());
 
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-				glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-				glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 //				tpGL::TexParameteri(tpGL::TEXTURE_2D,tpGL::TEXTURE_MIN_FILTER,tpGL::LINEAR);
 //				tpGL::TexParameteri(tpGL::TEXTURE_2D,tpGL::TEXTURE_MAG_FILTER,tpGL::LINEAR);
@@ -192,7 +199,7 @@ public:
 		if (nodemap_lights.getSize())
 		{
 			// hack
-			glEnable(GL_LIGHTING);
+			//glEnable(GL_LIGHTING);
 
 			for (tpNodeMatrixMap::iterator i = nodemap_lights.begin();
 				 i != nodemap_lights.end();
@@ -263,7 +270,7 @@ public:
 	{
 		const tpMaterial* actual_mat = (mat) ? mat : tpDefaultMaterial;
 
-		glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
+		glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
 
 		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, actual_mat->getAmbientColor().getData() );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, actual_mat->getDiffuseColor().getData() );

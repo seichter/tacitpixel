@@ -43,14 +43,14 @@ tpViewer::create(const tpString& title/* = "tpViewer"*/,
 	mCamera = mRenderer->getActiveCamera();
 	mCamera->setName("Default");
 
-
 	mCamera->setProjectionPerspective(60.0f,1.3f,0.1f,1000.0f);
 	mCamera->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
 
-	mCamera->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
 
+	mCamera->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
 	mCamera->setClearColor(tpVec4f(0.5f,0.5f,0.9f,1.0f));
-	mCamera->setViewport(tpVec4i(0,0,640,480));
+
+	mCamera->setViewport(tpVec4i(0,0,w,h));
 
 	mSurface->show(true);
 

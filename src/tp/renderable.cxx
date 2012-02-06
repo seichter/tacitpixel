@@ -40,8 +40,8 @@ tpRenderable::tpRenderable(const tpString& name)
 
 tpRenderable::tpRenderable(const tpRenderable& geo)
 	: tpNode(geo),
-	m_material(geo.m_material),
-	m_texture(geo.m_texture)
+	mMaterial(geo.mMaterial),
+	mTexture(geo.mTexture)
 {
 }
 

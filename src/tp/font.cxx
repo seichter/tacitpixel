@@ -25,7 +25,7 @@ struct tpFontRasterizer {
 		if (ffile.open(name,"rb")) {
 
 			mImage = new tpImage();
-			mImage->allocate(512,512,tpPixelFormat::kGray_8);
+			mImage->allocate(256,156,tpPixelFormat::kGray_8);
 
 			if (name.afterLast('.') == "ttc") {
 
@@ -46,45 +46,53 @@ struct tpFontRasterizer {
 		prim.clearAll();
 		prim.setAttributes(tpPrimitive::kAttributeVertex|tpPrimitive::kAttributeNormals|tpPrimitive::kAttributeUV);
 
+		float x(0),y(0);
+
 		for (tpSizeT i = 0; i < text.getLength(); ++i) {
 			stbtt_aligned_quad q;
-			float x(0),y(0);
-			stbtt_GetBakedQuad(cdata, 512 ,512, text.c_str()[i]-32, &x,&y,&q,1);//1=opengl,0=old d3d
+			stbtt_GetBakedQuad(cdata, getImage()->getWidth() ,getImage()->getHeight(), text.c_str()[i]-32, &x,&y,&q,1);//1=opengl,0=old d3d
+
+			float h = q.t1 - q.t0;
+
+			// hack! this should be parameterized
+//			x-=1;
 
 			tpVec3f normal(0,0,1);
 
 			// GLES doesn't like Quads!
-#define TP_ALLOW_QUAD 1
+//#define TP_ALLOW_QUAD 1
 #if TP_ALLOW_QUAD
 
-			//
-//			glTexCoord2f(q.s0,q.t1); glVertex2f(q.x0,q.y0);
-//			glTexCoord2f(q.s1,q.t1); glVertex2f(q.x1,q.y0);
-//			glTexCoord2f(q.s1,q.t0); glVertex2f(q.x1,q.y1);
-//			glTexCoord2f(q.s0,q.t0); glVertex2f(q.x0,q.y1);
-
-//			res->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(0,0,0,1)); // v0
-//			res->addVertex(tpVec3r(1,0,0),tpVec3r(0,0,1),tpVec2r(1,1),tpVec4r(1,0,0,1)); // v1
-//			res->addVertex(tpVec3r(0,1,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,1,0,1)); // v3
-//			res->addVertex(tpVec3r(1,1,0),tpVec3r(0,0,1),tpVec2r(1,0),tpVec4r(1,1,1,1)); // v2
-
+			tpLogMessage("T: %3.3f %3.3f",q.t0,q.t1);
 
 			prim.setPrimitiveType(tpPrimitive::kQuads);
-			prim.addVertex(tpVec3f(q.x0,q.y0,0),normal,tpVec2f(q.s0,q.t1)); // v0
-			prim.addVertex(tpVec3f(q.x1,q.y0,0),normal,tpVec2f(q.s1,q.t1)); // v1
-			prim.addVertex(tpVec3f(q.x1,q.y1,0),normal,tpVec2f(q.s1,q.t0)); // v2
-			prim.addVertex(tpVec3f(q.x0,q.y1,0),normal,tpVec2f(q.s0,q.t0)); // v3
+
+//			prim.addVertex(tpVec3f(q.x0,q.y0,0),normal,tpVec2f(q.s0,q.t1)); // v0
+//			prim.addVertex(tpVec3f(q.x1,q.y0,0),normal,tpVec2f(q.s1,q.t1)); // v1
+//			prim.addVertex(tpVec3f(q.x1,q.y1,0),normal,tpVec2f(q.s1,q.t0)); // v2
+//			prim.addVertex(tpVec3f(q.x0,q.y1,0),normal,tpVec2f(q.s0,q.t0)); // v3
+
+			// unlike the suggested version tex-coordinates are upside down and
+			// we move the vertices into positive y direction - check with
+			// stb_truetype 0.5
+			prim.addVertex(tpVec3f(q.x0,-q.y0,0),normal,tpVec2f(q.s0,q.t0)); // v0
+			prim.addVertex(tpVec3f(q.x1,-q.y0,0),normal,tpVec2f(q.s1,q.t0)); // v1
+			prim.addVertex(tpVec3f(q.x1,-q.y1,0),normal,tpVec2f(q.s1,q.t1)); // v2
+			prim.addVertex(tpVec3f(q.x0,-q.y1,0),normal,tpVec2f(q.s0,q.t1)); // v3
+
+
 #else
 
+			// also here swapped t component of tex-coords and moved vertices into
+			// positive y - direction
 			prim.setPrimitiveType(tpPrimitive::kTriangles);
+			prim.addVertex(tpVec3f(q.x0,-q.y0,0),normal,tpVec2f(q.s0,q.t0)); // v0
+			prim.addVertex(tpVec3f(q.x1,-q.y0,0),normal,tpVec2f(q.s1,q.t0)); // v1
+			prim.addVertex(tpVec3f(q.x1,-q.y1,0),normal,tpVec2f(q.s1,q.t1)); // v2
 
-			prim.addVertex(tpVec3f(q.x0,q.y0,0),normal,tpVec2f(q.s0,q.t1)); // v0
-			prim.addVertex(tpVec3f(q.x1,q.y0,0),normal,tpVec2f(q.s1,q.t1)); // v1
-			prim.addVertex(tpVec3f(q.x1,q.y1,0),normal,tpVec2f(q.s1,q.t0)); // v2
-
-			prim.addVertex(tpVec3f(q.x0,q.y0,0),normal,tpVec2f(q.s0,q.t1)); // v0
-			prim.addVertex(tpVec3f(q.x1,q.y1,0),normal,tpVec2f(q.s1,q.t0)); // v2
-			prim.addVertex(tpVec3f(q.x0,q.y1,0),normal,tpVec2f(q.s0,q.t0)); // v3
+			prim.addVertex(tpVec3f(q.x0,-q.y0,0),normal,tpVec2f(q.s0,q.t0)); // v0
+			prim.addVertex(tpVec3f(q.x1,-q.y1,0),normal,tpVec2f(q.s1,q.t1)); // v2
+			prim.addVertex(tpVec3f(q.x0,-q.y1,0),normal,tpVec2f(q.s0,q.t1)); // v3
 
 #endif
 

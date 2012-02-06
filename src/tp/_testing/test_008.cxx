@@ -30,7 +30,7 @@ int main(int argc,char* argv[])
 	font->load(argv[1]);
 	font->getImage()->write("font.jpg");
 	tpRefPtr<tpPrimitive> prim = new tpPrimitive();
-	font->text("Test",*prim);
+	font->text("Tacit Pixel",*prim);
 
 	tpRefPtr<tpNode> root = new tpNode("Root");
 
@@ -40,7 +40,8 @@ int main(int argc,char* argv[])
 	t->addChild(prim.get());
 
 
-	tpMat44r m; m.identity();  m.scale(.1,.1,.1);
+
+	tpMat44r m; m.identity();  m.scale(.025,.025,.025);
 	t->setMatrix(m);
 
 	tpRefPtr<tpLight> light = new tpLight();

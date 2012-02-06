@@ -34,7 +34,7 @@ class TP_API tpRenderable : public tpNode
 {
 public:
 
-	TP_TYPE_DECLARE;
+	TP_TYPE_DECLARE
 
 	//! c'tor
 	tpRenderable(const tpString& name = "");
@@ -45,33 +45,31 @@ public:
 	virtual tpObject* clone();
 
 	//! set a material for the regarding geometry
-	void setMaterial(tpMaterial* material) { m_material = material; }
+	void setMaterial(tpMaterial* material) { mMaterial = material; }
 	//! get a pointer to the material
-	const tpMaterial* getMaterial() const { return m_material.get(); }
-
+	const tpMaterial* getMaterial() const { return mMaterial.get(); }
+	tpMaterial* getMaterial() { return mMaterial.get(); }
 
 	//! set a texture for the regarding geometry
-	void setTexture(tpTexture* texture) { m_texture = texture; }
+	void setTexture(tpTexture* texture) { mTexture = texture; }
 	//! get a pointer to the texture
-	const tpTexture* getTexture() const { return m_texture.get(); }
-	tpTexture* getTexture() { return m_texture.get(); }
+	const tpTexture* getTexture() const { return mTexture.get(); }
+	tpTexture* getTexture() { return mTexture.get(); }
 
 	//! check if this material has a texture
-	bool hasTexture() const { return m_texture.isValid(); }
+	bool hasTexture() const { return mTexture.isValid(); }
 
 	//! set if this material is renderable is for culling only
-	void setCulling(bool flag) { m_culling = flag; }
-	bool getCulling() const { return m_culling; }
-
-
+	void setCulling(bool flag) { mCulling = flag; }
+	bool getCulling() const { return mCulling; }
 
 
 protected:
 
-	tpRefPtr<tpMaterial>	m_material;
-	tpRefPtr<tpTexture>		m_texture;
+	tpRefPtr<tpMaterial>	mMaterial;
+	tpRefPtr<tpTexture>		mTexture;
 
-	bool		m_culling;
+	bool		mCulling;
 
 };
 
