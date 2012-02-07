@@ -142,7 +142,7 @@ tpLog::tpLog() :
 	mLogCallbacks.add(new tpConsoleLog());
 #endif
 
-	this->log(tpLog::kLogNotify,tpGetVersionString());
+//	this->log(tpLog::kLogNotify,tpGetVersionString());
 }
 
 tpLog::~tpLog()

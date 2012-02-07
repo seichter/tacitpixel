@@ -9,8 +9,31 @@
 		#include <OpenAL/al.h>
 	#else
 		#include <AL/al.h>
+        #include <AL/alc.h>
 	#endif
 #endif
+
+static
+const char* alGetErrorName(ALuint error) {
+    switch (error) {
+    case AL_NO_ERROR:
+        return "no error";
+    case AL_INVALID_NAME:
+        return "invalid name";
+    case AL_INVALID_ENUM:
+        return "invalid enum";
+    case AL_INVALID_VALUE:
+        return "invalid value";
+    case AL_INVALID_OPERATION:
+        return "invalid operation";
+    case AL_OUT_OF_MEMORY:
+        return "out of memory";
+  }
+    return "N/A";
+}
+
+#define alCheckError() \
+    if (int err = alGetError()) tpLogNotify("OpenAL error %d (0x%x) '%s'",err,err,alGetErrorName(err))
 
 
 class tpSound : public tpNode {
@@ -24,27 +47,47 @@ class tpSoundOpenAL : public tpSound {
 	tpMat44f mPosition;
 	
 public:
-	
-	tpSoundOpenAL() {
-		
-		#define NUM_BUFFERS 1
-		#define NUM_SOURCES 1
-//		#define NUM_ENVIRONMENTS 1
-		
+
+
+
+
+    tpSoundOpenAL() {
+
+        const ALCchar *default_device;
+        ALCdevice *device;
+        default_device = alcGetString(NULL,ALC_DEFAULT_DEVICE_SPECIFIER);
+
+        if ((device = alcOpenDevice(default_device)) == NULL) {
+            tpLogNotify("failed to open sound device");
+        }
+
+        ALCcontext *context = alcCreateContext(device, NULL);
+       // alcMakeCurrentContext
+        alcMakeContextCurrent(context);
+        alcProcessContext(context);
+
+        tpLogNotify("OpenAL\n\t%s\n\t%s\n\t%s\n\t%s",
+                    alGetString(AL_VENDOR),
+                    alGetString(AL_VERSION),
+                    alGetString(AL_RENDERER),
+                    alGetString(AL_EXTENSIONS));
+
+
+				
 		float listenerPos[]={0.0,0.0,4.0};
 		float listenerVel[]={0.0,0.0,0.0};
 		float listenerOri[]={0.0,0.0,1.0, 0.0,1.0,0.0};
 		
-		alListenerfv(AL_POSITION,listenerPos);
-	    alListenerfv(AL_VELOCITY,listenerVel);
-	    alListenerfv(AL_ORIENTATION,listenerOri);
+//		alListenerfv(AL_POSITION,listenerPos);
+//	    alListenerfv(AL_VELOCITY,listenerVel);
+//	    alListenerfv(AL_ORIENTATION,listenerOri);
 	
 		ALfloat source0Pos[]={ -2.0, 0.0, 0.0};
 		ALfloat source0Vel[]={ 0.0, 0.0, 0.0};
 	
 	
-		tpUInt  buffer[NUM_BUFFERS];
-		tpUInt  source[NUM_SOURCES];
+        ALuint  bufferID;
+        ALuint  sourceID;
 		// tpUInt  environment[NUM_ENVIRONMENTS];
 
 		ALsizei size,freq;
@@ -54,26 +97,18 @@ public:
 		alGetError(); // clear any error messages
 
 	   	// Generate buffers, or else no sound will happen!
-    	alGenBuffers(NUM_BUFFERS, buffer);
+        alGenBuffers(1,&bufferID);
 
-    	if(alGetError() != AL_NO_ERROR) 
-    	{
-        	tpLogError("- Error creating buffers !!\n");
-        	exit(1);
-    	}
-    	else
-    	{
-        	tpLogNotify("init() - No errors yet.");
-    	}
+        alCheckError();
 
-    	alBufferData(buffer[0],format,data,size,freq);
+        alBufferData(bufferID,format,data,size,freq);
 
-		alSourcef(source[0], AL_PITCH, 1.0f);
-		alSourcef(source[0], AL_GAIN, 1.0f);
-		alSourcefv(source[0], AL_POSITION, source0Pos);
-		alSourcefv(source[0], AL_VELOCITY, source0Vel);
-		alSourcei(source[0], AL_BUFFER,buffer[0]);
-		alSourcei(source[0], AL_LOOPING, AL_TRUE);
+        alSourcef(sourceID, AL_PITCH, 1.0f);
+        alSourcef(sourceID, AL_GAIN, 1.0f);
+        alSourcefv(sourceID, AL_POSITION, source0Pos);
+        alSourcefv(sourceID, AL_VELOCITY, source0Vel);
+        alSourcei(sourceID, AL_BUFFER,bufferID);
+        alSourcei(sourceID, AL_LOOPING, AL_TRUE);
 
 
 	}
@@ -85,3 +120,10 @@ public:
 	
 	
 };
+
+void tpSoundTest() {
+
+    tpRefPtr<tpSound> sound = new tpSoundOpenAL();
+
+
+}

@@ -20,6 +20,9 @@
 //#include <GL/gl.h>
 //#endif
 
+
+
+
 #if defined(TP_USE_OPENGL)
 	#if defined(__APPLE__)
 		#include <OpenGL/gl.h>
@@ -28,16 +31,28 @@
 	#endif
 #endif
 
+
+#define glErrorCheck \
+        GLenum err = glGetError(); \
+        if (err) tpLogNotify("OpenGL error 0x%x %d",err,err);
+
 class tpTextureObjectGL : public tpTextureObject {
 protected:
 
 	GLuint mGLID;
 	tpInt mChangeCount;
+
+    tpVec2i npot;
+
 public:
 	tpTextureObjectGL()
 		: mGLID(0)
 		, mChangeCount(-1)
 	{}
+
+    tpVec2i getSize() const {
+        return npot;
+    }
 
 	GLenum getFormat(const tpTexture& texture) {
 		switch (texture.getFormat()) {
@@ -61,16 +76,20 @@ public:
 
 	GLint getInternalFormat(const tpTexture& texture) {
 
-		if (texture.getFormat() == tpTexture::kFormatAlpha) {
-			return GL_ALPHA;
-		}
+        // GL_ALPHA and GL_LUMINANCE need to be set simultanously
+        if (texture.getFormat() == tpTexture::kFormatAlpha) {
+            return GL_ALPHA;
+        }
 
 		// some graphics cards insist on the symbolic name - screw them!
 		return (tpPixelFormat::getBitsPerPixel(texture.getImage()->getPixelFormat())/8);
 	}
 
 	void create(const tpTexture &texture) {
+        glActiveTexture(GL_TEXTURE0);
 		glGenTextures(1,&mGLID);
+
+        glErrorCheck;
 	}
 
 	void update(const tpTexture &texture) {
@@ -80,34 +99,43 @@ public:
 			// bind!
 			this->activate();
 
-			glEnable(GL_BLEND);
-			glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            // hack!
+            glEnable(GL_BLEND);
+            glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			GLenum format = getFormat(texture);
 
+
+            if (mChangeCount < 0) {
+
+                npot[0] = tpNextPowerOfTwo(texture.getImage()->getWidth());
+                npot[1] = tpNextPowerOfTwo(texture.getImage()->getHeight());
+
+                GLint internalFormat = getInternalFormat(texture);
+
+                //
+                tpLogNotify("%s 0x%x 0x%x %dx%d (%dx%d)",__FUNCTION__,format,internalFormat,
+                            texture.getImage()->getWidth(),texture.getImage()->getHeight(),
+                            npot[0],npot[1]);
+
+                glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+
+                glTexImage2D(GL_TEXTURE_2D,0,internalFormat,npot[0],npot[1],0,format,GL_UNSIGNED_BYTE,0);
+
+
+            }
+
 			// subload
-			if (mChangeCount >= 0) {
+            glTexSubImage2D(GL_TEXTURE_2D,0,0,0,
+                            texture.getImage()->getWidth(),texture.getImage()->getHeight(),
+                            format,GL_UNSIGNED_BYTE,texture.getImage()->getData());
 
-//				glActiveTexture(GL_TEXTURE0);
 
-				glTexSubImage2D(GL_TEXTURE_2D,0,0,0,texture.getImage()->getWidth(),texture.getImage()->getHeight(),format,GL_UNSIGNED_BYTE,texture.getImage()->getData());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-			// first load
-			} else {
-
-				GLint internalFormat = getInternalFormat(texture);
-
-				//
-				tpLogNotify("%s 0x%x 0x%x %dx%d",__FUNCTION__,format,internalFormat,texture.getImage()->getWidth(),texture.getImage()->getHeight());
-
-				glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-
-				glTexImage2D(GL_TEXTURE_2D,0,internalFormat,texture.getImage()->getWidth(),texture.getImage()->getHeight(),0,format,GL_UNSIGNED_BYTE,texture.getImage()->getData());
-
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 //				tpGL::TexParameteri(tpGL::TEXTURE_2D,tpGL::TEXTURE_MIN_FILTER,tpGL::LINEAR);
 //				tpGL::TexParameteri(tpGL::TEXTURE_2D,tpGL::TEXTURE_MAG_FILTER,tpGL::LINEAR);
@@ -115,7 +143,7 @@ public:
 //				tpGL::TexParameteri(tpGL::TEXTURE_2D,tpGL::TEXTURE_WRAP_S, tpGL::REPEAT);
 //				tpGL::TexParameteri(tpGL::TEXTURE_2D,tpGL::TEXTURE_WRAP_T, tpGL::REPEAT);
 
-			}
+
 
 			mChangeCount = texture.getImage()->getChangeCount();
 		}
@@ -124,11 +152,11 @@ public:
 	void activate() {
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D,mGLID);
-	}
+    }
 
 	void deactivate() {
 		glDisable(GL_TEXTURE_2D);
-	}
+    }
 
 	void destroy() {
 		glDeleteTextures(1,&mGLID);
@@ -220,8 +248,10 @@ public:
 			(*this)(*p,(*i).getValue());
 		}
 
-		GLint error = glGetError();
-		if (error) tpLogError("glGetError() 0x%x (%d)",error,error);
+        glErrorCheck;
+
+//		GLint error = glGetError();
+//		if (error) tpLogError("glGetError() 0x%x (%d)",error,error);
 
 //		tpLogNotify("%s %d lights %d nodes %3.3fms",
 //					__FUNCTION__,nodemap_lights.getSize(),nodemap_primitives.getSize(),

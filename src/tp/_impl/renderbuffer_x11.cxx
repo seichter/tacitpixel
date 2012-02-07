@@ -4,6 +4,7 @@
 
 #include <tp/log.h>
 #include <tp/module.h>
+#include <tp/version.h>
 
 #include <X11/Xlib.h>
 
@@ -77,6 +78,13 @@ public:
 class tpRenderBufferFactoryX11 : public tpRenderBufferFactory {
 
     TP_TYPE_DECLARE
+
+public:
+
+    tpRenderBufferFactoryX11() : tpRenderBufferFactory()
+    {
+        tpLogNotify("%s X11 PixMap Renderbuffer",tpGetVersionString());
+    }
 
     tpRenderBuffer* create(const tpSize &size, tpUInt pixelformat)
     {

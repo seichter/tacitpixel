@@ -41,6 +41,8 @@ tpEventHandler::process(tpEvent& e)
 			(*it)->call(this,e);
 		}
 	}
+
+    return e.getHandled();
 }
 
 

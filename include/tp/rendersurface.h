@@ -216,7 +216,7 @@ public:
 	virtual tpString getName() const;
 
 	virtual void setCaption(const tpString& ) {}
-	virtual tpString getCaption() {}
+    virtual tpString getCaption() { return tpString(); }
 
 	bool isValid() const { return !mDone; }
 

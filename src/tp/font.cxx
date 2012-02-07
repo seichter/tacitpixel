@@ -25,7 +25,7 @@ struct tpFontRasterizer {
 		if (ffile.open(name,"rb")) {
 
 			mImage = new tpImage();
-			mImage->allocate(256,156,tpPixelFormat::kGray_8);
+            mImage->allocate(512,512,tpPixelFormat::kGray_8);
 
 			if (name.afterLast('.') == "ttc") {
 

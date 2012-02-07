@@ -20,6 +20,7 @@
 #include <tp/log.h>
 #include <tp/image.h>
 #include <tp/module.h>
+#include <tp/version.h>
 
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
@@ -203,7 +204,7 @@ public:
 
     tpRenderSurfaceFactoryX11() : tpRenderSurfaceFactory()
     {
-        tpLogNotify("%s - added X11 Surface Factory",__FUNCTION__);
+        tpLogNotify("%s X11 RenderSurface",tpGetVersionString());
     }
 
     tpRenderSurface* create( tpRenderSurfaceTraits* traits )

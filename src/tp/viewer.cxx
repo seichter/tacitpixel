@@ -10,9 +10,6 @@
 #include <tp/thread.h>
 
 
-
-
-
 tpViewer::tpViewer() : tpReferenced() {}
 
 

@@ -39,6 +39,10 @@ tpRenderContextGLX::create(tpRenderTarget *target)
         configuration
                 .add(GLX_DOUBLEBUFFER)
                 .add(GLX_RGBA)
+                .add(GLX_RED_SIZE).add(8)
+                .add(GLX_GREEN_SIZE).add(8)
+                .add(GLX_BLUE_SIZE).add(8)
+                .add(GLX_ALPHA_SIZE).add(8)
                 .add(GLX_DEPTH_SIZE).add(depth_bits)
                 .add(None);
 

@@ -122,6 +122,9 @@ public:
 
 	virtual void destroy() = 0;
 
+    //@ returns the size the machine will understand (such as NPOT)
+    virtual tpVec2i getSize() const { return tpVec2i(0,0); }
+
 protected:
 
 	virtual ~tpTextureObject() {}

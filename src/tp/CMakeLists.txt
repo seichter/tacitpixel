@@ -81,6 +81,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/rtti.h
 	${tp_include_path}/tp/socket.h
 	${tp_include_path}/tp/sort.h
+	${tp_include_path}/tp/sound.h
 	${tp_include_path}/tp/scopeptr.h
 	${tp_include_path}/tp/stack.h
 	${tp_include_path}/tp/stream.h
@@ -116,10 +117,10 @@ if(OPENAL_FOUND)
 #		_impl/renderer_gl1.cxx
 #		_impl/renderer_gl1.h
 #		)
-#	include_directories(${OPENGL_INCLUDE_DIRS})
-#	list(APPEND tp_impl_libs
-#		${OPENGL_LIBRARIES}
-#		)
+	include_directories(${OPENAL_INCLUDE_DIR})
+	list(APPEND tp_impl_libs
+		${OPENAL_LIBRARY}
+		)
 endif()
 
 
@@ -284,6 +285,11 @@ if(APPLE)
 	target_link_libraries(${tp_name}
 		"-framework CoreFoundation"
 		)
+endif()
+
+
+if (HAVE_DLFCN_H)
+	target_link_libraries(${tp_name} dl)
 endif()
 
 if (HAVE_CLOCK_GETTIME)
