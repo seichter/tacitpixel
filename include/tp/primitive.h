@@ -101,7 +101,7 @@ public:
 class TP_API tpPrimitive : public tpRenderable {
 public:
 
-	TP_TYPE_DECLARE;
+	TP_TYPE_DECLARE
 
 	enum {
 		kPoints = 0x0000,
