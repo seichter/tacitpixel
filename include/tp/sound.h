@@ -13,6 +13,7 @@ TP_API void tpSoundTest(const char*);
 
 class TP_API tpSoundStream : public tpReferenced {
 public:
+
 	enum {
 		kFormatMono8,
 		kFormatMono16,

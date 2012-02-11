@@ -220,6 +220,13 @@ list(APPEND tp_srcs
 	)
 
 
+# Sound
+
+list(APPEND tp_srcs
+	_impl/soundstream_ogg.cxx
+	_impl/soundstream_ogg.h
+	)
+
 #
 # Scenegraph
 #
