@@ -1,3 +1,5 @@
+#include <tp/sound.h>
+
 #include <tp/config.h>
 #include <tp/log.h>
 #include <tp/node.h>
@@ -44,35 +46,17 @@ const char* alGetErrorName(ALuint error) {
 	if (int err = alGetError()) tpLogNotify("OpenAL error %d (0x%x) '%s' %d",err,err,alGetErrorName(err),__LINE__)
 
 
-class tpSoundStream : public tpReferenced {
-public:
-	enum {
-		kFormatMono8,
-		kFormatMono16,
-		kFormatMono32,
-		kFormatStereo8,
-		kFormatStereo16,
-		kFormatStereo32
-	};
-
-	virtual bool open(const tpString& name) = 0;
-
-	virtual bool read(tpArray<tpChar> &buffer, tpUInt &format, tpUInt &freq) = 0;
-};
-
 
 class tpSoundStreamOgg : public tpSoundStream {
 public:
 
 	bool open(const tpString& name);
+
 	void close();
 
 	bool read(tpArray<tpChar> &buffer, tpUInt &format, tpUInt &freq);
 
-//    bool playback();
-//    bool playing();
-//    bool update();
-
+private:
 
 	tpFile mFile;
 	OggVorbis_File mStream;
@@ -81,6 +65,56 @@ public:
 	vorbis_comment* vorbisComment; // user comments
 
 };
+
+
+
+bool
+tpSoundStream::open(const tpString& name)
+{
+
+	if (name.afterLast('.') == "ogg") {
+		mImp = new tpSoundStreamOgg();
+	}
+
+	if (!mImp.isValid()) return false;
+
+	return mImp->open(name);
+}
+
+
+void
+tpSoundStream::close()
+{
+	if (mImp.isValid()) mImp->close();
+	mImp = 0;
+}
+
+bool
+tpSoundStream::read(tpArray<tpChar> &buffer, tpUInt &format, tpUInt &freq)
+{
+	return (mImp.isValid()) ? mImp->read(buffer,format,freq) : false;
+}
+
+//class tpSoundStream : public tpReferenced {
+//public:
+//	enum {
+//		kFormatMono8,
+//		kFormatMono16,
+//		kFormatMono32,
+//		kFormatStereo8,
+//		kFormatStereo16,
+//		kFormatStereo32
+//	};
+
+//	virtual bool open(const tpString& name) = 0;
+
+//	virtual bool read(tpArray<tpChar> &buffer, tpUInt &format, tpUInt &freq) = 0;
+
+//	virtual void close() = 0;
+
+//};
+
+
 
 
 bool
@@ -134,41 +168,53 @@ tpSoundStreamOgg::read(tpArray<tpChar>& buffer,tpUInt& format,tpUInt& freq)
 			size += result;
 		} else {
 			if (result < 0) {
+				buffer.resize(0);
 				tpLogError("Error reading file");
 				return false;
 			} else {
 				break;
 			}
 		}
+		tpLogNotify("%s %d",__FUNCTION__,result);
 	}
-	if (size == 0) return false;
 
 	buffer.resize(size);
 
+	if (size == 0) return false;
+
 	return true;
+}
+
+void
+tpSoundStreamOgg::close()
+{
+	ov_clear(&mStream);
+	mFile.close();
 }
 
 class tpSoundContext_OAL : public tpReferenced {
 
 	ALCcontext* mContext;
+	ALCdevice* mDevice;
 public:
 
 	tpSoundContext_OAL()
 		: tpReferenced()
 		, mContext(0)
+		, mDevice(0)
 	{}
 
 	void create()
 	{
 		const ALCchar *default_device;
-		ALCdevice *device;
+
 		default_device = alcGetString(NULL,ALC_DEFAULT_DEVICE_SPECIFIER);
 
-		if ((device = alcOpenDevice(default_device)) == NULL) {
+		if ((mDevice = alcOpenDevice(default_device)) == NULL) {
 			tpLogNotify("failed to open sound device");
 		}
 
-		mContext = alcCreateContext(device, NULL);
+		mContext = alcCreateContext(mDevice, NULL);
 
 		makeCurrent();
 
@@ -194,6 +240,7 @@ public:
 	void destroy()
 	{
 		alcDestroyContext(mContext);
+		alcCloseDevice(mDevice);
 	}
 };
 
@@ -243,13 +290,6 @@ public:
 		ALfloat source0Vel[]={ 0.0, 0.0, 0.0};
 
 
-
-		// tpUInt  environment[NUM_ENVIRONMENTS];
-
-		ALsizei size,freq;
-		ALenum  format;
-		ALvoid  *data;
-
 		alGetError(); // clear any error messages
 
 		// Generate buffers, or else no sound will happen!
@@ -258,8 +298,8 @@ public:
 
 		alCheckError();
 
-		alSourcef(sourceID, AL_PITCH, 1.0f);
-		alSourcef(sourceID, AL_GAIN, 1.0f);
+//		alSourcef(sourceID, AL_PITCH, 1.0f);
+//		alSourcef(sourceID, AL_GAIN, 1.0f);
 		alSourcefv(sourceID, AL_POSITION, source0Pos);
 		alSourcefv(sourceID, AL_VELOCITY, source0Vel);
 
@@ -272,6 +312,9 @@ public:
 
 	void write(ALuint bufferID, const tpArray<tpChar>& buffer,tpUInt format, tpUInt rateFreq)
 	{
+
+		if (0 == buffer.getSize()) return;
+
 		ALenum alFormat(0);
 		switch (format) {
 		case tpSoundStream::kFormatMono16:
@@ -312,10 +355,6 @@ public:
 //            check();
 			alCheckError();
 
-
-			tpArray<tpChar> streambuffer;
-			tpUInt format; tpUInt freq;
-
 			active = this->stream(buffer,stream);
 //            active = stream(buffer);
 
@@ -325,7 +364,7 @@ public:
 			alCheckError();
 		}
 
-
+		tpLogNotify("%s",__FUNCTION__);
 
 		return active;
 	}
@@ -342,11 +381,12 @@ public:
 			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 
-	bool play(tpSoundStream& stream)
+	bool
+	play(tpSoundStream& stream)
 	{
 
 		if (playing()) return true;
@@ -357,6 +397,8 @@ public:
 
 		alSourceQueueBuffers(sourceID, 2,&buffers[0]);
 		alSourcePlay(sourceID);
+
+		alCheckError();
 
 		return true;
 	}
@@ -372,6 +414,16 @@ void tpSoundTest(const char* what) {
 
 	stream->open(what);
 
+//	tpArray<tpChar> buffer;
+//	tpUInt f,r;
+//	while (stream->read(buffer,f,r)) {}
+
+
+
+
+
+#if 1
+
 	tpRefPtr<tpSoundContext_OAL> context = new tpSoundContext_OAL;
 	context->create();
 	context->makeCurrent();
@@ -380,17 +432,11 @@ void tpSoundTest(const char* what) {
 
 	 tpLogNotify("Tick!");
 
-	 if(!sound->play(*stream.get())) {
-		 tpLogError("Already here off");
-	 }
-
-	while(sound->update(*stream.get())) {
-		if(!sound->playing()) {
-			if(!sound->play(*stream.get())) {
-
-			}
+	 if(sound->play(*stream.get())) {
+		while(sound->update(*stream.get())) {
 		}
 	}
+#endif
 
 	tpLogNotify("Finished!");
 
