@@ -97,12 +97,16 @@ public:
 	const tpTextureObject* getTextureObject() const { return mObject.get(); }
 	tpTextureObject* getTextureObject() { return mObject.get(); }
 
+	void setStatic(bool s = true) { mStatic = s; }
+	bool getStatic() const { return mStatic; }
+
 protected:
 
 	virtual ~tpTexture();
 
 	tpUInt mFormat;
 	tpVec3<tpUInt> mWrap;
+	bool mStatic;
 
 	tpRefPtr<tpImage> mImage;
 	tpRefPtr<tpTextureObject> mObject;
@@ -113,17 +117,17 @@ protected:
 class tpTextureObject : public tpReferenced {
 public:
 
-	virtual void create(const tpTexture& texture) = 0;
+	virtual void create(tpTexture& texture) = 0;
 
-	virtual void update(const tpTexture& texture) = 0;
+	virtual void update(tpTexture& texture) = 0;
 
 	virtual void activate() = 0;
 	virtual void deactivate() = 0;
 
 	virtual void destroy() = 0;
 
-    //@ returns the size the machine will understand (such as NPOT)
-    virtual tpVec2i getSize() const { return tpVec2i(0,0); }
+	//@ returns the size the machine will understand (such as NPOT)
+	virtual tpVec2i getSize() const { return tpVec2i(0,0); }
 
 protected:
 

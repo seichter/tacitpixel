@@ -29,6 +29,31 @@
 #include "tp/node.h"
 
 
+//struct tpAttributeIterator {
+//	tpVec4f
+//};
+
+
+//struct tpAttributeStorage {
+
+//	enum {
+//		kVertex,
+//		kMap,
+//		kColor,
+//		kNormal
+//	};
+
+//	tpUInt getStride(tpUChar attribute) const { return 4; }
+//	tpUInt getOffset(tpUChar attribute) const { return 0; }
+
+//	tpAttributeIterator& addVertex();
+
+
+//	tpArray<tpFloat> mStorage;
+//};
+
+
+
 struct tpPrimitiveAttribute {
 
 };

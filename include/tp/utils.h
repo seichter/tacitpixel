@@ -84,5 +84,17 @@ template <typename T> inline T tpNextPowerOfTwo(T v)
 	return v;
 }
 
+template <class T>
+inline T tpNearestPowerOfTwo(T v)
+{
+		int k;
+		if (v == 0)
+				return 1;
+		for (k = sizeof(T) * 8 - 1; ((static_cast<T>(1U) << k) & v) == 0; k--);
+		if (((static_cast<T>(1U) << (k - 1)) & v) == 0)
+				return static_cast<T>(1U) << k;
+		return static_cast<T>(1U) << (k + 1);
+}
+
 
 #endif

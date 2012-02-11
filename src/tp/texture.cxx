@@ -31,6 +31,7 @@ tpTexture::tpTexture(const tpString& name  /* = TP_NONAME */)
 	, mWrap(tpVec3<tpUInt>(kWrapModeClamp,kWrapModeClamp,kWrapModeClamp))
 	, mImage(0)
 	, mFormat(kFormatRGB)
+	, mStatic(false)
 {
 }
 
@@ -38,8 +39,7 @@ tpTexture::~tpTexture()
 {
 }
 
-void tpTexture::setImage( tpImage* image )
-{
+void tpTexture::setImage( tpImage* image ) {
 	mImage = image;
 }
 
