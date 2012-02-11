@@ -63,6 +63,9 @@ public:
 	void setCulling(bool flag) { mCulling = flag; }
 	bool getCulling() const { return mCulling; }
 
+    void setLighting(bool on) { mLighting = on; }
+    bool getLighting() const { return mLighting; }
+
 
 protected:
 
@@ -70,6 +73,7 @@ protected:
 	tpRefPtr<tpTexture>		mTexture;
 
 	bool		mCulling;
+    bool        mLighting;
 
 };
 

@@ -226,10 +226,7 @@ public:
 
 		if (nodemap_lights.getSize())
 		{
-			// hack
-			//glEnable(GL_LIGHTING);
-
-			for (tpNodeMatrixMap::iterator i = nodemap_lights.begin();
+            for (tpNodeMatrixMap::iterator i = nodemap_lights.begin();
 				 i != nodemap_lights.end();
 				 ++i)
 			{
@@ -311,6 +308,16 @@ public:
 
 	void operator()(const tpPrimitive& prim,const tpMat44r& modelmatrix)
 	{
+
+        // first setup the lighting
+        if (prim.getLighting())
+        {
+            glEnable(GL_LIGHTING);
+        } else
+        {
+            glDisable(GL_LIGHTING);
+        }
+
 		if (prim.hasTexture()) {
 			(*this)(const_cast<tpTexture*>(prim.getTexture()));
 		} else {

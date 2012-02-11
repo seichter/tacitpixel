@@ -3,6 +3,6 @@
 
 #include <tp/globals.h>
 
-TP_API void tpSoundTest();
+TP_API void tpSoundTest(const char*);
 
 #endif

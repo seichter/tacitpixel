@@ -54,12 +54,9 @@
 tpUByte
 tpSystem::getEndian() const
 {
-	int i = 1;
-	char *p = (char *)&i;
-
-	if (p[0] == 1) return TP_SYS_LITTLEENDIAN;
-
-	return TP_SYS_LITTLEENDIAN;
+    tpInt32 num = 1;
+    if(*(char *)&num == 1) return kSysLittleEndian;
+    return kSysBigEndian;
 }
 
 

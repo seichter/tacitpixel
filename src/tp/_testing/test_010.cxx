@@ -3,7 +3,7 @@
 
 int main(int argc, char* argv[]) {
 
-    tpSoundTest();
+    tpSoundTest(argv[1]);
 
     return 0;
 }
