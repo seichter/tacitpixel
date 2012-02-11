@@ -25,10 +25,10 @@ set(zlib_srcs
 	zlib.h
 	zutil.h
 	)
-	
-add_library(zlib STATIC ${zlib_srcs})
 
-set_target_properties(zlib
+add_library(z STATIC ${zlib_srcs})
+
+set_target_properties(z
 	PROPERTIES
 	PROJECT_LABEL "Dependency zlib"
 )

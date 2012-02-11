@@ -5,7 +5,7 @@ set(vorbis_pub_hdrs
 	include/vorbis/vorbisenc.h
 	include/vorbis/vorbisfile.h
 	)
-	
+
 
 set(vorbis_srcs
 	lib/analysis.c
@@ -34,7 +34,7 @@ set(vorbis_srcs
 	lib/vorbisfile.c
 	lib/window.c
 	)
-	
+
 set(vorbis_hdrs
 	lib/backends.h
 	lib/bitrate.h
@@ -56,7 +56,7 @@ set(vorbis_hdrs
 	lib/smallft.h
 	lib/window.h
 	)
-	
-include_directories(include ${CMAKE_CURRENT_SOURCE_DIR}/../libogg-1.1.4/include)
+
+include_directories(include ${CMAKE_CURRENT_SOURCE_DIR}/../libogg/include)
 
 add_library(vorbis STATIC ${vorbis_hdrs} ${vorbis_srcs} ${vorbis_pub_hdrs})
