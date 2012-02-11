@@ -44,8 +44,6 @@ tpSoundStreamOgg::read(tpArray<tpChar>& buffer,tpUInt& format,tpUInt& freq)
 
 	freq = vorbisInfo->rate;
 
-	buffer.resize(4096);
-
 	int result = ov_read(&mStream,
 						 buffer.getData(),
 						 buffer.getSize(),

@@ -134,6 +134,19 @@ public:
 class tpSound : public tpReferenced {
 public:
 
+
+	virtual bool isPlaying() = 0;
+
+	virtual void create() = 0;
+
+	virtual void destroy() = 0;
+
+	virtual bool play(tpSoundStream* stream) = 0;
+
+	virtual bool update() = 0;
+
+
+
 protected:
 };
 
@@ -143,8 +156,10 @@ class tpSoundOpenAL : public tpSound {
 	tpVec3f mVelocity;
 	tpMat44f mPosition;
 
-	ALuint sourceID;
-	tpArray<ALuint> buffers;
+	ALuint mSource;
+	tpArray<ALuint> mBuffers;
+
+	tpRefPtr<tpSoundStream> mStream;
 
 public:
 
@@ -152,48 +167,24 @@ public:
 	{
 	}
 
-	void create()
+	void
+	create()
 	{
-
-		tpVec4f pos(0.0,0.0,4.0,1.0);
-		tpVec4f vel(0,0,0,1);
-
-		float listenerPos[]={0.0,0.0,4.0};
-		float listenerVel[]={0.0,0.0,0.0};
-		float listenerOri[]={0.0,0.0,1.0, 0.0,1.0,0.0};
-
-//		alListenerfv(AL_POSITION,listenerPos);
-//	    alListenerfv(AL_VELOCITY,listenerVel);
-//	    alListenerfv(AL_ORIENTATION,listenerOri);
-
-		ALfloat source0Pos[]={ -2.0, 0.0, 0.0};
-		ALfloat source0Vel[]={ 0.0, 0.0, 0.0};
-
 
 		alGetError(); // clear any error messages
 
-		buffers.resize(10);
+		mBuffers.resize(10);
 
 		// Generate buffers, or else no sound will happen!
-		alGenBuffers(buffers.getSize(),&buffers[0]);
-		alGenSources(1,&sourceID);
+		alGenBuffers(mBuffers.getSize(),&mBuffers[0]);
+		alGenSources(1,&mSource);
 
 		alCheckError();
 
-//		alSourcef(sourceID, AL_PITCH, 1.0f);
-//		alSourcef(sourceID, AL_GAIN, 1.0f);
-//		alSourcefv(sourceID, AL_POSITION, source0Pos);
-//		alSourcefv(sourceID, AL_VELOCITY, source0Vel);
-
-//		alCheckError();
-//		alSourcei(sourceID, AL_BUFFER, buffers[0]);
-//		alSourcei(sourceID, AL_BUFFER, buffers[1]);
-//		alSourcei(sourceID, AL_LOOPING, AL_FALSE);
-
-
 	}
 
-	void write(ALuint bufferID, const tpArray<tpChar>& buffer,tpUInt format, tpUInt rateFreq)
+	void
+	write(ALuint bufferID, const tpArray<tpChar>& buffer,tpUInt format, tpUInt rateFreq)
 	{
 
 		if (0 == buffer.getSize()) return;
@@ -220,6 +211,9 @@ public:
 		tpArray<tpChar> streambuffer;
 		tpUInt format; tpUInt freq;
 
+		// request size
+		streambuffer.resize(4096);
+
 		if (stream.read(streambuffer,format,freq))
 		{
 			if (streambuffer.getSize() > 0) {
@@ -235,21 +229,21 @@ public:
 
 
 	bool
-	playing()
+	isPlaying()
 	{
 		ALenum state;
-		alGetSourcei(sourceID, AL_SOURCE_STATE, &state);
+		alGetSourcei(mSource, AL_SOURCE_STATE, &state);
 		alCheckError();
 		return (state == AL_PLAYING);
 	}
 
 	bool
-	update(tpSoundStream& stream)
+	update()
 	{
 		int processed = 0;
 		bool active = true;
 
-		alGetSourcei(sourceID, AL_BUFFERS_PROCESSED, &processed);
+		alGetSourcei(mSource, AL_BUFFERS_PROCESSED, &processed);
 
 		if (processed <= 0) return true;
 
@@ -257,11 +251,11 @@ public:
 		{
 			ALuint buffer;
 
-			alSourceUnqueueBuffers(sourceID, 1, &buffer);
+			alSourceUnqueueBuffers(mSource, 1, &buffer);
 
-			active = this->stream(buffer,stream);
+			active = this->stream(buffer,*mStream);
 
-			alSourceQueueBuffers(sourceID, 1, &buffer);
+			alSourceQueueBuffers(mSource, 1, &buffer);
 
 		}
 
@@ -270,31 +264,42 @@ public:
 
 
 	bool
-	play(tpSoundStream& stream)
+	play(tpSoundStream* stream)
 	{
+		mStream = stream;
 
-		if (playing()) return true;
+		// still busy
+		if (isPlaying()) return true;
 
-		for (tpArray<ALuint>::iterator it = buffers.begin();
-			 it != buffers.end();
+		// queue buffers
+		for (tpArray<ALuint>::iterator it = mBuffers.begin();
+			 it != mBuffers.end();
 			 ++it)
 		{
-			this->stream(*it,stream);
+			this->stream(*it,*stream);
 		}
 
-		alSourceQueueBuffers(sourceID,buffers.getSize(),&buffers[0]);
-		alSourcePlay(sourceID);
+		// start play
+		alSourceQueueBuffers(mSource,mBuffers.getSize(),&mBuffers[0]);
+		alSourcePlay(mSource);
 
 		alCheckError();
 
 		return true;
 	}
 
-	~tpSoundOpenAL() {
-		alSourcei(sourceID,AL_BUFFER,AL_NONE);
-		alDeleteSources(1,&sourceID);
-		alDeleteBuffers(buffers.getSize(),&buffers[0]);
+	void
+	pause()
+	{
+		alSourceStop(mSource);
+	}
 
+	void
+	destroy()
+	{
+		mStream = 0;
+		alDeleteSources(1,&mSource);
+		alDeleteBuffers(mBuffers.getSize(),&mBuffers[0]);
 	}
 };
 
@@ -322,8 +327,8 @@ void tpSoundTest(const char* what) {
 
 	 tpLogNotify("Tick!");
 
-	 if(sound->play(*stream.get())) {
-		while(sound->update(*stream.get())) {
+	 if(sound->play(stream.get())) {
+		while(sound->update()) {
 			tpThread::sleep(100);
 		}
 	}
