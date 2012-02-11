@@ -14,6 +14,7 @@
 #include <tp/primitive.h>
 #include <tp/vec.h>
 #include <tp/light.h>
+#include <tp/viewer.h>
 
 struct tpSurfaceHandler {
 
@@ -91,26 +92,6 @@ int main(int argc,char* argv[])
 		return -1;
 	}
 
-	tpRenderSurfaceTraits traits;
-	traits.setSize(640,480).setPosition(10,10).setTitle("Tacit Pixel 3");
-
-	tpRefPtr<tpRenderer> renderer = tpRenderer::create();
-	tpRefPtr<tpRenderSurface> rendersurface = tpRenderSurface::create(&traits);
-	rendersurface->setContext(0);
-
-	if (!renderer.isValid() || !rendersurface.isValid() || !rendersurface->hasContext()) return -1;
-
-	tpRefPtr<tpCamera> camera = renderer->getActiveCamera();
-	camera->setName("Default");
-
-
-	camera->setProjectionPerspective(60.0f,1.3f,0.1f,1000.0f);
-	camera->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
-
-	camera->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
-
-	camera->setClearColor(tpVec4f(0.5f,0.5f,0.9f,1.0f));
-	camera->setViewport(tpVec4i(0,0,640,480));
 
 	tpRefPtr<tpLight> l = new tpLight();
 	l->setPosition(tpVec3f(5,5,5));
@@ -118,45 +99,11 @@ int main(int argc,char* argv[])
 
 	root->addChild(l.get());
 
-	tpUInt frames = 0;
-	tpDouble time = 0;
 
-	tpTimer timer;
-
-	if (rendersurface.isValid() && renderer.isValid())
-	{
-		tpSurfaceHandler handler(camera.get());
-
-		rendersurface->getEventHandler().attach<tpRenderSurfaceEvent,tpSurfaceHandler>(&handler,&tpSurfaceHandler::onRenderSurface);
-
-		rendersurface->show(true);
-
-
-		while (rendersurface->isValid())
-		{
-			timer.start();
-
-			if (rendersurface->getContext()->makeCurrent())
-			{
-				(*renderer)(root.get());
-
-				rendersurface->getContext()->swapBuffers();
-				frames++;
-			}
-
-			time += timer.getElapsed(tpTimer::kTimeSeconds);
-
-			if (time > 5) {
-				tpLogNotify("fps %3.3f",(float)frames/time);
-				time = 0;
-				frames = 0;
-			}
-
-			rendersurface->update();
-
-			tpThread::yield();
-		}
-	}
+    tpRefPtr<tpViewer> viewer = new tpViewer();
+    viewer->create();
+    viewer->setScene(root.get());
+    viewer->run();
 
 	return 0;
 }

@@ -31,17 +31,17 @@
 #include <tp/array.h>
 #include <tp/string.h>
 
-enum {
-	TP_SYS_LITTLEENDIAN = 0x0,
-	TP_SYS_BIGENDIAN
-};
-
 class TP_API tpSystem : public tpReferenced {
 
 	tpSystem();
 	tpSystem(const tpSystem& o) {}
 
 public:
+
+    enum {
+        kSysLittleEndian = 0x0,
+        kSysBigEndian
+    };
 
 	static tpSystem* get();
 

@@ -45,6 +45,7 @@ struct tpFontRasterizer {
 
 		prim.clearAll();
 		prim.setAttributes(tpPrimitive::kAttributeVertex|tpPrimitive::kAttributeNormals|tpPrimitive::kAttributeUV);
+        prim.setLighting(false);
 
 		float x(0),y(0);
 

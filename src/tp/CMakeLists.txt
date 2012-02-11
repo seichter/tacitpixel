@@ -8,6 +8,8 @@ set(tp_include_path ${CMAKE_CURRENT_SOURCE_DIR}/../../include)
 
 include_directories(${tp_include_path}
 	_thirdparty
+	_thirdparty/libogg/include
+	_thirdparty/libvorbis/include
 	${CMAKE_BINARY_DIR}/include)
 
 find_package(X11)
@@ -279,7 +281,7 @@ set_target_properties(${tp_name}
 	COMPILE_DEFINITIONS TP_BUILD_LIBRARY=1
 	)
 
-target_link_libraries(${tp_name} jpeg)
+target_link_libraries(${tp_name} jpeg png z ogg vorbis)
 
 if(APPLE)
 	target_link_libraries(${tp_name}

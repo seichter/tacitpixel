@@ -38,7 +38,7 @@ tpCamera::tpCamera()
 
 tpCamera::tpCamera(const tpCamera& cam)
 {
-	tpCamera::tpCamera();
+    tpCamera();
 	*this = cam;
 }
 

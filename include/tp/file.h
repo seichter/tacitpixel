@@ -117,6 +117,7 @@ public:
 
 	void setHandle(void* handle) { m_handle = handle; }
 	const void* getHandle() const { return m_handle; }
+    void* getHandle() { return m_handle; }
 
 protected:
 

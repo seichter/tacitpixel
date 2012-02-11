@@ -27,6 +27,8 @@
 
 tpRenderable::tpRenderable(const tpString& name)
 	: tpNode(name)
+    , mCulling(false)
+    , mLighting(true)
 //	, m_material(tpDefaultMaterial)
 {
 	//m_fields.add(new tpSingleField<tpMaterial>(m_material.get(),"material"));

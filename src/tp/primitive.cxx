@@ -259,6 +259,8 @@ tpPrimitive* tpPrimitiveFactory::create( tpUShort primitive_type )
 		res->addVertex(tpVec3r(0,1,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,1,0,1));
 		res->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,0,1,1));
 		res->addVertex(tpVec3r(0,0,1),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,0,1,1));
+
+        res->setLighting(false);
 		break;
 
 	case kPlane:
