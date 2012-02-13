@@ -224,6 +224,9 @@ public:
 	  */
 	bool contains(const T &item) const;
 
+	tpArray<T, Tidx>& swap(tpArray<T, Tidx> &other);
+
+
 private:
 
 	void grow();
@@ -548,5 +551,14 @@ tpArray<T,Tidx>& tpArray<T,Tidx>::reverse()
 	return *this;
 }
 
+template <typename T,typename Tidx>
+tpArray<T,Tidx>& tpArray<T,Tidx>::swap(tpArray<T,Tidx>& other)
+{
+	tpSwap(mData,other.mData);
+	tpSwap(mCapacity,other.mCapacity);
+	tpSwap(mSize,other.mSize);
+
+	return *this;
+}
 
 #endif
