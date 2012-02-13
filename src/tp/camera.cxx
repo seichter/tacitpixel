@@ -64,6 +64,19 @@ void tpCamera::setViewLookAt( const tpVec3r& eye, const tpVec3r& target, const t
 	update();
 }
 
+tpVec3r
+tpCamera::getTranslation()
+{
+	return tpVec3r(mView(3,0),mView(3,1),mView(3,2));
+}
+
+void
+tpCamera::setTranslation(const tpVec3r &t)
+{
+	mView(3,0) = t[0]; mView(3,1) = t[1]; mView(3,2) = t[2];
+	update();
+}
+
 
 void tpCamera::setProjectionPerspective( const tpReal& fov, const tpReal& aspect, const tpReal& n, const tpReal& f )
 {

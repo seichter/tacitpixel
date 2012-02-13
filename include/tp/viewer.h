@@ -34,6 +34,7 @@
 #include <tp/scene.h>
 
 class tpViewer : public tpReferenced {
+protected:
 
 	tpRefPtr<tpRenderSurface> mSurface;
 	tpRefPtr<tpRenderer> mRenderer;
@@ -49,11 +50,16 @@ public:
 
 	int run();
 
-	virtual void onSurfaceEvent(tpRenderSurfaceEvent &e);
-
 	tpScene& getScene() {
 		return *mScene.get();
 	}
+
+	virtual void onSurfaceEvent(tpRenderSurfaceEvent &e);
+
+private:
+
+	void _dispatch(tpRenderSurfaceEvent &e);
+
 
 };
 

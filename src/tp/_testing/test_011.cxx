@@ -36,8 +36,6 @@ int main(int argc, char* argv[])
 	cam_2->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
 	cam_1->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
 
-
-
 	cam_1->addChild(axis.get());
 	cam_2->addChild(axis.get());
 

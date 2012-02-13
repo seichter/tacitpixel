@@ -52,14 +52,21 @@ tpViewer::frame() {
 }
 
 /*virtual*/ void
-tpViewer::onSurfaceEvent(tpRenderSurfaceEvent& e) {
+tpViewer::onSurfaceEvent(tpRenderSurfaceEvent& e)
+{
+}
+
+/*virtual*/ void
+tpViewer::_dispatch(tpRenderSurfaceEvent& e)
+{
+	this->onSurfaceEvent(e);
 }
 
 int
 tpViewer::run() {
 
 	// now also bind the event handler
-	mSurface->getEventHandler().attach<tpRenderSurfaceEvent,tpViewer>(this,&tpViewer::onSurfaceEvent);
+	mSurface->getEventHandler().attach<tpRenderSurfaceEvent,tpViewer>(this,&tpViewer::_dispatch);
 
 	while (mSurface->isValid()) {
 		this->frame();

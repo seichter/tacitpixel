@@ -16,22 +16,23 @@
 #include <tp/light.h>
 #include <tp/viewer.h>
 
-struct tpSurfaceHandler {
+class tpViewerShow : public tpViewer {
 
-	tpRefPtr<tpCamera> camera;
-	tpVec3r campos;
+public:
 
-	tpSurfaceHandler(tpCamera* camera_)
-		: camera(camera_)
-		, campos(tpVec3r(2,2,2))
-	{}
 
-	void onRenderSurface(tpRenderSurfaceEvent& e) {
+	virtual void
+	onSurfaceEvent(tpRenderSurfaceEvent& e)
+	{
 
-//		tpLogMessage("Mouse: %d %d (%d) [%d] Key: %d %d",
-//					 e.getMousePosition()[0],e.getMousePosition()[1],
-//					 e.getMouseKey(),e.getMouseState(),
-//					 e.getKeyCode(),e.getKeyState());
+		tpLogMessage("Mouse: %d %d (%d) [%d] Key: %d %d",
+					 e.getMousePosition()[0],e.getMousePosition()[1],
+					 e.getMouseKey(),e.getMouseState(),
+					 e.getKeyCode(),e.getKeyState());
+		tpCamera* camera = mScene->getActiveCamera();
+
+		tpLog::get() << camera->getTranslation() << "\n";
+
 
 		if (e.getKeyCode() == 27 && e.getKeyState() == tpRenderSurfaceEvent::kKeyUp) {
 			e.getRenderSurface()->setDone();
@@ -39,40 +40,18 @@ struct tpSurfaceHandler {
 
 		if (e.getMouseState() == tpRenderSurfaceEvent::kMouseDown) {
 
+			tpVec3r delta(0.05,0,0);
+
 			if (e.getMouseKey() == tpRenderSurfaceEvent::kMouseKeyLeft) {
-				campos[0] += 0.5;
+				camera->setTranslation(camera->getTranslation() + delta);
 			} else {
-				campos[0] -= 0.5;
+				camera->setTranslation(camera->getTranslation() - delta);
 			}
-
-			tpLogNotify("Camera pos: %3.1f %3.1f %3.1f",campos[0],campos[2],campos[2]);
-
-			camera->setViewLookAt(campos,tpVec3r(0,0,0),tpVec3r(0,1,0));
 		}
 
 		e.setHandled(true);
 	}
 };
-
-tpNode*
-createAxis()
-{
-	tpPrimitive* axis = new tpPrimitive(tpPrimitive::kLines,
-										tpPrimitive::kAttributeVertex | tpPrimitive::kAttributeColors);
-
-
-	axis->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(1,1,1,1));
-	axis->addVertex(tpVec3r(1,0,0),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(1,0,0,1));
-
-	axis->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(1,1,1,1));
-	axis->addVertex(tpVec3r(0,1,0),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(0,1,0,1));
-
-	axis->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(1,1,1,1));
-	axis->addVertex(tpVec3r(0,0,1),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(0,0,1,1));
-
-	return axis;
-
-}
 
 int main(int argc,char* argv[])
 {
@@ -85,7 +64,9 @@ int main(int argc,char* argv[])
 	if (args.get("--file",file)) {}
 
 
-	tpRefNode root = (file == "axis") ? createAxis() :  tpNode::read(file);
+	tpRefNode root = (file == "axis")
+			? tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kAxis)
+			:  tpNode::read(file);
 
 	if (!root.isValid()) {
 		tpLogError("Can't load file");
@@ -98,10 +79,11 @@ int main(int argc,char* argv[])
 
 	root->addChild(l.get());
 
-
-	tpRefPtr<tpViewer> viewer = new tpViewer();
+	tpRefPtr<tpViewer> viewer = new tpViewerShow;
 
 	viewer->getScene().getActiveCamera()->addChild(root.get());
+	viewer->getScene().getActiveCamera()->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
+	viewer->getScene().getActiveCamera()->setProjectionPerspective(30,1.4,1,100);
 	viewer->getScene().getActiveCamera()->setClearColor(tpVec4f(.5,.5,.5,1));
 	viewer->getScene().getActiveCamera()->setClearFlags(tpCamera::kClearDepth | tpCamera::kClearColor);
 
