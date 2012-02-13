@@ -130,7 +130,11 @@ tpThread::detach()
 void
 tpThread::yield()
 {
+#if defined(HAVE_PTHREAD_H)
+	pthread_yield_np();
+#else
 	sleep(0);
+#endif
 }
 
 /* static */
