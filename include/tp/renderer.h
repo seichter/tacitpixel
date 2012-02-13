@@ -26,13 +26,11 @@
 #ifndef TP_RENDERER_H
 #define TP_RENDERER_H
 
-
-#include <tp/node.h>
+#include <tp/referenced.h>
 #include <tp/camera.h>
 
-class tpCamera;
 class tpRendererTraits;
-class tpRenderContext;
+class tpScene;
 
 
 struct tpRendererTraits {
@@ -54,30 +52,20 @@ public:
 
 	TP_TYPE_DECLARE
 
+	virtual void operator()(tpScene* node) = 0;
+
+	virtual const tpRendererTraits& getTraits() const = 0;
+
+	static tpRenderer* create(const tpRendererTraits& traits = tpRendererTraits());
+
+protected:
+
 	tpRenderer();
 
 	tpRenderer(const tpRenderer& r);
 
 	tpRenderer& operator = (const tpRenderer& rhs);
 
-	virtual void operator()(tpNode* node) = 0;
-
-	virtual const tpRendererTraits& getTraits() const = 0;
-
-	static tpRenderer* create(const tpRendererTraits& traits = tpRendererTraits());
-
-	tpCamera* getActiveCamera();
-
-	void setActiveCamera(tpUInt camera);
-
-	void addCamera(tpCamera* camera, bool makeActive = true);
-
-	void removeCamera(tpCamera *camera);
-
-protected:
-
-	tpRefCameraArray mCameras;
-	tpUInt mActiveCamera;
 
 	virtual ~tpRenderer();
 };

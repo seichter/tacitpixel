@@ -75,7 +75,7 @@ public:
 		for (register int i = 0; i < tpMat<R,C,T>::cells;++i) {m[i] = i;}
 	}
 
-	inline tpMat<R,C,T>&
+	tpMat<R,C,T>&
 	transpose()
 	{
 		tpMat<C,R,T> r;
@@ -84,7 +84,7 @@ public:
 		return *this;
 	}
 
-	inline void
+	void
 	getTranspose(tpMat<C,R,T>& rot) const
 	{
 		for (register tpUInt r = 0; r < rows; r++)
@@ -94,7 +94,7 @@ public:
 			}
 	}
 
-	inline tpMat<R,C,T>
+	tpMat<R,C,T>
 	multiply(const tpMat<R,C,T>& rhs) const
 	{
 
@@ -254,8 +254,122 @@ T tpMat<R,C,T>::getDeterminant() const
 
 /////////////////////////////////////////////////////////////////////////////
 
-// partial specializations
+// explicit specializations
 
+template <typename T>
+class tpMat44 : public tpMat<4,4,T>
+{
+public:
+
+	tpMat44()
+	{
+	}
+
+	tpMat44(const tpMat<4,4,T>& i)
+	{
+		*this = i;
+	}
+
+	tpMat44&
+	operator = (const tpMat<4,4,T>& rhs)
+	{
+		if (this != &rhs){
+			(*this)(0,0) = rhs(0,0);(*this)(0,1) = rhs(0,1);(*this)(0,2) = rhs(0,2);(*this)(0,3) = rhs(0,3);
+			(*this)(1,0) = rhs(1,0);(*this)(1,1) = rhs(1,1);(*this)(1,2) = rhs(1,2);(*this)(1,3) = rhs(1,3);
+			(*this)(2,0) = rhs(2,0);(*this)(2,1) = rhs(2,1);(*this)(2,2) = rhs(2,2);(*this)(2,3) = rhs(2,3);
+			(*this)(3,0) = rhs(3,0);(*this)(3,1) = rhs(3,1);(*this)(3,2) = rhs(3,2);(*this)(3,3) = rhs(3,3);
+		}
+		return *this;
+	}
+
+	tpMat<4,4,T>&
+	translate(const T& v1,const T& v2,const T& v3)
+	{
+		this->m[12] += v1;
+		this->m[13] += v2;
+		this->m[14] += v3;
+
+		return *this;
+	}
+
+	tpMat<4,4,T>&
+	setTranslation(const T& v1,const T& v2,const T& v3)
+	{
+		this->identity();
+		this->m[12] = v1;
+		this->m[13] = v2;
+		this->m[14] = v3;
+		return *this;
+	}
+
+	tpVec3<T>
+	getTranslation() const
+	{
+		return tpVec3<T>(this->m[12],this->m[13],this->m[14]);
+	}
+
+	tpMat<4,4,T>&
+	setScale(const T& v1,const T& v2,const T& v3)
+	{
+		this->identity();
+		(*this)(0,0) = v1;
+		(*this)(1,1) = v2;
+		(*this)(2,2) = v3;
+		return *this;
+	}
+
+	tpMat<4,4,T>&
+	scale(const T& v1,const T& v2,const T& v3)
+	{
+		(*this)(0,0) *= v1;
+		(*this)(1,1) *= v2;
+		(*this)(2,2) *= v3;
+		return *this;
+	}
+
+	tpMat<4,4,T>&
+	setRotation(const tpVec3<T>& vec, const T& rotation)
+	{
+		this->identity();
+
+		if (vec.getLength() < T(.000001f)) return *this;
+
+		T _radiant = tpDeg2Rad(rotation);
+
+		T _fCos = (T) cos (_radiant);
+
+		tpVec<T,3> _vCos = vec * (1 - _fCos);
+		tpVec<T,3> _vSin = vec * (T)sin(_radiant);
+
+		this->m[0]= (T) ((vec[0] * _vCos[0]) + _fCos);
+		this->m[4]= (T) ((vec[0] * _vCos[1]) - _vSin[2]);
+		this->m[8]= (T) ((vec[0] * _vCos[2]) + _vSin[1]);
+
+		this->m[1]= (T) ((vec[1] * _vCos[0]) + _vSin[2]);
+		this->m[5]= (T) ((vec[1] * _vCos[1]) + _fCos);
+		this->m[9]= (T) ((vec[1] * _vCos[2]) - _vSin[0]);
+
+		this->m[2]= (T)  ((vec[2] * _vCos[0]) - _vSin[1]);
+		this->m[6]= (T)  ((vec[2] * _vCos[1]) + _vSin[0]);
+		this->m[10]= (T) ((vec[2] * _vCos[2]) + _fCos);
+
+		this->m[3] = this->m[7] = this->m[11] = T(0);
+
+		this->m[15] = T(1);
+
+		return *this;
+	}
+
+	tpMat<4,4,T>&
+	rotate(const tpVec3<T>& vec, const T& rotation)
+	{
+		tpMat<4,4,T> rot; rot.setRotation(vec,rotation); *this *= rot;
+		return *this;
+	}
+};
+
+
+#if 0
 //
 // Mat 4x4
 //
@@ -359,7 +473,7 @@ public:
 			+(this->m[8]*this->m[13] - this->m[12] *this->m[9])*(this->m[ 2]*this->m[7] - this->m[6]*this->m[3]);
 	}
 
-#if 0
+
 	tpMat44&
 	invert()
 	{
@@ -449,10 +563,10 @@ public:
 		return *this;
 	}
 
-#endif
 
 };
 
+#endif
 
 
 //
@@ -485,10 +599,6 @@ typedef tpMat44<tpReal> tpMat44r;
 typedef tpMat44<tpDouble> tpMat44d;
 typedef tpMat44<tpFloat> tpMat44f;
 typedef tpMat44<tpFixed32> tpMat44x;
-
-
-class tpVector3d : public tpMat<1,3,tpDouble> {};
-
 
 
 #endif

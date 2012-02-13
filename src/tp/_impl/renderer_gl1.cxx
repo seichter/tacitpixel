@@ -9,6 +9,7 @@
 #include <tp/logutils.h>
 #include <tp/light.h>
 #include <tp/timer.h>
+#include <tp/scene.h>
 
 
 //#if defined(__APPLE__)
@@ -203,12 +204,30 @@ public:
 	static tpGLRendererTraits mRendererTraits;
 	const tpRendererTraits& getTraits() const { return mRendererTraits; }
 
-	void operator()(tpNode* node)
+
+	void operator()(tpScene* scene)
 	{
+		static int count(0);
 
 		tpTimer t;
+		for (tpRefCameraArray::iterator it = scene->getCameras().begin();
+			 it != scene->getCameras().end();
+			 ++it)
+		{
+			this->onCamera((*it).get());
+			this->onNode((*it).get());
+		}
 
-		tpCamera* camera = getActiveCamera();
+//		if (0 == (count % 100))
+//		{
+//			tpLogNotify("t %lf",t.getElapsed(tpTimer::kTimeMilliSeconds));
+//		}
+	}
+
+
+	void
+	onCamera(const tpCamera* camera)
+	{
 
 		tpUInt glclearflag(0);
 		if (camera->hasClearFlag(tpCamera::kClearColor))
@@ -223,7 +242,13 @@ public:
 		}
 
 		if (glclearflag) glClear(glclearflag);
+	}
 
+	void
+	onNode(tpNode* node)
+	{
+
+		tpTimer t;
 
 		// ok, now we can bail out if there are actually no nodes
 		if (0 == node) return;
@@ -243,11 +268,11 @@ public:
 //		glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 
 		// setup lights
-		tpNodeMatrixMap nodemap_lights = tpNodeOps::getNodeMatrixMap(node,tpLight::getTypeInfo());
+		tpNodeMatrixStackMap nodemap_lights = tpNodeOps::getNodeMatrixStackMap(node,tpLight::getTypeInfo());
 
 		if (nodemap_lights.getSize())
 		{
-            for (tpNodeMatrixMap::iterator i = nodemap_lights.begin();
+			for (tpNodeMatrixStackMap::iterator i = nodemap_lights.begin();
 				 i != nodemap_lights.end();
 				 ++i)
 			{
@@ -256,9 +281,9 @@ public:
 		}
 
 		// render nodes
-		tpNodeMatrixMap nodemap_primitives = tpNodeOps::getNodeMatrixMap(node,tpPrimitive::getTypeInfo());
+		tpNodeMatrixStackMap nodemap_primitives = tpNodeOps::getNodeMatrixStackMap(node,tpPrimitive::getTypeInfo());
 
-		for (tpNodeMatrixMap::iterator i = nodemap_primitives.begin();
+		for (tpNodeMatrixStackMap::iterator i = nodemap_primitives.begin();
 			 i != nodemap_primitives.end();
 			 ++i)
 		{
@@ -276,13 +301,14 @@ public:
 //					t.getElapsed(tpTimer::kTimeMilliSeconds));
 	}
 
-	void operator ()(const tpLight& light, const tpMat44r& modelmatrix)
+	void operator ()(const tpLight& light, const tpMatrixStack& stack)
 	{
 
-		tpCamera* camera = getActiveCamera();
+//		tpCamera* camera = getActiveCamera();
 
 		// just compile the modelviewprojection matrix (prepared for OpenGL 2.0 / ES 2.0)
-		tpMat<4,4,float> mvp = modelmatrix * camera->getViewInverse() * camera->getProjection();
+//		tpMat<4,4,float> mvp = stack.model * camera->getViewInverse() * camera->getProjection();
+		tpMat<4,4,float> mvp = stack.model * stack.view * stack.projection;
 
 		// HACK!
 		mvp.at(11) += light.getPosition()[0];
@@ -327,17 +353,17 @@ public:
 		glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, actual_mat->getShininess() );
 	}
 
-	void operator()(const tpPrimitive& prim,const tpMat44r& modelmatrix)
+	void operator()(const tpPrimitive& prim,const tpMatrixStack& stack)
 	{
 
-        // first setup the lighting
-        if (prim.getLighting())
-        {
-            glEnable(GL_LIGHTING);
-        } else
-        {
-            glDisable(GL_LIGHTING);
-        }
+		// first setup the lighting
+		if (prim.getLighting())
+		{
+			glEnable(GL_LIGHTING);
+		} else
+		{
+			glDisable(GL_LIGHTING);
+		}
 
 		if (prim.hasTexture()) {
 			(*this)(const_cast<tpTexture*>(prim.getTexture()));
@@ -345,13 +371,16 @@ public:
 			(*this)(prim.getMaterial());
 		}
 
-		tpCamera* camera = getActiveCamera();
+//		tpCamera* camera = getActiveCamera();
 
 		// we are using our own transformation stack
 		glMatrixMode(GL_MODELVIEW);
 
 //		 hence just compile the modelviewprojection matrix (prepared for OpenGL 2.0 / ES 2.0)
-		tpMat<4,4,float> mvp = modelmatrix * camera->getViewInverse() * camera->getProjection();
+//		tpMat<4,4,float> mvp = stack.model * camera->getViewInverse() * stack.projection;
+
+		// actually the view matrix is the view inverse already
+		tpMat<4,4,float> mvp = stack.model * stack.view * stack.projection;
 
 		// load on the stack
 		glLoadMatrixf(mvp.data());

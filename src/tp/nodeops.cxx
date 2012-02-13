@@ -1,5 +1,10 @@
 #include <tp/nodeops.h>
 #include <tp/transform.h>
+#include <tp/projection.h>
+#include <tp/camera.h>
+
+#include <tp/log.h>
+#include <tp/logutils.h>
 
 struct tpLeafNodeCollector : tpTraverser {
 
@@ -184,6 +189,61 @@ tpNodeOps::getNodeMatrixMap(const tpNode *node,const tpRTTI* rtti)
 		}
 
 		result.add((*i).front(),m);
+	}
+
+	return result;
+}
+
+tpNodeMatrixStackMap
+tpNodeOps::getNodeMatrixStackMap(const tpNode *node, const tpRTTI *rtti)
+{
+
+	tpNodeMatrixStackMap result;
+	tpNodeArray typednodes;
+
+	tpNodeTypeCollector ntc(typednodes,rtti);
+	const_cast<tpNode*>(node)->traverse(ntc);
+
+	tpNodeArrayArray nodearray;
+
+	for (tpNodeArray::iterator i = typednodes.begin();
+		 i != typednodes.end();
+		 ++i)
+
+	{
+		tpNodeArrayArray localresult;
+		tpNodePathCollector npc(localresult);
+		const_cast<tpNode*>(*i)->traverse(npc);
+
+		localresult.reverse();
+
+		nodearray.append(localresult);
+	}
+
+	for (tpNodeArrayArray::iterator i = nodearray.begin();
+		 i != nodearray.end();
+		 ++i)
+	{
+		tpMatrixStack matrixstack;
+
+		for (tpNodeArray::iterator j = (*i).begin();
+			 j != (*i).end();
+			 ++j)
+		{
+			tpTransform* t = (*j)->getType()->self_cast<tpTransform>(*j);
+			if (t)
+			{
+				t->getMatrix(true,matrixstack.model);
+			}
+			tpCamera* camera = (*j)->getType()->self_cast<tpCamera>(*j);
+			if (camera)
+			{
+				matrixstack.projection = camera->getProjection();
+				matrixstack.view = camera->getViewInverse();
+			}
+		}
+
+		result.add((*i).front(),matrixstack);
 	}
 
 	return result;

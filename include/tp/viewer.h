@@ -31,13 +31,13 @@
 #include <tp/rendersurface.h>
 #include <tp/renderer.h>
 #include <tp/camera.h>
+#include <tp/scene.h>
 
 class tpViewer : public tpReferenced {
 
 	tpRefPtr<tpRenderSurface> mSurface;
 	tpRefPtr<tpRenderer> mRenderer;
-	tpRefPtr<tpCamera> mCamera;
-	tpRefPtr<tpNode> mScene;
+	tpRefPtr<tpScene> mScene;
 
 public:
 
@@ -47,12 +47,13 @@ public:
 
 	void frame();
 
-	void run();
+	int run();
 
 	virtual void onSurfaceEvent(tpRenderSurfaceEvent &e);
 
-	void setScene(tpNode *scene);
-	tpNode *getScene();
+	tpScene& getScene() {
+		return *mScene.get();
+	}
 
 };
 

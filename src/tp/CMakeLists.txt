@@ -238,10 +238,12 @@ set(tp_hdrs_sg
 	${tp_include_path}/tp/nodeops.h
 	${tp_include_path}/tp/object.h
 	${tp_include_path}/tp/primitive.h
+	${tp_include_path}/tp/projection.h
 	${tp_include_path}/tp/renderable.h
 	${tp_include_path}/tp/renderer.h
 	${tp_include_path}/tp/rendercontext.h
 	${tp_include_path}/tp/rendersurface.h
+	${tp_include_path}/tp/scene.h
 	${tp_include_path}/tp/texture.h
 	${tp_include_path}/tp/transform.h
 	${tp_include_path}/tp/traverser.h
@@ -255,10 +257,12 @@ set(tp_srcs_sg
 	nodeops.cxx
 	object.cxx
 	primitive.cxx
+	projection.cxx
 	renderable.cxx
 	renderer.cxx
 	rendercontext.cxx
 	rendersurface.cxx
+	scene.cxx
 	sound.cxx
 	texture.cxx
 	transform.cxx

@@ -6,8 +6,27 @@
 #include <tp/map.h>
 #include <tp/mat.h>
 
+
+struct tpMatrixStack {
+
+	tpMat44r model;
+	tpMat44r view;
+	tpMat44r projection;
+
+	bool cameraOverride;
+
+	tpMatrixStack()
+		: model(tpMat44r::Identity())
+		, view(tpMat44r::Identity())
+		, projection(tpMat44r::Identity())
+		, cameraOverride(false)
+	{
+	}
+};
+
 typedef tpStack<tpNode*> tpNodeStack;
 typedef tpMap<tpNode*,tpMat44r> tpNodeMatrixMap;
+typedef tpMap<tpNode*,tpMatrixStack> tpNodeMatrixStackMap;
 
 /**
   * This implements some essential traversal techniques that
@@ -48,6 +67,8 @@ struct tpNodeOps {
 	static tpNodeArrayArray getNodePathsOfType(const tpNode *node, const tpRTTI *rtti);
 
 	static tpNodeMatrixMap getNodeMatrixMap(const tpNode *node, const tpRTTI *rtti);
+
+	static tpNodeMatrixStackMap getNodeMatrixStackMap(const tpNode *node, const tpRTTI *rtti);
 };
 
 

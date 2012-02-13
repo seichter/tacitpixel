@@ -27,6 +27,8 @@
 #define TP_MATOP_H
 
 #include <tp/mat.h>
+
+
 /**
   * @brief just a stub for typical OpenGL matrix operations
   */
@@ -83,7 +85,7 @@ struct tpMat44Op {
 	  * @param matOut output of the calculation
 	  */
 	template <typename T>
-	static void frustum(T Left,T Right,T Bottom,T Top, T Near, T Far,tpMat44<T>& matOut)
+	static void frustum(T Left,T Right,T Bottom,T Top, T Near, T Far,tpMat<4,4,T>& matOut)
 	{
 		matOut.fill(0);
 
@@ -108,7 +110,7 @@ struct tpMat44Op {
 	  * @param matOut output of the calculation
 	  */
 	template <typename T>
-	static void perspective(T FovY, T Aspect, T Near, T Far, tpMat44<T>& matOut)
+	static void perspective(T FovY, T Aspect, T Near, T Far, tpMat<4,4,T>& matOut)
 	{
 
 		T ymax = Near * (T)tan( FovY * TP_PI / T(360) );
@@ -130,7 +132,7 @@ struct tpMat44Op {
 	  * @param matOut output of the calculation
 	  */
 	template <typename T>
-	static void ortho(T Left, T Right, T Bottom, T Top, T Near, T Far, tpMat44<T>& matOut)
+	static void ortho(T Left, T Right, T Bottom, T Top, T Near, T Far, tpMat<4,4,T>& matOut)
 	{
 		matOut.fill(0);
 		matOut(0,0) =  2 / (Right-Left);

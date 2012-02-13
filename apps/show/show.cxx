@@ -92,7 +92,6 @@ int main(int argc,char* argv[])
 		return -1;
 	}
 
-
 	tpRefPtr<tpLight> l = new tpLight();
 	l->setPosition(tpVec3f(5,5,5));
 	l->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
@@ -100,10 +99,15 @@ int main(int argc,char* argv[])
 	root->addChild(l.get());
 
 
-    tpRefPtr<tpViewer> viewer = new tpViewer();
-    viewer->create();
-    viewer->setScene(root.get());
-    viewer->run();
+	tpRefPtr<tpViewer> viewer = new tpViewer();
+
+	viewer->getScene().getActiveCamera()->addChild(root.get());
+	viewer->getScene().getActiveCamera()->setClearColor(tpVec4f(.5,.5,.5,1));
+	viewer->getScene().getActiveCamera()->setClearFlags(tpCamera::kClearDepth | tpCamera::kClearColor);
+
+
+	viewer->create();
+	viewer->run();
 
 	return 0;
 }

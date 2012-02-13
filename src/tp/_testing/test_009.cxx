@@ -35,8 +35,10 @@ int main(int argc,char* argv[]) {
 
 
 	tpRefPtr<tpViewer> viewer = new tpViewer();
+
+	viewer->getScene().getActiveCamera()->addChild(root.get());
+
 	viewer->create();
-	viewer->setScene(root.get());
 	viewer->run();
 
 	return 0;

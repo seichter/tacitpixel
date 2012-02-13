@@ -101,14 +101,14 @@ int main(int argc, char* argv[])
 		exit(-1);
 	}
 
-	tpRefPtr<tpCamera> camera = renderer->getActiveCamera();
+//	tpRefPtr<tpCamera> camera = renderer->getActiveCamera();
 
-	camera->setProjectionPerspective(60.0f,1.3f,0.1f,1000.0f);
-	camera->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
+//	camera->setProjectionPerspective(60.0f,1.3f,0.1f,1000.0f);
+//	camera->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
 
-	camera->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
-	camera->setClearColor(tpVec4f(0.5f,0.5f,0.9f,1.0f));
-	camera->setViewport(tpVec4i(0,0,640,480));
+//	camera->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
+//	camera->setClearColor(tpVec4f(0.5f,0.5f,0.9f,1.0f));
+//	camera->setViewport(tpVec4i(0,0,640,480));
 
 	if (rendersurface.isValid())
 	{
@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
 
 		rendersurface = 0;
 		renderer = 0;
-		camera = 0;
+//		camera = 0;
 	}
 
 	return 0;

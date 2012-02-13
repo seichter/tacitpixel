@@ -41,7 +41,7 @@ int main(int argc,char* argv[])
 
 
 
-	tpMat44r m; m.identity();  m.scale(.025,.025,.025);
+	tpMat44r m; m.identity();  m.scale(.01,.01,.01);
 	t->setMatrix(m);
 
 	tpRefPtr<tpLight> light = new tpLight();
@@ -54,7 +54,13 @@ int main(int argc,char* argv[])
 
 	tpRefPtr<tpMyViewer> viewer = new tpMyViewer();
 
-	viewer->setScene(root.get());
+
+	viewer->getScene().getActiveCamera()->addChild(root.get());
+	viewer->getScene().getActiveCamera()->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
+	viewer->getScene().getActiveCamera()->setClearColor(tpVec4f(0,.15f,.3f,1.f));
+
+
+
 	viewer->create();
 	viewer->run();
 

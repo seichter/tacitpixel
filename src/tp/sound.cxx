@@ -134,9 +134,6 @@ public:
 class tpSound : public tpReferenced {
 public:
 
-
-	virtual bool isPlaying() = 0;
-
 	virtual void create() = 0;
 
 	virtual void destroy() = 0;
@@ -145,9 +142,8 @@ public:
 
 	virtual bool update() = 0;
 
+	virtual bool isPlaying() = 0;
 
-
-protected:
 };
 
 
@@ -224,8 +220,6 @@ public:
 
 		return false;
 	}
-
-
 
 
 	bool

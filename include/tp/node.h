@@ -88,6 +88,11 @@ public:
 	//! remove child node
 	tpNode* removeChild(tpNode* node);
 
+	tpNode* removeChild(tpUInt idx);
+
+	//! removes all children nodes
+	void removeAllChildren();
+
 	//! set child node
 	bool setChild(tpSizeT idx,tpNode* node);
 
@@ -134,6 +139,10 @@ public:
 
 	void setRenderNode(tpRenderNode* rn) { mRenderNode = rn; }
 	tpRenderNode* getRenderNode() { return mRenderNode.get(); }
+
+	tpRefNodeArray& getChildren() { return mChildren; }
+	const tpRefNodeArray& getChildren() const { return mChildren; }
+
 
 protected:
 

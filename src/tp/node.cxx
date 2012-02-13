@@ -103,6 +103,29 @@ tpNode::removeChild(tpNode* node)
 	return node;
 }
 
+//! remove child node
+tpNode*
+tpNode::removeChild(tpUInt idx)
+{
+	if (idx >= mChildren.getSize()) return 0;
+
+	tpRefPtr<tpNode> node = mChildren[idx];
+	tpSizeT idx_p = node->mParents.find(this);
+
+	mChildren.erase(idx);
+	node->mParents.erase(node->mParents.begin() + idx_p);
+
+	return node.get();
+}
+
+void
+tpNode::removeAllChildren()
+{
+	while (this->getChildCount() > 0)
+	{
+		this->removeChild(mChildren.getSize()-1);
+	}
+}
 
 void
 tpNode::setUpdateFlags(tpUInt flag,bool add /*= true*/)

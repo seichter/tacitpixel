@@ -25,7 +25,7 @@ struct tpFontRasterizer {
 		if (ffile.open(name,"rb")) {
 
 			mImage = new tpImage();
-            mImage->allocate(512,512,tpPixelFormat::kGray_8);
+			mImage->allocate(512,512,tpPixelFormat::kGray_8);
 
 			if (name.afterLast('.') == "ttc") {
 
@@ -45,7 +45,7 @@ struct tpFontRasterizer {
 
 		prim.clearAll();
 		prim.setAttributes(tpPrimitive::kAttributeVertex|tpPrimitive::kAttributeNormals|tpPrimitive::kAttributeUV);
-        prim.setLighting(false);
+		prim.setLighting(false);
 
 		float x(0),y(0);
 
@@ -55,23 +55,13 @@ struct tpFontRasterizer {
 
 			float h = q.t1 - q.t0;
 
-			// hack! this should be parameterized
-//			x-=1;
-
 			tpVec3f normal(0,0,1);
 
 			// GLES doesn't like Quads!
 //#define TP_ALLOW_QUAD 1
 #if TP_ALLOW_QUAD
 
-			tpLogMessage("T: %3.3f %3.3f",q.t0,q.t1);
-
 			prim.setPrimitiveType(tpPrimitive::kQuads);
-
-//			prim.addVertex(tpVec3f(q.x0,q.y0,0),normal,tpVec2f(q.s0,q.t1)); // v0
-//			prim.addVertex(tpVec3f(q.x1,q.y0,0),normal,tpVec2f(q.s1,q.t1)); // v1
-//			prim.addVertex(tpVec3f(q.x1,q.y1,0),normal,tpVec2f(q.s1,q.t0)); // v2
-//			prim.addVertex(tpVec3f(q.x0,q.y1,0),normal,tpVec2f(q.s0,q.t0)); // v3
 
 			// unlike the suggested version tex-coordinates are upside down and
 			// we move the vertices into positive y direction - check with

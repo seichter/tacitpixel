@@ -10,17 +10,10 @@
 #include <tp/thread.h>
 
 
-tpViewer::tpViewer() : tpReferenced() {}
-
-
-void
-tpViewer::setScene(tpNode* scene) {
-	mScene = scene;
-}
-
-tpNode*
-tpViewer::getScene() { return mScene.get(); }
-
+tpViewer::tpViewer()
+	: tpReferenced()
+	, mScene(new tpScene())
+{}
 
 bool
 tpViewer::create(const tpString& title/* = "tpViewer"*/,
@@ -36,18 +29,6 @@ tpViewer::create(const tpString& title/* = "tpViewer"*/,
 	mSurface->setContext(0);
 
 	if (!mRenderer.isValid() || !mSurface.isValid() || !mSurface->hasContext()) return false;
-
-	mCamera = mRenderer->getActiveCamera();
-	mCamera->setName("Default");
-
-	mCamera->setProjectionPerspective(60.0f,1.3f,0.1f,1000.0f);
-	mCamera->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
-
-
-	mCamera->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
-	mCamera->setClearColor(tpVec4f(0.5f,0.5f,0.9f,1.0f));
-
-	mCamera->setViewport(tpVec4i(0,0,w,h));
 
 	mSurface->show(true);
 
@@ -74,7 +55,7 @@ tpViewer::frame() {
 tpViewer::onSurfaceEvent(tpRenderSurfaceEvent& e) {
 }
 
-void
+int
 tpViewer::run() {
 
 	// now also bind the event handler
@@ -83,5 +64,7 @@ tpViewer::run() {
 	while (mSurface->isValid()) {
 		this->frame();
 	}
+
+	return 0;
 }
 

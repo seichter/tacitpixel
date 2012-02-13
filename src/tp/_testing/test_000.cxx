@@ -143,8 +143,8 @@ int main(int argc, char* argv[])
 
 	tpRefPtr<tpReferenced> r(new tpReferenced());
 
-	tpMat44<float> m44f;
-	tpMat44<tpFixed32> m44x;
+	tpMat44f m44f;
+	tpMat44x m44x;
 
 	m44f.identity();
 	m44x.identity();

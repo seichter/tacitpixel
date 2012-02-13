@@ -32,8 +32,6 @@ TP_TYPE_REGISTER(tpRenderer,tpReferenced,Renderer);
 
 tpRenderer::tpRenderer()
 	: tpReferenced()
-	, mCameras(tpRefCameraArray())
-	, mActiveCamera(0)
 {
 }
 
@@ -46,52 +44,6 @@ tpRenderer::~tpRenderer()
 {
 }
 
-tpRenderer & tpRenderer::operator =(const tpRenderer &rhs)
-{
-	if (this != &rhs) {
-		mCameras = rhs.mCameras;
-		mActiveCamera = rhs.mActiveCamera;
-	}
-
-	return *this;
-}
-
-
-tpCamera * tpRenderer::getActiveCamera()
-{
-	if (mCameras.isEmpty())
-	{
-		tpCamera* camera = new tpCamera();
-		addCamera(camera,true);
-		mActiveCamera = 0;
-	}
-
-	return mCameras[mActiveCamera].get();
-}
-
-void
-tpRenderer::setActiveCamera(tpUInt camera)
-{
-	if (camera < mCameras.getSize())
-	{
-		mActiveCamera = camera;
-	}
-}
-
-
-void
-tpRenderer::addCamera(tpCamera *camera,
-						   bool makeActive /*= true*/)
-{
-	if (makeActive) mActiveCamera = mCameras.getSize();
-	mCameras.add(camera);
-}
-
-void
-tpRenderer::removeCamera(tpCamera *camera)
-{
-	mCameras.erase(mCameras.find(camera));
-}
 
 tpRenderer* tpRenderer::create( const tpRendererTraits& traits )
 {
@@ -99,8 +51,6 @@ tpRenderer* tpRenderer::create( const tpRendererTraits& traits )
 	tpRenderer* renderer = 0;
 
 	tpModuleList modules = tpModuleManager::get()->getModules();
-
-	tpLogNotify("%s has %d module(s)",__FUNCTION__,modules.getSize());
 
 	for (tpUInt i = 0; i < modules.getSize(); i++)
 	{
