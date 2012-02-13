@@ -28,7 +28,7 @@
 #include <tp/logutils.h>
 
 tpCamera::tpCamera()
-	: tpObject()
+	: tpNode()
 {
 	// default OpenGL
 	setProjectionOrtho(-1,1,-1,1,1,-1);
@@ -38,7 +38,7 @@ tpCamera::tpCamera()
 
 tpCamera::tpCamera(const tpCamera& cam)
 {
-    tpCamera();
+	tpCamera();
 	*this = cam;
 }
 

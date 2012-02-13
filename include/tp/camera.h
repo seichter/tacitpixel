@@ -26,7 +26,7 @@
 #define TP_CAMERA_H 1
 
 
-#include <tp/object.h>
+#include <tp/node.h>
 #include <tp/mat.h>
 #include <tp/matop.h>
 #include <tp/vec.h>
@@ -38,7 +38,7 @@
 	pass a pointer to a camera (tpCamera) to the
 	respective renderengine (tpRenderEngine)
  */
-class TP_API tpCamera : public tpObject {
+class TP_API tpCamera : public tpNode {
 public:
 
 	TP_TYPE_DECLARE
