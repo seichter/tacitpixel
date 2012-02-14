@@ -32,7 +32,7 @@
 /**
   * @brief just a stub for typical OpenGL matrix operations
   */
-struct tpMat44Op {
+struct TP_API tpMat44Op {
 
 	/**
 	  * @brief OpenGL based lookAt implementation

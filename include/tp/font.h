@@ -34,11 +34,13 @@
 #include <tp/primitive.h>
 #include <tp/string.h>
 
-struct tpFontRasterizer;
 
-class tpFont : public tpReferenced {
+class TP_API tpFont : public tpReferenced {
 protected:
-	tpScopePtr<tpFontRasterizer> mRasterizer;
+
+	class Rasterizer;
+	tpScopePtr<Rasterizer> mRasterizer;
+
 public:
 
 	tpFont();

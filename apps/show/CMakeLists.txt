@@ -7,7 +7,7 @@ set(srcs
 	)
 
 add_executable(tacitshow
-	WIN32 MACOSX_BUNDLE
+	MACOSX_BUNDLE
 	${srcs})
 
 

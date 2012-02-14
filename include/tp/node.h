@@ -48,7 +48,7 @@ class TP_API tpRenderNode : public tpReferenced {
 public:
 	virtual void operator()(tpNode* node,tpRenderer* renderer) = 0;
 protected:
-	virtual ~tpRenderNode();
+	virtual ~tpRenderNode() {}
 };
 
 /*!

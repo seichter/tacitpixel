@@ -30,6 +30,9 @@
 #include <tp/types.h>
 #include <tp/scopeptr.h>
 
+
+class tpThread;
+
 /**
   * @brief wrapper for running code within threads or timers
   */

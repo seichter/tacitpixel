@@ -39,23 +39,22 @@
 template <class T> class tpScopePtr
 {
 public:
-	/*! brief standard c'tor
-	*/
-	tpScopePtr();
 
-	/*! c'tor with initializing pointer
-		\param ptr pointer to manage
-	*/
-	tpScopePtr(T* ptr);
+	typedef T ScopePtrType;
 
-	/*! copy c'tor
-		\param ref reference pointer to copy
-	*/
-	tpScopePtr(const tpScopePtr& ref);
+	/**
+	 * initializing the pointer
+	 */
+	explicit tpScopePtr(T* ptr = 0);
+
+	///*! copy c'tor
+	//	\param ref reference pointer to copy
+	//*/
+	//tpScopePtr(const tpScopePtr& ref);
 
 	/*! d'tor
 	*/
-	virtual ~tpScopePtr();
+	~tpScopePtr();
 
 	/*! get the pointer
 	*/
@@ -66,49 +65,50 @@ public:
 	*/
 	T& operator *() const;
 
-	/*! copy operator
-		\param ptr pointer to manage
-		\result reference to this ptr
-	*/
-	tpScopePtr<T>& operator=(T* ptr);
+	///*! copy operator
+	//	\param ptr pointer to manage
+	//	\result reference to this ptr
+	//*/
+	//tpScopePtr<T>& operator=(T* ptr);
 
 	void set(T* ptr);
-
-	//! assignment
-	tpScopePtr<T>& operator=(const tpScopePtr& ref);
 
 	//! return true if pointer is in use
 	bool isValid() const;
 
-
 protected:
-	T* m_ptr;
+
+	T* mPtr;
 	void cleanup();
+
+private:
+
+	//! assignment
+	tpScopePtr& operator=(const tpScopePtr& ref) {}
+	tpScopePtr(const tpScopePtr& ref) {}
+
 
 };
 
 // ----------------------------------------------------------------------------------------
 
-template <class T> inline
-tpScopePtr<T>::tpScopePtr()
-	: m_ptr(NULL)
-{
-}
 
 template <class T> inline
-tpScopePtr<T>::tpScopePtr(T* ptr)
-	: m_ptr(ptr)
+tpScopePtr<T>::tpScopePtr(T* ptr /* = 0*/)
+	: mPtr(ptr)
 {
 }
 
 
-template <class T> inline tpScopePtr<T>::tpScopePtr(const tpScopePtr& ref)
-	: m_ptr(ref.m_ptr)
-{
-}
+//template <class T> inline 
+//tpScopePtr<T>::tpScopePtr(const tpScopePtr& ref)
+//	: mPtr(ref.mPtr)
+//{
+//}
 
 
-template <class T> inline tpScopePtr<T>::~tpScopePtr()
+template <class T> inline 
+tpScopePtr<T>::~tpScopePtr()
 {
 	this->cleanup();
 }
@@ -116,48 +116,40 @@ template <class T> inline tpScopePtr<T>::~tpScopePtr()
 
 template <class T> inline T* tpScopePtr<T>::operator->() const
 {
-	return m_ptr;
+	return mPtr;
 }
 
 
 template <class T> inline T& tpScopePtr<T>::operator *() const
 {
-	return *m_ptr;
+	return *mPtr;
 }
 
 
-template <class T> inline tpScopePtr<T>& tpScopePtr<T>::operator=(T* ptr)
+template <class T> inline void tpScopePtr<T>::set(T* ptr /* = 0 */)
 {
 	cleanup();
-	m_ptr = ptr;
-	return *this;
+	mPtr = ptr;
 }
 
 
-template <class T> inline void tpScopePtr<T>::set(T* ptr)
-{
-	cleanup();
-	m_ptr = ptr;
-}
-
-
-template <class T> inline tpScopePtr<T>& tpScopePtr<T>::operator=(const tpScopePtr<T>& ref)
-{
-	if (this->m_ptr == ref.m_ptr) return *this;
-	if (ref.m_ptr) m_ptr = ref.m_ptr;
-	return *this;
-}
+//template <class T> inline tpScopePtr<T>& tpScopePtr<T>::operator=(const tpScopePtr<T>& ref)
+//{
+//	if (mPtr == ref.mPtr) return *this;
+//	if (ref.mPtr) mPtr = ref.mPtr;
+//	return *this;
+//}
 
 
 template <class T> inline void tpScopePtr<T>::cleanup()
 {
-	if (m_ptr != NULL) delete m_ptr;
+	if (mPtr != NULL) delete mPtr;
 }
 
 
 template <class T> inline bool tpScopePtr<T>::isValid() const
 {
-	return (m_ptr != NULL);
+	return (mPtr != NULL);
 }
 
 #endif

@@ -12,6 +12,7 @@
 #include <tp/scene.h>
 
 
+
 //#if defined(__APPLE__)
 //    #include <OpenGL/OpenGL.h>
 //#elif defined(_WIN32)
@@ -25,8 +26,12 @@
 #if defined(TP_USE_OPENGL)
 	#if defined(__APPLE__)
 		#include <OpenGL/gl.h>
-	#else
+	#elif defined(_WIN32)
+		#define WIN32_LEAN_AND_MEAN 1
+		#include <Windows.h>
 		#include <GL/gl.h>
+		#define GL_BGR GL_BGR_EXT
+		#define GL_BGRA GL_BGRA_EXT 
 	#endif
 #endif
 
@@ -101,7 +106,7 @@ public:
 	}
 
 	void create(tpTexture &texture) {
-		glActiveTexture(GL_TEXTURE0);
+//		glActiveTexture(GL_TEXTURE0);
 		glGenTextures(1,&mGLID);
 
 		glErrorCheck;

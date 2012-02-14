@@ -51,3 +51,9 @@ add_library(ogg STATIC
 	src/bitwise.c
 	src/framing.c)
 
+
+set_target_properties(ogg
+	PROPERTIES
+	PROJECT_LABEL "Dependency libogg"
+	)
+

@@ -24,6 +24,13 @@ set(SRCS
 	lib3ds_viewport.c
 	)
 
+
+set_source_files_properties(
+	${SRCS}
+	PROPERTIES
+	COMPILE_FLAGS "-DLIB3DS_STATIC"
+	)
+
 if(NOT WIN32)
 	add_definitions(-fPIC)
 endif(NOT WIN32)

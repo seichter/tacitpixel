@@ -13,37 +13,6 @@
 
 #include "_impl/soundstream_ogg.h"
 
-#if defined(TP_USE_OPENAL)
-	#if defined(__APPLE__)
-		#include <OpenAL/al.h>
-		#include <OpenAL/alc.h>
-	#else
-		#include <AL/al.h>
-		#include <AL/alc.h>
-	#endif
-#endif
-
-static
-const char* alGetErrorName(ALuint error) {
-	switch (error) {
-	case AL_NO_ERROR:
-		return "no error";
-	case AL_INVALID_NAME:
-		return "invalid name";
-	case AL_INVALID_ENUM:
-		return "invalid enum";
-	case AL_INVALID_VALUE:
-		return "invalid value";
-	case AL_INVALID_OPERATION:
-		return "invalid operation";
-	case AL_OUT_OF_MEMORY:
-		return "out of memory";
-  }
-	return "N/A";
-}
-
-#define alCheckError() \
-	if (int err = alGetError()) tpLogNotify("OpenAL error %d (0x%x) '%s' %d",err,err,alGetErrorName(err),__LINE__)
 
 
 bool
@@ -74,6 +43,42 @@ tpSoundStream::read(tpArray<tpChar> &buffer, tpUInt &format, tpUInt &freq)
 {
 	return (mImp.isValid()) ? mImp->read(buffer,format,freq) : false;
 }
+
+
+#if defined(TP_USE_OPENAL)
+	#if defined(__APPLE__)
+		#include <OpenAL/al.h>
+		#include <OpenAL/alc.h>
+	#elif defined(_WIN32)
+		#include <al.h>
+		#include <alc.h>
+	#else
+		#include <AL/al.h>
+		#include <AL/alc.h>
+	#endif
+
+static
+const char* alGetErrorName(ALuint error) {
+	switch (error) {
+	case AL_NO_ERROR:
+		return "no error";
+	case AL_INVALID_NAME:
+		return "invalid name";
+	case AL_INVALID_ENUM:
+		return "invalid enum";
+	case AL_INVALID_VALUE:
+		return "invalid value";
+	case AL_INVALID_OPERATION:
+		return "invalid operation";
+	case AL_OUT_OF_MEMORY:
+		return "out of memory";
+  }
+	return "N/A";
+}
+
+#define alCheckError() \
+	if (int err = alGetError()) tpLogNotify("OpenAL error %d (0x%x) '%s' %d",err,err,alGetErrorName(err),__LINE__)
+
 
 
 
@@ -333,5 +338,5 @@ void tpSoundTest(const char* what) {
 
 	tpThread::sleep(2000);
 
-
 }
+#endif

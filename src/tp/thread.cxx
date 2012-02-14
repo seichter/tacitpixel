@@ -28,7 +28,7 @@
 // Includes for Windows and *nic'es
 #if defined(_WIN32)
 	#define WIN32_LEAN_AND_MEAN
-	#include <windows.h>
+	#include <Windows.h>
 #if !defined(WINCE)
 	#include <process.h>
 #else
@@ -38,6 +38,9 @@
 struct tpThreadHandle
 {
 	DWORD handle;
+
+	tpThreadHandle() : handle(0) {}
+	~tpThreadHandle() {}
 
 	static int dispatch(void* arg)
 	{
@@ -54,6 +57,9 @@ struct tpThreadHandle
 {
 	pthread_t handle;
 
+	tpThreadHandle() : handle(0) {}
+	~tpThreadHandle() {}
+
 	static void* dispatch(void* arg)
 	{
 		static_cast<tpThread*>(arg)->run();
@@ -65,7 +71,7 @@ struct tpThreadHandle
 
 tpThread::tpThread(tpRunnable* runnable)
 	: mState(kStateNew)
-	, mThreadHandle(0L)
+	, mThreadHandle(new tpThreadHandle())
 	, mRunnable(runnable)
 {
 }
@@ -80,12 +86,10 @@ tpThread::start()
 {
 
 #if defined(_WIN32)
-	mThreadHandle = new tpThreadHandle();
 	CreateThread( 0, 0,
 		reinterpret_cast<LPTHREAD_START_ROUTINE>(tpThreadHandle::dispatch),
 		this,0,reinterpret_cast<LPDWORD>(mThreadHandle->handle));
 #elif defined(HAVE_PTHREAD_H)
-	mThreadHandle = new tpThreadHandle();
 	pthread_create(&mThreadHandle->handle,0L,tpThreadHandle::dispatch,static_cast<void*>(this));
 	mState = kStateRun;
 #endif
@@ -132,6 +136,12 @@ tpThread::yield()
 {
 #if defined(HAVE_PTHREAD_H)
 	pthread_yield_np();
+#elif defined(_WIN32)
+	MSG msg;
+	if (PeekMessage(&msg,0,0,0,PM_REMOVE)) {
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
 #else
 	sleep(0);
 #endif

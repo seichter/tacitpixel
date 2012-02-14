@@ -7,7 +7,7 @@
 #include <tp/mat.h>
 
 
-struct tpMatrixStack {
+struct TP_API tpMatrixStack {
 
 	tpMat44r model;
 	tpMat44r view;
@@ -33,7 +33,7 @@ typedef tpMap<tpNode*,tpMatrixStack> tpNodeMatrixStackMap;
   * are used to dispatch the scenegraph into the rendering
   * hardware.
   */
-struct tpNodeOps {
+struct TP_API tpNodeOps {
 
 	/**
 	  * @brief traverses a node and returns all of it leafs

@@ -33,7 +33,7 @@
 #include <tp/camera.h>
 #include <tp/scene.h>
 
-class tpViewer : public tpReferenced {
+class TP_API tpViewer : public tpReferenced {
 protected:
 
 	tpRefPtr<tpRenderSurface> mSurface;

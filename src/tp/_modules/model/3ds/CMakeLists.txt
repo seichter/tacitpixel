@@ -12,10 +12,18 @@ set(srcs
 	nodehandler_3ds.cxx
 	)
 
+set_source_files_properties(
+	${srcs}
+	PROPERTIES
+	COMPILE_FLAGS "-DLIB3DS_STATIC"
+	)
+
+
 
 add_library(${module_name} MODULE
 	${srcs}
 	)
+
 
 
 target_link_libraries(${module_name}

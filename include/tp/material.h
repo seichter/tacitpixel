@@ -83,6 +83,6 @@ protected:
 	tpFloat m_transparency;
 };
 
-extern tpMaterial* tpDefaultMaterial;
+extern TP_API tpMaterial* tpDefaultMaterial;
 
 #endif

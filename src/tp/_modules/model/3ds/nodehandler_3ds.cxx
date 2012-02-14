@@ -88,7 +88,9 @@ tpNodeHandler_3DS::read(const tpString& name)
 
 	if (0 == file3ds) return 0;
 
-	lib3ds_file_eval(file3ds, file3ds->frames);
+	lib3ds_file_eval(file3ds, 0);
+	//
+	//lib3ds_file_eval(file3ds, file3ds->frames);
 	//lib3ds_file_create_nodes_for_meshes(file3ds);
 
 	tpLogNotify("\texporter %s",file3ds->name);

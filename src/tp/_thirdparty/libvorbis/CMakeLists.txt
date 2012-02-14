@@ -60,3 +60,9 @@ set(vorbis_hdrs
 include_directories(include ${CMAKE_CURRENT_SOURCE_DIR}/../libogg/include)
 
 add_library(vorbis STATIC ${vorbis_hdrs} ${vorbis_srcs} ${vorbis_pub_hdrs})
+
+set_target_properties(vorbis
+	PROPERTIES
+	PROJECT_LABEL "Dependency libvorbis"
+	)
+

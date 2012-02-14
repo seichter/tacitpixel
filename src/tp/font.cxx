@@ -8,12 +8,21 @@
 
 #include <stb_truetype/stb_truetype.h>
 
-struct tpFontRasterizer {
+class tpFont::Rasterizer {
+public:
 
 	tpRefPtr<tpImage> mImage;
 
 	tpImage* getImage() {
 		return mImage.get();
+	}
+
+	Rasterizer() 
+	{
+	}
+
+	~Rasterizer()
+	{
 	}
 
 	stbtt_bakedchar cdata[96]; // ASCII 32..126 is 95 glyphs
@@ -94,13 +103,15 @@ struct tpFontRasterizer {
 
 tpFont::tpFont()
 	: tpReferenced()
-	, mRasterizer(new tpFontRasterizer())
+	, mRasterizer(new tpFont::Rasterizer())
 {}
 
 bool
-tpFont::load(const tpString& name) {
-
+tpFont::load(const tpString& name) 
+{
 	mRasterizer->onLoad(name);
+
+	return mRasterizer->mImage.isValid();
 }
 
 void

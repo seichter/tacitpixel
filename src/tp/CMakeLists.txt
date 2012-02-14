@@ -174,6 +174,15 @@ if(X11_FOUND)
 
 endif()
 
+if(WIN32)
+	
+	list(APPEND tp_impl_srcs
+			_impl/rendersurface_win32.cxx
+			_impl/rendersurface_win32.h
+			_impl/rendercontext_wgl.cxx
+			_impl/rendercontext_wgl.h
+			)
+endif()
 
 
 

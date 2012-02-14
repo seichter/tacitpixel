@@ -29,9 +29,7 @@
 #include <tp/referenced.h>
 #include <tp/camera.h>
 
-class tpRendererTraits;
 class tpScene;
-
 
 struct tpRendererTraits {
 

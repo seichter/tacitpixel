@@ -30,5 +30,5 @@ add_library(z STATIC ${zlib_srcs})
 
 set_target_properties(z
 	PROPERTIES
-	PROJECT_LABEL "Dependency zlib"
-)
+	PROJECT_LABEL "Dependency libz"
+	)

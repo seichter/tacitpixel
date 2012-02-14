@@ -53,6 +53,7 @@ public:
 	}
 };
 
+
 int main(int argc,char* argv[])
 {
 	tpModuleManager::get()->load("obj,3ds,jpeg");
