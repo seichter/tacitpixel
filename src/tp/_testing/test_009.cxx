@@ -32,14 +32,14 @@ int main(int argc,char* argv[]) {
 
 	root->addChild(light.get());
 
-
-
 	tpRefPtr<tpViewer> viewer = new tpViewer();
 
 	viewer->getScene().getActiveCamera()->addChild(root.get());
+	viewer->getScene().getActiveCamera()->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
+	viewer->getScene().getActiveCamera()->setClearColor(tpVec4f(0,.15f,.3f,1.f));
+
 
 	viewer->create();
-	viewer->run();
-
-	return 0;
+	
+	return viewer->run();;
 }
