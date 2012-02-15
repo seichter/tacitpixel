@@ -17,7 +17,6 @@ public:
 			e.getRenderSurface()->setDone();
 			e.setHandled();
 		}
-		tpLogMessage("E!");
 	}
 };
 

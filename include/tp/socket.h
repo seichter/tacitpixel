@@ -80,7 +80,7 @@ enum tpSocketState
 class TP_API tpSocket : public tpReferenced {
 public:
 
-	TP_TYPE_DECLARE;
+    TP_TYPE_DECLARE
 
 	enum {
 		kTCP = 0x0,
