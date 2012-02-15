@@ -66,6 +66,10 @@ tpRenderContextGLX::create(tpRenderTarget *target)
                 mVendor = this->getString(GL_VENDOR);
                 mRenderer = this->getString(GL_RENDERER);
                 mExtensions = this->getString(GL_EXTENSIONS);
+
+                tpLogNotify("OpenGL %s %s",mVendor.c_str(),mVersion.c_str());
+
+
                 return true;
             }
         }
@@ -74,6 +78,7 @@ tpRenderContextGLX::create(tpRenderTarget *target)
         //window = glXCreateGLXPixmap(display,vi,window);
 
     }
+
 
     return false;
 }
@@ -105,7 +110,15 @@ tpRenderContextGLX::swapBuffers() {
 
 void
 tpRenderContextGLX::destroy() {
+
+    glXMakeCurrent(display,window,glxcontext);
+    glXDestroyContext(display,glxcontext);
 	// \todo implement!
+}
+
+tpRenderContextGLX::~tpRenderContextGLX()
+{
+    this->destroy();
 }
 
 tpString

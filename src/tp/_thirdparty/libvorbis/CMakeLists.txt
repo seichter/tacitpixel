@@ -61,6 +61,15 @@ include_directories(include ${CMAKE_CURRENT_SOURCE_DIR}/../libogg/include)
 
 add_library(vorbis STATIC ${vorbis_hdrs} ${vorbis_srcs} ${vorbis_pub_hdrs})
 
+
+if(CMAKE_COMPILER_IS_GNUCC)
+    set_target_properties(
+        vorbis
+        PROPERTIES
+        COMPILE_FLAGS -fPIC
+        )
+endif()
+
 set_target_properties(vorbis
 	PROPERTIES
 	PROJECT_LABEL "Dependency libvorbis"

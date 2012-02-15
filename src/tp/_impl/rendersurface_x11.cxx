@@ -107,21 +107,26 @@ tpRenderSurfaceX11::doCreate( tpRenderSurfaceTraits* traits ) {
 						&swa);
 */
 
+    Atom wmDelete=XInternAtom(dpy, "WM_DELETE_WINDOW", True);
+    XSetWMProtocols(dpy, win, &wmDelete, 1);
+
 	if (traits) setCaption(traits->getTitle());
 
+    XMapWindow(dpy, win);
 
-	XMapWindow(dpy, win);
-	XMapRaised(dpy, win);
-	XFlush(dpy);
-
-
-	XSync(dpy, 0 );
+    //XFlush(dpy);
 
 }
 
 bool
 tpRenderSurfaceX11::show(bool doShow)
 {
+    if (doShow) {
+        XRaiseWindow(dpy,win);
+    } else {
+        XLowerWindow(dpy,win);
+    }
+
 	return true;
 }
 
@@ -140,6 +145,11 @@ tpRenderSurfaceX11::update()
 		XEvent event;
 		XNextEvent(dpy,&event);
 
+        tpRenderSurfaceEvent e(this);
+        //e.setMousePosition(point.x,point.y);
+        e.setRenderSurface(this);
+        bool submit = false;
+
 		switch (event.type) {
 		case ConfigureNotify:
 			tpLogNotify("%s - configure",__FUNCTION__);
@@ -147,11 +157,11 @@ tpRenderSurfaceX11::update()
 		case KeyPress:
 		case KeyRelease:
 			{
-				tpRenderSurfaceEvent e(this);
 				XKeyEvent* ke = (XKeyEvent*)&event;
 				e.setKeyCode(ke->keycode);
 				tpLogNotify("%s - key pressed (%d)",__FUNCTION__,XKeycodeToKeysym(dpy,ke->keycode,0));			
 			}
+            submit = true;
 			break;
 		case ButtonPress:
 			tpLogNotify("%s - button pressed",__FUNCTION__);
@@ -160,18 +170,21 @@ tpRenderSurfaceX11::update()
 		case ClientMessage:
 			tpLogNotify("%s - request to close",__FUNCTION__);
 			this->setDone();
+            submit = true;
 			break;
 		default:
 			tpLogNotify("%s - got an unknown event %d",__FUNCTION__,event.type);
 			break;
 		}
+
+        if (submit) this->getEventHandler().process(e);
 	}
 }
 
 void
 tpRenderSurfaceX11::destroy()
 {
-    tpRenderTarget::setContext(0);
+    mContext = 0;
 
 	XDestroyWindow(dpy,win);
 	XCloseDisplay(dpy);
@@ -215,7 +228,7 @@ public:
 
 TP_TYPE_REGISTER(tpRenderSurfaceX11,tpRenderSurface,RenderSurfaceX11);
 TP_TYPE_REGISTER(tpRenderSurfaceFactoryX11,tpRenderSurfaceFactory,RenderSurfaceFactoryX11);
-TP_MODULE_REGISTER(x11surface,tpRenderSurfaceFactoryX11);
+TP_MODULE_REGISTER(x11surface,tpRenderSurfaceFactoryX11)
 
 
 #endif

@@ -61,3 +61,10 @@ set_target_properties(jpeg
 	PROJECT_LABEL "Dependency libjpeg"
 )
 
+if(CMAKE_COMPILER_IS_GNUCC)
+    set_target_properties(
+        jpeg
+        PROPERTIES
+        COMPILE_FLAGS -fPIC
+        )
+endif()

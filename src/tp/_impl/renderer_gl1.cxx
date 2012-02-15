@@ -32,7 +32,9 @@
 		#include <GL/gl.h>
 		#define GL_BGR GL_BGR_EXT
 		#define GL_BGRA GL_BGRA_EXT 
-	#endif
+    #else
+        #include <GL/gl.h>
+    #endif
 #endif
 
 

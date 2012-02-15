@@ -135,7 +135,8 @@ void
 tpThread::yield()
 {
 #if defined(HAVE_PTHREAD_H)
-	pthread_yield_np();
+    pthread_yield();
+//	pthread_yield_np();
 #elif defined(_WIN32)
 	MSG msg;
 	if (PeekMessage(&msg,0,0,0,PM_REMOVE)) {
