@@ -140,14 +140,23 @@ void
 tpRenderSurfaceX11::update()
 {
 
-	if (XPending(dpy)) {
+    XFlush(dpy);
+
+    if (XEventsQueued(dpy,QueuedAlready)) {
 	
 		XEvent event;
 		XNextEvent(dpy,&event);
 
         tpRenderSurfaceEvent e(this);
-        //e.setMousePosition(point.x,point.y);
+
+        tpPoint point;
+
+        Window temp_win;
+        unsigned int mask;
+        XQueryPointer(dpy,win,&temp_win,&temp_win,&point.x,&point.y,&point.x,&point.y,&mask);
+        e.setMousePosition(point.x,point.y);
         e.setRenderSurface(this);
+
         bool submit = false;
 
 		switch (event.type) {
@@ -157,14 +166,24 @@ tpRenderSurfaceX11::update()
 		case KeyPress:
 		case KeyRelease:
 			{
-				XKeyEvent* ke = (XKeyEvent*)&event;
-				e.setKeyCode(ke->keycode);
-				tpLogNotify("%s - key pressed (%d)",__FUNCTION__,XKeycodeToKeysym(dpy,ke->keycode,0));			
+                KeyCode kc = event.xkey.keycode;
+                KeySym ks = XKeycodeToKeysym(dpy, kc, 0);
+                tpString kstr = XKeysymToString(ks);
+                tpLogNotify("%s - key pressed %d (%s)",__FUNCTION__,kstr.c_str()[0],kstr.c_str());
+                e.setKeyCode(kstr.c_str()[0]);
+                e.setKeyState((event.type == KeyPress) ?
+                                  tpRenderSurfaceEvent::kKeyDown :
+                                  tpRenderSurfaceEvent::kKeyUp );
 			}
             submit = true;
 			break;
 		case ButtonPress:
-			tpLogNotify("%s - button pressed",__FUNCTION__);
+        case ButtonRelease:
+            e.setMouseKey(event.xbutton.button);
+            e.setMouseState((event.type == ButtonPress) ?
+                                tpRenderSurfaceEvent::kMouseDown :
+                                tpRenderSurfaceEvent::kMouseUp);
+            tpLogNotify("%s - button released/pressed (%d)",__FUNCTION__,event.xbutton.button);
 			break;
 		case DestroyNotify:
 		case ClientMessage:
@@ -172,6 +191,11 @@ tpRenderSurfaceX11::update()
 			this->setDone();
             submit = true;
 			break;
+        case Expose:
+        case MapNotify:
+        case ReparentNotify:
+            // just ignore those
+            break;
 		default:
 			tpLogNotify("%s - got an unknown event %d",__FUNCTION__,event.type);
 			break;
@@ -213,7 +237,7 @@ tpRenderSurfaceX11::setContext(tpRenderContext* context)
 class tpRenderSurfaceFactoryX11 : public tpRenderSurfaceFactory {
 public:
 
-    TP_TYPE_DECLARE;
+    TP_TYPE_DECLARE
 
     tpRenderSurfaceFactoryX11() : tpRenderSurfaceFactory()
     {

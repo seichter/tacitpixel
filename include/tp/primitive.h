@@ -142,7 +142,7 @@ public:
 	 */
 	virtual tpObject* clone();
 
-	void addVertex(const tpVec3<tpReal>& pos,
+    void addVertex(const tpVec4<tpReal>& position,
 		const tpVec3<tpReal>& normal = tpVec3r(0,0,1),
 		const tpVec2<tpReal>& tcoord = tpVec2r(0,1),
 		const tpVec4<tpReal>& color = tpVec4r(1,1,1,1));

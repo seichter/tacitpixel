@@ -216,6 +216,8 @@ public:
 	{
 		static int count(0);
 
+        count++;
+
 		tpTimer t;
 		for (tpRefCameraArray::iterator it = scene->getCameras().begin();
 			 it != scene->getCameras().end();
@@ -225,10 +227,10 @@ public:
 			this->onNode((*it).get());
 		}
 
-//		if (0 == (count % 100))
-//		{
-//			tpLogNotify("t %lf",t.getElapsed(tpTimer::kTimeMilliSeconds));
-//		}
+        if (0 == (count % 100))
+        {
+            tpLogNotify("t %lf ms",t.getElapsed(tpTimer::kTimeMilliSeconds));
+        }
 	}
 
 
@@ -271,8 +273,6 @@ public:
 		glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
 
 
-		//#define GL_SEPARATE_SPECULAR_COLOR 0x81FA
-//		glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 
 		// setup lights
 		tpNodeMatrixStackMap nodemap_lights = tpNodeOps::getNodeMatrixStackMap(node,tpLight::getTypeInfo());
@@ -283,7 +283,7 @@ public:
 				 i != nodemap_lights.end();
 				 ++i)
 			{
-				(*this)(*static_cast<tpLight*>((*i).getKey()),(*i).getValue());
+                onLight(*static_cast<tpLight*>((*i).getKey()),(*i).getValue());
 			}
 		}
 
@@ -295,7 +295,7 @@ public:
 			 ++i)
 		{
 			tpPrimitive* p = static_cast<tpPrimitive*>((*i).getKey());
-			(*this)(*p,(*i).getValue());
+            onPrimitive(*p,(*i).getValue());
 		}
 
 		glErrorCheck;
@@ -303,12 +303,12 @@ public:
 //		GLint error = glGetError();
 //		if (error) tpLogError("glGetError() 0x%x (%d)",error,error);
 
-//		tpLogNotify("%s %d lights %d nodes %3.3fms",
-//					__FUNCTION__,nodemap_lights.getSize(),nodemap_primitives.getSize(),
-//					t.getElapsed(tpTimer::kTimeMilliSeconds));
+//        tpLogNotify("%s %d lights %d nodes %3.3fms",
+//                    __FUNCTION__,nodemap_lights.getSize(),nodemap_primitives.getSize(),
+//                    t.getElapsed(tpTimer::kTimeMilliSeconds));
 	}
 
-	void operator ()(const tpLight& light, const tpMatrixStack& stack)
+    void onLight(const tpLight& light, const tpMatrixStack& stack)
 	{
 
 //		tpCamera* camera = getActiveCamera();
@@ -333,6 +333,9 @@ public:
 		glLightfv(lid,GL_DIFFUSE,light.getDiffuseColor().getData());
 		glLightfv(lid,GL_SPECULAR,light.getSpecularColor().getData());
 
+        //#define GL_SEPARATE_SPECULAR_COLOR 0x81FA
+        glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+
 	}
 
 	void operator ()(tpTexture* tex) {
@@ -353,14 +356,14 @@ public:
 
 		glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
 
-		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, actual_mat->getAmbientColor().getData() );
-		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, actual_mat->getDiffuseColor().getData() );
-		glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, actual_mat->getSpecularColor().getData() );
-		glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, actual_mat->getEmissiveColor().getData() );
-		glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, actual_mat->getShininess() );
+        glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, actual_mat->getAmbientColor().getData() );
+        glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, actual_mat->getDiffuseColor().getData() );
+        glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, actual_mat->getSpecularColor().getData() );
+        glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, actual_mat->getEmissiveColor().getData() );
+        glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, actual_mat->getShininess() );
 	}
 
-	void operator()(const tpPrimitive& prim,const tpMatrixStack& stack)
+    void onPrimitive(const tpPrimitive& prim,const tpMatrixStack& stack)
 	{
 
 		// first setup the lighting
@@ -412,7 +415,7 @@ public:
 		}
 
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, prim.getVertices().getData());
+        glVertexPointer(4, GL_FLOAT, 0, prim.getVertices().getData());
 
 		glDrawArrays(prim.getPrimitiveType(),0,prim.getVertexCount());
 
