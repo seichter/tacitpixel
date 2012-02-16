@@ -17,17 +17,17 @@ public:
 		return mImage.get();
 	}
 
-    tpFontRasterizerStb()
+	tpFontRasterizerStb()
 	{
 	}
 
-    ~tpFontRasterizerStb()
+	~tpFontRasterizerStb()
 	{
 	}
 
 	stbtt_bakedchar cdata[96]; // ASCII 32..126 is 95 glyphs
 
-    bool onLoad(const tpString& name) {
+	bool onLoad(const tpString& name) {
 
 		tpFile ffile;
 
@@ -46,11 +46,11 @@ public:
 			ffile.read((char*)&buffer[0],buffer.getSize());
 
 			stbtt_BakeFontBitmap( &buffer[0],
-                                  0, 90, (tpUChar*)mImage->getData(),mImage->getWidth(),mImage->getHeight(), 32,96, cdata);
+								  0, 90, (tpUChar*)mImage->getData(),mImage->getWidth(),mImage->getHeight(), 32,96, cdata);
 
-            return true;
+			return true;
 		}
-        return false;
+		return false;
 	}
 
 	void onText(const tpString& text,tpPrimitive& prim) {
@@ -106,13 +106,13 @@ public:
 
 tpFont::tpFont()
 	: tpReferenced()
-    , mRasterizer(new tpFontRasterizerStb())
+	, mRasterizer(new tpFontRasterizerStb())
 {}
 
 bool
-tpFont::load(const tpString& name) 
+tpFont::load(const tpString& name)
 {
-    return mRasterizer->onLoad(name);
+	return mRasterizer->onLoad(name);
 }
 
 void
@@ -134,22 +134,3 @@ tpFont::getImage()
 }
 
 
-
-
-tpText::tpText()
-    : tpPrimitive()
-{}
-
-void tpText::set(const tpString& s)
-{
-    mText = s;
-    mFont->text(mText,*this);
-}
-
-void tpText::setFont(const tpString &name)
-{
-    tpFont* font = new tpFont();
-    if (font->load(name)) {
-        mFont = font;
-    }
-}
