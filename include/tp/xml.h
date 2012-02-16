@@ -26,8 +26,6 @@
 #ifndef TPXML_H
 #define TPXML_H
 
-
-
 #include <tp/referenced.h>
 #include <tp/string.h>
 #include <tp/map.h>

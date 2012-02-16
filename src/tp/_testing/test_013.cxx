@@ -2,7 +2,21 @@
 
 #include <tp/xml.h>
 #include <tp/refptr.h>
+#include <tp/file.h>
 
+void tpIO2String(tpIO* io,tpString& s)
+{
+	tpArray<tpChar> buffer;
+	buffer.resize(1024);
+
+	while(io->isGood()) {
+		io->read(buffer.getData(),buffer.getSize());
+
+		tpString tmp; tmp.set(buffer.getData(),io->getCount());
+
+		s += tmp;
+	}
+}
 
 class MyCallback : public tpXMLNodeCallback {
 	void operator ()(const tpXML& xml)
@@ -32,7 +46,19 @@ int main(int argc, char* argv[])
 
 	xml->setCallback(new MyCallback());
 
-	xml->parse("<we are=\"cool\"><some stuff=\"yes\">And also some text<tag a=\"b\"/></some><br/></we>");
+	tpString doc;
+
+	if (argc > 1) {
+		tpFile file;
+		file.open(argv[1]);
+
+		tpIO2String(&file,doc);
+	} else {
+
+		doc = "<we are=\"cool\"><some stuff=\"yes\">And also some text<tag a=\"b\"/></some><br/></we>";
+	}
+
+	xml->parse(doc);
 
 	return 0;
 }
