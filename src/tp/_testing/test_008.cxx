@@ -11,12 +11,18 @@ class tpMyViewer : public tpViewer {
 public:
 	tpMyViewer() : tpViewer() {}
 
+    tpRefPtr<tpText> text;
+    tpTimer t;
+
 	void
-	onSurfaceEvent(tpRenderSurfaceEvent& e) {
+    onSurfaceEvent(tpRenderSurfaceEvent& e)
+    {
 		if (e.getKeyCode() == 27 && e.getKeyState() == tpRenderSurfaceEvent::kKeyUp) {
 			e.getRenderSurface()->setDone();
 			e.setHandled();
 		}
+
+        text->set(tpString::format("%3.3f",t.getElapsed(tpTimer::kTimeSeconds)));
 	}
 };
 
@@ -35,8 +41,13 @@ int main(int argc,char* argv[])
 
 	tpPrimitive* axis = tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kAxis);
 
+    tpText* text = new tpText();
+    text->setFont(argv[1]);
+    text->set("x");
+
 	tpTransform* t = new tpTransform;
-	t->addChild(prim.get());
+//	t->addChild(prim.get());
+    t->addChild(text);
 
 
 
@@ -52,6 +63,7 @@ int main(int argc,char* argv[])
 	root->addChild(t);
 
 	tpRefPtr<tpMyViewer> viewer = new tpMyViewer();
+    viewer->text = text;
 
 
 	viewer->getScene().getActiveCamera()->addChild(root.get());
@@ -61,7 +73,5 @@ int main(int argc,char* argv[])
 
 
 	viewer->create();
-	viewer->run();
-
-	return 0;
+    return viewer->run();
 }

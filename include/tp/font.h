@@ -34,12 +34,23 @@
 #include <tp/primitive.h>
 #include <tp/string.h>
 
+class tpFontRasterizer {
+public:
+
+    virtual bool onLoad(const tpString& font) = 0;
+
+    virtual void onText(const tpString& text,tpPrimitive& prim) = 0;
+
+    virtual tpImage* getImage() = 0;
+
+    virtual ~tpFontRasterizer() {}
+};
+
 
 class TP_API tpFont : public tpReferenced {
 protected:
 
-	class Rasterizer;
-	tpScopePtr<Rasterizer> mRasterizer;
+    tpScopePtr<tpFontRasterizer> mRasterizer;
 
 public:
 
@@ -50,6 +61,22 @@ public:
 	bool load(const tpString &name);
 
 	void text(const tpString &text, tpPrimitive &p);
+
+};
+
+class TP_API tpText : public tpPrimitive {
+public:
+
+    tpText();
+
+    void set(const tpString &s);
+
+    void setFont(const tpString& name);
+
+protected:
+
+    tpRefPtr<tpFont> mFont;
+    tpString mText;
 
 };
 

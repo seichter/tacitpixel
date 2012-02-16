@@ -58,7 +58,7 @@ public:
 
 private:
 
-	void _dispatch(tpRenderSurfaceEvent &e);
+    virtual void _dispatch(tpRenderSurfaceEvent &e);
 
 
 };

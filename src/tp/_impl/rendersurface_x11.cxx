@@ -184,6 +184,7 @@ tpRenderSurfaceX11::update()
                                 tpRenderSurfaceEvent::kMouseDown :
                                 tpRenderSurfaceEvent::kMouseUp);
             tpLogNotify("%s - button released/pressed (%d)",__FUNCTION__,event.xbutton.button);
+            submit = true;
 			break;
 		case DestroyNotify:
 		case ClientMessage:
