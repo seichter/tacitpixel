@@ -38,6 +38,7 @@
 
 #cmakedefine HAVE_CLOCK_GETTIME
 #cmakedefine HAVE_GETTIMEOFDAY
+#cmakedefine HAVE_PTHREAD_YIELD_NP
 
 
 #define TP_VERSION_MAJOR @TP_VERSION_MAJOR@

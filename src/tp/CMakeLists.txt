@@ -31,6 +31,7 @@ CHECK_INCLUDE_FILES("stdio.h" HAVE_STDIO_H)
 include(CheckSymbolExists)
 check_symbol_exists(clock_gettime sys/time.h HAVE_CLOCK_GETTIME)
 check_symbol_exists(gettimeofday sys/time.h HAVE_GETTIMEOFDAY)
+check_symbol_exists(pthread_yield_np pthread.h HAVE_PTHREAD_YIELD_NP)
 
 
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
@@ -175,7 +176,7 @@ if(X11_FOUND)
 endif()
 
 if(WIN32)
-	
+
 	list(APPEND tp_impl_srcs
 			_impl/rendersurface_win32.cxx
 			_impl/rendersurface_win32.h
@@ -253,6 +254,7 @@ set(tp_hdrs_sg
 	${tp_include_path}/tp/rendercontext.h
 	${tp_include_path}/tp/rendersurface.h
 	${tp_include_path}/tp/scene.h
+	${tp_include_path}/tp/text.h
 	${tp_include_path}/tp/texture.h
 	${tp_include_path}/tp/transform.h
 	${tp_include_path}/tp/traverser.h
@@ -273,6 +275,7 @@ set(tp_srcs_sg
 	rendersurface.cxx
 	scene.cxx
 	sound.cxx
+	text.cxx
 	texture.cxx
 	transform.cxx
 	traverser.cxx
