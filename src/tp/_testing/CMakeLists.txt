@@ -2,8 +2,8 @@
 set(tacit_libs tacit)
 
 macro(testprg number)
-    add_executable("test_${number}" "test_${number}.cxx")
-    target_link_libraries("test_${number}" ${tp_name})
+	add_executable("test_${number}" "test_${number}.cxx")
+	target_link_libraries("test_${number}" ${tp_name})
 endmacro()
 
 
@@ -21,5 +21,6 @@ testprg(009)
 testprg(010)
 testprg(011)
 testprg(012)
+testprg(013)
 
 
