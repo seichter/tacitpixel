@@ -31,6 +31,7 @@ tpSoundStreamOgg::open(const tpString &name)
 				vorbisInfo->channels,
 				vorbisInfo->rate);
 
+    return true;
 }
 
 bool

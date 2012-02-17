@@ -30,6 +30,21 @@
 #include <string.h>
 
 
+#if defined(WIN32) || defined(WINCE)
+    #include <winsock.h>
+#endif
+
+#if defined(__unix) || defined(__APPLE__) || defined(__BEOS__) || defined(__HAIKU__)
+  #include <sys/types.h>
+  #include <sys/socket.h>
+  #include <netinet/in.h>
+  #include <netdb.h>
+  #include <arpa/inet.h>
+  #include <unistd.h>
+  #include <fcntl.h>
+#endif
+
+
 #if defined(WINCE)
 	#pragma comment( lib, "winsock.lib" )
 #else
@@ -49,6 +64,26 @@ static bool gs_wsock32_init = false;
 #endif
 
 
+// Try to work out address from string
+// returns 0 if bad
+struct in_addr* tpAddressToInAddr(const tpString& address)
+{
+    struct hostent *host;
+    static struct in_addr saddr;
+
+    // First try nnn.nnn.nnn.nnn form
+    saddr.s_addr = inet_addr(address.c_str());
+    if (saddr.s_addr != -1)
+        return &saddr;
+
+    host = gethostbyname(address.c_str());
+    if( host )
+        return (struct in_addr *) *host->h_addr_list;
+
+    return 0;
+}
+
+
 static void fillAddr(const char* address,
 					 unsigned short port,
 					 sockaddr_in &addr)
@@ -65,27 +100,27 @@ static void fillAddr(const char* address,
 
 tpSocket::tpSocket()
 	: tpReferenced()
-	, m_socketdesc(-1)
+    , mHandle(-1)
 {
 }
 
 
 tpSocket::tpSocket(const tpSocket& socket)
 	: tpReferenced()
-	, m_socketdesc(socket.m_socketdesc)
+    , mHandle(socket.mHandle)
 {
 }
 
 
 tpSocket::~tpSocket()
 {
-	this->m_socketdesc = -1;
+    this->mHandle = -1;
 }
 
 
 
-bool
-tpSocket::doInit(unsigned int port,bool blocking)
+static inline bool
+tpSocketInit(tpSocket& socket, unsigned int port, bool blocking = true)
 {
 
 #ifdef _WIN32
@@ -103,34 +138,28 @@ tpSocket::doInit(unsigned int port,bool blocking)
 	};
 #endif
 
-	if (this->getType() == tpTCPSocket::getTypeInfo())
+    if (socket.getType() == tpTCPSocket::getTypeInfo())
 	{
 			tpLogNotify("Init as TCP");
-			m_socketdesc = (int)::socket( PF_INET, SOCK_STREAM, IPPROTO_TCP);
+            socket.setHandle((int)::socket( PF_INET, SOCK_STREAM, IPPROTO_TCP));
 	} else
-	if (this->getType() == tpUDPSocket::getTypeInfo())
+    if (socket.getType() == tpUDPSocket::getTypeInfo())
 	{
 			tpLogNotify("Init as UDP");
-			m_socketdesc =  (int)::socket(AF_INET, SOCK_DGRAM, 0);
+            socket.setHandle((int)::socket(AF_INET, SOCK_DGRAM, 0));
 	} else
 	{
 			tpLogError("tpSocket::doInit() undeterminded socket type!");
 			return false;
-	};
+    }
 
 
-	if( m_socketdesc == INVALID_SOCKET)
+    if( socket.getHandle() < 0)
 	{
 		tpLogError("tpSocket::doInit() : could not initialize socket");
 		return false;
 	}
 
-	// sockaddr initialisation
-	memset( &m_sockaddr, 0, sizeof( sockaddr));
-
-	m_sockaddr.sin_family = AF_INET;
-	m_sockaddr.sin_port = htons( port);
-	m_sockaddr.sin_addr.s_addr = INADDR_ANY;
 
 	// if (!blocking);
 
@@ -140,49 +169,57 @@ tpSocket::doInit(unsigned int port,bool blocking)
 
 
 
-tpSocketState tpSocket::sendRaw(tpSocket* socket,const void* indata,tpUInt datalength,tpUInt *total)
+bool
+tpSocket::sendRaw(const void* indata,tpSizeT datalength,tpSizeT& total)
 {
-	int put = 0;
-	*total = 0;
+    int put = 0;
+    total = 0;
 
-	tpChar* data = (tpChar*)indata;
-	while (datalength > 0)
-	{
-		// if (tm_timedout(sock, TM_SEND)) return TP_SOCKTIMEOUT;
+    const tpChar* data = (const tpChar*)indata;
 
-		put = send(socket->m_socketdesc, data, datalength, 0);
-		if (put <= 0)
-		{
-#ifdef _WIN32
-			if (put < 0 && WSAGetLastError() == WSAEWOULDBLOCK)
-				continue;
-#endif
-#ifdef __CYGWIN__
+    while (datalength)
+    {
+       put = send(mHandle, data, datalength, 0);
 
-			if (put < 0 && errno == EWOULDBLOCK)
-				continue;
-#endif
-			return TP_SOCKCLOSE;
-		};
+        if (put > 0) {
 
-		datalength -= put;
-		data += put;
-		*total += put;
-	}
-	return TP_SOCKOK;
-};
+            datalength -= put;
+            data += put;
+            total += put;
+        } else {
+
+            if (put == 0) {
+                return true;
+            }
+
+        }
+    }
+
+    return true;
+}
 
 
-bool tpSocket::bind()
+
+
+bool
+tpSocket::bind(tpUInt port)
 {
-	if (::bind( m_socketdesc,
-		(sockaddr*) &m_sockaddr, sizeof(sockaddr)) < 0)
+    // sockaddr initialisation
+    sockaddr_in sa;
+    memset( &sa, 0, sizeof( sockaddr));
+
+    sa.sin_family = AF_INET;
+    sa.sin_port = htons(port);
+    sa.sin_addr.s_addr = INADDR_ANY;
+
+    if (::bind( mHandle,(sockaddr*) &sa, sizeof(sockaddr)) < 0)
 	{
 		tpLogError("tpSocket::doBind() : could not bind");
 		return false;
-	};
+    }
+
 	return true;
-};
+}
 
 
 
@@ -191,72 +228,70 @@ bool tpSocket::bind()
 tpTCPSocket::tpTCPSocket(const tpTCPSocket& socket)
 	: tpSocket(socket)
 {
-};
+}
 
+tpTCPSocket::tpTCPSocket(const tpString& remotehost, unsigned int remoteport)
+{
+    this->connect(remotehost,remoteport);
+}
 
 tpTCPSocket::tpTCPSocket()
 {
-};
-
-
+}
 
 tpTCPSocket::tpTCPSocket(unsigned int localport)
 {
 	this->listen(localport);
-};
-
-
+}
 
 tpTCPSocket::~tpTCPSocket()
 {
 	this->close();
-};
+}
 
-
-
-bool tpTCPSocket::listen(unsigned int localport)
+bool
+tpTCPSocket::listen(unsigned int localport)
 {
-	doInit(localport);
-	bind();
+    tpSocketInit(*this,localport,true);
+    bind(localport);
 	return this->doListenImpl(5);
-};
+}
 
-
-
-bool tpTCPSocket::doListenImpl(int maxpending)
+bool
+tpTCPSocket::doListenImpl(int maxpending)
 {
-
-	if( ::listen( m_socketdesc, maxpending) < 0)
+    if( ::listen( mHandle, maxpending) < 0)
 	{
 		tpLogError("tpTCPSocket::doListen() : could not listen");
 		return false;
 	}
 	return true;
-};
+}
 
 
-
-tpTCPSocket::tpTCPSocket(const tpString& remotehost, unsigned int remoteport)
+bool
+tpTCPSocket::connect(const tpString& remotehost, unsigned int remoteport)
 {
-	this->connect(remotehost,remoteport);
-};
-
-
-bool tpTCPSocket::connect(const tpString& remotehost, unsigned int remoteport)
-{
-
 	if (remotehost.isEmpty())
 	{
-		tpLogError("tpTCPSocket::Connect() : unsufficient parameter");
+        tpLogError("tpTCPSocket::Connect() : unsufficient parameter %s:%d",remotehost.c_str(),remoteport);
 		return false;
-	};
+    }
 
-	doInit(remoteport);
+    tpSocketInit(*this,remoteport);
+
+    // sockaddr initialisation
+    sockaddr_in sa;
+    memset( &sa, 0, sizeof( sockaddr));
+
+    sa.sin_family = AF_INET;
+    sa.sin_port = htons(remoteport);
+    sa.sin_addr.s_addr = INADDR_ANY;
 
 	// first guess => try to resolve it as IP@
-	m_sockaddr.sin_addr.s_addr = inet_addr( remotehost.c_str());
+    sa.sin_addr.s_addr = inet_addr( remotehost.c_str());
 
-	if( m_sockaddr.sin_addr.s_addr == INADDR_NONE)
+    if( sa.sin_addr.s_addr == INADDR_NONE)
 	{	// screwed => try to resolve it as name
 
 		tpLogNotify("tpTCPSocket::Connect() : connect to %s:%d",remotehost.c_str(),remoteport);
@@ -268,24 +303,24 @@ bool tpTCPSocket::connect(const tpString& remotehost, unsigned int remoteport)
 			return false;
 		} else
 		{
-			m_sockaddr.sin_addr.s_addr = **((int **) host->h_addr_list);
+            sa.sin_addr.s_addr = **((int **) host->h_addr_list);
 			// m_sockaddr.sin_port = htons(remoteport);
 		};
 
 	};
 
-	if( ::connect( m_socketdesc, ( sockaddr*)&m_sockaddr, sizeof( sockaddr)))
+    if( ::connect( mHandle, ( sockaddr*)&sa, sizeof( sockaddr)))
 	{
 		tpLogError("tpTCPSocket::Connect() : could not connect %s:%d",remotehost.c_str(),remoteport);
 		return false;
 	} else return true;
-};
+}
 
 
 tpTCPSocket* tpTCPSocket::accept(int timeout)
 {
 
-	if (m_socketdesc == INVALID_SOCKET)
+    if (mHandle < 0)
 	{
 		tpLogError("tpTCPSocket::doAccept() : can not accept on an invalid socket");
 		return NULL;
@@ -300,10 +335,10 @@ tpTCPSocket* tpTCPSocket::accept(int timeout)
 		timeval tv = { timeout / 1000 , timeout % 1000 };
 
 		FD_ZERO(&fds);
-		FD_SET(m_socketdesc, &fds);
-		::select(m_socketdesc, &fds, 0, 0, &tv);
+        FD_SET(mHandle, &fds);
+        ::select(mHandle, &fds, 0, 0, &tv);
 
-		_accept = (FD_ISSET(m_socketdesc, &fds)) ? false : true;
+        _accept = (FD_ISSET(mHandle, &fds)) ? false : true;
 
 	};
 
@@ -312,68 +347,62 @@ tpTCPSocket* tpTCPSocket::accept(int timeout)
 
 		int nlen = sizeof( sockaddr);
 
-		int fd =  (int)::accept( m_socketdesc, ( sockaddr *)&m_sockaddr,(socklen_t*) &nlen);
+        sockaddr_in m_sockaddr;
 
-		if( fd == INVALID_SOCKET) return NULL;
+        int fd =  (int)::accept( mHandle, ( sockaddr *)&m_sockaddr,(socklen_t*) &nlen);
+
+        if( fd < 0) return 0;
 
 		tpTCPSocket* socket = new tpTCPSocket;
-		socket->m_socketdesc = fd;
+        socket->setHandle(fd);
 
 		return socket;
 
-	};
+    }
+
+    return 0;
+}
 
 
-	return NULL;
-
-
-
-};
-
-
-int tpTCPSocket::write(const void* data,unsigned int datalength)
+int
+tpTCPSocket::write(const void* data,tpSizeT datalength)
 {
-	tpUInt total = 0;
-	tpSocketState state;
-
-
-
-	state = tpSocket::sendRaw(this,data,datalength,&total);
+    tpSizeT total = 0;
+    bool state = sendRaw(data,datalength,total);
 
 	tpLogNotify("tpTCPSocket::write() : %d/%d bytes",datalength,total);
 
-	if (state == TP_SOCKOK) return total;
+    if (state) return total;
 
 	return -1;
+}
 
-	// return( (int)send( m_socketdesc, (char*)data, datalength, 0));
-};
-
-int tpTCPSocket::read(void* data,unsigned int datalength)
+int tpTCPSocket::read(void* data,tpSizeT datalength)
 {
-	return( (int)recv( m_socketdesc, (char*)data, datalength, 0));
-};
+    return( (int)::recv( mHandle, (char*)data, datalength, 0));
+}
 
-void tpTCPSocket::close()
+bool
+tpTCPSocket::close()
 {
-#ifdef _WIN32
+    int res =
+#if defined(_WIN32)
 	::closesocket( m_socketdesc);
+#else
+    ::close(mHandle);
 #endif
-#if defined(__unix) || defined(__APPLE__)
-	::close(m_socketdesc);
-#endif
+    return (res == 0);
 }
 
 
 
 tpString tpTCPSocket::getRemoteAddress() const
 {
-
-	tpString _ret;
-	_ret.set(inet_ntoa(m_sockaddr.sin_addr));
+    // \TODO rewrite
+    tpString _ret;
+//	_ret.set(inet_ntoa(m_sockaddr.sin_addr));
 	return _ret;
-
-};
+}
 
 
 // --------------------------------------------------------------------------------------
@@ -430,7 +459,7 @@ bool
 tpUDPSocket::setLocalPort(unsigned int localport)
 {
 
-	if (!doInit(localport)) return false;
+    if (!tpSocketInit(*this,localport)) return false;
 
 	// Bind the socket to its port
 	sockaddr_in localAddr;
@@ -440,7 +469,7 @@ tpUDPSocket::setLocalPort(unsigned int localport)
 
 	localAddr.sin_port = htons(localport);
 
-	if (::bind(m_socketdesc, (sockaddr *) &localAddr, sizeof(sockaddr_in)) < 0)
+    if (::bind(mHandle, (sockaddr *) &localAddr, sizeof(sockaddr_in)) < 0)
 	{
 		tpLogError("tpUDPSocket::setLocalPort() : could not bind to port %d",localport);
 		return false;
@@ -461,7 +490,7 @@ tpUDPSocket::send(const void *data, unsigned int datalength,const tpPair<tpUInt,
 	fillAddr(receiver.getValue().c_str(), receiver.getKey(), destAddr);
 
 	// Write out the whole buffer as a single message.
-	return sendto(m_socketdesc,
+    return sendto(mHandle,
 		(const char*) data,
 		datalength, 0,
 				(sockaddr*)&destAddr,
@@ -471,7 +500,7 @@ tpUDPSocket::send(const void *data, unsigned int datalength,const tpPair<tpUInt,
 
 // receive from remote
 int
-tpUDPSocket::receiveFrom(void *data, unsigned int datalength, tpString& remoteaddress, unsigned int &remoteport)
+tpUDPSocket::receiveFrom(void *data, unsigned int datalength, tpString& remoteaddress, unsigned int &remoteport, int timeout)
 {
 
 	sockaddr_in clntAddr;
@@ -480,17 +509,17 @@ tpUDPSocket::receiveFrom(void *data, unsigned int datalength, tpString& remotead
 	int rtn;
 
 	struct timeval timeout_value;
-	timeout_value.tv_sec = m_timeout / 1000;
-	timeout_value.tv_usec = (m_timeout % 1000) * 1000;
+    timeout_value.tv_sec = timeout / 1000;
+    timeout_value.tv_usec = (timeout % 1000) * 1000;
 
 	fd_set fds;
 
 	FD_ZERO(&fds);
-	FD_SET(m_socketdesc, &fds);
+    FD_SET(mHandle, &fds);
 
 	if (0 == ::select(1,&fds,NULL,NULL,&timeout_value))	return -2;
 
-	rtn = ::recvfrom(m_socketdesc, (char*)data, datalength, 0, (sockaddr *) &clntAddr,
+    rtn = ::recvfrom(mHandle, (char*)data, datalength, 0, (sockaddr *) &clntAddr,
 					  (socklen_t *) &addrLen);
 
 	remoteaddress = inet_ntoa(clntAddr.sin_addr);
@@ -505,7 +534,7 @@ tpUDPSocket::receiveFrom(void *data, unsigned int datalength, tpString& remotead
 void
 tpUDPSocket::setMulticastTTL(unsigned int TTL)
 {
-	if (setsockopt(m_socketdesc, IPPROTO_IP, IP_MULTICAST_TTL,
+    if (setsockopt(mHandle, IPPROTO_IP, IP_MULTICAST_TTL,
 			(char *) &TTL, sizeof(TTL)) < 0)
 	{
 		tpLogError("tpUDPSocket::setMulticastTTL() set failed (setsockopt())");
@@ -520,7 +549,7 @@ tpUDPSocket::joinGroup(const tpString& multicastGroup)
 	struct ip_mreq multicastRequest;
 	multicastRequest.imr_multiaddr.s_addr = inet_addr(multicastGroup.c_str());
 	multicastRequest.imr_interface.s_addr = htonl(INADDR_ANY);
-	if (setsockopt(m_socketdesc, IPPROTO_IP, IP_ADD_MEMBERSHIP,
+    if (setsockopt(mHandle, IPPROTO_IP, IP_ADD_MEMBERSHIP,
 				 (char *) &multicastRequest,
 				 sizeof(multicastRequest)) < 0)
 	{
@@ -536,7 +565,7 @@ tpUDPSocket::leaveGroup(const tpString& multicastGroup)
 	multicastRequest.imr_multiaddr.s_addr = inet_addr(multicastGroup.c_str());
 	multicastRequest.imr_interface.s_addr = htonl(INADDR_ANY);
 
-	if (setsockopt(m_socketdesc, IPPROTO_IP, IP_DROP_MEMBERSHIP,
+    if (setsockopt(mHandle, IPPROTO_IP, IP_DROP_MEMBERSHIP,
 	   (char *) &multicastRequest, sizeof(multicastRequest)) < 0)
 	{
 		tpLogError("tpUDPSocket::leaveGroup() failed");

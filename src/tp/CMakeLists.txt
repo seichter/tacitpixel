@@ -341,4 +341,3 @@ option(TP_BUILD_UNITTESTS "Build unit tests" OFF)
 if(TP_BUILD_UNITTESTS)
 	add_subdirectory(_unit)
 endif()
-

@@ -9,7 +9,7 @@
 #include <tp/fixed.h>
 #include <tp/log.h>
 #include <tp/node.h>
-#include <tp/matrix.h>
+#include <tp/mat.h>
 #include <tp/map.h>
 #include <tp/file.h>
 #include <tp/library.h>
