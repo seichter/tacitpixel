@@ -34,7 +34,8 @@ public:
 	explicit tpArguments(int *argc, char* argv[]);
 
 	bool get(const tpString &param) const;
-	bool get(const tpString &param, tpString &value) const;
+    bool get(const tpString &param, tpString &value) const;
+    bool get(const tpString &param, tpUInt &value) const;
 
 	const tpStringArray& get() const { return mArguments; }
 

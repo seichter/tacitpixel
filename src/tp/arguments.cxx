@@ -28,7 +28,16 @@ tpArguments::get(const tpString& param,tpString& value) const
 			return true;
 		}
 	}
-	return false;
+    return false;
+}
+
+bool tpArguments::get(const tpString &param, tpUInt &value) const
+{
+    tpString num;
+    bool ok = this->get(param,num);
+
+    value = atoi(num.c_str());
+    return ok;
 }
 
 bool
