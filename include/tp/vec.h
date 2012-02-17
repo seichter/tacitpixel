@@ -383,9 +383,9 @@ public:
 		this->vec[0] = this->vec[1] = this->vec[2] = this->vec[3] = T(0);
 	}
 
-	tpVec4(const tpVec3<T>& rv,T pad = T(0))
+    tpVec4(const tpVec<T,3>& rv,T pad = T(0))
 	{
-		this->vec[0] = rv.vec[0]; this->vec[1] = rv.vec[1]; this->vec[2] = rv.vec[2]; this->vec[3] = pad;
+        this->vec[0] = rv[0]; this->vec[1] = rv[1]; this->vec[2] = rv[2]; this->vec[3] = pad;
 	}
 
 	tpVec4(T v1,T v2,T v3,T v4)

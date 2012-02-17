@@ -8,7 +8,7 @@
 
 #include <stb_truetype/stb_truetype.h>
 
-class tpFont::Rasterizer {
+class tpFontRasterizerStb : public tpFontRasterizer {
 public:
 
 	tpRefPtr<tpImage> mImage;
@@ -17,17 +17,17 @@ public:
 		return mImage.get();
 	}
 
-	Rasterizer() 
+	tpFontRasterizerStb()
 	{
 	}
 
-	~Rasterizer()
+	~tpFontRasterizerStb()
 	{
 	}
 
 	stbtt_bakedchar cdata[96]; // ASCII 32..126 is 95 glyphs
 
-	void onLoad(const tpString& name) {
+	bool onLoad(const tpString& name) {
 
 		tpFile ffile;
 
@@ -46,8 +46,11 @@ public:
 			ffile.read((char*)&buffer[0],buffer.getSize());
 
 			stbtt_BakeFontBitmap( &buffer[0],
-								  0, 32.0, (tpUChar*)mImage->getData(),mImage->getWidth(),mImage->getHeight(), 32,96, cdata);
+								  0, 90, (tpUChar*)mImage->getData(),mImage->getWidth(),mImage->getHeight(), 32,96, cdata);
+
+			return true;
 		}
+		return false;
 	}
 
 	void onText(const tpString& text,tpPrimitive& prim) {
@@ -103,15 +106,13 @@ public:
 
 tpFont::tpFont()
 	: tpReferenced()
-	, mRasterizer(new tpFont::Rasterizer())
+	, mRasterizer(new tpFontRasterizerStb())
 {}
 
 bool
-tpFont::load(const tpString& name) 
+tpFont::load(const tpString& name)
 {
-	mRasterizer->onLoad(name);
-
-	return mRasterizer->mImage.isValid();
+	return mRasterizer->onLoad(name);
 }
 
 void
@@ -131,4 +132,5 @@ tpFont::getImage()
 {
 	return (mRasterizer.isValid()) ? mRasterizer->getImage() : 0;
 }
+
 

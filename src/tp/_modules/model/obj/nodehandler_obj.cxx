@@ -40,11 +40,14 @@ tpNode* tpOBJ(const tpString& filename)
 	}
 
 	// regenerate the model structure
-	glmUnitize(model);
-	glmFacetNormals(model);
-	// should make the crease angle an option
-	glmVertexNormals(model,89);
-	glmLinearTexture(model);
+    glmUnitize(model);
+
+    glmReverseWinding(model);
+    glmReverseWinding(model);
+    glmFacetNormals(model);
+    // should make the crease angle an option
+    glmVertexNormals(model,89);
+    glmLinearTexture(model);
 
 	tpRefNode root = new tpNode();
 
@@ -56,7 +59,10 @@ tpNode* tpOBJ(const tpString& filename)
 
 		if (group->numtriangles > 0)
 		{
-			tpPrimitive* mesh = new tpPrimitive(tpPrimitive::kTriangles);
+            tpPrimitive* mesh = new tpPrimitive(tpPrimitive::kTriangles,
+                                                tpPrimitive::kAttributeVertex |
+                                                tpPrimitive::kAttributeUV |
+                                                tpPrimitive::kAttributeNormals);
 
 			//tpLogNotify("%s found %d triangles (%s)",__FUNCTION__,group->numtriangles,group->name);
 

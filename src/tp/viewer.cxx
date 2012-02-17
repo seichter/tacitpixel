@@ -72,6 +72,9 @@ tpViewer::run() {
 		this->frame();
 	}
 
+    mSurface = 0;
+    mScene = 0;
+
 	return 0;
 }
 

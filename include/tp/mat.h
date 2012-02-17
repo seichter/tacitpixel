@@ -111,7 +111,7 @@ public:
 			}
 		}
 		return res;
-	}
+    }
 
 	inline void
 	getInverse(tpMat<R,C,T>& resMat) const

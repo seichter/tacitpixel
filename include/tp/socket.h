@@ -33,54 +33,13 @@
 #include <tp/io.h>
 #include <tp/map.h>
 
-#if defined(WIN32) || defined(WINCE)
-	#include <winsock.h>
-#endif
-
-#if defined(__unix) || defined(__APPLE__) || defined(__BEOS__) || defined(__HAIKU__)
-  #include <sys/types.h>
-  #include <sys/socket.h>
-  #include <netinet/in.h>
-  #include <netdb.h>
-  #include <arpa/inet.h>
-  #include <unistd.h>
-  #include <fcntl.h>
-#endif
-
-
-
-#define TPTTL_SAMEHOST			0
-#define TPTTL_SAMESUBNET		1
-#define TPTTL_SAMESITE			32
-#define TPTTL_SAMEREGION		64
-#define TPTTL_SAMECONTINENT		128
-#define TPTTL_UNRESTRICTED		255
-
-
-
-#if defined(__unix) || defined(__APPLE__) || defined(__BEOS__) || defined(__HAIKU__)
-	#define INVALID_SOCKET -1
-#endif
-
-
-#define TPSOCKET_ERROR -1
-
-enum tpSocketState
-{
-	TP_SOCKOK = -1,
-	TP_SOCKTIMEOUT,
-	TP_SOCKCLOSE
-};
-
-
-/*!
-	\brief a generic socket to wrap UDP and TCP sockets
-	\author Hartmut Seichter
-*/
+/**
+ * A simple wrapper for network sockets
+ */
 class TP_API tpSocket : public tpReferenced {
 public:
 
-	TP_TYPE_DECLARE;
+    TP_TYPE_DECLARE
 
 	enum {
 		kTCP = 0x0,
@@ -99,25 +58,19 @@ public:
 	//! read from socket
 	virtual int read(void* data,unsigned int datalength) = 0;
 
-	static tpSocketState sendRaw(tpSocket* socket,
-		const void* indata,
-		tpUInt datalength,
-		tpUInt *total);
+    void setHandle(int handle) { mHandle = handle; }
+    int getHandle() const { return mHandle; }
 
-	void setTimeOut(tpUInt timeout) {m_timeout = timeout;}
-	tpUInt getTimeOut() const {return m_timeout;}
+    bool bind(tpUInt port);
+
+    bool sendRaw(const void *indata, tpSizeT datalength, tpSizeT &total);
 
 protected:
-	//! default d'tor
+
+    //! default d'tor
 	virtual ~tpSocket();
 
-	bool doInit(unsigned int port,bool blocking = true);
-	bool bind();
-
-	sockaddr_in m_sockaddr;
-	int m_socketdesc;
-
-	tpUInt m_timeout;
+    int mHandle;
 };
 
 
@@ -126,7 +79,7 @@ class TP_API tpTCPSocket : public tpSocket
 {
 public:
 
-	TP_TYPE_DECLARE;
+    TP_TYPE_DECLARE
 
 
 	//! standard c'tor
@@ -147,13 +100,13 @@ public:
 	bool listen(unsigned int localport);
 
 	//! close connection
-	void close();
+    bool close();
 
 
 	//! write to the socket
-	virtual int write(const void* data,unsigned int datalength);
+    virtual int write(const void* data,tpSizeT datalength);
 	//! read from socket
-	virtual int read(void* data,unsigned int datalength);
+    virtual int read(void* data,tpSizeT datalength);
 
 	//! connect on remote address and port
 	bool connect(const tpString& remoteaddress,unsigned int remoteport);
@@ -177,11 +130,19 @@ typedef tpMap<tpUInt,tpString> tpReceiverMap;
 	\class tpUDPSocket
 	\brief wrapper for system UDP sockets
 */
-class TP_API tpUDPSocket : public tpSocket
-{
+class TP_API tpUDPSocket : public tpSocket {
 public:
 
-	TP_TYPE_DECLARE;
+    TP_TYPE_DECLARE
+
+    enum {
+        kTTLSameHost = 0,
+        kTTLSameSubNet = 1,
+        kTTLSameSite = 32,
+        kTTLSameRegion = 64,
+        kTTLSameContinent = 128,
+        kTTLUnrestriced = 255
+    };
 
 
 	//! standard c'tor
@@ -207,7 +168,7 @@ public:
 	int send(const void *data,unsigned int datalength,const tpPair<tpUInt,tpString>& receiver);
 
 	//! receive from remote address
-	int receiveFrom(void *data,unsigned int datalength, tpString& remoteaddress, unsigned int &remoteport);
+    int receiveFrom(void *data,unsigned int datalength, tpString& remoteaddress, unsigned int &remoteport, int timeout = 10);
 
 	//! set broadcast
 	void setBroadcast(const tpString&,unsigned int);

@@ -38,7 +38,7 @@ public:
 
 protected:
 
-    virtual ~tpRenderContextGLX() {}
+    virtual ~tpRenderContextGLX();
 };
 
 #endif

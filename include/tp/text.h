@@ -23,49 +23,26 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TPFONT_H
-#define TPFONT_H
+#ifndef TPTEXT_H
+#define TPTEXT_H
 
-#include <tp/referenced.h>
-#include <tp/refptr.h>
-#include <tp/scopeptr.h>
-#include <tp/image.h>
-#include <tp/file.h>
+#include <tp/font.h>
 #include <tp/primitive.h>
-#include <tp/string.h>
 
+class TP_API tpText : public tpPrimitive {
+public:
 
-class tpFontRasterizer;
+	tpText();
 
-class TP_API tpFont : public tpReferenced {
+	void set(const tpString &s);
+
+	void setFont(const tpString& name);
+
 protected:
 
-	tpScopePtr<tpFontRasterizer> mRasterizer;
-
-public:
-
-	tpFont();
-
-	tpImage* getImage();
-
-	bool load(const tpString &name);
-
-	void text(const tpString &text, tpPrimitive &p);
+	tpRefPtr<tpFont> mFont;
+	tpString mText;
 
 };
-
-class tpFontRasterizer {
-public:
-
-	virtual bool onLoad(const tpString& font) = 0;
-
-	virtual void onText(const tpString& text,tpPrimitive& prim) = 0;
-
-	virtual tpImage* getImage() = 0;
-
-	virtual ~tpFontRasterizer() {}
-};
-
-
 
 #endif

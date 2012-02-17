@@ -27,6 +27,8 @@
 #define TPMATRIX_H
 
 
+#if defined(TP_USE_DEPRECATED)
+
 #include <tp/math.h>
 #include <tp/fixed.h>
 #include <tp/mat.h>
@@ -879,6 +881,6 @@ template <class T> void tpMatrix<T>::setFromRaw(const tpInt* raw)
 	
 };
 
-
+#endif
 
 #endif

@@ -32,3 +32,11 @@ set_target_properties(z
 	PROPERTIES
 	PROJECT_LABEL "Dependency libz"
 	)
+
+if(CMAKE_COMPILER_IS_GNUCC)
+    set_target_properties(
+        z
+        PROPERTIES
+        COMPILE_FLAGS -fPIC
+        )
+endif()

@@ -53,6 +53,13 @@ struct tpThreadHandle
 
 #include <pthread.h>
 
+#if defined(HAVE_PTHREAD_YIELD_NP)
+#define tpPThreadYield pthread_yield_np
+#else
+#define tpPThreadYield pthread_yield
+#endif
+
+
 struct tpThreadHandle
 {
 	pthread_t handle;
@@ -135,7 +142,9 @@ void
 tpThread::yield()
 {
 #if defined(HAVE_PTHREAD_H)
-	pthread_yield_np();
+
+	tpPThreadYield();
+
 #elif defined(_WIN32)
 	MSG msg;
 	if (PeekMessage(&msg,0,0,0,PM_REMOVE)) {

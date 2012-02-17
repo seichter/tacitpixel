@@ -101,12 +101,12 @@ void tpPrimitive::setPrimitiveType(tpUInt meshtype)
 }
 
 void
-tpPrimitive::addVertex(const tpVec3<tpReal>& pos,
+tpPrimitive::addVertex(const tpVec4<tpReal> &position,
 					   const tpVec3<tpReal>& normal,
 					   const tpVec2<tpReal>& tcoord,
 					   const tpVec4<tpReal>& color)
 {
-	m_vertices.add(pos[0]).add(pos[1]).add(pos[2]);
+    m_vertices.add(position[0]).add(position[1]).add(position[2]).add(1);
 	m_normals.add(normal[0]).add(normal[1]).add(normal[2]);
 	m_texcoords.add(tcoord[0]).add(tcoord[1]);
 	m_colors.add(color[0]).add(color[1]).add(color[2]).add(color[3]);
@@ -212,7 +212,7 @@ void tpPrimitive::clearAll()
 
 
 tpUInt tpPrimitive::getVertexCount() const {
-	return m_vertices.getSize() / 3;
+    return m_vertices.getSize() / 4;
 }
 
 tpUInt tpPrimitive::getTexCoordsCount() const {
