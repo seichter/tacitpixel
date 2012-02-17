@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 
 
 	// primitives
-	tpRefPtr<tpAttributeBuffer> attribBuffer = new tpAttributeBuffer();
+//	tpRefPtr<tpAttributeBuffer> attribBuffer = new tpAttributeBuffer();
 	//attribBuffer->add(tpVec3r(3,3,3));
 
 

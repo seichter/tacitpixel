@@ -27,7 +27,7 @@
 #define TP_QUAT_H
 
 #include <tp/vec.h>
-#include <tp/matrix.h>
+#include <tp/mat.h>
 
 
 template <typename T> class tpQuat : tpVec4<T>
@@ -45,7 +45,7 @@ public:
 	 T& z()  { return this->vec[3]; }
 
 
-	 void set(const tpMat<T>& m)
+     void set(const tpMat<4,4,T>& m)
 	 {
 		 this->w() = ::sqrt(T(1) + m(0,0) + m(1,1) + m(2,2)) / T(2.0);
 		 
@@ -55,8 +55,9 @@ public:
 		 this->z() = (m(1,0) - m(0,1)) / w4 ;
 	 }
 
-
-
+     void get(tpMat<4,4,T>& m) const
+     {
+     }
 
 };
 
