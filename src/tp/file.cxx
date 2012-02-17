@@ -45,8 +45,10 @@ tpFile::~tpFile()
 	close();
 }
 
-bool tpFile::open(const tpString& uri, const tpString& mode)
+bool 
+tpFile::open(const tpString& uri, const tpString& mode)
 {
+	if (uri.isEmpty()) return false;
 	m_handle = _F(fopen(uri.c_str(),mode.c_str()));
 	return (m_handle != 0L);
 }

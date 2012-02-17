@@ -23,6 +23,33 @@
  * SUCH DAMAGE.
  */
 
+
+#define USE_DL_PREFIX
+
+extern "C" {
+	#include "dlmalloc/malloc.h"
+};
+
+
 #include <tp/allocator.h>
+
+
+/*static*/ void* 
+tpAllocator::malloc(tpSizeT size) 
+{
+	return dlmalloc(size);
+}
+
+/*static*/ void 
+tpAllocator::free(void* ptr) 
+{
+	return dlfree(ptr);
+}
+
+/*static*/ void* 
+tpAllocator::memalign( tpSizeT size,tpSizeT alignment/* = 16*/)
+{
+	return dlmemalign(alignment,size);
+}
 
 

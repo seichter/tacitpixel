@@ -25,9 +25,17 @@
 #ifndef _TP_ALLOCATOR_H_
 #define _TP_ALLOCATOR_H_ 1
 
+#include <tp/globals.h>
 #include <tp/types.h>
 
+struct TP_API tpAllocator {
 
+	static void free(void* ptr);
+	static void* malloc(tpSizeT size);
+
+	static void* memalign(tpSizeT size,tpSizeT alignment = 16);
+
+};
 
 
 #endif
