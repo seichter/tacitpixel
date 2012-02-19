@@ -26,10 +26,7 @@
 
 #define USE_DL_PREFIX
 
-extern "C" {
-	#include "dlmalloc/malloc.h"
-};
-
+#include <dlmalloc/malloc_.h>
 
 #include <tp/allocator.h>
 
@@ -50,6 +47,18 @@ tpAllocator::free(void* ptr)
 tpAllocator::memalign( tpSizeT size,tpSizeT alignment/* = 16*/)
 {
 	return dlmemalign(alignment,size);
+}
+
+/*static*/ void*
+tpAllocator::calloc(tpSizeT elem, tpSizeT elem_size)
+{
+	return dlcalloc(elem,elem_size);
+}
+
+/*static*/ void*
+tpAllocator::realloc(void* p, tpSizeT n)
+{
+	return dlrealloc(p,n);
 }
 
 

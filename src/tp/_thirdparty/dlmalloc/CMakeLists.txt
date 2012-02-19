@@ -4,13 +4,15 @@ set(lib_name dlmalloc)
 	
 set(dlmalloc_srcs
 	malloc.c
-	malloc.h
+	malloc_.h
 	)
+
 
 set_source_files_properties(
 	${dlmalloc_srcs}
 	PROPERTIES
-	COMPILE_FLAGS -DUSE_DL_PREFIX
+#	LANGUAGE C
+	COMPILE_FLAGS "-DUSE_DL_PREFIX"
 	)
 	
 	

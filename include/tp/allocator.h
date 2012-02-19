@@ -30,11 +30,15 @@
 
 struct TP_API tpAllocator {
 
-	static void free(void* ptr);
 	static void* malloc(tpSizeT size);
 
 	static void* memalign(tpSizeT size,tpSizeT alignment = 16);
 
+	static void* realloc(void* p, tpSizeT n);
+
+	static void* calloc(tpSizeT elem, tpSizeT elem_size);
+
+	static void free(void* ptr);
 };
 
 
