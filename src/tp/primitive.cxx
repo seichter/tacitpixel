@@ -28,63 +28,90 @@
 #include "tp/log.h"
 #include "tp/node.h"
 #include "tp/utils.h"
+#include "tp/map.h"
 
-
-//struct tpAttributeIterator {
-//	tpVec4f
-//};
-
-
-//struct tpAttributeStorage {
-
-//	enum {
-//		kVertex,
-//		kMap,
-//		kColor,
-//		kNormal
-//	};
-
-//	tpUInt getStride(tpUChar attribute) const { return 4; }
-//	tpUInt getOffset(tpUChar attribute) const { return 0; }
-
-//	tpAttributeIterator& addVertex();
-
-
-//	tpArray<tpFloat> mStorage;
-//};
-
-class tpPrimitiveAttribute {
+class tpPrimitiveAttribute : public tpReferenced {
 protected:
-    tpArray<tpFloat> mData;
-    tpUByte mStride;
+	tpArray<tpFloat> mData;
+	tpUByte mStride;
+	tpUByte mType;
 public:
 
-    tpPrimitiveAttribute(tpUByte stride = 4)
-        : mStride(stride)
-    {
-        mData.reserve(mStride);
-    }
+	tpPrimitiveAttribute(tpUByte stride = 4, tpUByte attr_type = 0)
+		: mStride(stride)
+		, mType(attr_type)
+	{
+		mData.reserve(mStride);
+	}
 
-    tpSizeT getSize() const { return mData.getSize() / mStride; }
+	void setType(tpUByte attr_type) {
+		mType = attr_type;
+	}
 
-    void remove(tpSizeT idx)
-    {
-        tpSizeT rIdx = idx * mStride;
-        for (tpUByte i = 0; i < mStride;++i) mData.erase(rIdx);
-    }
+	bool isType(tpUByte attr_type) const { return mType == attr_type; }
 
-    tpUByte getStride() const { return mStride; }
+	tpSizeT getSize() const { return mData.getSize() / mStride; }
 
-    const tpFloat* getData() const { return mData.getData(); }
-    tpFloat* getData() { return mData.getData(); }
+	void remove(tpSizeT idx)
+	{
+		tpSizeT rIdx = idx * mStride;
+		for (tpUByte i = 0; i < mStride;++i) mData.erase(rIdx);
+	}
 
-    tpPrimitiveAttribute&
-    add(tpFloat v[])
-    {
-        for (int i = 0; i < mStride; ++i) mData.add(v[i]);
-        return *this;
-    }
+	void clear()
+	{
+		mData.clear();
+	}
 
+	tpUByte getStride() const { return mStride; }
+
+	const tpFloat* getData() const { return mData.getData(); }
+	tpFloat* getData() { return mData.getData(); }
+
+
+	tpPrimitiveAttribute&
+	add(const tpFloat *v)
+	{
+		const tpFloat* vi = v;
+		for (int i = 0; (i < mStride) && vi; ++i, ++vi) mData.add(*vi);
+		return *this;
+	}
+
+	tpPrimitiveAttribute&
+	add(const tpVec4f& v)
+	{
+		for (int i = 0; i < tpMin((int)mStride,4);++i) mData.add(v[i]);
+	}
+
+	tpPrimitiveAttribute&
+	add(const tpVec3f& v)
+	{
+		for (int i = 0; i < tpMin((int)mStride,3);++i) mData.add(v[i]);
+	}
+};
+
+struct tpFakePrim {
+
+	tpRefPtr<tpPrimitiveAttribute> mVertices;
+	tpRefPtr<tpPrimitiveAttribute> mNormals;
+
+	tpArray<tpRefPtr<tpPrimitiveAttribute> > mAttributes;
+
+	tpPrimitiveAttribute&
+	getNormals()
+	{
+		if (!mNormals.isValid()) {
+			mNormals = new tpPrimitiveAttribute;
+			mAttributes.add(mNormals.get());
+		}
+		return *mNormals;
+	}
+
+	const tpPrimitiveAttribute&
+	getNormals() const
+	{
+		return *mNormals;
+	}
 
 };
 
@@ -92,9 +119,16 @@ public:
 static
 void t()
 {
-    tpPrimitiveAttribute pv;
-    pv.add(0);
+	tpPrimitiveAttribute pv;
+	pv.add(0);
+	pv.add(tpVec3f(3,2,3)).add(tpVec3f(1,1,1));
+
+	tpFakePrim fp;
+	fp.getNormals().getData();
+
 }
+
+
 
 
 
@@ -146,7 +180,7 @@ tpPrimitive::addVertex(const tpVec4<tpReal> &position,
 					   const tpVec2<tpReal>& tcoord,
 					   const tpVec4<tpReal>& color)
 {
-    m_vertices.add(position[0]).add(position[1]).add(position[2]).add(1);
+	m_vertices.add(position[0]).add(position[1]).add(position[2]).add(1);
 	m_normals.add(normal[0]).add(normal[1]).add(normal[2]);
 	m_texcoords.add(tcoord[0]).add(tcoord[1]);
 	m_colors.add(color[0]).add(color[1]).add(color[2]).add(color[3]);
@@ -252,7 +286,7 @@ void tpPrimitive::clearAll()
 
 
 tpUInt tpPrimitive::getVertexCount() const {
-    return m_vertices.getSize() / 4;
+	return m_vertices.getSize() / 4;
 }
 
 tpUInt tpPrimitive::getTexCoordsCount() const {
@@ -300,7 +334,7 @@ tpPrimitive* tpPrimitiveFactory::create( tpUShort primitive_type )
 		res->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,0,1,1));
 		res->addVertex(tpVec3r(0,0,1),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,0,1,1));
 
-        res->setLighting(false);
+		res->setLighting(false);
 		break;
 
 	case kPlane:

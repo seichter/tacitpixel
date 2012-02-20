@@ -26,69 +26,7 @@
 #ifndef TPMESH_H
 #define TPMESH_H
 
-
 #include <tp/renderable.h>
-
-/**
- * Mesh types are mapping to the enums in OpenGL
- *
- */
-
-
-//typedef tpArray<tpDouble> tpArrayd;
-//typedef tpArray<tpFloat> tpArrayf;
-//typedef tpArray<tpReal> tpArrayr;
-
-
-//template <typename T>
-//class tpMultiArray
-//{
-//	T* mData;
-//	tpArray<tpUInt> mDimensions;
-
-//public:
-
-//	tpMultiArray() : mData(0) {}
-
-//	const void* data() const { return static_cast<void*>(mData); }
-
-//	void create(void* data,tpUInt dimensions,...)
-//	{
-//		if (data != 0) { mData = data; }
-
-//		mDimensions.clear();
-//	}
-//};
-
-
-//struct tpAttributeStorage {
-//	tpSizedChunk mStorage;
-//	tpArray<tpUShort> mOffsets;
-//	tpArray<tpSizeT> mSizes;
-//};
-
-//class TP_API tpAttributeBuffer : public tpReferenced
-//{
-//	tpArrayr mAttributes;
-//	tpUShort mType;
-//	tpUShort mIndex;
-
-//public:
-
-//	enum {
-//		kUnkown = 0,
-//		kVertices,
-//		kColors,
-//		kNormals,
-//		kTextureCoordinates,
-//		kUser = 0xff
-//	};
-
-//	tpAttributeBuffer() : tpReferenced(), mType(kUnkown), mIndex(0) {}
-
-//	tpAttributeBuffer(tpUShort type, tpUShort index = 0) : tpReferenced(), mType(type), mIndex(index) {}
-
-//};
 
 
 /*!
@@ -142,7 +80,7 @@ public:
 	 */
 	virtual tpObject* clone();
 
-    void addVertex(const tpVec4<tpReal>& position,
+	void addVertex(const tpVec4<tpReal>& position,
 		const tpVec3<tpReal>& normal = tpVec3r(0,0,1),
 		const tpVec2<tpReal>& tcoord = tpVec2r(0,1),
 		const tpVec4<tpReal>& color = tpVec4r(1,1,1,1));

@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,10 +32,10 @@
 #include <tp/rtti.h>
 
 
-class TP_API tpReferenced { 
+class TP_API tpReferenced {
 public:
 
-	TP_TYPE_DECLARE;
+	TP_TYPE_DECLARE
 
 	tpReferenced();
 
@@ -56,7 +56,7 @@ protected:
 
 
 inline tpReferenced& tpReferenced::operator = (const tpReferenced&) {
-    return *this;
+	return *this;
 }
 
 #endif

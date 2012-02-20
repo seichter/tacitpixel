@@ -39,7 +39,7 @@
 class TP_API tpSocket : public tpReferenced {
 public:
 
-    TP_TYPE_DECLARE
+	TP_TYPE_DECLARE
 
 	enum {
 		kTCP = 0x0,
@@ -51,26 +51,19 @@ public:
 	//! copy c'tor
 	tpSocket(const tpSocket&);
 
+	void setHandle(int handle) { mHandle = handle; }
+	int getHandle() const { return mHandle; }
 
-	//! write to socket
-	virtual int write(const void* data,unsigned int datalength) = 0;
+	bool bind(tpUInt port);
 
-	//! read from socket
-	virtual int read(void* data,unsigned int datalength) = 0;
-
-    void setHandle(int handle) { mHandle = handle; }
-    int getHandle() const { return mHandle; }
-
-    bool bind(tpUInt port);
-
-    bool sendRaw(const void *indata, tpSizeT datalength, tpSizeT &total);
+	bool sendRaw(const void *indata, tpSizeT datalength, tpSizeT &total);
 
 protected:
 
-    //! default d'tor
+	//! default d'tor
 	virtual ~tpSocket();
 
-    int mHandle;
+	int mHandle;
 };
 
 
@@ -79,7 +72,7 @@ class TP_API tpTCPSocket : public tpSocket
 {
 public:
 
-    TP_TYPE_DECLARE
+	TP_TYPE_DECLARE
 
 
 	//! standard c'tor
@@ -100,13 +93,13 @@ public:
 	bool listen(unsigned int localport);
 
 	//! close connection
-    bool close();
+	bool close();
 
 
 	//! write to the socket
-    virtual int write(const void* data,tpSizeT datalength);
+	virtual int write(const void* data,tpSizeT datalength);
 	//! read from socket
-    virtual int read(void* data,tpSizeT datalength);
+	virtual int read(void* data,tpSizeT datalength);
 
 	//! connect on remote address and port
 	bool connect(const tpString& remoteaddress,unsigned int remoteport);
@@ -133,16 +126,16 @@ typedef tpMap<tpUInt,tpString> tpReceiverMap;
 class TP_API tpUDPSocket : public tpSocket {
 public:
 
-    TP_TYPE_DECLARE
+	TP_TYPE_DECLARE
 
-    enum {
-        kTTLSameHost = 0,
-        kTTLSameSubNet = 1,
-        kTTLSameSite = 32,
-        kTTLSameRegion = 64,
-        kTTLSameContinent = 128,
-        kTTLUnrestriced = 255
-    };
+	enum {
+		kTTLSameHost = 0,
+		kTTLSameSubNet = 1,
+		kTTLSameSite = 32,
+		kTTLSameRegion = 64,
+		kTTLSameContinent = 128,
+		kTTLUnrestriced = 255
+	};
 
 
 	//! standard c'tor
@@ -168,7 +161,7 @@ public:
 	int send(const void *data,unsigned int datalength,const tpPair<tpUInt,tpString>& receiver);
 
 	//! receive from remote address
-    int receiveFrom(void *data,unsigned int datalength, tpString& remoteaddress, unsigned int &remoteport, int timeout = 10);
+	int receiveFrom(void *data,unsigned int datalength, tpString& remoteaddress, unsigned int &remoteport, int timeout = 10);
 
 	//! set broadcast
 	void setBroadcast(const tpString&,unsigned int);

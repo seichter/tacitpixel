@@ -50,9 +50,7 @@ int main(int argc, char* argv[])
 
 	if (argc > 1) {
 		tpFile file;
-		file.open(argv[1]);
-
-		tpIO2String(&file,doc);
+		if (file.open(argv[1])) tpIO2String(&file,doc);
 	} else {
 
 		doc = "<we are=\"cool\"><some stuff=\"yes\">And also some text<tag a=\"b\"/></some><br/></we>";
