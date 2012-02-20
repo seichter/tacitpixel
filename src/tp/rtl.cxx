@@ -1,20 +1,46 @@
 #include <tp/rtl.h>
 
-void tpRTL::close()
+
+class tpLibraryGetProcAddress : public tpGetProcAddress {
+	tpRefPtr<tpLibrary> mLibrary;
+public:
+	tpLibraryGetProcAddress(tpLibrary *lib = 0) 
+		: tpGetProcAddress()
+		, mLibrary(lib)
+	{}
+
+	void* operator()(const char* name)
+	{
+		return mLibrary.isValid() ? mLibrary->getAddress(name) : 0L;
+	}
+
+};
+
+
+void tpRuntimeLoader::close()
 {
-	mLibrary = 0L;
+	mLibrary = 0;
 }
 
-bool tpRTL::open( const tpString& name )
+void tpRuntimeLoader::load(tpGetProcAddress& gpa)
+{
+	tpFunctoid::load(gpa,mFunctions);
+}
+
+bool tpRuntimeLoader::load( const tpString& name )
 {
 	mLibrary = tpLibrary::load(name);
 
 	if (mLibrary.isValid())
 	{
-		tpFunctoid::load(mLibrary.get(),mFunctions);
+
+		tpLibraryGetProcAddress lgpa(mLibrary.get());
+
+		tpFunctoid::load(lgpa,mFunctions);
 
 		return true;
 	}
 
 	return false;
 }
+

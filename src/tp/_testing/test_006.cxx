@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 	tpString file;
 	args.get("--egl",file);
 
-	tpEGL::get()->open(file);
+	tpEGL::get()->load(file);
 
 	tpRefPtr<tpRenderSurface> surface = tpRenderSurface::create();
 

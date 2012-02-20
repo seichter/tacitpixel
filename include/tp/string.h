@@ -104,7 +104,7 @@ public:
 
 	//! append another cstr
 	tpString& append(const char* rs);
-
+	tpString& append(const char& c);
 	//! prepend another cstr
 	tpString& prepend(const char* rs);
 

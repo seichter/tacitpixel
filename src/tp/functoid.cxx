@@ -1,13 +1,13 @@
 #include <tp/functoid.h>
 
 
-/*static*/ void
-tpFunctoid::load(const tpLibrary* lib,tpFunctoidArray& farray)
+void 
+tpFunctoid::load( tpGetProcAddress& gpa, tpFunctoidArray& farray )
 {
 	for(tpFunctoidArray::iterator it = farray.begin();
 		it != farray.end();
 		++it)
 	{
-		(*it).getKey()->assign(*lib,(*it).getValue());
+		(*it).getKey()->assign(gpa,(*it).getValue());
 	}
 }

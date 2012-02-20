@@ -61,7 +61,23 @@ TEST(tpMat, mul) {
 	EXPECT_EQ(0,abc(2,0));
 	EXPECT_EQ(0,abc(0,2));
 
-	tpLog::get() << abc;
+	//tpLog::get() << abc;
+
+}
+
+TEST(tpString,checks) {
+
+	tpString test1("we try to test.something");
+	tpString test2("one.two.three");
+
+	EXPECT_EQ(3,test2.find('.',false));
+	EXPECT_EQ(7,test2.find('.',true));
+	EXPECT_EQ(tpString::kNotFound,test2.find("z"));
+
+	EXPECT_EQ("we",test1.beforeFirst(' '));
+	EXPECT_EQ("something",test1.afterLast('.'));
+	EXPECT_EQ("one.two",test2.beforeLast('.'));
+	EXPECT_EQ("test",test1.beforeLast('.').afterLast(' '));
 
 }
 

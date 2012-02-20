@@ -31,15 +31,14 @@
 #include <tp/refptr.h>
 #include <tp/functoid.h>
 
-class TP_API tpRTL : public tpReferenced {
+
+class TP_API tpRuntimeLoader : public tpReferenced {
 protected:
 
-	tpRefPtr<tpLibrary> mLibrary;
 	tpFunctoidArray mFunctions;
+	tpRefPtr<tpLibrary> mLibrary;
 
 public:
-
-	tpRefPtr<tpLibrary> getLibrary() const { return mLibrary; }
 
 	tpFunctoidArray& getFunctions() { return mFunctions; }
 
@@ -50,8 +49,15 @@ public:
 	 * @param name filename of the library to load
 	 * @return true if successful
 	 */
-	bool open(const tpString& name);
+	bool load( const tpString& name );
 
+	/**
+	 * Loads a signatures
+	 *
+	 * @param gpa is a runtime loader function
+	 */
+	void load(tpGetProcAddress& gpa);
+	
 	/**
 	 * Closes the library and clears all pointers
 	 */

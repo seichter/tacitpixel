@@ -37,8 +37,8 @@ public:
 
 	virtual tpString getCaption();
 
-	tpRawPtr getDisplay() { return 0; }
-	tpRawPtr getWindow() { return _handle; }
+	tpRawPtr getDisplay();
+	tpRawPtr getWindow();
 
 	void setContext(tpRenderContext* context);
 };

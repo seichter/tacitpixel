@@ -114,7 +114,27 @@ tpRenderContextWGL::tpRenderContextWGL()
 
 int chooseVisual(HDC hdc)
 {
+	int PFD(0);
 
+	PIXELFORMATDESCRIPTOR pfd;
+	pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
+	if (DescribePixelFormat(hdc, PFD, pfd.nSize, &pfd) == 0)
+		return -1;
+
+	HWND tmpWin = CreateWindowEx(
+		WS_EX_APPWINDOW,
+		"STATIC",
+		"Dummy Tmp Window from NGL",
+		WS_POPUP,
+		0, 0, 64, 64,
+		NULL,
+		NULL,
+		NULL,
+		NULL);
+	HDC tmpDC = GetDC(tmpWin);
+	SetPixelFormat(tmpDC, PFD, &pfd);
+	HGLRC rc = wglCreateContext(tmpDC);
+	wglMakeCurrent(tmpDC, rc);
 
 
 	PFNWGLGETPIXELFORMATATTRIBIVARB wglGetPixelFormatAttribivARB =
@@ -153,7 +173,8 @@ int chooseVisual(HDC hdc)
 
 			wglGetPixelFormatAttribivARB(hdc,pixformats[i],0,query.getSize(),query.getData(),result.getData());
 
-			if ((result[0] == 32) && (result[2] == 8))
+			// reminder color bits should be *without* the alpha channel
+			if ((result[0] == 24) && (result[2] == 8))
 			{
 
 				return pixformats[i];
@@ -232,6 +253,19 @@ tpRenderContextWGL::create(tpRenderTarget *target)
 
 	bool res = this->makeCurrent();
 
+	if (res)
+	{
+		mVersion = this->getString(GL_VERSION);
+		mVendor = this->getString(GL_VENDOR);
+		mRenderer = this->getString(GL_RENDERER);
+		mExtensions = this->getString(GL_EXTENSIONS);
+
+		tpLogNotify("OpenGL %s %s",mVendor.c_str(),mVersion.c_str());
+
+		return true;
+	}
+
+
 	tpInt glmajor(0), glminor(0);
 
 //	tpGetGLVersion(glmajor,glminor);
@@ -250,7 +284,7 @@ tpRenderContextWGL::create(tpRenderTarget *target)
 		};
 
 		PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = 
-			(PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
+			(PFNWGLCREATECONTEXTATTRIBSARBPROC)this->getProcAddress("wglCreateContextAttribsARB");
 		if (wglCreateContextAttribsARB)
 		{
 
@@ -300,6 +334,12 @@ tpRenderContextWGL::getString(const tpUInt& e)
 {
 	const tpChar* str = reinterpret_cast<const tpChar*>(glGetString(e));
 	return tpString(str);
+}
+
+void*
+tpRenderContextWGL::getProcAddress(const char* name)
+{
+	return wglGetProcAddress(name);
 }
 
 

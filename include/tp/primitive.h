@@ -136,6 +136,86 @@ protected:
 };
 
 
+class TP_API tpPrimitiveAttribute : public tpReferenced {
+protected:
+	tpArray<tpFloat> mData;
+	tpUByte mStride;
+	tpUByte mType;
+public:
+
+	tpPrimitiveAttribute(tpUByte stride = 4, tpUByte attr_type = 0);
+
+	void setType(tpUByte attr_type);
+
+	bool isType(tpUByte attr_type) const;
+
+	tpSizeT getSize() const { return mData.getSize() / mStride; }
+
+	void remove(tpSizeT idx);
+
+	void clear()
+	{
+		mData.clear();
+	}
+
+	tpUByte getStride() const { return mStride; }
+
+	const tpFloat* getData() const { return mData.getData(); }
+	tpFloat* getData() { return mData.getData(); }
+
+	tpPrimitiveAttribute&
+		add(const tpFloat *v);
+
+	tpPrimitiveAttribute&
+		add(const tpVec4f& v);
+
+	tpPrimitiveAttribute&
+		add(const tpVec3f& v);
+};
+
+
+class TP_API tpPrimitiveNew : public tpRenderable {
+protected:
+	tpRefPtr<tpPrimitiveAttribute> mVertices;
+	tpRefPtr<tpPrimitiveAttribute> mNormals;
+	tpRefPtr<tpPrimitiveAttribute> mTexCoords;
+	tpRefPtr<tpPrimitiveAttribute> mColors;
+
+	typedef tpArray<tpRefPtr<tpPrimitiveAttribute> > tpRefPrimitiveAttributeArray;
+
+	tpRefPrimitiveAttributeArray mUserAttributes;
+public:
+
+	tpPrimitiveNew(const tpString& name = "primitive");
+
+	bool hasVertices() const;
+
+	bool hasNormals() const;
+
+	bool hasColors() const;
+
+	bool hasTextureCoordinates() const;
+
+	tpPrimitiveAttribute& getVertices();
+
+	const tpPrimitiveAttribute& getVertices() const;
+
+	tpPrimitiveAttribute& getNormals();
+
+	const tpPrimitiveAttribute& getNormals() const;
+
+	tpPrimitiveAttribute& getColors();
+
+	const tpPrimitiveAttribute& getColors() const;
+
+	tpPrimitiveAttribute& getTextureCoordinates();
+
+	const tpPrimitiveAttribute& getTextureCoordinates() const;
+
+};
+
+
+
 class TP_API tpPrimitiveFactory : public tpReferenced {
 public:
 

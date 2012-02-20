@@ -23,4 +23,10 @@ tpRenderContext::getExtensions(tpStringArray& extensions) const
     extensions = tpStringTokenizer::split(ext," ");
 }
 
+void*
+tpRenderContext::getProcAddress(const char* name)
+{
+	return 0L;
+}
+
 TP_TYPE_REGISTER(tpRenderContext,tpReferenced,RenderContext);

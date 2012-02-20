@@ -30,90 +30,16 @@
 #include "tp/utils.h"
 #include "tp/map.h"
 
-class tpPrimitiveAttribute : public tpReferenced {
-protected:
-	tpArray<tpFloat> mData;
-	tpUByte mStride;
-	tpUByte mType;
-public:
-
-	tpPrimitiveAttribute(tpUByte stride = 4, tpUByte attr_type = 0)
-		: mStride(stride)
-		, mType(attr_type)
-	{
-		mData.reserve(mStride);
-	}
-
-	void setType(tpUByte attr_type) {
-		mType = attr_type;
-	}
-
-	bool isType(tpUByte attr_type) const { return mType == attr_type; }
-
-	tpSizeT getSize() const { return mData.getSize() / mStride; }
-
-	void remove(tpSizeT idx)
-	{
-		tpSizeT rIdx = idx * mStride;
-		for (tpUByte i = 0; i < mStride;++i) mData.erase(rIdx);
-	}
-
-	void clear()
-	{
-		mData.clear();
-	}
-
-	tpUByte getStride() const { return mStride; }
-
-	const tpFloat* getData() const { return mData.getData(); }
-	tpFloat* getData() { return mData.getData(); }
+//class tpPrimitiveAttributeBase : public tpReferenced {
+//
+//	virtual void* getData() { return 0L; }
+//	virtual const void* getData() const { return 0L; }
+//
+//};
 
 
-	tpPrimitiveAttribute&
-	add(const tpFloat *v)
-	{
-		const tpFloat* vi = v;
-		for (int i = 0; (i < mStride) && vi; ++i, ++vi) mData.add(*vi);
-		return *this;
-	}
 
-	tpPrimitiveAttribute&
-	add(const tpVec4f& v)
-	{
-		for (int i = 0; i < tpMin((int)mStride,4);++i) mData.add(v[i]);
-	}
 
-	tpPrimitiveAttribute&
-	add(const tpVec3f& v)
-	{
-		for (int i = 0; i < tpMin((int)mStride,3);++i) mData.add(v[i]);
-	}
-};
-
-struct tpFakePrim {
-
-	tpRefPtr<tpPrimitiveAttribute> mVertices;
-	tpRefPtr<tpPrimitiveAttribute> mNormals;
-
-	tpArray<tpRefPtr<tpPrimitiveAttribute> > mAttributes;
-
-	tpPrimitiveAttribute&
-	getNormals()
-	{
-		if (!mNormals.isValid()) {
-			mNormals = new tpPrimitiveAttribute;
-			mAttributes.add(mNormals.get());
-		}
-		return *mNormals;
-	}
-
-	const tpPrimitiveAttribute&
-	getNormals() const
-	{
-		return *mNormals;
-	}
-
-};
 
 
 static
@@ -123,8 +49,8 @@ void t()
 	pv.add(0);
 	pv.add(tpVec3f(3,2,3)).add(tpVec3f(1,1,1));
 
-	tpFakePrim fp;
-	fp.getNormals().getData();
+	tpRefPtr<tpPrimitiveNew> fp = new tpPrimitiveNew();
+	fp->getNormals();
 
 }
 
@@ -353,3 +279,143 @@ tpPrimitive* tpPrimitiveFactory::create( tpUShort primitive_type )
 
 	return res;
 }
+
+tpPrimitiveAttribute::tpPrimitiveAttribute( tpUByte stride /*= 4*/, tpUByte attr_type /*= 0*/ ) 
+: mStride(stride)
+, mType(attr_type)
+{
+	mData.reserve(mStride);
+}
+
+void tpPrimitiveAttribute::setType( tpUByte attr_type )
+{
+	mType = attr_type;
+}
+
+bool tpPrimitiveAttribute::isType( tpUByte attr_type ) const
+{
+	return mType == attr_type;
+}
+
+void tpPrimitiveAttribute::remove( tpSizeT idx )
+{
+	tpSizeT rIdx = idx * mStride;
+	for (tpUByte i = 0; i < mStride;++i) mData.erase(rIdx);
+}
+
+tpPrimitiveAttribute& tpPrimitiveAttribute::add( const tpFloat *v )
+{
+	const tpFloat* vi = v;
+	for (int i = 0; (i < mStride) && vi; ++i, ++vi) mData.add(*vi);
+	return *this;
+}
+
+tpPrimitiveAttribute& tpPrimitiveAttribute::add( const tpVec4f& v )
+{
+	for (int i = 0; i < tpMin((int)mStride,4);++i) mData.add(v[i]);
+	return *this;
+}
+
+tpPrimitiveAttribute& tpPrimitiveAttribute::add( const tpVec3f& v )
+{
+	for (int i = 0; i < tpMin((int)mStride,3);++i) mData.add(v[i]);
+	return *this;
+}
+
+//////////////////////////////////////////////////////////////////////////
+tpPrimitiveNew::tpPrimitiveNew( const tpString& name /*= "primitive"*/ ) 
+: tpRenderable(name)
+{
+}
+
+bool 
+tpPrimitiveNew::hasTextureCoordinates() const
+{
+	return (mTexCoords.isValid() && mTexCoords->getSize());
+}
+
+bool 
+tpPrimitiveNew::hasColors() const
+{
+	return (mColors.isValid() && mColors->getSize());
+}
+
+bool 
+tpPrimitiveNew::hasNormals() const
+{
+	return (mNormals.isValid() && mNormals->getSize());
+}
+
+bool 
+tpPrimitiveNew::hasVertices() const
+{
+	return (mVertices.isValid() && mVertices->getSize());
+}
+
+
+const tpPrimitiveAttribute& 
+tpPrimitiveNew::getVertices() const
+{
+	return *mVertices;
+}
+
+tpPrimitiveAttribute& 
+tpPrimitiveNew::getVertices()
+{
+	if (!mVertices.isValid()) {
+		mVertices = new tpPrimitiveAttribute;
+		mVertices->setType(tpPrimitive::kAttributeVertex);
+	}
+	return *mVertices;
+}
+
+
+const tpPrimitiveAttribute& 
+tpPrimitiveNew::getNormals() const
+{
+	return *mNormals;
+}
+
+tpPrimitiveAttribute& 
+tpPrimitiveNew::getNormals()
+{
+	if (!mNormals.isValid()) {
+		mNormals = new tpPrimitiveAttribute;
+		mNormals->setType(tpPrimitive::kAttributeNormals);
+	}
+	return *mNormals;
+}
+
+
+const tpPrimitiveAttribute& 
+tpPrimitiveNew::getTextureCoordinates() const
+{
+	return *mTexCoords;
+}
+
+tpPrimitiveAttribute& 
+tpPrimitiveNew::getTextureCoordinates()
+{
+	if (!mTexCoords.isValid()) {
+		mTexCoords = new tpPrimitiveAttribute;
+		mTexCoords->setType(tpPrimitive::kAttributeUV);
+	}
+	return *mTexCoords;
+}
+
+const tpPrimitiveAttribute& 
+tpPrimitiveNew::getColors() const
+{
+	return *mTexCoords;
+}
+
+tpPrimitiveAttribute& 
+tpPrimitiveNew::getColors()
+{
+	if (!mColors.isValid()) {
+		mColors = new tpPrimitiveAttribute;
+		mColors->setType(tpPrimitive::kAttributeColors);
+	}
+	return *mColors;
+}
+

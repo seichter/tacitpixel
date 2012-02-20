@@ -37,6 +37,9 @@ public:
 
     void getExtensions(tpStringArray& e) const;
 
+	virtual void* getProcAddress(const char* name);
+
+
 protected:
 
     tpString mVendor;

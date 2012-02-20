@@ -26,7 +26,10 @@ public:
 	virtual bool swapBuffers();
 
 	virtual tpString getString( const tpUInt& e );
+	
+	void* getProcAddress(const char* name);
 
+protected:
 	HDC _dc;
 	HGLRC _context;
 };

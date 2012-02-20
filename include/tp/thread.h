@@ -103,6 +103,13 @@ public:
 	  * @brief returns time to the calling thread
 	  */
 	static void yield();
+	
+	
+	/**
+	 * @brief get number of CPUs available
+	 */
+	static int getCoreCount();
+
 
 protected:
 

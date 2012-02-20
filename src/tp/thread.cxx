@@ -175,4 +175,21 @@ tpThread::sleep(tpULong milliseconds)
 
 }
 
+int 
+tpThread::getCoreCount()
+{
+#if defined(_WIN32)
+	SYSTEM_INFO sysinfo;
+	GetSystemInfo(&sysinfo);
+
+	return sysinfo.dwNumberOfProcessors;
+#elif defined(__linux)
+
+	return sysconf( _SC_NPROCESSORS_ONLN );
+
+#endif
+
+	return -1;
+}
+
 

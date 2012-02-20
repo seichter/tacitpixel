@@ -299,6 +299,16 @@ tpRenderSurfaceWin32::setContext(tpRenderContext* context)
 	tpRenderTarget::setContext(context);
 }
 
+tpRawPtr tpRenderSurfaceWin32::getDisplay()
+{
+	return GetWindowDC(_handle);
+}
+
+tpRawPtr tpRenderSurfaceWin32::getWindow()
+{
+	return _handle;
+}
+
 
 TP_TYPE_REGISTER(tpRenderSurfaceWin32,tpRenderSurface,RenderSurfaceWin32);
 

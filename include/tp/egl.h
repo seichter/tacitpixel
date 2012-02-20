@@ -130,7 +130,7 @@ public:
 };
 
 
-class TP_API tpEGL : public tpRTL {
+class TP_API tpEGL : public tpRuntimeLoader {
 public:
 
 	// signatures
@@ -149,6 +149,7 @@ public:
 	typedef EGLBoolean (__TP_CALL * eglGetConfigAttribT)(EGLDisplay,EGLConfig,EGLint,EGLint * value);
 	typedef EGLBoolean (__TP_CALL * eglBindAPIT)(EGLenum api);
 	typedef const char* (__TP_CALL * eglQueryStringT)(EGLDisplay dpy,int);
+	typedef void* (__TP_CALL * eglGetProcAddress)(const char*);
 
 	// functoids
 	tpFunctoidImpl<eglGetErrorT> GetError;
@@ -166,6 +167,7 @@ public:
 	tpFunctoidImpl<eglQueryStringT> QueryString;
 	tpFunctoidImpl<eglGetConfigAttribT> GetConfigAttrib;
 	tpFunctoidImpl<eglBindAPIT> BindAPI;
+	tpFunctoidImpl<eglGetProcAddress> GetProcAddress;
 
 
 	static tpEGL* get(bool destroy = false);

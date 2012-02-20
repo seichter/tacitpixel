@@ -182,6 +182,19 @@ tpString::append(const char* other)
 }
 
 tpString&
+tpString::append(const char& c)
+{
+	if (mBuffer.getSize() == 0) {
+		mBuffer.add(c);
+	} else {
+		mBuffer[mBuffer.getSize()-1] = c;
+	}
+	mBuffer.add('\0');
+
+	return *this;
+}
+
+tpString&
 tpString::prepend(const char* other)
 {
 	tpString result(other);
@@ -193,9 +206,9 @@ tpString::prepend(const char* other)
 int
 tpString::find(const char& c, bool fromright) const
 {
-	if ( isEmpty() ) return -1;
+	if ( isEmpty() ) return kNotFound;
 	const char* _pc = (fromright) ? tpStrRChr(c_str(),c) : tpStrChr(c_str(),c);
-	return (_pc) ? _pc - (const char*)c_str() : -1;
+	return (_pc) ? _pc - (const char*)c_str() : tpString::kNotFound;
 }
 
 tpString& tpString::removeFrom(const char& end, bool fromright)
@@ -313,7 +326,7 @@ tpString
 tpString::afterFirst(const char& c) const
 {
 	tpString _ret;
-	int _pos = find(c);
+	int _pos = find(c,false);
 
 	if (0 > _pos) return *this;
 
@@ -325,17 +338,9 @@ tpString::afterFirst(const char& c) const
 tpString
 tpString::beforeFirst(const char& c) const
 {
-
 	tpString _ret;
-/*
-	const char* _pc = (const char*)c_str();
-
-	while (*_pc != 0 && *_pc != c)
-	{
-		_ret << *_pc;
-		_pc++;
-	}
-*/
+	int pos = find(c,false);
+	if (pos != tpString::kNotFound) _ret.set(mBuffer.getData(),pos);
 	return _ret;
 }
 
@@ -344,11 +349,11 @@ tpString
 tpString::beforeLast(const char& c) const
 {
 	tpString _ret;
-/*
-	int pos = find(c,TRUE);
 
-	if (pos != TP_NOTFOUND) _ret = tpString(m_stringbuffer.getData() + pos);
-*/
+	int pos = find(c,true);
+
+	if (pos != tpString::kNotFound) _ret.set(mBuffer.getData(),pos);
+
 	return _ret;
 }
 

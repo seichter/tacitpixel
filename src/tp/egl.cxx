@@ -19,6 +19,7 @@ tpEGL::tpEGL()
 			.push(&GetConfigAttrib,"eglGetConfigAttrib")
 			.push(&QueryString,"eglQueryString")
 			.push(&BindAPI,"eglBindAPI")
+			.push(&GetProcAddress,"eglGetProcAddress")
 			;
 }
 
@@ -42,13 +43,14 @@ bool tpRenderContextEGL::create(tpRenderTarget* target) {
 
 	tpArray<EGLint> attributes;
 
-//	attributes.add(EGL_RENDERABLE_TYPE).add(EGL_OPENGL_ES2_BIT);
-	attributes.add(EGL_RENDERABLE_TYPE).add(EGL_OPENGL_BIT);
+	attributes.add(EGL_RENDERABLE_TYPE).add(EGL_OPENGL_ES2_BIT);
+//	attributes.add(EGL_RENDERABLE_TYPE).add(EGL_OPENGL_BIT);
 
 	switch (target->getTargetType())
 	{
 		case tpRenderTarget::kWindow:
 			attributes.add(EGL_SURFACE_TYPE).add(EGL_WINDOW_BIT);
+
 			break;
 		case tpRenderTarget::kPbuffer:
 
