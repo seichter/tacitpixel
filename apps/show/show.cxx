@@ -82,11 +82,11 @@ int main(int argc,char* argv[])
 
 	tpRefPtr<tpViewer> viewer = new tpViewerShow;
 
-	viewer->getScene().getActiveCamera()->addChild(root.get());
     viewer->getScene().getActiveCamera()->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
     viewer->getScene().getActiveCamera()->setProjectionPerspective(30,1.4,0.1,100);
 	viewer->getScene().getActiveCamera()->setClearColor(tpVec4f(.5,.5,.5,1));
 	viewer->getScene().getActiveCamera()->setClearFlags(tpCamera::kClearDepth | tpCamera::kClearColor);
+	viewer->getScene().getActiveCamera()->addChild(root.get());
 
 
 	viewer->create();

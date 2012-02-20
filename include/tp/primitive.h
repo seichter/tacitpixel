@@ -35,60 +35,60 @@
  */
 
 
-typedef tpArray<tpDouble> tpArrayd;
-typedef tpArray<tpFloat> tpArrayf;
-typedef tpArray<tpReal> tpArrayr;
+//typedef tpArray<tpDouble> tpArrayd;
+//typedef tpArray<tpFloat> tpArrayf;
+//typedef tpArray<tpReal> tpArrayr;
 
 
-template <typename T>
-class tpMultiArray
-{
-	T* mData;
-	tpArray<tpUInt> mDimensions;
+//template <typename T>
+//class tpMultiArray
+//{
+//	T* mData;
+//	tpArray<tpUInt> mDimensions;
 
-public:
+//public:
 
-	tpMultiArray() : mData(0) {}
+//	tpMultiArray() : mData(0) {}
 
-	const void* data() const { return static_cast<void*>(mData); }
+//	const void* data() const { return static_cast<void*>(mData); }
 
-	void create(void* data,tpUInt dimensions,...)
-	{
-		if (data != 0) { mData = data; }
+//	void create(void* data,tpUInt dimensions,...)
+//	{
+//		if (data != 0) { mData = data; }
 
-		mDimensions.clear();
-	}
-};
+//		mDimensions.clear();
+//	}
+//};
 
 
-struct tpAttributeStorage {
-	tpSizedChunk mStorage;
-	tpArray<tpUShort> mOffsets;
-	tpArray<tpSizeT> mSizes;
-};
+//struct tpAttributeStorage {
+//	tpSizedChunk mStorage;
+//	tpArray<tpUShort> mOffsets;
+//	tpArray<tpSizeT> mSizes;
+//};
 
-class TP_API tpAttributeBuffer : public tpReferenced
-{
-	tpArrayr mAttributes;
-	tpUShort mType;
-	tpUShort mIndex;
+//class TP_API tpAttributeBuffer : public tpReferenced
+//{
+//	tpArrayr mAttributes;
+//	tpUShort mType;
+//	tpUShort mIndex;
 
-public:
+//public:
 
-	enum {
-		kUnkown = 0,
-		kVertices,
-		kColors,
-		kNormals,
-		kTextureCoordinates,
-		kUser = 0xff
-	};
+//	enum {
+//		kUnkown = 0,
+//		kVertices,
+//		kColors,
+//		kNormals,
+//		kTextureCoordinates,
+//		kUser = 0xff
+//	};
 
-	tpAttributeBuffer() : tpReferenced(), mType(kUnkown), mIndex(0) {}
+//	tpAttributeBuffer() : tpReferenced(), mType(kUnkown), mIndex(0) {}
 
-	tpAttributeBuffer(tpUShort type, tpUShort index = 0) : tpReferenced(), mType(type), mIndex(index) {}
+//	tpAttributeBuffer(tpUShort type, tpUShort index = 0) : tpReferenced(), mType(type), mIndex(index) {}
 
-};
+//};
 
 
 /*!

@@ -387,7 +387,7 @@ tpTCPSocket::close()
 {
     int res =
 #if defined(_WIN32)
-	::closesocket( m_socketdesc);
+	::closesocket( mHandle);
 #else
     ::close(mHandle);
 #endif

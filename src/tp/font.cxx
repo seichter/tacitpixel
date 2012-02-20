@@ -53,7 +53,13 @@ public:
 		return false;
 	}
 
-	void onText(const tpString& text,tpPrimitive& prim) {
+	void onText(const tpString& text,tpPrimitive& prim) 
+	{
+		if (!mImage.isValid() || !mImage->isValid()) {
+		
+			tpLogError("tpFontRasterizer - no font loaded");
+			return;
+		}
 
 		prim.clearAll();
 		prim.setAttributes(tpPrimitive::kAttributeVertex|tpPrimitive::kAttributeNormals|tpPrimitive::kAttributeUV);

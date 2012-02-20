@@ -298,7 +298,7 @@ add_library(${tp_name} SHARED
 	)
 
 
-target_link_libraries(${tp_name} ${tp_impl_libs})
+target_link_libraries(${tp_name} ${tp_impl_libs} dlmalloc )
 
 set_target_properties(${tp_name}
 	PROPERTIES

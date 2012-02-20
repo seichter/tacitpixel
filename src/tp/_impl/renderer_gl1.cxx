@@ -334,7 +334,7 @@ public:
 		glLightfv(lid,GL_SPECULAR,light.getSpecularColor().getData());
 
         //#define GL_SEPARATE_SPECULAR_COLOR 0x81FA
-        glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+        //glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 
 	}
 

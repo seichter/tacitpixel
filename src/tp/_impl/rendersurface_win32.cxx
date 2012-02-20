@@ -20,8 +20,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	tpUByte mouse_button(0);
 	tpUByte mouse_state(0);
 
-
-	tpRenderSurfaceWin32* rendersurface = reinterpret_cast<tpRenderSurfaceWin32*>(GetWindowLong(hWnd, GWL_USERDATA));
+	tpRenderSurfaceWin32* rendersurface = (tpRenderSurfaceWin32*)GetWindowLongPtr(hWnd,GWL_USERDATA);
 
 	//tpLogNotify("%s: 0x%x",__FUNCTION__,rendersurface);
 
@@ -42,8 +41,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_CREATE:
 		{
+
 			CREATESTRUCT *cs = (CREATESTRUCT*)lParam;
-			SetWindowLong(hWnd,GWL_USERDATA,(long)rendersurface);
+			rendersurface = (tpRenderSurfaceWin32*)cs->lpCreateParams;
+			SetWindowLongPtr(hWnd,GWL_USERDATA,(LONG_PTR)rendersurface);
 			PostMessage(hWnd,WM_CREATED,0,0);
 			return 0;
 		};
@@ -71,7 +72,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			tpLogNotify("%s destroy dispatched",__FUNCTION__);
 			rendersurface->setDone(true);
 		}
-		//PostQuitMessage(0);
+		PostQuitMessage(0);
 		break;
 	case WM_ACTIVATE:
 		// Notify shell of our activate message
@@ -223,6 +224,11 @@ void tpRenderSurfaceWin32::doCreate( tpRenderSurfaceTraits* traits )
 
 void tpRenderSurfaceWin32::doKill()
 {
+}
+
+
+void tpRenderSurfaceWin32::destroy()
+{
 	if (_handle)
 	{
 		DestroyWindow(_handle);
@@ -231,11 +237,7 @@ void tpRenderSurfaceWin32::doKill()
 
 	UnregisterClassA(_classname.c_str(), _instance);
 	_instance = 0;
-}
 
-
-void tpRenderSurfaceWin32::destroy()
-{
 	this->mContext = 0;
 	doKill();
 }
@@ -249,6 +251,9 @@ bool tpRenderSurfaceWin32::show( bool doShow )
 
 void tpRenderSurfaceWin32::update()
 {
+
+	if (this->mDone) return;
+
 	MSG msg;
 
 	if (PeekMessage(&msg, _handle, 0, 0, PM_NOREMOVE)) 

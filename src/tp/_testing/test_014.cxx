@@ -4,7 +4,7 @@
 #include <tp/socket.h>
 #include <tp/log.h>
 
-int client_implementation(const tpString& remote, tpUInt port)
+void client_implementation(const tpString& remote, tpUInt port)
 {
     tpRefPtr<tpTCPSocket> tcp = new tpTCPSocket();
 

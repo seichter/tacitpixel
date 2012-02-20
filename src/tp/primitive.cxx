@@ -27,6 +27,7 @@
 #include "tp/math.h"
 #include "tp/log.h"
 #include "tp/node.h"
+#include "tp/utils.h"
 
 
 //struct tpAttributeIterator {
@@ -52,11 +53,50 @@
 //	tpArray<tpFloat> mStorage;
 //};
 
+class tpPrimitiveAttribute {
+protected:
+    tpArray<tpFloat> mData;
+    tpUByte mStride;
+public:
 
+    tpPrimitiveAttribute(tpUByte stride = 4)
+        : mStride(stride)
+    {
+        mData.reserve(mStride);
+    }
 
-struct tpPrimitiveAttribute {
+    tpSizeT getSize() const { return mData.getSize() / mStride; }
+
+    void remove(tpSizeT idx)
+    {
+        tpSizeT rIdx = idx * mStride;
+        for (tpUByte i = 0; i < mStride;++i) mData.erase(rIdx);
+    }
+
+    tpUByte getStride() const { return mStride; }
+
+    const tpFloat* getData() const { return mData.getData(); }
+    tpFloat* getData() { return mData.getData(); }
+
+    tpPrimitiveAttribute&
+    add(tpFloat v[])
+    {
+        for (int i = 0; i < mStride; ++i) mData.add(v[i]);
+        return *this;
+    }
+
 
 };
+
+
+static
+void t()
+{
+    tpPrimitiveAttribute pv;
+    pv.add(0);
+}
+
+
 
 
 tpPrimitive::tpPrimitive(tpUByte meshtype,tpUShort attributes)
