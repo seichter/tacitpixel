@@ -28,20 +28,170 @@
 
 #include <tp/renderable.h>
 
+///*!
+//	\class tpMesh
+//	\brief an expanded triangle mesh
+//
+//	This node can hold primitive triangle geometries and
+//	furthermore, can generate normals and color vertices
+//*/
+//class TP_API tpPrimitive : public tpRenderable {
+//public:
+//
+//	TP_TYPE_DECLARE
+//
+//	enum {
+//		kPoints = 0x0000,
+//		kLines,
+//		kLineStrip,
+//		kLineLoop,
+//		kTriangles,
+//		kTriangleStrip,
+//		kTriangleFan,
+//		kQuads,
+//		kQuadStrip,
+//		kPolygon
+//	};
+//
+//	enum {
+//		kAttributeVertex =	(1 << 0),
+//		kAttributeNormals =	(1 << 1),
+//		kAttributeColors =	(1 << 2),
+//		kAttributeUV =		(1 << 3)
+//	};
+//
+//
+//
+//	/*! c'tor
+//		\param name name of the name
+//	 */
+//	tpPrimitive(tpUByte meshtype = kTriangles,
+//		tpUShort attributes = kAttributeVertex | kAttributeNormals);
+//
+//	/*! copy c'tor
+//		\param mesh mesh to copy
+//		\param mode mode for copying
+//	 */
+//	tpPrimitive(const tpPrimitive& mesh);
+//
+//	/*! cloning interface
+//		\param mode mode to clone the mesh
+//	 */
+//	virtual tpObject* clone();
+//
+//	void addVertex(const tpVec4<tpReal>& position,
+//		const tpVec3<tpReal>& normal = tpVec3r(0,0,1),
+//		const tpVec2<tpReal>& tcoord = tpVec2r(0,1),
+//		const tpVec4<tpReal>& color = tpVec4r(1,1,1,1));
+//
+//	//! remove a vertex
+//	void removeVertex(tpUInt id);
+//
+//	//! returns the vertices of that mesh
+//	const tpArray<tpReal>& getVertices() const;
+//	//! returns the normals of that mesh
+//	const tpArray<tpReal>& getNormals() const;
+//	//! returns the tex corods of that mesh
+//	const tpArray<tpReal>& getTexCoords() const;
+//	//! returns color array
+//	const tpArray<tpReal>& getColors() const { return m_colors; }
+//
+//	tpUInt getVertexCount() const;
+//	tpUInt getNormalsCount() const;
+//	tpUInt getTexCoordsCount() const;
+//
+//	tpUInt getPrimitiveType() const;
+//	void setPrimitiveType(tpUInt meshtype);
+//
+//	void scale(const tpVec3r& scale);
+//
+//	void getAABB(tpVec3r& aabb_min,tpVec3r& aabb_max);
+//
+//	void flipNormals();
+//
+//	void setAttributes(tpUShort attrib) { m_attributes = attrib; }
+//	tpUShort getAttributes() const { return m_attributes; }
+//
+//	bool hasAttribute(tpUByte attrib) const { return (0 != (m_attributes & attrib)); }
+//
+//	void clearAll();
+//
+//
+//	void toString(tpString &s) const;
+//protected:
+//
+//	virtual ~tpPrimitive();
+//
+//	tpUByte	m_primitivetype;
+//	tpUShort m_attributes;
+//
+//	void calcNormals();
+//
+//	tpArray<tpReal> m_vertices;
+//
+//	tpArray<tpReal> m_normals;
+//	tpArray<tpReal> m_texcoords;
+//	tpArray<tpReal> m_colors;
+//};
 
-/*!
-	\class tpMesh
-	\brief an expanded triangle mesh
 
-	This node can hold primitive triangle geometries and
-	furthermore, can generate normals and color vertices
-*/
-class TP_API tpPrimitive : public tpRenderable {
+
+
+class TP_API tpPrimitiveAttribute : public tpReferenced {
+protected:
+	tpArray<tpFloat> mData;
+	tpUByte mStride;
+	tpUByte mAttrType;
 public:
 
-	TP_TYPE_DECLARE
-
 	enum {
+		kVertices = 0,
+		kNormals,
+		kColors,
+		kTexCoords,
+		kUser = 128
+	};
+
+	tpPrimitiveAttribute(tpUByte stride = 4, tpUByte attr_type = kVertices);
+
+	void setAttributeType(tpUByte attr_type);
+	tpUByte getAttributeType() const { return mAttrType; }
+	bool isAttributeType( tpUByte attr_type ) const;
+
+
+	tpSizeT getSize() const { return mData.getSize() / mStride; }
+
+	void remove(tpSizeT idx);
+
+	void clear();
+
+	tpUByte getStride() const { return mStride; }
+
+	const tpFloat* getData() const { return mData.getData(); }
+	tpFloat* getData() { return mData.getData(); }
+
+	tpPrimitiveAttribute& add(const tpVec4f& v);
+	tpPrimitiveAttribute& add(const tpVec3f& v);
+	tpPrimitiveAttribute& add( const tpVec2f& v );
+	tpPrimitiveAttribute& add( const tpFloat *v, tpSizeT size );
+};
+
+
+class TP_API tpPrimitive : public tpRenderable {
+protected:
+	tpRefPtr<tpPrimitiveAttribute> mVertices;
+	tpRefPtr<tpPrimitiveAttribute> mNormals;
+	tpRefPtr<tpPrimitiveAttribute> mTexCoords;
+	tpRefPtr<tpPrimitiveAttribute> mColors;
+
+	typedef tpArray<tpRefPtr<tpPrimitiveAttribute> > tpRefPrimitiveAttributeArray;
+
+	tpRefPrimitiveAttributeArray mUserAttributes;
+
+	tpUByte mPrimType;
+public:
+
+	enum PrimitiveType {
 		kPoints = 0x0000,
 		kLines,
 		kLineStrip,
@@ -54,139 +204,7 @@ public:
 		kPolygon
 	};
 
-	enum {
-		kAttributeVertex =	(1 << 0),
-		kAttributeNormals =	(1 << 1),
-		kAttributeColors =	(1 << 2),
-		kAttributeUV =		(1 << 3)
-	};
-
-
-
-	/*! c'tor
-		\param name name of the name
-	 */
-	tpPrimitive(tpUByte meshtype = kTriangles,
-		tpUShort attributes = kAttributeVertex | kAttributeNormals);
-
-	/*! copy c'tor
-		\param mesh mesh to copy
-		\param mode mode for copying
-	 */
-	tpPrimitive(const tpPrimitive& mesh);
-
-	/*! cloning interface
-		\param mode mode to clone the mesh
-	 */
-	virtual tpObject* clone();
-
-	void addVertex(const tpVec4<tpReal>& position,
-		const tpVec3<tpReal>& normal = tpVec3r(0,0,1),
-		const tpVec2<tpReal>& tcoord = tpVec2r(0,1),
-		const tpVec4<tpReal>& color = tpVec4r(1,1,1,1));
-
-	//! remove a vertex
-	void removeVertex(tpUInt id);
-
-	//! returns the vertices of that mesh
-	const tpArray<tpReal>& getVertices() const;
-	//! returns the normals of that mesh
-	const tpArray<tpReal>& getNormals() const;
-	//! returns the tex corods of that mesh
-	const tpArray<tpReal>& getTexCoords() const;
-	//! returns color array
-	const tpArray<tpReal>& getColors() const { return m_colors; }
-
-	tpUInt getVertexCount() const;
-	tpUInt getNormalsCount() const;
-	tpUInt getTexCoordsCount() const;
-
-	tpUInt getPrimitiveType() const;
-	void setPrimitiveType(tpUInt meshtype);
-
-	void scale(const tpVec3r& scale);
-
-	void getAABB(tpVec3r& aabb_min,tpVec3r& aabb_max);
-
-	void flipNormals();
-
-	void setAttributes(tpUShort attrib) { m_attributes = attrib; }
-	tpUShort getAttributes() const { return m_attributes; }
-
-	bool hasAttribute(tpUByte attrib) const { return (0 != (m_attributes & attrib)); }
-
-	void clearAll();
-
-
-	void toString(tpString &s) const;
-protected:
-
-	virtual ~tpPrimitive();
-
-	tpUByte	m_primitivetype;
-	tpUShort m_attributes;
-
-	void calcNormals();
-
-	tpArray<tpReal> m_vertices;
-
-	tpArray<tpReal> m_normals;
-	tpArray<tpReal> m_texcoords;
-	tpArray<tpReal> m_colors;
-};
-
-
-class TP_API tpPrimitiveAttribute : public tpReferenced {
-protected:
-	tpArray<tpFloat> mData;
-	tpUByte mStride;
-	tpUByte mType;
-public:
-
-	tpPrimitiveAttribute(tpUByte stride = 4, tpUByte attr_type = 0);
-
-	void setType(tpUByte attr_type);
-
-	bool isType(tpUByte attr_type) const;
-
-	tpSizeT getSize() const { return mData.getSize() / mStride; }
-
-	void remove(tpSizeT idx);
-
-	void clear()
-	{
-		mData.clear();
-	}
-
-	tpUByte getStride() const { return mStride; }
-
-	const tpFloat* getData() const { return mData.getData(); }
-	tpFloat* getData() { return mData.getData(); }
-
-	tpPrimitiveAttribute&
-		add(const tpFloat *v);
-
-	tpPrimitiveAttribute&
-		add(const tpVec4f& v);
-
-	tpPrimitiveAttribute&
-		add(const tpVec3f& v);
-};
-
-
-class TP_API tpPrimitiveNew : public tpRenderable {
-protected:
-	tpRefPtr<tpPrimitiveAttribute> mVertices;
-	tpRefPtr<tpPrimitiveAttribute> mNormals;
-	tpRefPtr<tpPrimitiveAttribute> mTexCoords;
-	tpRefPtr<tpPrimitiveAttribute> mColors;
-
-	typedef tpArray<tpRefPtr<tpPrimitiveAttribute> > tpRefPrimitiveAttributeArray;
-
-	tpRefPrimitiveAttributeArray mUserAttributes;
-public:
-
-	tpPrimitiveNew(const tpString& name = "primitive");
+	tpPrimitive(tpUByte primitivetype = kTriangles, const tpString& name = "primitive");
 
 	bool hasVertices() const;
 
@@ -212,6 +230,18 @@ public:
 
 	const tpPrimitiveAttribute& getTextureCoordinates() const;
 
+	tpPrimitive& addVertexNormal( const tpVec3r& vertex,const tpVec3f& normal );
+
+	tpPrimitive& addVertexNormalTextureCoordinate( const tpVec3r& vertex,const tpVec3f& normal,const tpVec2f& tcoord );
+
+	tpPrimitive& addVertexNormalColor(const tpVec3r& vertex,const tpVec3f& normal,const tpVec4f& color);
+
+	tpPrimitive& addVertexNormalTextureCoordinateColor( const tpVec3r& vertex,const tpVec3f& normal,const tpVec2f& texcoord,const tpVec4f& color );
+
+	void clear();
+
+	tpUByte getPrimitiveType() const { return mPrimType; }
+	void setPrimitiveType(tpUByte val) { mPrimType = val; }
 };
 
 
@@ -227,8 +257,12 @@ public:
 	};
 
 	static tpPrimitiveFactory* get(bool destroy = false);
-
 	tpPrimitive* create(tpUShort primitive_type);
+
+private:
+
+	tpPrimitiveFactory();
+	tpPrimitiveFactory(const tpPrimitiveFactory&);
 };
 
 

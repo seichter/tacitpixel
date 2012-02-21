@@ -51,6 +51,8 @@ public:
 
 	tpString getExecutablePath(bool removeExecName = false);
 
+	tpStringArray getFontPaths();
+
 	tpString getCWD() const;
 
 	tpUByte getEndian() const;

@@ -15,41 +15,6 @@
 #include <tp/thread.h>
 
 
-tpNode* createAxis()
-{
-	tpPrimitive* p = new tpPrimitive(tpPrimitive::kLines);
-
-	p->addVertex(tpVec3r(0,0,0));
-	p->addVertex(tpVec3r(1,0,0),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(1,0,0,1));
-	p->addVertex(tpVec3r(0,0,0));
-	p->addVertex(tpVec3r(0,1,0),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(0,1,0,1));
-	p->addVertex(tpVec3r(0,0,0));
-	p->addVertex(tpVec3r(0,0,1),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(0,0,1,1));
-
-	return p;
-}
-
-tpNode* createNode()
-{
-	tpPrimitive* p = new tpPrimitive(tpPrimitive::kTriangleStrip);
-	tpReal s = 2;
-
-	p->addVertex(tpVec3r(1,1,0),tpVec3r(0,0,1));
-	p->addVertex(tpVec3r(0,1,0),tpVec3r(0,0,1));
-	p->addVertex(tpVec3r(1,0,0),tpVec3r(0,0,1));
-	p->addVertex(tpVec3r(0,0,0),tpVec3r(0,0,1));
-
-	tpMaterial* m = new tpMaterial();
-
-	p->setMaterial(m);
-	m->setName("Default Material");
-
-	m->setDiffuseColor(tpVec4r(.3,0,0,1));
-
-	//return p;
-	return 0;
-}
-
 
 void report(const tpMat44r& mat)
 {
@@ -73,7 +38,7 @@ int main(int argc, char* argv[])
 
 	tpRefPtr<tpNode> n = tpNode::read(argv[1]);
 
-	if (!n.isValid()) n = createAxis();
+	if (!n.isValid()) n = tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kAxis);
 
 	tpRefPtr<tpNode> root = new tpNode();
 

@@ -30,34 +30,8 @@
 #include "tp/utils.h"
 #include "tp/map.h"
 
-//class tpPrimitiveAttributeBase : public tpReferenced {
-//
-//	virtual void* getData() { return 0L; }
-//	virtual const void* getData() const { return 0L; }
-//
-//};
 
-
-
-
-
-
-static
-void t()
-{
-	tpPrimitiveAttribute pv;
-	pv.add(0);
-	pv.add(tpVec3f(3,2,3)).add(tpVec3f(1,1,1));
-
-	tpRefPtr<tpPrimitiveNew> fp = new tpPrimitiveNew();
-	fp->getNormals();
-
-}
-
-
-
-
-
+#if 0
 
 tpPrimitive::tpPrimitive(tpUByte meshtype,tpUShort attributes)
 	: tpRenderable() ,
@@ -280,21 +254,22 @@ tpPrimitive* tpPrimitiveFactory::create( tpUShort primitive_type )
 	return res;
 }
 
+#endif
+
 tpPrimitiveAttribute::tpPrimitiveAttribute( tpUByte stride /*= 4*/, tpUByte attr_type /*= 0*/ ) 
 : mStride(stride)
-, mType(attr_type)
+, mAttrType(attr_type)
 {
-	mData.reserve(mStride);
 }
 
-void tpPrimitiveAttribute::setType( tpUByte attr_type )
+void tpPrimitiveAttribute::setAttributeType( tpUByte attr_type )
 {
-	mType = attr_type;
+	mAttrType = attr_type;
 }
 
-bool tpPrimitiveAttribute::isType( tpUByte attr_type ) const
+bool tpPrimitiveAttribute::isAttributeType( tpUByte attr_type ) const
 {
-	return mType == attr_type;
+	return mAttrType == attr_type;
 }
 
 void tpPrimitiveAttribute::remove( tpSizeT idx )
@@ -303,119 +278,236 @@ void tpPrimitiveAttribute::remove( tpSizeT idx )
 	for (tpUByte i = 0; i < mStride;++i) mData.erase(rIdx);
 }
 
-tpPrimitiveAttribute& tpPrimitiveAttribute::add( const tpFloat *v )
+tpPrimitiveAttribute& tpPrimitiveAttribute::add( const tpFloat *v, tpSizeT size )
 {
-	const tpFloat* vi = v;
-	for (int i = 0; (i < mStride) && vi; ++i, ++vi) mData.add(*vi);
+	// we need to fill data according to OpenGL
+	// including proper padding and alignment
+	// v2 > v4 => (1,2) > (1,2,0,1)
+	for (register tpSizeT i = 0; i < mStride; ++i) {
+		if (i < size) {
+			mData.add(v[i]);
+		} else {
+			// add zero for padding and 1 for marking the end
+			(i < ((tpSizeT)mStride - 1)) ? mData.add(0) : mData.add(1);
+		}
+	}
 	return *this;
 }
 
 tpPrimitiveAttribute& tpPrimitiveAttribute::add( const tpVec4f& v )
 {
-	for (int i = 0; i < tpMin((int)mStride,4);++i) mData.add(v[i]);
-	return *this;
+	return add(v.getData(),4);
 }
 
 tpPrimitiveAttribute& tpPrimitiveAttribute::add( const tpVec3f& v )
 {
-	for (int i = 0; i < tpMin((int)mStride,3);++i) mData.add(v[i]);
-	return *this;
+	return add(v.getData(),3);
+}
+
+tpPrimitiveAttribute& tpPrimitiveAttribute::add( const tpVec2f& v )
+{
+	return add(v.getData(),2);
+}
+
+void tpPrimitiveAttribute::clear()
+{
+	mData.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////
-tpPrimitiveNew::tpPrimitiveNew( const tpString& name /*= "primitive"*/ ) 
+
+tpPrimitive::tpPrimitive( tpUByte primitivetype /*= kTriangles*/, const tpString& name /*= "primitive"*/ )
 : tpRenderable(name)
+, mPrimType(primitivetype)
 {
 }
 
 bool 
-tpPrimitiveNew::hasTextureCoordinates() const
+tpPrimitive::hasTextureCoordinates() const
 {
 	return (mTexCoords.isValid() && mTexCoords->getSize());
 }
 
 bool 
-tpPrimitiveNew::hasColors() const
+tpPrimitive::hasColors() const
 {
 	return (mColors.isValid() && mColors->getSize());
 }
 
 bool 
-tpPrimitiveNew::hasNormals() const
+tpPrimitive::hasNormals() const
 {
 	return (mNormals.isValid() && mNormals->getSize());
 }
 
 bool 
-tpPrimitiveNew::hasVertices() const
+tpPrimitive::hasVertices() const
 {
 	return (mVertices.isValid() && mVertices->getSize());
 }
 
 
 const tpPrimitiveAttribute& 
-tpPrimitiveNew::getVertices() const
+tpPrimitive::getVertices() const
 {
 	return *mVertices;
 }
 
 tpPrimitiveAttribute& 
-tpPrimitiveNew::getVertices()
+tpPrimitive::getVertices()
 {
 	if (!mVertices.isValid()) {
 		mVertices = new tpPrimitiveAttribute;
-		mVertices->setType(tpPrimitive::kAttributeVertex);
+		mVertices->setAttributeType(tpPrimitiveAttribute::kVertices);
 	}
 	return *mVertices;
 }
 
 
 const tpPrimitiveAttribute& 
-tpPrimitiveNew::getNormals() const
+tpPrimitive::getNormals() const
 {
 	return *mNormals;
 }
 
 tpPrimitiveAttribute& 
-tpPrimitiveNew::getNormals()
+tpPrimitive::getNormals()
 {
 	if (!mNormals.isValid()) {
-		mNormals = new tpPrimitiveAttribute;
-		mNormals->setType(tpPrimitive::kAttributeNormals);
+		mNormals = new tpPrimitiveAttribute(3,tpPrimitiveAttribute::kNormals);
 	}
 	return *mNormals;
 }
 
 
 const tpPrimitiveAttribute& 
-tpPrimitiveNew::getTextureCoordinates() const
+tpPrimitive::getTextureCoordinates() const
 {
 	return *mTexCoords;
 }
 
 tpPrimitiveAttribute& 
-tpPrimitiveNew::getTextureCoordinates()
+tpPrimitive::getTextureCoordinates()
 {
 	if (!mTexCoords.isValid()) {
 		mTexCoords = new tpPrimitiveAttribute;
-		mTexCoords->setType(tpPrimitive::kAttributeUV);
+		mTexCoords->setAttributeType(tpPrimitiveAttribute::kTexCoords);
 	}
 	return *mTexCoords;
 }
 
 const tpPrimitiveAttribute& 
-tpPrimitiveNew::getColors() const
+tpPrimitive::getColors() const
 {
 	return *mTexCoords;
 }
 
 tpPrimitiveAttribute& 
-tpPrimitiveNew::getColors()
+tpPrimitive::getColors()
 {
 	if (!mColors.isValid()) {
 		mColors = new tpPrimitiveAttribute;
-		mColors->setType(tpPrimitive::kAttributeColors);
+		mColors->setAttributeType(tpPrimitiveAttribute::kColors);
 	}
 	return *mColors;
 }
 
+void
+tpPrimitive::clear()
+{
+	mVertices = 0;
+	mNormals = 0;
+	mColors = 0;
+	mTexCoords = 0;
+}
+
+tpPrimitive& 
+tpPrimitive::addVertexNormal( const tpVec3r& vertex,const tpVec3f& normal )
+{
+	getVertices().add(vertex);
+	getNormals().add(normal);
+
+	return *this;
+}
+
+tpPrimitive& 
+tpPrimitive::addVertexNormalTextureCoordinate( const tpVec3r& vertex,const tpVec3f& normal,const tpVec2f& tcoord )
+{
+	getVertices().add(vertex);
+	getNormals().add(normal);
+	getTextureCoordinates().add(tcoord);
+
+	return *this;
+}
+
+tpPrimitive& 
+tpPrimitive::addVertexNormalColor( const tpVec3r& vertex,const tpVec3f& normal,const tpVec4f& color )
+{
+	getVertices().add(vertex);
+	getNormals().add(normal);
+	getColors().add(color);
+
+	return *this;
+}
+
+tpPrimitive& 
+tpPrimitive::addVertexNormalTextureCoordinateColor( const tpVec3r& vertex,const tpVec3f& normal,const tpVec2f& texcoord,const tpVec4f& color )
+{
+	getVertices().add(vertex);
+	getNormals().add(normal);
+	getColors().add(color);
+	getTextureCoordinates().add(texcoord);
+
+	return *this;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+tpPrimitiveFactory* tpPrimitiveFactory::get(bool destroy /*= false*/)
+{
+	static tpRefPtr<tpPrimitiveFactory> gs_primfactory( (destroy) ? 0L : new tpPrimitiveFactory() );
+	return gs_primfactory.get();
+}
+
+tpPrimitive* tpPrimitiveFactory::create( tpUShort primitive_type )
+{
+	tpPrimitive *res(0);
+	switch (primitive_type)
+	{
+	case kAxis:
+		res = new tpPrimitive(tpPrimitive::kLines,"Axis");
+
+		res->addVertexNormalColor(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec4r(1,0,0,1));
+		res->addVertexNormalColor(tpVec3r(1,0,0),tpVec3r(0,0,1),tpVec4r(1,0,0,1));
+		res->addVertexNormalColor(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec4r(0,1,0,1));
+		res->addVertexNormalColor(tpVec3r(0,1,0),tpVec3r(0,0,1),tpVec4r(0,1,0,1));
+		res->addVertexNormalColor(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec4r(0,0,1,1));
+		res->addVertexNormalColor(tpVec3r(0,0,1),tpVec3r(0,0,1),tpVec4r(0,0,1,1));
+
+		res->setLighting(false);
+		break;
+
+	case kPlane:
+		res = new tpPrimitive(tpPrimitive::kTriangleStrip);
+
+		res->addVertexNormalTextureCoordinateColor(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec2r(0,1),tpVec4r(0,0,0,1)); // v0
+		res->addVertexNormalTextureCoordinateColor(tpVec3r(1,0,0),tpVec3r(0,0,1),tpVec2r(1,1),tpVec4r(1,0,0,1)); // v1
+		res->addVertexNormalTextureCoordinateColor(tpVec3r(0,1,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,1,0,1)); // v3
+		res->addVertexNormalTextureCoordinateColor(tpVec3r(1,1,0),tpVec3r(0,0,1),tpVec2r(1,0),tpVec4r(1,1,1,1)); // v2
+
+		break;
+	}
+
+
+	return res;
+}
+
+tpPrimitiveFactory::tpPrimitiveFactory()
+{
+
+}
+
+tpPrimitiveFactory::tpPrimitiveFactory( const tpPrimitiveFactory& )
+{
+
+}

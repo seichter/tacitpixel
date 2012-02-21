@@ -59,14 +59,11 @@ tpNode* tpOBJ(const tpString& filename)
 
 		if (group->numtriangles > 0)
 		{
-            tpPrimitive* mesh = new tpPrimitive(tpPrimitive::kTriangles,
-                                                tpPrimitive::kAttributeVertex |
-                                                tpPrimitive::kAttributeUV |
-                                                tpPrimitive::kAttributeNormals);
+            tpPrimitive* mesh = new tpPrimitive(tpPrimitive::kTriangles,tpString(group->name));
 
-			//tpLogNotify("%s found %d triangles (%s)",__FUNCTION__,group->numtriangles,group->name);
+			////tpLogNotify("%s found %d triangles (%s)",__FUNCTION__,group->numtriangles,group->name);
 
-			if (group->name) mesh->setName(group->name);
+			//if (group->name) mesh->setName(group->name);
 
 			for (int tri_idx = 0; tri_idx < group->numtriangles; ++tri_idx)
 			{
@@ -99,7 +96,7 @@ tpNode* tpOBJ(const tpString& filename)
 						cur_tcoord[1] = model->texcoords[2 * triangle->tindices[v_idx] + 1];
 
 						// add to mesh
-						mesh->addVertex(cur_vertex,cur_normal,cur_tcoord);
+						mesh->addVertexNormalTextureCoordinate(cur_vertex,cur_normal,cur_tcoord);
 
 						//tpLogNotify("%s found add vertex no %d of triangle %d",__FUNCTION__,v_idx,tri_idx);
 

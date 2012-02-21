@@ -70,6 +70,10 @@ if(CMAKE_COMPILER_IS_GNUCC)
         )
 endif()
 
+
+target_link_libraries(vorbis
+    ogg)
+
 set_target_properties(vorbis
 	PROPERTIES
 	PROJECT_LABEL "Dependency libvorbis"

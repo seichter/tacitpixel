@@ -49,8 +49,8 @@ include_directories(${CMAKE_BINARY_DIR}/include/ogg include)
 
 add_library(ogg STATIC
 	src/bitwise.c
-	src/framing.c)
-
+        src/framing.c
+    )
 
 if(CMAKE_COMPILER_IS_GNUCC)
     set_target_properties(

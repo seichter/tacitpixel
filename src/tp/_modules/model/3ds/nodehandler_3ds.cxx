@@ -144,7 +144,7 @@ tpNodeHandler_3DS::read(const tpString& name)
 
 		tpPrimitive* prim = new tpPrimitive(tpPrimitive::kTriangles);
 
-		tpPrimitiveNew* pn = new tpPrimitiveNew();
+		tpPrimitive* pn = new tpPrimitive();
 
 		mesh->addChild(prim);
 		node->addChild(mesh);
@@ -176,10 +176,7 @@ tpNodeHandler_3DS::read(const tpString& name)
 							mesh3ds->vertices[ face3ds->index[ i ] ][2]
 							);
 
-				prim->addVertex(vtx,normal);
-
-				pn->getVertices().add(vtx);
-				pn->getNormals().add(normal);
+				prim->addVertexNormal(vtx,normal);
 
 			}
 		}

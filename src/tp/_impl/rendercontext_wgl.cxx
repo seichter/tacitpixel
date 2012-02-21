@@ -339,7 +339,7 @@ tpRenderContextWGL::getString(const tpUInt& e)
 void*
 tpRenderContextWGL::getProcAddress(const char* name)
 {
-	return wglGetProcAddress(name);
+    return (void*)wglGetProcAddress(name);
 }
 
 

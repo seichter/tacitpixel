@@ -25,6 +25,8 @@
 
 #include <tp/thread.h>
 
+#include <tp/config.h>
+
 // Includes for Windows and *nic'es
 #if defined(_WIN32)
 	#define WIN32_LEAN_AND_MEAN
@@ -118,7 +120,7 @@ tpThread::run()
 void
 tpThread::join()
 {
-#if defined(HAVE_PTHREAD_H)
+#if defined(HAVE_PTHREAD_H) && !defined(__MINGW32__)
 	void *result = 0;
 	pthread_join(mThreadHandle->handle, &result);
 #else
@@ -128,7 +130,7 @@ tpThread::join()
 void
 tpThread::detach()
 {
-#if defined(HAVE_PTHREAD_H)
+#if defined(HAVE_PTHREAD_H) && !defined(__MINGW32__)
 	void *result = 0;
 	pthread_detach(mThreadHandle->handle);
 #else
@@ -141,7 +143,7 @@ tpThread::detach()
 void
 tpThread::yield()
 {
-#if defined(HAVE_PTHREAD_H)
+#if defined(HAVE_PTHREAD_H) && !defined(__MINGW32__)
 
 	tpPThreadYield();
 

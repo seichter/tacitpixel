@@ -14,7 +14,6 @@ int main(int argc,char* argv[]) {
 	root->addChild(tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kAxis));
 
 	tpPrimitive* p = tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kPlane);
-	p->setAttributes(tpPrimitive::kAttributeVertex | tpPrimitive::kAttributeNormals | tpPrimitive::kAttributeUV);
 
 	tpImage* i = tpImage::read(argv[1]);
 

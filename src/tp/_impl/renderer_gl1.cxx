@@ -26,12 +26,12 @@
 #if defined(TP_USE_OPENGL)
 	#if defined(__APPLE__)
 		#include <OpenGL/gl.h>
-	#elif defined(_WIN32)
+    #elif defined(_WIN32) || defined(__MINGW32__)
 		#define WIN32_LEAN_AND_MEAN 1
 		#include <Windows.h>
 		#include <GL/gl.h>
-		#define GL_BGR GL_BGR_EXT
-		#define GL_BGRA GL_BGRA_EXT 
+        #define GL_BGR 0x80E0
+        #define GL_BGRA 0x80E1
     #else
         #include <GL/gl.h>
     #endif
@@ -396,42 +396,42 @@ public:
 		glLoadMatrixf(mvp.data());
 
 		// render scene
-		if (prim.hasAttribute(tpPrimitive::kAttributeNormals))
+		if (prim.hasNormals())
 		{
 			glEnableClientState(GL_NORMAL_ARRAY);
 			glNormalPointer(GL_FLOAT, 0, prim.getNormals().getData());
 		}
 
-		if (prim.hasAttribute(tpPrimitive::kAttributeUV))
+		if (prim.hasTextureCoordinates())
 		{
 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glTexCoordPointer(2, GL_FLOAT, 0, prim.getTexCoords().getData());
+			glTexCoordPointer(prim.getTextureCoordinates().getStride(), GL_FLOAT, 0, prim.getTextureCoordinates().getData());
 		}
 
-		if (prim.hasAttribute(tpPrimitive::kAttributeColors))
+		if (prim.hasColors())
 		{
 			glEnableClientState(GL_COLOR_ARRAY);
-			glColorPointer(4, GL_FLOAT, 0, prim.getColors().getData());
+			glColorPointer(prim.getColors().getStride(), GL_FLOAT, 0, prim.getColors().getData());
 		}
 
 		glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(4, GL_FLOAT, 0, prim.getVertices().getData());
 
-		glDrawArrays(prim.getPrimitiveType(),0,prim.getVertexCount());
+		glDrawArrays(prim.getPrimitiveType(),0,prim.getVertices().getSize());
 
 		glDisableClientState(GL_VERTEX_ARRAY);
 
-		if (prim.hasAttribute(tpPrimitive::kAttributeNormals))
+		if (prim.hasNormals())
 		{
 			glDisableClientState(GL_NORMAL_ARRAY);
 		}
 
-		if (prim.hasAttribute(tpPrimitive::kAttributeUV))
+		if (prim.hasTextureCoordinates())
 		{
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		}
 
-		if (prim.hasAttribute(tpPrimitive::kAttributeColors))
+		if (prim.hasColors())
 		{
 			glDisableClientState(GL_COLOR_ARRAY);
 		}

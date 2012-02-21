@@ -61,8 +61,7 @@ public:
 			return;
 		}
 
-		prim.clearAll();
-		prim.setAttributes(tpPrimitive::kAttributeVertex|tpPrimitive::kAttributeNormals|tpPrimitive::kAttributeUV);
+		prim.clear();
 		prim.setLighting(false);
 
 		float x(0),y(0);
@@ -95,13 +94,13 @@ public:
 			// also here swapped t component of tex-coords and moved vertices into
 			// positive y - direction
 			prim.setPrimitiveType(tpPrimitive::kTriangles);
-			prim.addVertex(tpVec3f(q.x0,-q.y0,0),normal,tpVec2f(q.s0,q.t0)); // v0
-			prim.addVertex(tpVec3f(q.x1,-q.y0,0),normal,tpVec2f(q.s1,q.t0)); // v1
-			prim.addVertex(tpVec3f(q.x1,-q.y1,0),normal,tpVec2f(q.s1,q.t1)); // v2
+			prim.addVertexNormalTextureCoordinate(tpVec3f(q.x0,-q.y0,0),normal,tpVec2f(q.s0,q.t0)); // v0
+			prim.addVertexNormalTextureCoordinate(tpVec3f(q.x1,-q.y0,0),normal,tpVec2f(q.s1,q.t0)); // v1
+			prim.addVertexNormalTextureCoordinate(tpVec3f(q.x1,-q.y1,0),normal,tpVec2f(q.s1,q.t1)); // v2
 
-			prim.addVertex(tpVec3f(q.x0,-q.y0,0),normal,tpVec2f(q.s0,q.t0)); // v0
-			prim.addVertex(tpVec3f(q.x1,-q.y1,0),normal,tpVec2f(q.s1,q.t1)); // v2
-			prim.addVertex(tpVec3f(q.x0,-q.y1,0),normal,tpVec2f(q.s0,q.t1)); // v3
+			prim.addVertexNormalTextureCoordinate(tpVec3f(q.x0,-q.y0,0),normal,tpVec2f(q.s0,q.t0)); // v0
+			prim.addVertexNormalTextureCoordinate(tpVec3f(q.x1,-q.y1,0),normal,tpVec2f(q.s1,q.t1)); // v2
+			prim.addVertexNormalTextureCoordinate(tpVec3f(q.x0,-q.y1,0),normal,tpVec2f(q.s0,q.t1)); // v3
 
 #endif
 

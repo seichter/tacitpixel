@@ -276,6 +276,17 @@ tpSystem::getTime() const
 
 }
 
+tpStringArray tpSystem::getFontPaths()
+{
+	tpStringArray res;
+
+#if defined(_WIN32)
+	res.add(this->getEnv("SYSTEMROOT") + tpString("/Fonts"));
+#endif
+
+	return res;
+}
+
 
 tpString
 tpSlash()
