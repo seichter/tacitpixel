@@ -12,6 +12,7 @@
 #include <tp/scene.h>
 
 
+#include <tp/config.h>
 
 //#if defined(__APPLE__)
 //    #include <OpenGL/OpenGL.h>
@@ -231,6 +232,8 @@ public:
         {
             tpLogNotify("t %lf ms",t.getElapsed(tpTimer::kTimeMilliSeconds));
         }
+
+		glErrorCheck
 	}
 
 
@@ -251,6 +254,7 @@ public:
 		}
 
 		if (glclearflag) glClear(glclearflag);
+
 	}
 
 	void
@@ -411,7 +415,7 @@ public:
 		if (prim.hasColors())
 		{
 			glEnableClientState(GL_COLOR_ARRAY);
-			glColorPointer(prim.getColors().getStride(), GL_FLOAT, 0, prim.getColors().getData());
+			glColorPointer(4, GL_FLOAT, 0, prim.getColors().getData());
 		}
 
 		glEnableClientState(GL_VERTEX_ARRAY);

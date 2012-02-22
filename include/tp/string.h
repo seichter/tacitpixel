@@ -46,7 +46,7 @@ public:
 		ASCII = 0
 	};
 
-	static const tpInt kNotFound = -1;
+    static tpInt kNotFound;
 
 	//! default c'tor
 	tpString();

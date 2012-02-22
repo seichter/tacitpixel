@@ -13,8 +13,8 @@
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {	
 
-	HDC hdc;
-	int wmId, wmEvent;
+    HDC hdc;
+    int wmId, wmEvent;
 	PAINTSTRUCT ps;
 
 	tpUByte mouse_button(0);

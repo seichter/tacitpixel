@@ -25,6 +25,7 @@
 
 #include <stdio.h>
 
+#include "tp/config.h"
 #include "tp/file.h"
 
 #if defined(HAVE_STDIO_H)

@@ -27,8 +27,6 @@
 #define TP_TYPES_H
 
 
-#include <tp/config.h>
-
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -114,20 +112,8 @@ typedef tpDouble tpReal;
 typedef tpFloat tpReal;
 #endif
 
-#if defined(HAVE_STDINT_H)
 
-#include <stdint.h>
-typedef uint64_t tpUInt64;
-typedef int64_t tpInt64;
-typedef uint32_t tpUInt32;
-typedef int32_t tpInt32;
-typedef uint16_t tpUInt16;
-typedef int16_t tpInt16;
-typedef uint8_t tpUInt8;
-typedef int8_t tpInt8;
-
-
-#elif defined(_WIN32)
+#if defined(_MSC_VER)
 
 typedef __int64 tpInt64;
 typedef unsigned __int64 tpUInt64;
@@ -137,6 +123,24 @@ typedef unsigned __int32 tpUInt32;
 
 typedef __int16 tpInt16;
 typedef unsigned __int16 tpUInt16;
+
+typedef __int8 tpInt8;
+typedef unsigned __int8 tpUInt8;
+
+#else
+
+#include <stdint.h>
+typedef uint64_t tpUInt64;
+typedef int64_t tpInt64;
+
+typedef uint32_t tpUInt32;
+typedef int32_t tpInt32;
+
+typedef uint16_t tpUInt16;
+typedef int16_t tpInt16;
+
+typedef uint8_t tpUInt8;
+typedef int8_t tpInt8;
 
 
 #endif

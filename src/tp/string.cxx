@@ -31,6 +31,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+tpInt tpString::kNotFound = -1;
+
 //
 // C'tors
 //

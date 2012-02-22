@@ -27,6 +27,7 @@
 
 #include "tp/log.h"
 #include "tp/refptr.h"
+#include "tp/config.h"
 
 #if defined(_WIN32) || defined(_WIN64) || defined(_WIN32_WCE)
 	#define WIN32_LEAN_AND_MEAN

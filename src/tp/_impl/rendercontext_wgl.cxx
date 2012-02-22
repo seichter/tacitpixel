@@ -233,9 +233,8 @@ tpRenderContextWGL::create(tpRenderTarget *target)
 	pfd.iLayerType = PFD_MAIN_PLANE;
 	*/
 
-	int visual_id_new = chooseVisual(_dc);
-	
-	tpLogNotify("visual id %d",visual_id_new);
+	//int visual_id_new = chooseVisual(_dc);
+	//tpLogNotify("visual id %d",visual_id_new);
 
 	int visual_id = ChoosePixelFormat(_dc, &pfd); 
 
@@ -251,27 +250,16 @@ tpRenderContextWGL::create(tpRenderTarget *target)
 		return false;
 	}
 
-	bool res = this->makeCurrent();
-
-	if (res)
+	if (this->makeCurrent())
 	{
 		mVersion = this->getString(GL_VERSION);
 		mVendor = this->getString(GL_VENDOR);
 		mRenderer = this->getString(GL_RENDERER);
 		mExtensions = this->getString(GL_EXTENSIONS);
-
-		tpLogNotify("OpenGL %s %s",mVendor.c_str(),mVersion.c_str());
-
 		return true;
 	}
 
-
-	tpInt glmajor(0), glminor(0);
-
-//	tpGetGLVersion(glmajor,glminor);
-
-	tpLogNotify("Initialized an OpenGL %s context",glGetString(GL_VERSION));
-
+#if 0
 	if (res) 
 	{
 		int attribs[] =
@@ -299,10 +287,9 @@ tpRenderContextWGL::create(tpRenderTarget *target)
 				tpLogNotify("Re-Initialized an OpenGL %s context",glGetString(GL_VERSION));
 			}
 		}
-
-
 	}
 
+#endif
 	return true;
 }
 

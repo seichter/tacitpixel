@@ -399,15 +399,14 @@ tpPrimitive::getTextureCoordinates()
 const tpPrimitiveAttribute& 
 tpPrimitive::getColors() const
 {
-	return *mTexCoords;
+	return *mColors;
 }
 
 tpPrimitiveAttribute& 
 tpPrimitive::getColors()
 {
 	if (!mColors.isValid()) {
-		mColors = new tpPrimitiveAttribute;
-		mColors->setAttributeType(tpPrimitiveAttribute::kColors);
+		mColors = new tpPrimitiveAttribute(4,tpPrimitiveAttribute::kColors);
 	}
 	return *mColors;
 }

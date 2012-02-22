@@ -77,8 +77,8 @@ bool tpRenderContextEGL::create(tpRenderTarget* target) {
 
 	} else {
 
-		tpLogNotify("%s - EGL got implementation %d.%d\n\tVendor: %s, Version: %s\n\tExtensions:%s\n\tClient APIs:%s"
-			,__FUNCTION__,glMajor,glMinor,
+		tpLogNotify("tpEGL EGL %d.%d\n\tVendor: %s, Version: %s\n\tExtensions:%s\n\tClient APIs:%s"
+			,glMajor,glMinor,
 			tpEGL::a().QueryString.f(display,EGL_VENDOR),
 			tpEGL::a().QueryString.f(display,EGL_VERSION),
 			tpEGL::a().QueryString.f(display,EGL_EXTENSIONS),
@@ -114,29 +114,12 @@ bool tpRenderContextEGL::create(tpRenderTarget* target) {
 
 
 
+
+
+
 //	context_attributes.add(EGL_CONFIG_ID).add(0);
-//	context_attributes.add(EGL_CONTEXT_CLIENT_VERSION).add(2);
-//	context_attributes.add(EGL_NONE).add(EGL_NONE);
-
-	/* create an EGL rendering context */
-	context = tpEGL::a().CreateContext.f(display, config, EGL_NO_CONTEXT,/*(const EGLint*)&context_attributes.front()*/0L);
-	if (EGL_NO_CONTEXT == context)
-	{
-		tpLogError("%s - eglCreateContext failed (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
-
-	} else {
-
-		tpLogMessage("%s - eglCreateContext successful",__FUNCTION__);
-
-		makeCurrent();
-
-		tpInt w(0),h(0);
-		tpEGL::a().QuerySurface.f(display,surface,EGL_WIDTH,&w);
-		tpEGL::a().QuerySurface.f(display,surface,EGL_HEIGHT,&h);
-
-		tpLogMessage("%s - actual surface area %dx%d",__FUNCTION__,w,h);
-
-	}
+	context_attributes.add(EGL_CONTEXT_CLIENT_VERSION).add(2);
+	context_attributes.add(EGL_NONE).add(EGL_NONE);
 
 	/* create an EGL window surface */
 	/* This needs to be adapted for ES 1.x */
@@ -156,6 +139,26 @@ bool tpRenderContextEGL::create(tpRenderTarget* target) {
 		{
 			tpLogError("%s - eglCreatePbufferSurface failed (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
 		}
+	}
+
+	/* create an EGL rendering context */
+	context = tpEGL::a().CreateContext.f(display, config, EGL_NO_CONTEXT,(const EGLint*)context_attributes.getData());
+	if (EGL_NO_CONTEXT == context)
+	{
+		tpLogError("%s - eglCreateContext failed (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
+
+	} else {
+
+		tpLogMessage("%s - eglCreateContext successful",__FUNCTION__);
+
+		makeCurrent();
+
+		tpInt w(0),h(0);
+		tpEGL::a().QuerySurface.f(display,surface,EGL_WIDTH,&w);
+		tpEGL::a().QuerySurface.f(display,surface,EGL_HEIGHT,&h);
+
+		tpLogMessage("%s - actual surface area %dx%d",__FUNCTION__,w,h);
+
 	}
 
 
