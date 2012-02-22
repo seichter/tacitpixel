@@ -49,6 +49,7 @@ public:
 	//! get a pointer to the material
 	const tpMaterial* getMaterial() const { return mMaterial.get(); }
 	tpMaterial* getMaterial() { return mMaterial.get(); }
+	bool hasMaterial() const { return mMaterial.isValid(); }
 
 	//! set a texture for the regarding geometry
 	void setTexture(tpTexture* texture) { mTexture = texture; }
@@ -63,8 +64,12 @@ public:
 	void setCulling(bool flag) { mCulling = flag; }
 	bool getCulling() const { return mCulling; }
 
-    void setLighting(bool on) { mLighting = on; }
-    bool getLighting() const { return mLighting; }
+	void setLighting(bool on) { mLighting = on; }
+	bool getLighting() const { return mLighting; }
+
+	void setAlpha(tpReal alpha) { mAlpha = alpha; }
+	tpReal getAlpha() const { return mAlpha; }
+	bool hasAlpha() const { return (mAlpha < 1.f); }
 
 
 protected:
@@ -73,7 +78,8 @@ protected:
 	tpRefPtr<tpTexture>		mTexture;
 
 	bool		mCulling;
-    bool        mLighting;
+	bool        mLighting;
+	tpReal		mAlpha;
 
 };
 

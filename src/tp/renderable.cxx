@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,18 +27,11 @@
 
 tpRenderable::tpRenderable(const tpString& name)
 	: tpNode(name)
-    , mCulling(false)
-    , mLighting(true)
-//	, m_material(tpDefaultMaterial)
+	, mCulling(false)
+	, mLighting(true)
+	, mAlpha(1.f)
 {
-	//m_fields.add(new tpSingleField<tpMaterial>(m_material.get(),"material"));
-	//m_fields.add(new tpSingleField<tpTexture>(m_texture,"texture"));
-
-	//m_material.setValue(NULL);
-	//m_texture.setValue(NULL);
-	//m_culling.setValue(FALSE);
 }
-
 
 tpRenderable::tpRenderable(const tpRenderable& geo)
 	: tpNode(geo),
@@ -47,7 +40,7 @@ tpRenderable::tpRenderable(const tpRenderable& geo)
 {
 }
 
-tpObject* 
+tpObject*
 tpRenderable::clone()
 {
 	return new tpRenderable(*this);

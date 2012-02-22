@@ -40,14 +40,14 @@ tpNode* tpOBJ(const tpString& filename)
 	}
 
 	// regenerate the model structure
-    glmUnitize(model);
+	glmUnitize(model);
 
-    glmReverseWinding(model);
-    glmReverseWinding(model);
-    glmFacetNormals(model);
-    // should make the crease angle an option
-    glmVertexNormals(model,89);
-    glmLinearTexture(model);
+	glmReverseWinding(model);
+	glmReverseWinding(model);
+	glmFacetNormals(model);
+	// should make the crease angle an option
+	glmVertexNormals(model,89);
+	glmLinearTexture(model);
 
 	tpRefNode root = new tpNode();
 
@@ -59,7 +59,7 @@ tpNode* tpOBJ(const tpString& filename)
 
 		if (group->numtriangles > 0)
 		{
-            tpPrimitive* mesh = new tpPrimitive(tpPrimitive::kTriangles,tpString(group->name));
+			tpPrimitive* mesh = new tpPrimitive(tpPrimitive::kTriangles,tpString(group->name));
 
 			////tpLogNotify("%s found %d triangles (%s)",__FUNCTION__,group->numtriangles,group->name);
 
@@ -182,11 +182,11 @@ tpNode* tpOBJ(const tpString& filename)
 class tpOBJHandler : public tpNodeHandler {
 public:
 
-	TP_TYPE_DECLARE;
+	TP_TYPE_DECLARE
 
 	tpOBJHandler() : tpNodeHandler()
 	{
-		tpLogNotify("%s OBJ model file support",tpGetVersionString());
+		tpLogNotify("%s Wavefront OBJ support",tpGetVersionString());
 	}
 
 	~tpOBJHandler()

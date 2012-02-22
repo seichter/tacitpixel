@@ -357,8 +357,7 @@ tpPrimitiveAttribute&
 tpPrimitive::getVertices()
 {
 	if (!mVertices.isValid()) {
-		mVertices = new tpPrimitiveAttribute;
-		mVertices->setAttributeType(tpPrimitiveAttribute::kVertices);
+		mVertices = new tpPrimitiveAttribute(4,tpPrimitiveAttribute::kVertices);
 	}
 	return *mVertices;
 }
@@ -374,7 +373,7 @@ tpPrimitiveAttribute&
 tpPrimitive::getNormals()
 {
 	if (!mNormals.isValid()) {
-		mNormals = new tpPrimitiveAttribute(3,tpPrimitiveAttribute::kNormals);
+		mNormals = new tpPrimitiveAttribute(4,tpPrimitiveAttribute::kNormals);
 	}
 	return *mNormals;
 }
@@ -390,8 +389,7 @@ tpPrimitiveAttribute&
 tpPrimitive::getTextureCoordinates()
 {
 	if (!mTexCoords.isValid()) {
-		mTexCoords = new tpPrimitiveAttribute;
-		mTexCoords->setAttributeType(tpPrimitiveAttribute::kTexCoords);
+		mTexCoords = new tpPrimitiveAttribute(tpPrimitiveAttribute::kTexCoords);
 	}
 	return *mTexCoords;
 }
@@ -458,6 +456,35 @@ tpPrimitive::addVertexNormalTextureCoordinateColor( const tpVec3r& vertex,const 
 	getTextureCoordinates().add(texcoord);
 
 	return *this;
+}
+
+void
+tpPrimitive::setUniformColor(const tpVec4f& color)
+{
+	mColors = 0;
+	for (int i = 0; i < getVertices().getSize();++i) getColors().add(color);
+}
+
+void
+tpPrimitive::translate(const tpVec3f& vec)
+{
+	for (int i = 0; i < getVertices().getSize();++i)
+	{
+		getVertices().getData()[i*getVertices().getStride()+0] += vec[0];
+		getVertices().getData()[i*getVertices().getStride()+1] += vec[1];
+		getVertices().getData()[i*getVertices().getStride()+2] += vec[2];
+	}
+}
+
+void
+tpPrimitive::scale(const tpVec3f& vec)
+{
+	for (int i = 0; i < getVertices().getSize();++i)
+	{
+		getVertices().getData()[i*getVertices().getStride()+0] *= vec[0];
+		getVertices().getData()[i*getVertices().getStride()+1] *= vec[1];
+		getVertices().getData()[i*getVertices().getStride()+2] *= vec[2];
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

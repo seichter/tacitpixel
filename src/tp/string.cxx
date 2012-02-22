@@ -389,6 +389,36 @@ tpString::format(const char* format,...)
 	return res;
 }
 
+float tpString::toFloat() const
+{
+	return ::atof(this->c_str());
+}
+
+
+int tpString::toInt() const {
+	return ::atoi(this->c_str());
+}
+
+long tpString::toLong() const {
+	return ::atol(this->c_str());
+}
+
+tpString
+tpString::join(const tpStringArray& strarr,const tpString& sep)
+{
+	tpString result;
+	for (tpStringArray::const_iterator it = strarr.begin();
+		 it != strarr.end();
+		 ++it)
+	{
+		if ((it) != strarr.begin()) {
+			result += sep;
+		}
+		result += (*it);
+	}
+	return result;
+}
+
 #if 0
 
 

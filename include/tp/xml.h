@@ -35,7 +35,7 @@
 
 class tpXML;
 
-struct TP_API tpXMLNodeCallback : public tpReferenced {
+struct TP_API tpXMLNodeCallback {
 	virtual void operator()(const tpXML& xml) = 0;
 };
 
@@ -44,8 +44,10 @@ class TP_API tpXML : public tpReferenced {
 	tpString mDoc;
 public:
 
+	tpXML();
+
 	typedef tpMap<tpString,tpString> Attributes;
-	typedef tpStack<tpString> Path;
+	typedef tpArray<tpString> Path;
 
 	void parse(const tpString &doc);
 
@@ -59,13 +61,13 @@ public:
 	const tpString& getCurrentDataNode() const { return mData; }
 
 	void setCallback(tpXMLNodeCallback* cb) { mCallback = cb; }
-	tpXMLNodeCallback* getCallback() { return mCallback.get(); }
+	tpXMLNodeCallback* getCallback() { return mCallback; }
 
 	void callback() const;
 
 protected:
 
-	tpRefPtr<tpXMLNodeCallback> mCallback;
+	tpXMLNodeCallback* mCallback;
 
 	Path mPath;
 	Attributes mAttributes;

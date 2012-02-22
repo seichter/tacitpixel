@@ -169,7 +169,7 @@ tpNodeHandler_3DS::read(const tpString& name)
 
 			for (int i = 0; i < 3; ++i) {
 
-				mesh3ds->vertices[ face3ds->index[ i ] ];
+				//mesh3ds->vertices[ face3ds->index[ i ] ];
 
 				tpVec3r vtx(mesh3ds->vertices[ face3ds->index[ i ] ][0],
 							mesh3ds->vertices[ face3ds->index[ i ] ][1],

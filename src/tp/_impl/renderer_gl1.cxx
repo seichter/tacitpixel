@@ -27,15 +27,15 @@
 #if defined(TP_USE_OPENGL)
 	#if defined(__APPLE__)
 		#include <OpenGL/gl.h>
-    #elif defined(_WIN32) || defined(__MINGW32__)
+	#elif defined(_WIN32) || defined(__MINGW32__)
 		#define WIN32_LEAN_AND_MEAN 1
 		#include <Windows.h>
 		#include <GL/gl.h>
-        #define GL_BGR 0x80E0
-        #define GL_BGRA 0x80E1
-    #else
-        #include <GL/gl.h>
-    #endif
+		#define GL_BGR 0x80E0
+		#define GL_BGRA 0x80E1
+	#else
+		#include <GL/gl.h>
+	#endif
 #endif
 
 
@@ -217,7 +217,7 @@ public:
 	{
 		static int count(0);
 
-        count++;
+		count++;
 
 		tpTimer t;
 		for (tpRefCameraArray::iterator it = scene->getCameras().begin();
@@ -228,10 +228,10 @@ public:
 			this->onNode((*it).get());
 		}
 
-        if (0 == (count % 100))
-        {
-            tpLogNotify("t %lf ms",t.getElapsed(tpTimer::kTimeMilliSeconds));
-        }
+		if (0 == (count % 100))
+		{
+			tpLogNotify("t %lf ms",t.getElapsed(tpTimer::kTimeMilliSeconds));
+		}
 
 		glErrorCheck
 	}
@@ -287,7 +287,7 @@ public:
 				 i != nodemap_lights.end();
 				 ++i)
 			{
-                onLight(*static_cast<tpLight*>((*i).getKey()),(*i).getValue());
+				onLight(*static_cast<tpLight*>((*i).getKey()),(*i).getValue());
 			}
 		}
 
@@ -299,7 +299,7 @@ public:
 			 ++i)
 		{
 			tpPrimitive* p = static_cast<tpPrimitive*>((*i).getKey());
-            onPrimitive(*p,(*i).getValue());
+			onPrimitive(*p,(*i).getValue());
 		}
 
 		glErrorCheck;
@@ -312,7 +312,7 @@ public:
 //                    t.getElapsed(tpTimer::kTimeMilliSeconds));
 	}
 
-    void onLight(const tpLight& light, const tpMatrixStack& stack)
+	void onLight(const tpLight& light, const tpMatrixStack& stack)
 	{
 
 //		tpCamera* camera = getActiveCamera();
@@ -337,8 +337,8 @@ public:
 		glLightfv(lid,GL_DIFFUSE,light.getDiffuseColor().getData());
 		glLightfv(lid,GL_SPECULAR,light.getSpecularColor().getData());
 
-        //#define GL_SEPARATE_SPECULAR_COLOR 0x81FA
-        //glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+		//#define GL_SEPARATE_SPECULAR_COLOR 0x81FA
+		//glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 
 	}
 
@@ -360,28 +360,51 @@ public:
 
 		glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
 
-        glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, actual_mat->getAmbientColor().getData() );
-        glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, actual_mat->getDiffuseColor().getData() );
-        glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, actual_mat->getSpecularColor().getData() );
-        glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, actual_mat->getEmissiveColor().getData() );
-        glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, actual_mat->getShininess() );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, actual_mat->getAmbientColor().getData() );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, actual_mat->getDiffuseColor().getData() );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, actual_mat->getSpecularColor().getData() );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, actual_mat->getEmissiveColor().getData() );
+		glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, actual_mat->getShininess() );
 	}
 
-    void onPrimitive(const tpPrimitive& prim,const tpMatrixStack& stack)
+	void onPrimitive(const tpPrimitive& prim,const tpMatrixStack& stack,bool secondPass = false)
 	{
 
-		// first setup the lighting
-		if (prim.getLighting())
+		// setup alpha
+		if (prim.hasAlpha())
 		{
-			glEnable(GL_LIGHTING);
-		} else
-		{
-			glDisable(GL_LIGHTING);
+			if (!secondPass)
+			{
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				glEnable( GL_BLEND );
+				glDisable(GL_LIGHTING);
+			} else {
+//				glDisable(GL_BLEND);
+//				glEnable(GL_LIGHTING);
+//				glDepthFunc(GL_EQUAL);
+			}
+
+		} else {
+
+			// first setup the lighting
+			if (prim.getLighting())
+			{
+				glEnable(GL_LIGHTING);
+			} else
+			{
+				glDisable(GL_LIGHTING);
+			}
+
 		}
 
-		if (prim.hasTexture()) {
+
+		if (prim.hasTexture())
+		{
 			(*this)(const_cast<tpTexture*>(prim.getTexture()));
-		} else {
+		}
+
+		if (prim.hasMaterial())
+		{
 			(*this)(prim.getMaterial());
 		}
 
@@ -403,23 +426,34 @@ public:
 		if (prim.hasNormals())
 		{
 			glEnableClientState(GL_NORMAL_ARRAY);
-			glNormalPointer(GL_FLOAT, 0, prim.getNormals().getData());
+			glNormalPointer(GL_FLOAT,
+							prim.getNormals().getStride()*sizeof(float),
+							prim.getNormals().getData()
+							);
 		}
 
 		if (prim.hasTextureCoordinates())
 		{
 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glTexCoordPointer(prim.getTextureCoordinates().getStride(), GL_FLOAT, 0, prim.getTextureCoordinates().getData());
+			glTexCoordPointer(prim.getTextureCoordinates().getStride(),
+							  GL_FLOAT,
+							  prim.getTextureCoordinates().getStride()*sizeof(float),
+							  prim.getTextureCoordinates().getData()
+							  );
 		}
 
 		if (prim.hasColors())
 		{
 			glEnableClientState(GL_COLOR_ARRAY);
-			glColorPointer(4, GL_FLOAT, 0, prim.getColors().getData());
+			glColorPointer(prim.getColors().getStride(),
+						   GL_FLOAT,
+						   prim.getColors().getStride()*sizeof(float),
+						   prim.getColors().getData()
+						   );
 		}
 
 		glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(4, GL_FLOAT, 0, prim.getVertices().getData());
+		glVertexPointer(prim.getVertices().getStride(), GL_FLOAT, 0, prim.getVertices().getData());
 
 		glDrawArrays(prim.getPrimitiveType(),0,prim.getVertices().getSize());
 
@@ -440,9 +474,20 @@ public:
 			glDisableClientState(GL_COLOR_ARRAY);
 		}
 
+		// disable state
+
+
 		if (prim.hasTexture()) {
 			const_cast<tpTexture*>(prim.getTexture())->getTextureObject()->deactivate();
 		}
+
+		if (prim.hasAlpha()) {
+			if (!secondPass) {
+//				onPrimitive(prim,stack,true);
+				glDepthFunc(GL_LESS);
+			}
+		}
+
 
 	}
 };

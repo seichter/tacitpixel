@@ -134,12 +134,13 @@ tpRenderSurfaceCocoa::tpRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 	[mdelegate setRenderSurface:this];
 
 	delegate = mdelegate;
+	[window setDelegate:[NSApp delegate]];
+
 
 	[window center];
 	[window setAcceptsMouseMovedEvents:TRUE];
 	[window makeKeyAndOrderFront:nil];
 	[window isMainWindow];
-	[window setDelegate:[NSApp delegate]];
 
 	/* title */
 	if (traits) this->setCaption(traits->getTitle());

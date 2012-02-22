@@ -135,6 +135,12 @@ public:
 	tpUByte getPrimitiveType() const { return mPrimType; }
 
 	void setPrimitiveType(tpUByte val) { mPrimType = val; }
+
+	void setUniformColor(const tpVec4f &color);
+
+	void translate(const tpVec3f &vec);
+
+	void scale(const tpVec3f &vec);
 };
 
 

@@ -62,6 +62,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/imagehandler.h
 	${tp_include_path}/tp/imageop.h
 	${tp_include_path}/tp/io.h
+	${tp_include_path}/tp/ioutils.h
 	${tp_include_path}/tp/log.h
 	${tp_include_path}/tp/logutils.h
 	${tp_include_path}/tp/list.h
@@ -203,6 +204,7 @@ set(tp_srcs
 	image.cxx
 	imagehandler.cxx
 	imageop.cxx
+	ioutils.cxx
 	log.cxx
 	library.cxx
 	module.cxx

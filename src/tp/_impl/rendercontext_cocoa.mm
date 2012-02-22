@@ -1,6 +1,9 @@
 #import "rendercontext_cocoa.h"
 
 
+#import <OpenGL/gl.h>
+
+
 bool tpRenderContextCocoa::create(tpRenderTarget *target)
 {
 	NSOpenGLPixelFormatAttribute window_attribs[] =

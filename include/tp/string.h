@@ -33,8 +33,14 @@
 #include <tp/array.h>
 #include <tp/stringutils.h>
 
-class tpStringIterator;
-class tpStringJoin;
+//class tpStringIterator;
+//class tpStringJoin;
+
+
+class tpString;
+typedef tpArray<tpString> tpStringArray;
+
+
 
 /**
  * @brief Simple wrapper to handle null terminated c-string. Not yet optimized.
@@ -46,7 +52,7 @@ public:
 		ASCII = 0
 	};
 
-    static tpInt kNotFound;
+	static tpInt kNotFound;
 
 	//! default c'tor
 	tpString();
@@ -152,6 +158,13 @@ public:
 
 	template <typename T>
 	const T& operator [] ( tpSizeT idx ) const { return static_cast<T>(&mBuffer[idx]); }
+
+
+	float toFloat() const;
+	long toLong() const;
+	int toInt() const;
+
+	static tpString join(const tpStringArray &strarr, const tpString &sep);
 
 protected:
 
@@ -290,6 +303,5 @@ inline tpString& tpString::operator += (const char* rs)
 
 #endif
 
-typedef tpArray<tpString> tpStringArray;
 
 #endif

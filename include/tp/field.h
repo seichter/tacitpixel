@@ -112,7 +112,7 @@ protected:
 template <class T> class tpRefPtrField : public tpField
 {
 	//! c'tor
-	tpRefPtrField() {};
+	tpRefPtrField() {}
 
 	//! copy c'tor
 	tpRefPtrField(const tpRefPtrField& field) {}

@@ -21,7 +21,7 @@ void rapidxml_dispatch(tpXML& xml,rapidxml::xml_node<>* node)
 	//tpLogNotify("Node %s '%s'",node->name(),node->value());
 
 	xml.getCurrentDataNode() = tpString(node->value());
-	xml.getCurrentPath().push(tpString(node->name()));
+	xml.getCurrentPath().add(tpString(node->name()));
 
 	xml.getCurrentAttributes().clear();
 
@@ -44,7 +44,13 @@ void rapidxml_dispatch(tpXML& xml,rapidxml::xml_node<>* node)
 		rapidxml_dispatch(xml,child);
 	}
 
-	xml.getCurrentPath().pop();
+	xml.getCurrentPath().removeEnd();
+}
+
+tpXML::tpXML()
+	: tpReferenced()
+	, mCallback(0)
+{
 }
 
 void
@@ -64,11 +70,11 @@ tpXML::parse(const tpString& doc)
 	// sanity check
 	this->mAttributes.clear();
 	this->mData.empty();
-	this->mPath.empty();
+	this->mPath.clear();
 
 }
 
 void tpXML::callback() const
 {
-	if (mCallback.isValid()) (*mCallback)(*this);
+	if (mCallback) (*mCallback)(*this);
 }
