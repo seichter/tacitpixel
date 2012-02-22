@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +26,7 @@
 #ifndef TP_MUTEX_H
 #define TP_MUTEX_H
 
+#include <tp/globals.h>
 
 class tpMutexHandle;
 
@@ -39,8 +40,7 @@ class tpMutexHandle;
 	\see tpAutoLock
 
 */
-class TP_API tpMutex
-{
+class TP_API tpMutex {
 public:
 
 	/**
@@ -79,13 +79,7 @@ public:
 
 private:
 
-/*
-	tpMutex(const tpMutex& mutex);
-
-
-	tpVoid operator = (const tpMutex& mtx);
-*/
-	tpMutexHandle* m_lock;
+	tpMutexHandle* mHandle;
 };
 
 #endif

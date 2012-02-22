@@ -256,7 +256,7 @@ tpPrimitive* tpPrimitiveFactory::create( tpUShort primitive_type )
 
 #endif
 
-tpPrimitiveAttribute::tpPrimitiveAttribute( tpUByte stride /*= 4*/, tpUByte attr_type /*= 0*/ ) 
+tpPrimitiveAttribute::tpPrimitiveAttribute( tpUByte stride /*= 4*/, tpUByte attr_type /*= 0*/ )
 : mStride(stride)
 , mAttrType(attr_type)
 {
@@ -322,38 +322,38 @@ tpPrimitive::tpPrimitive( tpUByte primitivetype /*= kTriangles*/, const tpString
 {
 }
 
-bool 
+bool
 tpPrimitive::hasTextureCoordinates() const
 {
 	return (mTexCoords.isValid() && mTexCoords->getSize());
 }
 
-bool 
+bool
 tpPrimitive::hasColors() const
 {
 	return (mColors.isValid() && mColors->getSize());
 }
 
-bool 
+bool
 tpPrimitive::hasNormals() const
 {
 	return (mNormals.isValid() && mNormals->getSize());
 }
 
-bool 
+bool
 tpPrimitive::hasVertices() const
 {
 	return (mVertices.isValid() && mVertices->getSize());
 }
 
 
-const tpPrimitiveAttribute& 
+const tpPrimitiveAttribute&
 tpPrimitive::getVertices() const
 {
 	return *mVertices;
 }
 
-tpPrimitiveAttribute& 
+tpPrimitiveAttribute&
 tpPrimitive::getVertices()
 {
 	if (!mVertices.isValid()) {
@@ -364,13 +364,13 @@ tpPrimitive::getVertices()
 }
 
 
-const tpPrimitiveAttribute& 
+const tpPrimitiveAttribute&
 tpPrimitive::getNormals() const
 {
 	return *mNormals;
 }
 
-tpPrimitiveAttribute& 
+tpPrimitiveAttribute&
 tpPrimitive::getNormals()
 {
 	if (!mNormals.isValid()) {
@@ -380,13 +380,13 @@ tpPrimitive::getNormals()
 }
 
 
-const tpPrimitiveAttribute& 
+const tpPrimitiveAttribute&
 tpPrimitive::getTextureCoordinates() const
 {
 	return *mTexCoords;
 }
 
-tpPrimitiveAttribute& 
+tpPrimitiveAttribute&
 tpPrimitive::getTextureCoordinates()
 {
 	if (!mTexCoords.isValid()) {
@@ -396,13 +396,13 @@ tpPrimitive::getTextureCoordinates()
 	return *mTexCoords;
 }
 
-const tpPrimitiveAttribute& 
+const tpPrimitiveAttribute&
 tpPrimitive::getColors() const
 {
 	return *mColors;
 }
 
-tpPrimitiveAttribute& 
+tpPrimitiveAttribute&
 tpPrimitive::getColors()
 {
 	if (!mColors.isValid()) {
@@ -420,7 +420,7 @@ tpPrimitive::clear()
 	mTexCoords = 0;
 }
 
-tpPrimitive& 
+tpPrimitive&
 tpPrimitive::addVertexNormal( const tpVec3r& vertex,const tpVec3f& normal )
 {
 	getVertices().add(vertex);
@@ -429,7 +429,7 @@ tpPrimitive::addVertexNormal( const tpVec3r& vertex,const tpVec3f& normal )
 	return *this;
 }
 
-tpPrimitive& 
+tpPrimitive&
 tpPrimitive::addVertexNormalTextureCoordinate( const tpVec3r& vertex,const tpVec3f& normal,const tpVec2f& tcoord )
 {
 	getVertices().add(vertex);
@@ -439,7 +439,7 @@ tpPrimitive::addVertexNormalTextureCoordinate( const tpVec3r& vertex,const tpVec
 	return *this;
 }
 
-tpPrimitive& 
+tpPrimitive&
 tpPrimitive::addVertexNormalColor( const tpVec3r& vertex,const tpVec3f& normal,const tpVec4f& color )
 {
 	getVertices().add(vertex);
@@ -449,7 +449,7 @@ tpPrimitive::addVertexNormalColor( const tpVec3r& vertex,const tpVec3f& normal,c
 	return *this;
 }
 
-tpPrimitive& 
+tpPrimitive&
 tpPrimitive::addVertexNormalTextureCoordinateColor( const tpVec3r& vertex,const tpVec3f& normal,const tpVec2f& texcoord,const tpVec4f& color )
 {
 	getVertices().add(vertex);
@@ -495,6 +495,53 @@ tpPrimitive* tpPrimitiveFactory::create( tpUShort primitive_type )
 		res->addVertexNormalTextureCoordinateColor(tpVec3r(1,1,0),tpVec3r(0,0,1),tpVec2r(1,0),tpVec4r(1,1,1,1)); // v2
 
 		break;
+
+
+	case kSphere:
+		{
+
+			// moved from old tpSphere class ... need to parameterize this
+			const tpReal radius = 1;
+			const tpReal divisions = 20;
+			tpReal _division = tpReal(360.0)/divisions;
+
+			res = new tpPrimitive(tpPrimitive::kTriangleStrip);
+
+			tpReal   _latitude, _longitude;
+			tpReal   dToR;
+			tpReal x, y, z;
+
+			dToR = TP_PI / tpReal(180.0);
+
+			for (_latitude = -90.0; _latitude <= 90.0; _latitude += _division) {
+
+				// loop the other way around it
+				for (_longitude = 0; _longitude <= 360; _longitude += _division) {
+
+					x = tpReal( sin ( _longitude * dToR) * cos ((_latitude + _division) * dToR) );
+					y = tpReal( sin ( (_latitude + _division) * dToR) );
+					z = tpReal( cos ( _longitude * dToR) * cos ((_latitude + _division) * dToR) );
+
+					// assign the second normal and vertex
+					res->addVertexNormal(tpVec3r(x * radius,y * radius,z * radius),
+										 tpVec3r(x,y,z)
+										 );
+
+					// calculate the coordinates
+					x = sin ( _longitude * dToR) * cos (_latitude * dToR);
+					y = sin ( _latitude * dToR);
+					z = cos ( _longitude * dToR) * cos (_latitude * dToR);
+
+					// assign a normal and a vertex
+					res->addVertexNormal(
+								tpVec3r(x * radius,y * radius,z * radius),
+								tpVec3r(x,y,z)
+								);
+
+				}
+			}
+		}
+
 	}
 
 

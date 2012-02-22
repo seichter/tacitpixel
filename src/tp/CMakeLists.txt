@@ -86,6 +86,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/sort.h
 	${tp_include_path}/tp/sound.h
 	${tp_include_path}/tp/scopeptr.h
+	${tp_include_path}/tp/scopelock.h
 	${tp_include_path}/tp/stack.h
 	${tp_include_path}/tp/stream.h
 	${tp_include_path}/tp/string.h

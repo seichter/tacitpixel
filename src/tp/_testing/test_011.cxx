@@ -28,7 +28,6 @@ int main(int argc, char* argv[])
 	viewer->getScene().addCamera(cam_1.get(),true);
 	viewer->getScene().addCamera(cam_2.get(),false);
 
-
 	cam_1->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
 	cam_1->setClearColor(tpVec4f(0,.15f,.3f,1.f));
 
