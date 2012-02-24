@@ -74,6 +74,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		PostQuitMessage(0);
 		break;
+    case WM_SIZE:
+    {
+        tpRenderSurfaceEvent e(rendersurface);
+        e.setId(tpRenderSurfaceEvent::kWindowSize);
+        rendersurface->getEventHandler().process(e);
+    }
+        break;
 	case WM_ACTIVATE:
 		// Notify shell of our activate message
 		//SHHandleWMActivate(hWnd, wParam, lParam, &s_sai, FALSE);
@@ -224,6 +231,16 @@ void tpRenderSurfaceWin32::doCreate( tpRenderSurfaceTraits* traits )
 
 void tpRenderSurfaceWin32::doKill()
 {
+}
+
+tpVec2i
+tpRenderSurfaceWin32::getSize() const {
+    tpVec2i result;
+    RECT r;
+    GetClientRect(_handle,&r);
+    result[0] = r.right-r.left;
+    result[1] = r.bottom-r.top;
+    return result;
 }
 
 

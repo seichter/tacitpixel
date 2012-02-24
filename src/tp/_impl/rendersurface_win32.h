@@ -40,7 +40,8 @@ public:
 	tpRawPtr getDisplay();
 	tpRawPtr getWindow();
 
-	void setContext(tpRenderContext* context);
+    void setContext(tpRenderContext* context);
+    tpVec2i getSize() const;
 };
 
 
