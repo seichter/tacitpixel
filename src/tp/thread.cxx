@@ -124,6 +124,7 @@ tpThread::join()
 	void *result = 0;
 	pthread_join(mThreadHandle->handle, &result);
 #else
+    WaitForSingleObject(&mThreadHandle->handle,INFINITE);
 #endif
 }
 
