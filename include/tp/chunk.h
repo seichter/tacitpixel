@@ -39,7 +39,7 @@
 class TP_API tpChunk {
 
 	//! Copy c'tor.
-	tpChunk(const tpChunk& origin) {};
+    tpChunk(const tpChunk&) {}
 
 	//! assignment
 	tpChunk& operator = (const tpChunk& rhs) { return *this; }

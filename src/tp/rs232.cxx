@@ -29,7 +29,16 @@
 #include <fcntl.h>        // O_* flags, ::open
 #include <stdlib.h>     // ::free
 #include <string.h>       // ::memset, ::strdup, ::strerror
-#include <iostream>
+
+
+//#if defined(__unix) || defined(__APPLE__) || defined(__BEOS__) || defined(__HAIKU__)
+//#if defined(__sgi)
+//  #include <term.h>
+//#endif
+//  #include <termios.h>
+//  #include <sys/ioctl.h>
+//#endif
+
 
 #if defined(__unix) || defined(__APPLE__) || defined(__HAIKU__) || defined(__BEOS__)
 	#include <unistd.h>       // ::close, ::ioctl, ::read, ::write

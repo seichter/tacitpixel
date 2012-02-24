@@ -97,7 +97,7 @@ void tpMutex::unlock()
 {
 
 #if defined(_WIN32)
-	if(::ReleaseMutex(m_lock->handle) == 0)
+    if(::ReleaseMutex(mHandle->handle) == 0)
 #elif defined(HAVE_PTHREAD_H)
 	if (-1 == pthread_mutex_unlock(&mHandle->handle))
 #endif
@@ -109,7 +109,7 @@ void tpMutex::unlock()
 bool tpMutex::tryLock(tpULong timeout)
 {
 #if defined(_WIN32)
-	switch(::WaitForSingleObject(m_lock->handle,timeout))
+    switch(::WaitForSingleObject(mHandle->handle,timeout))
 	{
 	  case WAIT_OBJECT_0:
 		  return true;
