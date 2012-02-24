@@ -78,6 +78,11 @@ public:
 		kFormatBGRA
 	};
 
+	enum {
+		kDownSampling  = 0,
+		kUpSampling
+	};
+
 	tpTexture(const tpString& name = "");
 
 	tpImage* getImage() { return mImage.get(); }
@@ -92,6 +97,11 @@ public:
 	void setFormat(tpUInt format) { mFormat = format; }
 	tpUInt getFormat() const { return mFormat; }
 
+	void setFilter(tpUInt filter,tpUByte updown = kDownSampling) { (updown) ? mMinFilter = filter : mMagFilter = filter; }
+	tpUInt getFilter(tpUByte updown = kDownSampling) const { return ((updown) ? mMinFilter : mMagFilter) ; }
+	bool hasFilter(tpUInt filter,tpUByte updown = kDownSampling) const
+	{ return (0 != (getFilter(updown) & filter)); }
+
 	void setTextureObject(tpTextureObject* object) { mObject = object; }
 
 	const tpTextureObject* getTextureObject() const { return mObject.get(); }
@@ -105,6 +115,10 @@ protected:
 	virtual ~tpTexture();
 
 	tpUInt mFormat;
+
+	tpUInt mMinFilter;
+	tpUInt mMagFilter;
+
 	tpVec3<tpUInt> mWrap;
 	bool mStatic;
 

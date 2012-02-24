@@ -32,6 +32,8 @@ tpTexture::tpTexture(const tpString& name  /* = TP_NONAME */)
 	, mImage(0)
 	, mFormat(kFormatRGB)
 	, mStatic(false)
+	, mMinFilter(kFilterNearest | kFilterMipMapNearest)
+	, mMagFilter(kFilterNearest | kFilterMipMapNearest)
 {
 }
 

@@ -34,11 +34,11 @@ int main(int argc, char* argv[])
 	tpRefPtr<tpLibrary> mod_jpg = tpLibrary::load("tacit_jpg");
 
 	tpRefPtr<tpPrimitive> p =
-		tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kAxis);
+		tpPrimitiveFactory::create(tpPrimitiveFactory::kAxis);
 
 	tpRefPtr<tpNode> n = tpNode::read(argv[1]);
 
-	if (!n.isValid()) n = tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kAxis);
+	if (!n.isValid()) n = tpPrimitiveFactory::create(tpPrimitiveFactory::kAxis);
 
 	tpRefPtr<tpNode> root = new tpNode();
 

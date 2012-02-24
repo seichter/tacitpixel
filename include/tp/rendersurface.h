@@ -92,6 +92,10 @@ class tpRenderSurfaceEvent : public tpEvent {
 public:
 
 	enum {
+		kWindowSize = 0x4000
+	};
+
+	enum {
 		kMouseNone = 0,
 		kMouseMove,
 		kMouseUp,
@@ -203,7 +207,7 @@ protected:
 class TP_API tpRenderSurface : public tpRenderTarget {
 public:
 
-	TP_TYPE_DECLARE;
+	TP_TYPE_DECLARE
 
 	static tpRenderSurface* create( tpRenderSurfaceTraits* traits = 0);
 
@@ -215,14 +219,19 @@ public:
 
 	virtual tpString getName() const;
 
+	virtual tpVec2i getSize() const;
+
 	virtual void setCaption(const tpString& ) {}
-    virtual tpString getCaption() { return tpString(); }
+	virtual tpString getCaption() { return tpString(); }
 
 	bool isValid() const { return !mDone; }
 
 	void setDone(bool done = true) { mDone = done; }
 
 	tpEventHandler& getEventHandler() { return mEventHandler; }
+
+
+
 
 protected:
 

@@ -161,7 +161,7 @@ protected:
 class TP_API tpNodeHandler : public tpReferenced {
 public:
 
-	TP_TYPE_DECLARE;
+	TP_TYPE_DECLARE
 
 	enum {
 		kNone  = 0,

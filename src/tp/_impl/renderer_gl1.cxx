@@ -72,7 +72,26 @@ public:
 	}
 
 
-	GLenum getFilterMode(const tpTexture& t) {
+	GLenum setGLFilterMode(const tpTexture& t) {
+
+		GLenum minFilter(GL_LINEAR_MIPMAP_LINEAR);
+		GLenum magFilter(GL_LINEAR_MIPMAP_LINEAR);
+
+//		if		(t.hasFilter(tpTexture::kFilterNearest | tpTexture::kFilterMipMapNearest,tpTexture::kDownSampling))
+//			minFilter = GL_NEAREST_MIPMAP_NEAREST;
+//		else if (t.hasFilter(tpTexture::kFilterLinear | tpTexture::kFilterMipMapLinear,tpTexture::kDownSampling))
+//			minFilter = GL_LINEAR_MIPMAP_LINEAR;
+//		else if (t.hasFilter(tpTexture::kFilterNearest | tpTexture::kFilterMipMapLinear,tpTexture::kDownSampling))
+//			minFilter = GL_NEAREST_MIPMAP_LINEAR;
+//		else if (t.hasFilter(tpTexture::kFilterLinear | tpTexture::kFilterMipMapLinear,tpTexture::kDownSampling))
+//			minFilter = GL_LINEAR_MIPMAP_LINEAR;
+//		else if (t.hasFilter(tpTexture::kFilterLinear | tpTexture::kFilterMipMapLinear,tpTexture::kDownSampling))
+//			minFilter = GL_LINEAR_MIPMAP_LINEAR;
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+
+
 		return 0;
 	}
 
@@ -160,6 +179,9 @@ public:
 
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, getWrapMode(texture.getWrapMode()[0]));
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, getWrapMode(texture.getWrapMode()[0]));
+
+
+
 
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -255,6 +277,7 @@ public:
 
 		if (glclearflag) glClear(glclearflag);
 
+
 	}
 
 	void
@@ -274,7 +297,7 @@ public:
 //		glEnable(GL_NORMALIZE);
 //		glEnable(GL_RESCALE_NORMAL);
 //		glShadeModel(GL_FLAT);
-		glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
+//		glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
 
 
 
@@ -356,15 +379,17 @@ public:
 
 	void operator ()(const tpMaterial* mat)
 	{
-		const tpMaterial* actual_mat = (mat) ? mat : tpDefaultMaterial;
+		if (0 == mat) return;
+
+//		const tpMaterial* actual_mat = (mat) ? mat : tpDefaultMaterial;
 
 		glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
 
-		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, actual_mat->getAmbientColor().getData() );
-		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, actual_mat->getDiffuseColor().getData() );
-		glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, actual_mat->getSpecularColor().getData() );
-		glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, actual_mat->getEmissiveColor().getData() );
-		glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, actual_mat->getShininess() );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, mat->getAmbientColor().getData() );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, mat->getDiffuseColor().getData() );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, mat->getSpecularColor().getData() );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, mat->getEmissiveColor().getData() );
+		glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, mat->getShininess() );
 	}
 
 	void onPrimitive(const tpPrimitive& prim,const tpMatrixStack& stack,bool secondPass = false)
@@ -403,9 +428,10 @@ public:
 			(*this)(const_cast<tpTexture*>(prim.getTexture()));
 		}
 
-		if (prim.hasMaterial())
-		{
+		if (prim.hasMaterial()) {
 			(*this)(prim.getMaterial());
+		} else if (prim.hasColors()) {
+			glEnable(GL_COLOR_MATERIAL);
 		}
 
 //		tpCamera* camera = getActiveCamera();
@@ -430,6 +456,9 @@ public:
 							prim.getNormals().getStride()*sizeof(float),
 							prim.getNormals().getData()
 							);
+		} else {
+			// no normals no fun
+			glDisable(GL_LIGHTING);
 		}
 
 		if (prim.hasTextureCoordinates())
@@ -444,12 +473,15 @@ public:
 
 		if (prim.hasColors())
 		{
-			glEnableClientState(GL_COLOR_ARRAY);
+			glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+
 			glColorPointer(prim.getColors().getStride(),
 						   GL_FLOAT,
 						   prim.getColors().getStride()*sizeof(float),
 						   prim.getColors().getData()
 						   );
+
+			glEnableClientState(GL_COLOR_ARRAY);
 		}
 
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -471,8 +503,10 @@ public:
 
 		if (prim.hasColors())
 		{
+			glDisable(GL_COLOR_MATERIAL);
 			glDisableClientState(GL_COLOR_ARRAY);
 		}
+
 
 		// disable state
 

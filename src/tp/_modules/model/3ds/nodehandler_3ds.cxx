@@ -52,7 +52,9 @@ public:
 tpMaterial*
 createMaterial(Lib3dsMaterial* m3ds)
 {
-	if (0 == m3ds) return tpDefaultMaterial;
+//	if (0 == m3ds) return tpDefaultMaterial;
+
+	if (0 == m3ds) return 0L;
 
 	tpLogNotify("created material %s",m3ds->name);
 

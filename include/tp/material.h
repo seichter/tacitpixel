@@ -72,6 +72,8 @@ public:
 	void setAmbientColor(const tpVec4f& v) { m_ambientcolor = v; }
 	const tpVec4f& getAmbientColor() const { return m_ambientcolor; }
 
+	static tpMaterial* createDefault(tpReal r, tpReal g, tpReal b, tpReal intensity = .8f);
+
 protected:
 
 	tpVec4r m_ambientcolor;
@@ -83,6 +85,6 @@ protected:
 	tpFloat m_transparency;
 };
 
-extern TP_API tpMaterial* tpDefaultMaterial;
+//extern TP_API tpMaterial* tpDefaultMaterial;
 
 #endif

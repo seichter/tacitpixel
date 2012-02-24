@@ -16,9 +16,11 @@
 
 #import "rendercontext_cocoa.h"
 
+#include <ApplicationServices/ApplicationServices.h>
+
 #include <tp/module.h>
 #include <tp/version.h>
-
+#include <tp/logutils.h>
 
 
 @interface tpGLRenderSurfaceCocoaDelegate : NSResponder
@@ -88,7 +90,10 @@
 
 -(void) windowDidResize: (NSNotification*)notification
 {
-	tpLogMessage("Resize!");
+	tpRenderSurfaceEvent e(rendersurface);
+	e.setId(tpRenderSurfaceEvent::kWindowSize);
+	e.setRenderSurface(rendersurface);
+	rendersurface->getEventHandler().process(e);
 }
 
 - (BOOL)acceptsFirstResponder
@@ -151,6 +156,10 @@ tpRenderSurfaceCocoa::tpRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 
 	[NSApp finishLaunching];
 
+	ProcessSerialNumber PSN;
+	GetCurrentProcess(&PSN);
+	TransformProcessType(&PSN,kProcessTransformToForegroundApplication);
+
 	[pool release];
 
 }
@@ -172,6 +181,18 @@ bool tpRenderSurfaceCocoa::show(bool doShow)
 {
 	[window setIsVisible:(BOOL)doShow];
 	return [window isVisible];
+}
+
+tpVec2i tpRenderSurfaceCocoa::getSize() const {
+	NSRect rect = [window contentRectForFrameRect:[window frame]];
+	NSSize size = rect.size;
+
+	tpVec2i s;
+
+	s[0] =  (int)floor(size.width);
+	s[1] = (int)floor(size.height);
+
+	return s;
 }
 
 void tpRenderSurfaceCocoa::update()

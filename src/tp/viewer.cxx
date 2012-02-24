@@ -13,7 +13,8 @@
 tpViewer::tpViewer()
 	: tpReferenced()
 	, mScene(new tpScene())
-{}
+{
+}
 
 bool
 tpViewer::create(const tpString& title/* = "tpViewer"*/,
@@ -29,6 +30,7 @@ tpViewer::create(const tpString& title/* = "tpViewer"*/,
 	mSurface->setContext(0);
 
 	if (!mRenderer.isValid() || !mSurface.isValid() || !mSurface->hasContext()) return false;
+
 
 	mSurface->show(true);
 
@@ -59,6 +61,14 @@ tpViewer::onSurfaceEvent(tpRenderSurfaceEvent& e)
 /*virtual*/ void
 tpViewer::_dispatch(tpRenderSurfaceEvent& e)
 {
+	if (e.getId() == tpRenderSurfaceEvent::kWindowSize) {
+
+		tpVec2i size = e.getRenderSurface()->getSize();
+		this->getScene().getActiveCamera()->setViewport(tpVec4i(0,0,size[0],size[1]));
+
+		tpLog::get() << size;
+	}
+
 	this->onSurfaceEvent(e);
 }
 
@@ -72,8 +82,8 @@ tpViewer::run() {
 		this->frame();
 	}
 
-    mSurface = 0;
-    mScene = 0;
+	mSurface = 0;
+	mScene = 0;
 
 	return 0;
 }

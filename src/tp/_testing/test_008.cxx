@@ -40,7 +40,7 @@ int main(int argc,char* argv[])
 
 	tpRefPtr<tpNode> root = new tpNode("Root");
 
-	tpPrimitive* axis = tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kAxis);
+	tpPrimitive* axis = tpPrimitiveFactory::create(tpPrimitiveFactory::kAxis);
 
 	tpText* text = new tpText();
 	text->setFont(argv[1]);

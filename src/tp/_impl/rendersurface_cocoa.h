@@ -42,6 +42,8 @@ public:
 
 	virtual void update();
 
+	virtual tpVec2i getSize() const;
+
 	void setCaption(const tpString& caption);
 
 	tpRawPtr getWindow() { return window; }

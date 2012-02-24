@@ -49,6 +49,8 @@ protected:
 	bool mHandled;
 	tpTimerTick mTick;
 
+	tpULong mId;
+
 public:
 
 	TP_TYPE_DECLARE
@@ -64,6 +66,9 @@ public:
 
 	/** D'tor */
 	virtual ~tpEvent();
+
+	void setId(tpULong id) { mId = id; }
+	tpULong getId() { return mId; }
 
 	inline void
 	setHandled(bool handled = true) { mHandled = handled; }

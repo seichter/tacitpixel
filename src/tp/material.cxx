@@ -63,11 +63,25 @@ tpMaterial& tpMaterial::operator = (const tpMaterial& mat)
 	return *this;
 }
 
+tpMaterial *tpMaterial::createDefault(tpReal r, tpReal g, tpReal b, tpReal intensity)
+{
+	tpMaterial* m = new tpMaterial();
+
+	m->setDiffuseColor(tpVec4f(r,g,b,1));
+	m->setSpecularColor(tpVec4f(intensity,intensity,intensity,1));
+
+	m->setAmbientColor(tpVec4f(0,0,0,1));
+	m->setEmissiveColor(tpVec4f(0,0,0,1));
+	m->setShininess(1);
+
+	return m;
+}
+
 
 TP_TYPE_REGISTER(tpMaterial,tpObject,Material);
 
-static tpMaterial gs_defaultmaterial;
-tpMaterial* tpDefaultMaterial = &gs_defaultmaterial;
+//static tpMaterial gs_defaultmaterial;
+//tpMaterial* tpDefaultMaterial = &gs_defaultmaterial;
 
 
 

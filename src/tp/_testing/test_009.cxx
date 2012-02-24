@@ -11,9 +11,9 @@ int main(int argc,char* argv[]) {
 	tpModuleManager::get()->load("jpg");
 
 	tpRefNode root = new tpNode();
-	root->addChild(tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kAxis));
+	root->addChild(tpPrimitiveFactory::create(tpPrimitiveFactory::kAxis));
 
-	tpPrimitive* p = tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kPlane);
+	tpPrimitive* p = tpPrimitiveFactory::create(tpPrimitiveFactory::kPlane);
 
 	tpImage* i = tpImage::read(argv[1]);
 
@@ -39,6 +39,6 @@ int main(int argc,char* argv[]) {
 
 
 	viewer->create();
-	
+
 	return viewer->run();;
 }

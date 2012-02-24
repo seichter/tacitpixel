@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 
 	tpRefPtr<tpViewer> viewer = new tpViewer();
 
-	tpRefPtr<tpPrimitive> axis = tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kAxis);
+	tpRefPtr<tpPrimitive> axis = tpPrimitiveFactory::create(tpPrimitiveFactory::kAxis);
 
 	tpRefPtr<tpNode> root = new tpNode;
 

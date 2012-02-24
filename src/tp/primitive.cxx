@@ -314,12 +314,32 @@ void tpPrimitiveAttribute::clear()
 	mData.clear();
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+
+
 //////////////////////////////////////////////////////////////////////////
 
 tpPrimitive::tpPrimitive( tpUByte primitivetype /*= kTriangles*/, const tpString& name /*= "primitive"*/ )
 : tpRenderable(name)
 , mPrimType(primitivetype)
 {
+}
+
+tpPrimitive& tpPrimitive::operator =(const tpPrimitive &rhs)
+{
+	if (&rhs != this)
+	{
+
+	}
+
+	return *this;
+}
+
+tpObject*
+tpPrimitive::clone()
+{
+	return new tpPrimitive(*this);
 }
 
 bool
@@ -487,15 +507,22 @@ tpPrimitive::scale(const tpVec3f& vec)
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
-
-tpPrimitiveFactory* tpPrimitiveFactory::get(bool destroy /*= false*/)
+void
+tpPrimitive::flipNormals()
 {
-	static tpRefPtr<tpPrimitiveFactory> gs_primfactory( (destroy) ? 0L : new tpPrimitiveFactory() );
-	return gs_primfactory.get();
+	for (int i = 0; i < getNormals().getSize();++i)
+	{
+		getNormals().getData()[i*getNormals().getStride()+0] *= -1;
+		getNormals().getData()[i*getNormals().getStride()+1] *= -1;
+		getNormals().getData()[i*getNormals().getStride()+2] *= -1;
+	}
+
 }
 
-tpPrimitive* tpPrimitiveFactory::create( tpUShort primitive_type )
+//////////////////////////////////////////////////////////////////////////
+
+tpPrimitive*
+tpPrimitiveFactory::create( tpUShort primitive_type )
 {
 	tpPrimitive *res(0);
 	switch (primitive_type)
@@ -529,10 +556,12 @@ tpPrimitive* tpPrimitiveFactory::create( tpUShort primitive_type )
 
 			// moved from old tpSphere class ... need to parameterize this
 			const tpReal radius = 1;
-			const tpReal divisions = 20;
+			const tpUInt divisions = 20;
 			tpReal _division = tpReal(360.0)/divisions;
 
 			res = new tpPrimitive(tpPrimitive::kTriangleStrip);
+
+			//res->setPrimitiveType(tpPrimitive::kLineStrip);
 
 			tpReal   _latitude, _longitude;
 			tpReal   dToR;
@@ -575,12 +604,3 @@ tpPrimitive* tpPrimitiveFactory::create( tpUShort primitive_type )
 	return res;
 }
 
-tpPrimitiveFactory::tpPrimitiveFactory()
-{
-
-}
-
-tpPrimitiveFactory::tpPrimitiveFactory( const tpPrimitiveFactory& )
-{
-
-}

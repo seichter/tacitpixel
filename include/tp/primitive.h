@@ -98,6 +98,11 @@ public:
 
 	tpPrimitive(tpUByte primitivetype = kTriangles, const tpString& name = "primitive");
 
+	tpPrimitive &operator =(const tpPrimitive &rhs);
+
+	tpObject *clone();
+
+
 	bool hasVertices() const;
 
 	bool hasNormals() const;
@@ -141,12 +146,13 @@ public:
 	void translate(const tpVec3f &vec);
 
 	void scale(const tpVec3f &vec);
+
+	void flipNormals();
 };
 
 
 
-class TP_API tpPrimitiveFactory : public tpReferenced {
-public:
+struct TP_API tpPrimitiveFactory {
 
 	enum {
 		kPlane,
@@ -155,13 +161,7 @@ public:
 		kTeapot
 	};
 
-	static tpPrimitiveFactory* get(bool destroy = false);
-	tpPrimitive* create(tpUShort primitive_type);
-
-private:
-
-	tpPrimitiveFactory();
-	tpPrimitiveFactory(const tpPrimitiveFactory&);
+	static tpPrimitive* create(tpUShort primitive_type);
 };
 
 

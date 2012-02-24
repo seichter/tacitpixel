@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
 	tpRefPtr<tpViewer> viewer = new tpViewer();
 	viewer->create();
 
-	tpPrimitive* prim = tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kSphere);
+	tpPrimitive* prim = tpPrimitiveFactory::create(tpPrimitiveFactory::kSphere);
 
 	tpRefPtr<tpCamera> camera = viewer->getScene().getActiveCamera();
 	camera->setName("Perspective");

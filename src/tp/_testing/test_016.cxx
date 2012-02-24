@@ -45,15 +45,29 @@ int main(int argc, char* argv[])
 	tpRefPtr<tpViewer> viewer = new tpViewer();
 	viewer->create();
 
-	tpPrimitive* axis = tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kAxis);
-	tpPrimitive* prim = tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kPlane);
-	tpPrimitive* sphr = tpPrimitiveFactory::get()->create(tpPrimitiveFactory::kSphere);
+	tpPrimitive* axis = tpPrimitiveFactory::create(tpPrimitiveFactory::kAxis);
+	tpPrimitive* prim = tpPrimitiveFactory::create(tpPrimitiveFactory::kPlane);
+	tpPrimitive* sphr = tpPrimitiveFactory::create(tpPrimitiveFactory::kSphere);
+	tpPrimitive* sphr_opaque = tpPrimitiveFactory::create(tpPrimitiveFactory::kSphere);
+	tpPrimitive* sphr_mat = tpPrimitiveFactory::create(tpPrimitiveFactory::kSphere);
+
 
 	prim->setAlpha(0.4f);
 	prim->setUniformColor(tpVec4f(0.3,0.5,0.5,.3));
+	prim->scale(tpVec3f(3,3,3));
+
 
 	sphr->scale(tpVec3f(.3f,.3f,.3f));
 	sphr->translate(tpVec3f(0,0,-1));
+	sphr->setUniformColor(tpVec4f(1,0,0,.3));
+
+	sphr_opaque->scale(tpVec3f(.8,.8,.8));
+	sphr_opaque->translate(tpVec3f(0,0,-2));
+	sphr_opaque->setUniformColor(tpVec4f(0,1,0,1));
+
+	sphr_mat->scale(tpVec3f(.8,.8,.8));
+	sphr_mat->translate(tpVec3f(-2,0,0));
+	sphr_mat->setMaterial(tpMaterial::createDefault(0.64, 0.04814919, 0, .5));
 
 	tpDebugPrimitive(*prim);
 
@@ -72,6 +86,9 @@ int main(int argc, char* argv[])
 	camera->addChild(light.get());
 	camera->addChild(axis);
 	camera->addChild(sphr);
+	camera->addChild(sphr_opaque);
+	camera->addChild(sphr_mat);
+
 
 	viewer->getScene().getActiveCamera()->addChild(prim);
 
