@@ -4,8 +4,8 @@
 #include <tp/string.h>
 #include <tp/mat.h>
 
-template <typename T, tpUInt R, tpUInt C>
-tpString& operator << (tpString& out, const tpMat<R,C,T>& m)
+template <tpUInt R, tpUInt C>
+tpString& operator << (tpString& out, const tpMat<R,C,float>& m)
 {
 	// we are using MatLab style
 	tpString result("[ ");
@@ -22,18 +22,32 @@ tpString& operator << (tpString& out, const tpMat<R,C,T>& m)
 	return out.append(result);
 }
 
-template <typename T, tpUInt C>
-tpString& operator << (tpString& out, const tpVec<T,C>& v)
+template <tpUInt C>
+tpString& operator << (tpString& out, const tpVec<float,C>& v)
 {
-	// we are using MatLab style
-	tpString result("[ ");
-	for (int c = 0; c < v.dimensions;++c)
-	{
-		result += tpString::format("%3.3f",v[c]);
-		if (c != v.dimensions - 1) result += "; ";
-	}
-	result += " ]";
-	return out.append(result);
+    // we are using MatLab style
+    tpString result("[ ");
+    for (int c = 0; c < v.dimensions;++c)
+    {
+        result += tpString::format("%3.3f",v[c]);
+        if (c != v.dimensions - 1) result += "; ";
+    }
+    result += " ]";
+    return out.append(result);
+}
+
+template <tpUInt C>
+tpString& operator << (tpString& out, const tpVec<int,C>& v)
+{
+    // we are using MatLab style
+    tpString result("[ ");
+    for (int c = 0; c < v.dimensions;++c)
+    {
+        result += tpString::format("%d",v[c]);
+        if (c != v.dimensions - 1) result += "; ";
+    }
+    result += " ]";
+    return out.append(result);
 }
 
 

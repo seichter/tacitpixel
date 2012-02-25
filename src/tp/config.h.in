@@ -28,6 +28,7 @@
 
 #cmakedefine HAVE_STDINT_H
 #cmakedefine HAVE_MALLOC_H
+#cmakedefine HAVE_UNISTD_H
 #cmakedefine HAVE_SYS_MOUNT_H
 #cmakedefine HAVE_PTHREAD_H
 #cmakedefine HAVE_DLFCN_H

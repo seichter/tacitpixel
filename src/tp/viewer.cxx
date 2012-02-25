@@ -64,7 +64,7 @@ tpViewer::_dispatch(tpRenderSurfaceEvent& e)
 	if (e.getId() == tpRenderSurfaceEvent::kWindowSize) {
 
 		tpVec2i size = e.getRenderSurface()->getSize();
-		this->getScene().getActiveCamera()->setViewport(tpVec4i(0,0,size[0],size[1]));
+        this->getScene().getActiveCamera()->setViewport(tpVec4i(0,0,size[0],size[1]));
 
 		tpLog::get() << size;
 	}

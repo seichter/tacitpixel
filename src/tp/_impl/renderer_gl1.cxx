@@ -10,7 +10,7 @@
 #include <tp/light.h>
 #include <tp/timer.h>
 #include <tp/scene.h>
-
+#include <tp/thread.h>
 
 #include <tp/config.h>
 
@@ -291,6 +291,7 @@ public:
 
 		glShadeModel(GL_SMOOTH);
 		glEnable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
 
 
 //		glEnable(GL_NORMALIZE);
@@ -391,6 +392,27 @@ public:
 		glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, mat->getShininess() );
 	}
 
+
+    void quickTest()
+    {
+        float vertices[] = { 0,0,0, 0,1,0, 0,0,1};
+        float normals[] =  { 1,0,0, 1,0,0, 1,0,0 };
+
+
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glEnableClientState(GL_VERTEX_ARRAY);
+
+        glNormalPointer(GL_FLOAT,0,normals);
+        glVertexPointer(3, GL_FLOAT, 0, vertices);
+
+        glDrawArrays(GL_TRIANGLES,0,3);
+
+        glDisableClientState(GL_NORMAL_ARRAY);
+        glDisableClientState(GL_VERTEX_ARRAY);
+
+    }
+
+
 	void onPrimitive(const tpPrimitive& prim,const tpMatrixStack& stack,bool secondPass = false)
 	{
 
@@ -427,7 +449,7 @@ public:
 			(*this)(const_cast<tpTexture*>(prim.getTexture()));
 		}
 
-		if (prim.hasMaterial()) {
+        if (prim.hasMaterial()) {
 			(*this)(prim.getMaterial());
 		} else if (prim.hasColors()) {
 			glEnable(GL_COLOR_MATERIAL);
@@ -447,14 +469,18 @@ public:
 		// load on the stack
 		glLoadMatrixf(mvp.data());
 
+        quickTest();
+
+        return;
+
 		// render scene
 		if (prim.hasNormals())
 		{
-			glEnableClientState(GL_NORMAL_ARRAY);
-			glNormalPointer(GL_FLOAT,
-							prim.getNormals().getStride()*sizeof(float),
-							prim.getNormals().getData()
-							);
+            glNormalPointer(GL_FLOAT,
+                            prim.getNormals().getStride()*sizeof(float),
+                            prim.getNormals().getData()
+                            );
+            glEnableClientState(GL_NORMAL_ARRAY);
 		} else {
 			// no normals no fun
 			glDisable(GL_LIGHTING);

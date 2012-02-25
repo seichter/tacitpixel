@@ -27,6 +27,10 @@
 
 #include <tp/config.h>
 
+#if defined(HAVE_UNISTD_H)
+#include <unistd.h>
+#endif
+
 // Includes for Windows and *nic'es
 #if defined(_WIN32)
 	#define WIN32_LEAN_AND_MEAN

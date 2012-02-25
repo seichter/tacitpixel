@@ -130,6 +130,17 @@ tpRenderSurfaceX11::show(bool doShow)
 	return true;
 }
 
+tpVec2i
+tpRenderSurfaceX11::getSize() const {
+    tpVec2i r;
+    XWindowAttributes xwa;
+    XGetWindowAttributes(dpy,win,&xwa);
+    r[0] = xwa.width;
+    r[1] = xwa.height;
+
+    return r;
+}
+
 void
 tpRenderSurfaceX11::setCaption(const tpString& caption)
 {
@@ -161,7 +172,9 @@ tpRenderSurfaceX11::update()
 
 		switch (event.type) {
 		case ConfigureNotify:
-			tpLogNotify("%s - configure",__FUNCTION__);
+            e.setId(tpRenderSurfaceEvent::kWindowSize);
+            submit = true;
+            //tpLogNotify("%s - configure",__FUNCTION__);
 			break;
 		case KeyPress:
 		case KeyRelease:

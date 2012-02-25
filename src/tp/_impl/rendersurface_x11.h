@@ -26,6 +26,10 @@ public:
 	void doCreate(tpRenderSurfaceTraits *traits);
 
 	void setCaption(const tpString &caption);
+
+    tpVec2i getSize() const;
+
+
 	void update();
 
 	tpRawPtr getDisplay() { return dpy; }

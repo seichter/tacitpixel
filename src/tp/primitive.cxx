@@ -393,7 +393,7 @@ tpPrimitiveAttribute&
 tpPrimitive::getNormals()
 {
 	if (!mNormals.isValid()) {
-		mNormals = new tpPrimitiveAttribute(4,tpPrimitiveAttribute::kNormals);
+        mNormals = new tpPrimitiveAttribute(4,tpPrimitiveAttribute::kNormals);
 	}
 	return *mNormals;
 }
