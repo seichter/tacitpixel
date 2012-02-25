@@ -5,6 +5,9 @@
 #include <tp/rendersurface.h>
 #include <tp/log.h>
 
+#define GLX_SAMPLE_BUFFERS_SGIS         100000
+#define GLX_SAMPLES_SGIS                100001
+
 tpRenderContextGLX::tpRenderContextGLX()
     : tpRenderContext()
     , display(0)
@@ -16,6 +19,7 @@ bool
 tpRenderContextGLX::create(tpRenderTarget *target)
 {
 	tpInt glx_major(0), glx_minor(0), screen(0);
+    tpString glx_extensions;
 
 	this->display = reinterpret_cast<Display*>(target->getDisplay());
 	this->window =  reinterpret_cast<Window>(target->getWindow());
@@ -27,11 +31,17 @@ tpRenderContextGLX::create(tpRenderTarget *target)
 	} else {
 
 		glXQueryVersion(display,&glx_major,&glx_minor);
-		tpLogNotify("%s - GLX Extension %d.%d",__FUNCTION__,glx_major,glx_minor);
+        glx_extensions = glXQueryExtensionsString(display,0);
+
+
+        tpLogNotify("%s - GLX Extension %d.%d\n%s",
+                    __FUNCTION__,glx_major,glx_minor,
+                    glx_extensions.c_str());
 	}
 
     if (target->getType()->isOfType(tpRenderSurface::getTypeInfo()))
     {
+
 
         const unsigned int depth_bits = 24;
 
@@ -42,9 +52,19 @@ tpRenderContextGLX::create(tpRenderTarget *target)
                 .add(GLX_RED_SIZE).add(8)
                 .add(GLX_GREEN_SIZE).add(8)
                 .add(GLX_BLUE_SIZE).add(8)
-                .add(GLX_ALPHA_SIZE).add(8)
-                .add(GLX_DEPTH_SIZE).add(depth_bits)
-                .add(None);
+ //               .add(GLX_ALPHA_SIZE).add(8)
+                .add(GLX_BUFFER_SIZE).add(24)
+                .add(GLX_DEPTH_SIZE).add(depth_bits);
+
+        if (glx_extensions.find("SGIS_multisample") != tpString::kNotFound)
+        {
+//            configuration.add(GLX_SAMPLES_SGIS).add(4);
+  //                  .add(GLX_SAMPLE_BUFFERS_SGIS).add(2);
+        }
+
+
+        configuration.add(None);
+
 
         XVisualInfo* vi = 0;
 
@@ -52,8 +72,7 @@ tpRenderContextGLX::create(tpRenderTarget *target)
 
         if (vi == NULL)
         {
-            if (vi == NULL) tpLogError("no appropriate RGB visual with depth buffer");
-            vi = glXChooseVisual(display, screen, &configuration[0]);
+            tpLogError("%s GLX could not find a matching visual",__FUNCTION__);
         }
 
         glxcontext = glXCreateContext(display,vi,0,True);
@@ -126,6 +145,12 @@ tpRenderContextGLX::getString(const tpUInt& e)
 {
     const tpChar* str = reinterpret_cast<const tpChar*>(glGetString(e));
     return tpString(str);
+}
+
+void*
+tpRenderContextGLX::getProcAddress(const char *name)
+{
+    return (void*)glXGetProcAddressARB((const unsigned char*)name);
 }
 
 TP_TYPE_REGISTER(tpRenderContextGLX,tpRenderContext,RenderContextX11);

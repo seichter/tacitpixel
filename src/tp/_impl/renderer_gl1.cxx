@@ -276,6 +276,7 @@ public:
 
 		if (glclearflag) glClear(glclearflag);
 
+        glViewport(0,0,camera->getViewport()[2],camera->getViewport()[3]);
 
 	}
 
@@ -294,8 +295,8 @@ public:
         glDisable(GL_CULL_FACE);
 
 
-//		glEnable(GL_NORMALIZE);
-//		glEnable(GL_RESCALE_NORMAL);
+//        glEnable(GL_NORMALIZE);
+//        glEnable(GL_RESCALE_NORMAL);
 //		glShadeModel(GL_FLAT);
 //		glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
 
@@ -395,17 +396,17 @@ public:
 
     void quickTest()
     {
-        float vertices[] = { 0,0,0, 0,1,0, 0,0,1};
-        float normals[] =  { 1,0,0, 1,0,0, 1,0,0 };
+        float vertices[] = { 0,0,0, 0,1,0, 0,0,1, 0,0,1 };
+        float normals[] =  { 0,0,1, 0,0,1, 0,0,1, 0,0,1 };
 
 
         glEnableClientState(GL_NORMAL_ARRAY);
         glEnableClientState(GL_VERTEX_ARRAY);
 
-        glNormalPointer(GL_FLOAT,0,normals);
+        glNormalPointer(GL_FLOAT, 0, normals);
         glVertexPointer(3, GL_FLOAT, 0, vertices);
 
-        glDrawArrays(GL_TRIANGLES,0,3);
+        glDrawArrays(GL_TRIANGLES,0,4);
 
         glDisableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_VERTEX_ARRAY);
@@ -444,12 +445,10 @@ public:
 		}
 
 
-		if (prim.hasTexture())
-		{
-			(*this)(const_cast<tpTexture*>(prim.getTexture()));
-		}
 
-        if (prim.hasMaterial()) {
+        if (prim.hasTexture()) {
+			(*this)(const_cast<tpTexture*>(prim.getTexture()));
+        } else if (prim.hasMaterial()) {
 			(*this)(prim.getMaterial());
 		} else if (prim.hasColors()) {
 			glEnable(GL_COLOR_MATERIAL);
@@ -469,9 +468,8 @@ public:
 		// load on the stack
 		glLoadMatrixf(mvp.data());
 
-        quickTest();
-
-        return;
+//        quickTest();
+//        return;
 
 		// render scene
 		if (prim.hasNormals())

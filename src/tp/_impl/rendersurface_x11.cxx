@@ -43,7 +43,7 @@ tpRenderSurfaceX11::doCreate( tpRenderSurfaceTraits* traits ) {
 	XSetWindowAttributes swa;
 	// XWMHints       *wmHints;
 
-	static tpString s_display;
+    tpString s_display;
 
 	// should actually check if we can use "getenv"
 	if (s_display.isEmpty()) s_display.set(getenv("DISPLAY"));
@@ -70,18 +70,6 @@ tpRenderSurfaceX11::doCreate( tpRenderSurfaceTraits* traits ) {
 
 	Colormap colormap = XCreateColormap( dpy, root_window, vi->visual, AllocNone );
 	swa.colormap = colormap;
-
-	// this is desktop GL stuff - egl needs different treatment
-
-#if 0
-	swa.colormap = XCreateColormap(dpy,
-		RootWindow(dpy, vi->screen),
-		vi->visual, AllocNone);
-#endif
-
-	//swa.border_pixel = 0;
-	//swa.background_pixel = 0;
-
 	swa.event_mask = ExposureMask | StructureNotifyMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | KeyPressMask;
 	unsigned int mask = CWBackPixel | CWBorderPixel | CWEventMask | CWColormap;
 
@@ -99,13 +87,6 @@ tpRenderSurfaceX11::doCreate( tpRenderSurfaceTraits* traits ) {
 
 
 	win = XCreateWindow( dpy, root_window, pos_x, pos_y, width, height, 0, CopyFromParent, InputOutput, CopyFromParent, mask, &swa);
-/*
-	win = XCreateWindow(dpy, root_window,
-						pos_x, pos_y, width, height,
-						0, vi->depth, InputOutput, vi->visual,
-						mask,
-						&swa);
-*/
 
     Atom wmDelete=XInternAtom(dpy, "WM_DELETE_WINDOW", True);
     XSetWMProtocols(dpy, win, &wmDelete, 1);

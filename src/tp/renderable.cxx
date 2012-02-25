@@ -46,4 +46,10 @@ tpRenderable::clone()
 	return new tpRenderable(*this);
 }
 
+
+struct tpRenderFlag {
+    bool isOn() const { return false; }
+};
+
+
 TP_TYPE_REGISTER(tpRenderable,tpNode,Geometry);

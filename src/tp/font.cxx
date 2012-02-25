@@ -123,13 +123,17 @@ tpFont::load(const tpString& name)
 void
 tpFont::text(const tpString& text,tpPrimitive& p) {
 
+    if (0 == p.getTexture())
+    {
+        tpTexture* rasterfont = new tpTexture();
+        rasterfont->setFormat(tpTexture::kFormatAlpha);
+        rasterfont->setImage(getImage());
+
+        p.setTexture(rasterfont);
+    }
+
 	mRasterizer->onText(text,p);
 
-	tpTexture* rasterfont = new tpTexture();
-	rasterfont->setFormat(tpTexture::kFormatAlpha);
-	rasterfont->setImage(getImage());
-
-	p.setTexture(rasterfont);
 }
 
 tpImage *

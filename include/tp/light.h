@@ -48,8 +48,8 @@ public:
 	const tpVec4f& getDiffuseColor() const { return mDiffuseColor; }
 	const tpVec4f& getSpecularColor() const { return mSpecularColor; }
 
-	void setPosition(const tpVec3f& position) { mPosition = position; }
-	const tpVec3f& getPosition() const { return mPosition; }
+    void setPosition(const tpVec4f& position) { mPosition = position; }
+    const tpVec4f& getPosition() const { return mPosition; }
 
 protected:
 
@@ -61,8 +61,8 @@ protected:
 	tpVec4f mSpecularColor;
 
 	/* position & orientation */
-	tpVec3f mPosition;
-	tpVec3f mOrientation;
+    tpVec4f mPosition;
+    tpVec4f mOrientation;
 
 	/* light model */
 	tpFloat mExponent;

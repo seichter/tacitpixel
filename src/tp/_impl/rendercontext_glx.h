@@ -36,6 +36,8 @@ public:
 
     tpString getString(const tpUInt& e);
 
+    void *getProcAddress(const char *name);
+
 protected:
 
     virtual ~tpRenderContextGLX();

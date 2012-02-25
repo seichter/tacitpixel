@@ -82,6 +82,8 @@ public:
 struct TP_API tpEventProxy {
 	virtual void call(tpEventHandler*, tpEvent&) = 0;
 	virtual bool corresponds(tpEvent& e) const = 0;
+
+    virtual ~tpEventProxy() {}
 };
 
 template <typename EventType>
@@ -144,6 +146,10 @@ public:
 	}
 
 	bool process(tpEvent &e);
+
+    void removeAll();
+
+    ~tpEventHandler();
 };
 
 

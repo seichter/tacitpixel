@@ -5,6 +5,7 @@ tpEvent::tpEvent()
 	: mSender(0)
 	, mHandled(false)
 	, mTick(0)
+    , mId(0)
 {
 	tpTimer::getCurrentTick(mTick);
 }
@@ -19,6 +20,7 @@ tpEvent::operator = (const tpEvent& e) {
 		mSender = e.mSender;
 		mHandled = e.mHandled;
 		mTick = e.mTick;
+        mId = e.mId;
 	}
 
 	return *this;
@@ -43,6 +45,23 @@ tpEventHandler::process(tpEvent& e)
 	}
 
     return e.getHandled();
+}
+
+void tpEventHandler::removeAll()
+{
+    for (tpEventProxyArray::iterator it = mHandlers.begin();
+         it != mHandlers.end();
+         ++it)
+    {
+        delete (*it);
+    }
+    mHandlers.clear();
+}
+
+
+tpEventHandler::~tpEventHandler()
+{
+    removeAll();
 }
 
 
