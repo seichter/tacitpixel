@@ -91,25 +91,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:
-		mouse_state = 1;
+        mouse_state = tpRenderSurfaceEvent::kMouseDown;
 	case WM_LBUTTONUP:
 	case WM_RBUTTONUP:
 	case WM_MBUTTONUP:
-		if (!mouse_state) mouse_state = 2;
+        if (!mouse_state) mouse_state = tpRenderSurfaceEvent::kMouseUp;
 	case WM_MOUSEMOVE:
 		{
-			if (wParam & MK_LBUTTON) mouse_button = 1;
-			if (wParam & MK_RBUTTON) mouse_button = 2;
-			if (wParam & MK_MBUTTON) mouse_button = 3;
+            if (wParam & MK_LBUTTON) mouse_button = tpRenderSurfaceEvent::kMouseKeyLeft;
+            if (wParam & MK_RBUTTON) mouse_button = tpRenderSurfaceEvent::kMouseKeyRight;
+            if (wParam & MK_MBUTTON) mouse_button = tpRenderSurfaceEvent::kMouseKeyMiddle;
 
 			tpInt mouse_x = LOWORD(lParam);
 			tpInt mouse_y = HIWORD(lParam);
 
-			//if (rendersurface->getCallback()) 
-			//{
-			//	rendersurface->getCallback()->onMouseMotion(mouse_x,mouse_y,mouse_button,mouse_state);
-			//}
-			break;
+            tpRenderSurfaceEvent e(rendersurface);
+            e.setMousePosition(mouse_x,mouse_y);
+            e.setMouseState(mouse_state);
+            e.setMouseKey(mouse_button);
+
+            rendersurface->getEventHandler().process(e);
+
+            break;
 		}
 
 	default:

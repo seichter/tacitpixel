@@ -61,7 +61,7 @@ enum tpCopyMode
 class TP_API tpObject : public tpReferenced {
 public:
 
-	TP_TYPE_DECLARE;
+    TP_TYPE_DECLARE
 
 	//! standard c'tor
 	tpObject(const tpString& name = "");

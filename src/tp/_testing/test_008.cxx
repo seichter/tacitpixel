@@ -30,7 +30,16 @@ public:
 
 int main(int argc,char* argv[])
 {
+
+    if (argc < 2) {
+        tpLogError("No font file provided - usage %s font.ttf",argv[0]);
+        return 0;
+    }
+
 	tpModuleManager::get()->load("jpg,3ds");
+
+    tpRefPtr<tpMyViewer> viewer = new tpMyViewer();
+
 
 	tpRefPtr<tpFont> font = new tpFont();
 	font->load(argv[1]);
@@ -63,7 +72,6 @@ int main(int argc,char* argv[])
 	root->addChild(axis);
 	root->addChild(t);
 
-	tpRefPtr<tpMyViewer> viewer = new tpMyViewer();
 	viewer->text = text;
 
 

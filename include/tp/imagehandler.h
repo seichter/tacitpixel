@@ -41,13 +41,13 @@ public:
 		kCanWrite = (1 << 2)
 	};
 
-	TP_TYPE_DECLARE;
+    TP_TYPE_DECLARE
 
 	tpImageHandler();
 
 	virtual bool getCapability(tpUInt capability,const tpString& name) { return false; }
 
-	virtual tpImage* read(const tpString& name) { return 0; };
+    virtual tpImage* read(const tpString& name) { return 0; }
 	virtual bool write(const tpImage* img, const tpString& name) { return false; }
 
 protected:
