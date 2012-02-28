@@ -3,27 +3,27 @@
 
 #if defined(TP_USE_X11)
 
-#include <tp/rendersurface.h>
+#include <tp/window.h>
 
 #include <X11/Xlib.h>
 
-class tpRenderSurfaceX11 : public tpRenderSurface {
+class tpWindowX11 : public tpWindow {
 protected:
 
 	Display *dpy;
 	Window win;
 	Atom wmDeleteWindow;
 
-	virtual ~tpRenderSurfaceX11();
+    virtual ~tpWindowX11();
 
 public:
 
 	TP_TYPE_DECLARE
 
-	tpRenderSurfaceX11(tpRenderSurfaceTraits *traits);
+    tpWindowX11(tpWindowTraits *traits);
 
 	bool show(bool doShow);
-	void doCreate(tpRenderSurfaceTraits *traits);
+    void doCreate(tpWindowTraits *traits);
 
 	void setCaption(const tpString &caption);
 

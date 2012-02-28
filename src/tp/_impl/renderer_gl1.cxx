@@ -23,6 +23,38 @@
 //#include <GL/gl.h>
 //#endif
 
+void
+tpDebugPrimitive(const tpPrimitive& p)
+{
+    for (int i = 0; i < p.getVertices().getSize();++i)
+    {
+        tpVec4f v(p.getVertices().getData()[i*4],
+                  p.getVertices().getData()[i*4+1],
+                  p.getVertices().getData()[i*4+2],
+                  p.getVertices().getData()[i*4+3]
+                  );
+
+        tpVec4f n(p.getNormals().getData()[i*p.getNormals().getStride()],
+                  p.getNormals().getData()[i*p.getNormals().getStride()+1],
+                  p.getNormals().getData()[i*p.getNormals().getStride()+2],
+                  p.getNormals().getData()[i*p.getNormals().getStride()+3]
+                  );
+
+//        tpVec4f c(p.getColors().getData()[i*4],
+//                  p.getColors().getData()[i*4+1],
+//                  p.getColors().getData()[i*4+2],
+//                  p.getColors().getData()[i*4+3]
+//                  );
+
+
+        tpLog::get() << "\nv " << v <<
+                        "\nn " << n <<
+//                        "\nc " << c <<
+                        "\n";
+    }
+}
+
+
 
 #if defined(TP_USE_OPENGL)
 	#if defined(__APPLE__)
@@ -323,6 +355,8 @@ public:
 		{
 			tpPrimitive* p = static_cast<tpPrimitive*>((*i).getKey());
 			onPrimitive(*p,(*i).getValue());
+
+//            tpDebugPrimitive(*p);
 		}
 
 		glErrorCheck;
@@ -415,7 +449,18 @@ public:
 
 	void onPrimitive(const tpPrimitive& prim,const tpMatrixStack& stack,bool secondPass = false)
 	{
+        glEnable(GL_DEPTH_TEST);
 
+//        GLint max_v, max_i;
+//        glGetIntegerv(GL_MAX_ELEMENTS_VERTICES,&max_v);
+//        glGetIntegerv(GL_MAX_ELEMENTS_INDICES,&max_i);
+
+//        tpLogNotify("Max %d %d (%d)",max_v,max_i,prim.getVertices().getSize());
+
+        //prim.checkNormals();
+        //tpDebugPrimitive(prim);
+
+        //exit(0);
 		// setup alpha
 		if (prim.hasAlpha())
 		{
@@ -455,14 +500,21 @@ public:
 
 //		tpCamera* camera = getActiveCamera();
 
+//        glMatrixMode(GL_PROJECTION);
+//        glLoadIdentity();
+//        glLoadMatrixf(stack.projection.data());
+
 		// we are using our own transformation stack
 		glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
 
 //		 hence just compile the modelviewprojection matrix (prepared for OpenGL 2.0 / ES 2.0)
 //		tpMat<4,4,float> mvp = stack.model * camera->getViewInverse() * stack.projection;
 
 		// actually the view matrix is the view inverse already
-		tpMat<4,4,float> mvp = stack.model * stack.view * stack.projection;
+        tpMat<4,4,float> mvp = stack.model * stack.view * stack.projection;
+
+//        tpMat<4,4,float> mvp = stack.model * stack.view;
 
 		// load on the stack
 		glLoadMatrixf(mvp.data());
@@ -473,12 +525,16 @@ public:
 		// render scene
 		if (prim.hasNormals())
 		{
+            glEnableClientState(GL_NORMAL_ARRAY);
             glNormalPointer(GL_FLOAT,
                             prim.getNormals().getStride()*sizeof(float),
                             prim.getNormals().getData()
                             );
-            glEnableClientState(GL_NORMAL_ARRAY);
-		} else {
+//            glNormalPointer(GL_FLOAT,
+//                            0,
+//                            prim.getNormals().getData()
+//                            );
+        } else {
 			// no normals no fun
 			glDisable(GL_LIGHTING);
 		}

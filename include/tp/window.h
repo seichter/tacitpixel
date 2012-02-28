@@ -152,7 +152,7 @@ public:
 class TP_API tpRenderBuffer : public tpRenderTarget {
 public:
 
-	TP_TYPE_DECLARE;
+    TP_TYPE_DECLARE
 
 	static tpRenderBuffer* create(const tpSize& size, const tpUInt pixelformat);
 

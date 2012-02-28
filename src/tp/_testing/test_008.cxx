@@ -61,7 +61,7 @@ int main(int argc,char* argv[])
 
 
 
-	tpMat44r m; m.identity();  m.scale(.01,.01,.01);
+    tpMat44r m; m.identity();  m.scale(.001,.001,.001);
 	t->setMatrix(m);
 
 	tpRefPtr<tpLight> light = new tpLight();

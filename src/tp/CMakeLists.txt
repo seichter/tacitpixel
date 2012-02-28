@@ -156,8 +156,8 @@ if(X11_FOUND)
 	if(TP_USE_X11)
 
 		list(APPEND tp_impl_srcs
-			_impl/rendersurface_x11.cxx
-			_impl/rendersurface_x11.h
+			_impl/window_x11.cxx
+			_impl/window_x11.h
 			_impl/renderbuffer_x11.cxx
 			_impl/renderbuffer_x11.h
 			)

@@ -519,6 +519,24 @@ tpPrimitive::flipNormals()
 
 }
 
+void
+tpPrimitive::checkNormals() const
+{
+    for (int i = 0; i < getNormals().getSize();++i)
+    {
+        tpVec3f n(getNormals().getData()[i*getNormals().getStride()+0],
+                  getNormals().getData()[i*getNormals().getStride()+1],
+                  getNormals().getData()[i*getNormals().getStride()+2]
+                  );
+
+        //tpLogMessage("%3.6f l",n.getLength());
+
+//        getNormals().getData()[i*getNormals().getStride()+0] *= -1;
+//        getNormals().getData()[i*getNormals().getStride()+1] *= -1;
+//        getNormals().getData()[i*getNormals().getStride()+2] *= -1;
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 tpPrimitive*

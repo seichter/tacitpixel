@@ -147,7 +147,8 @@ public:
 
 	void scale(const tpVec3f &vec);
 
-	void flipNormals();
+    void flipNormals();
+    void checkNormals() const;
 };
 
 

@@ -1,5 +1,5 @@
 
-#include <tp/rendersurface.h>
+#include <tp/window.h>
 #include <tp/image.h>
 
 #include <tp/log.h>
