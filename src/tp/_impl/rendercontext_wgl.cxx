@@ -5,7 +5,7 @@
 #include <gl/GL.h>
 #include <Windows.h>
 
-#include <tp/rendersurface.h>
+#include <tp/window.h>
 #include <tp/log.h>
 #include <tp/stringtokenizer.h>
 
@@ -92,6 +92,9 @@ typedef BOOL  (__TP_CALL *PFNWGLGETPIXELFORMATATTRIBIVARB)(HDC hdc,int iPixelFor
 typedef BOOL  (__TP_CALL *PFNWGLGETPIXELFORMATATTRIBFVARB)(HDC hdc,int iPixelFormat,int iLayerPlane,UINT nAttributes,const int *piAttributes,int *pfValues);
 typedef BOOL  (__TP_CALL *PFNWGLCHOOSEPIXELFORMATARB)(HDC hdc,const int *piAttribIList,const int *pfAttribFList,UINT nMaxFormats,int *piFormats,UINT *nNumFormats);
 
+typedef BOOL  (__TP_CALL * PFNWGLSWAPINTERVALEXT)(int interval);
+
+PFNWGLSWAPINTERVALEXT wglSwapInterval;
 
 
 void 
@@ -204,12 +207,13 @@ tpRenderContextWGL::create(tpRenderTarget *target)
 	}
 
 	
+#if 0
 	PIXELFORMATDESCRIPTOR pfd = { 
 		sizeof(PIXELFORMATDESCRIPTOR),
 		1,                     
 		PFD_DRAW_TO_WINDOW | PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL,      
 		PFD_TYPE_RGBA,         
-		32,                    
+        24,
 		0, 0, 0, 0, 0, 0,      
 		0,                     
 		0,                     
@@ -222,16 +226,18 @@ tpRenderContextWGL::create(tpRenderTarget *target)
 		0,                     
 		0, 0, 0                
 	};
-	/*
-	ZeroMemory( &pfd, sizeof( pfd ) );
+#else
+    PIXELFORMATDESCRIPTOR pfd;
+    memset( &pfd, 0, sizeof( PIXELFORMATDESCRIPTOR ) );
 	pfd.nSize = sizeof( pfd );
 	pfd.nVersion = 1;
 	pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
 	pfd.iPixelType = PFD_TYPE_RGBA;
-	pfd.cColorBits = 32;
-	pfd.cDepthBits = 16;
+    pfd.cColorBits = 24;
+    pfd.cAlphaBits = 8;
+    pfd.cDepthBits = 32;
 	pfd.iLayerType = PFD_MAIN_PLANE;
-	*/
+#endif
 
 	//int visual_id_new = chooseVisual(_dc);
 	//tpLogNotify("visual id %d",visual_id_new);
@@ -251,11 +257,22 @@ tpRenderContextWGL::create(tpRenderTarget *target)
 	}
 
 	if (this->makeCurrent())
-	{
+    {
 		mVersion = this->getString(GL_VERSION);
 		mVendor = this->getString(GL_VENDOR);
 		mRenderer = this->getString(GL_RENDERER);
 		mExtensions = this->getString(GL_EXTENSIONS);
+
+        if (mExtensions.find("WGL_EXT_swap_control") != tpString::kNotFound)
+        {
+            wglSwapInterval = (PFNWGLSWAPINTERVALEXT)wglGetProcAddress("wglSwapIntervalEXT");
+            if(wglSwapInterval) {
+                wglSwapInterval(1);
+                tpLogNotify("vsync enabled!");
+            }
+        }
+
+
 		return true;
 	}
 

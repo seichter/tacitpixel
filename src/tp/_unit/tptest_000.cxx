@@ -69,6 +69,7 @@ TEST(tpString,checks) {
 
 	tpString test1("we try to test.something");
 	tpString test2("one.two.three");
+    tpString test3(test2);
 
 	EXPECT_EQ(3,test2.find('.',false));
 	EXPECT_EQ(7,test2.find('.',true));
@@ -79,6 +80,8 @@ TEST(tpString,checks) {
 	EXPECT_EQ("one.two",test2.beforeLast('.'));
 	EXPECT_EQ("test",test1.beforeLast('.').afterLast(' '));
 
+    EXPECT_EQ(true,test3 == test2);
+    EXPECT_EQ(true,test3 == "one.two.three");
 }
 
 // run

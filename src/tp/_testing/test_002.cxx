@@ -6,7 +6,7 @@
 #include <tp/imageop.h>
 #include <tp/library.h>
 #include <tp/module.h>
-#include <tp/rendersurface.h>
+#include <tp/window.h>
 #include <tp/camera.h>
 #include <tp/primitive.h>
 #include <tp/transform.h>
@@ -52,11 +52,11 @@ int main(int argc, char* argv[])
 
 	root->addChild(t.get());
 
-	tpRenderSurfaceTraits traits;
+	tpWindowTraits traits;
 	traits.setSize(640,480).setPosition(10,10).setTitle("Tacit Pixel 3");
 
 
-	tpRefPtr<tpRenderSurface> rendersurface = tpRenderSurface::create(&traits);
+	tpRefPtr<tpWindow> rendersurface = tpWindow::create(&traits);
 
 
 	tpRefPtr<tpRenderer> renderer = tpRenderer::create();

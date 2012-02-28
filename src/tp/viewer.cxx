@@ -5,7 +5,7 @@
 #include <tp/logutils.h>
 #include <tp/font.h>
 #include <tp/module.h>
-#include <tp/rendersurface.h>
+#include <tp/window.h>
 #include <tp/renderer.h>
 #include <tp/thread.h>
 
@@ -22,17 +22,21 @@ tpViewer::create(const tpString& title/* = "tpViewer"*/,
 				 tpUInt x /*= 0*/, tpUInt y /*= 0*/,
 				 tpUInt flags /*= 0*/) {
 
-	tpRenderSurfaceTraits traits;
+	tpWindowTraits traits;
 	traits.setSize(w,h).setPosition(x,y).setTitle(title);
 
 	mRenderer = tpRenderer::create();
-	mSurface = tpRenderSurface::create(&traits);
+	mSurface = tpWindow::create(&traits);
 	mSurface->setContext(0);
 
 	if (!mRenderer.isValid() || !mSurface.isValid() || !mSurface->hasContext()) return false;
 
+	// now also bind the event handler
+	mSurface->getEventHandler().attach<tpWindowEvent,tpViewer>(this,&tpViewer::_dispatch);
 
-	mSurface->show(true);
+
+	mSurface->setSize(w,h);
+
 
 	return true;
 
@@ -54,14 +58,14 @@ tpViewer::frame() {
 }
 
 /*virtual*/ void
-tpViewer::onSurfaceEvent(tpRenderSurfaceEvent& e)
+tpViewer::onSurfaceEvent(tpWindowEvent& e)
 {
 }
 
 /*virtual*/ void
-tpViewer::_dispatch(tpRenderSurfaceEvent& e)
+tpViewer::_dispatch(tpWindowEvent& e)
 {
-	if (e.getId() == tpRenderSurfaceEvent::kWindowSize) {
+	if (e.getId() == tpWindowEvent::kWindowSize) {
 
 		tpVec2i size = e.getRenderSurface()->getSize();
         this->getScene().getActiveCamera()->setViewport(tpVec4i(0,0,size[0],size[1]));
@@ -73,8 +77,7 @@ tpViewer::_dispatch(tpRenderSurfaceEvent& e)
 int
 tpViewer::run() {
 
-	// now also bind the event handler
-	mSurface->getEventHandler().attach<tpRenderSurfaceEvent,tpViewer>(this,&tpViewer::_dispatch);
+	mSurface->show(true);
 
 	while (mSurface->isValid()) {
 		this->frame();

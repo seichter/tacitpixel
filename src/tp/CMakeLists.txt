@@ -181,8 +181,8 @@ endif()
 if(WIN32)
 
 	list(APPEND tp_impl_srcs
-			_impl/rendersurface_win32.cxx
-			_impl/rendersurface_win32.h
+			_impl/window_win32.cxx
+			_impl/window_win32.h
 			_impl/rendercontext_wgl.cxx
 			_impl/rendercontext_wgl.h
 			)
@@ -257,7 +257,8 @@ set(tp_hdrs_sg
 	${tp_include_path}/tp/renderable.h
 	${tp_include_path}/tp/renderer.h
 	${tp_include_path}/tp/rendercontext.h
-	${tp_include_path}/tp/rendersurface.h
+	${tp_include_path}/tp/rendertarget.h
+	${tp_include_path}/tp/window.h
 	${tp_include_path}/tp/scene.h
 	${tp_include_path}/tp/text.h
 	${tp_include_path}/tp/texture.h
@@ -277,7 +278,7 @@ set(tp_srcs_sg
 	renderable.cxx
 	renderer.cxx
 	rendercontext.cxx
-	rendersurface.cxx
+	window.cxx
 	scene.cxx
 	sound.cxx
 	text.cxx

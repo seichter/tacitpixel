@@ -85,7 +85,9 @@ tpImage::read( const tpString& name )
 
 		if (item->getType()->isOfType(tpImageHandler::getTypeInfo()))
 		{
-			tpLogNotify("%s found %s",__FUNCTION__,item->getType()->getName());
+            tpLogNotify("%s found %s (input %s)",
+                        __FUNCTION__,item->getType()->getName(),
+                        name.c_str());
 
 			tpRefPtr<tpImageHandler> nf = static_cast<tpImageHandler*>(item.get());
 

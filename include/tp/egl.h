@@ -3,7 +3,7 @@
 
 
 #include <tp/rtl.h>
-#include <tp/rendersurface.h>
+#include <tp/window.h>
 
 #if defined(_WIN32)
 #	define __TP_CALL __stdcall

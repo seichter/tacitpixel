@@ -23,7 +23,7 @@
  * SUCH DAMAGE.
  */
 
-#include "tp/rendersurface.h"
+#include "tp/window.h"
 
 #include "tp/renderer.h"
 #include "tp/node.h"
@@ -35,10 +35,10 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-tpRenderSurface*
-tpRenderSurface::create( tpRenderSurfaceTraits* traits /* =0 */)
+tpWindow*
+tpWindow::create( tpWindowTraits* traits /* =0 */)
 {
-	tpRenderSurfaceFactory* surface_factory(0);
+	tpWindowFactory* surface_factory(0);
 
 	const tpModuleList& modules = tpModuleManager::get()->getModules();
 
@@ -46,9 +46,9 @@ tpRenderSurface::create( tpRenderSurfaceTraits* traits /* =0 */)
 		 iter != modules.end();
 		 ++iter)
 	{
-		if ((*iter)->getType()->isOfType(tpRenderSurfaceFactory::getTypeInfo()))
+		if ((*iter)->getType()->isOfType(tpWindowFactory::getTypeInfo()))
 		{
-			surface_factory = static_cast<tpRenderSurfaceFactory*>(iter->get());
+			surface_factory = static_cast<tpWindowFactory*>(iter->get());
 			return surface_factory->create( traits );
 		}
 	}
@@ -56,31 +56,45 @@ tpRenderSurface::create( tpRenderSurfaceTraits* traits /* =0 */)
 	return 0L;
 }
 
-tpRenderSurface::tpRenderSurface()
+tpWindow::tpWindow()
 	: tpRenderTarget()
 	, mDone(false)
 {
 }
 
 
-tpRenderSurface::tpRenderSurface( tpRenderSurfaceTraits* traits )
+tpWindow::tpWindow( tpWindowTraits* traits )
 	: tpRenderTarget()
 	, mDone(false)
 {
 }
 
-tpRenderSurface::~tpRenderSurface()
+tpWindow::~tpWindow()
 {
 }
 
 
 tpString
-tpRenderSurface::getName() const
+tpWindow::getName() const
 {
 	return tpString("RenderSurface");
 }
 
-tpVec2i tpRenderSurface::getSize() const
+tpVec2i tpWindow::getSize() const
+{
+	return tpVec2i(-1,-1);
+}
+
+void tpWindow::setSize( tpInt w, tpInt h )
+{
+}
+
+void tpWindow::setPosition( tpInt x, tpInt y )
+{
+
+}
+
+tpVec2i tpWindow::getPosition() const
 {
 	return tpVec2i(-1,-1);
 }
@@ -141,98 +155,98 @@ tpRenderBuffer::create(const tpSize& size, const tpUInt pixelformat) {
 
 //////////////////////////////////////////////////////////////////////////
 
-tpRenderSurfaceTraits::tpRenderSurfaceTraits()
+tpWindowTraits::tpWindowTraits()
 	: title("GL Window"),
 	size(tpVec2i(320,240)),
 	position(tpVec2i(0,0))
 {
 }
 
-tpVec2i tpRenderSurfaceTraits::getSize() const
+tpVec2i tpWindowTraits::getSize() const
 {
 	return size;
 }
 
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setSize( tpVec2i val )
+tpWindowTraits& tpWindowTraits::setSize( tpVec2i val )
 {
 	size = val; return *this;
 }
 
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setSize( tpInt width, tpInt height )
+tpWindowTraits& tpWindowTraits::setSize( tpInt width, tpInt height )
 {
 	return setSize(tpVec2i(width,height));
 }
 
-tpString tpRenderSurfaceTraits::getTitle() const
+tpString tpWindowTraits::getTitle() const
 {
 	return title;
 }
 
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setTitle( const tpString& val )
+tpWindowTraits& tpWindowTraits::setTitle( const tpString& val )
 {
 	title = val; return *this;
 }
 
-bool tpRenderSurfaceTraits::useDefaultSize()
+bool tpWindowTraits::useDefaultSize()
 {
 	return (size[0] < 0 || size[1] < 0);
 }
 
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setDefaultSize()
+tpWindowTraits& tpWindowTraits::setDefaultSize()
 {
 	return setSize(-1,-1);
 }
 
-tpVec2i tpRenderSurfaceTraits::getPosition() const
+tpVec2i tpWindowTraits::getPosition() const
 {
 	return position;
 }
 
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setPosition( tpVec2i val )
+tpWindowTraits& tpWindowTraits::setPosition( tpVec2i val )
 {
 	position = val;
 	return *this;
 }
 
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setPosition( tpInt x, tpInt y )
+tpWindowTraits& tpWindowTraits::setPosition( tpInt x, tpInt y )
 {
 	return setPosition( tpVec2i( x, y ) );
 }
 
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setDefaultPosition()
+tpWindowTraits& tpWindowTraits::setDefaultPosition()
 {
 	return setPosition(-1,-1);
 }
 
-bool tpRenderSurfaceTraits::useDefaultPosition()
+bool tpWindowTraits::useDefaultPosition()
 {
 	return (position[0] < 0 || position[1] < 0);
 }
 
-void* tpRenderSurfaceTraits::getWindowHandle() const
+void* tpWindowTraits::getWindowHandle() const
 {
 	return window_handle;
 }
 
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setWindowHandle( void* val )
+tpWindowTraits& tpWindowTraits::setWindowHandle( void* val )
 {
 	window_handle = val; return *this;
 }
 
-bool tpRenderSurfaceTraits::isFullscreen() const
+bool tpWindowTraits::isFullscreen() const
 {
 	return fullscreen;
 }
 
-tpRenderSurfaceTraits& tpRenderSurfaceTraits::setFullscreen( bool val /*= true*/ )
+tpWindowTraits& tpWindowTraits::setFullscreen( bool val /*= true*/ )
 {
 	fullscreen = val; return *this;
 }
 
-TP_TYPE_REGISTER(tpRenderSurfaceFactory,tpReferenced,RenderSurfaceFactory);
+TP_TYPE_REGISTER(tpWindowFactory,tpReferenced,RenderSurfaceFactory);
 TP_TYPE_REGISTER(tpRenderBufferFactory,tpReferenced,RenderBufferFactory);
 TP_TYPE_REGISTER(tpRenderTarget,tpReferenced,RenderTarget);
-TP_TYPE_REGISTER(tpRenderSurface,tpRenderTarget,RenderSurface);
+TP_TYPE_REGISTER(tpWindow,tpRenderTarget,RenderSurface);
 TP_TYPE_REGISTER(tpRenderBuffer,tpRenderTarget,RenderBuffer);
 
 

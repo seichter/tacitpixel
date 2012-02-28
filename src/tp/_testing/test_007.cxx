@@ -1,12 +1,12 @@
 
-#include <tp/rendersurface.h>
+#include <tp/window.h>
 #include <tp/log.h>
 #include <tp/thread.h>
 #include <tp/renderer.h>
 
 int main(int argc, char* argv[]) {
 
-	tpRefPtr<tpRenderSurface> window = tpRenderSurface::create();
+	tpRefPtr<tpWindow> window = tpWindow::create();
 
 	if (!window.isValid())
 	{

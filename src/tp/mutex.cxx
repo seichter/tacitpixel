@@ -63,7 +63,7 @@ tpMutex::tpMutex()
 #if defined(HAVE_PTHREAD_H)
 	pthread_mutex_init(&mHandle->handle,NULL);
 #elif defined(_WIN32)
-	m_lock->handle = ::CreateMutex(0, 0, 0);
+	mHandle->handle = ::CreateMutex(0, 0, 0);
 #else
 	#error Unsupported platform
 #endif
@@ -75,7 +75,7 @@ tpMutex::~tpMutex()
 #if defined(HAVE_PTHREAD_H)
 	pthread_mutex_destroy(&mHandle->handle);
 #elif defined(_WIN32)
-	::CloseHandle(m_lock->handle);
+	::CloseHandle(mHandle->handle);
 #else
 	#error Unsupported platform
 #endif
@@ -86,7 +86,7 @@ void tpMutex::lock()
 #if defined(HAVE_PTHREAD_H)
 	if (-1 == pthread_mutex_lock(&mHandle->handle))
 #elif defined(_WIN32)
-	if(::WaitForSingleObject(m_lock->handle, INFINITE) != WAIT_OBJECT_0)
+	if(::WaitForSingleObject(mHandle->handle, INFINITE) != WAIT_OBJECT_0)
 #endif
 	{
 		//tpLogError("tpMutex::lock() : Error unlocking!");

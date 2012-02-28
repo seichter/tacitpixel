@@ -33,15 +33,6 @@
 #include <tp/array.h>
 #include <tp/stringutils.h>
 
-//class tpStringIterator;
-//class tpStringJoin;
-
-
-class tpString;
-typedef tpArray<tpString> tpStringArray;
-
-
-
 /**
  * @brief Simple wrapper to handle null terminated c-string. Not yet optimized.
  */
@@ -164,7 +155,7 @@ public:
 	long toLong() const;
 	int toInt() const;
 
-	static tpString join(const tpStringArray &strarr, const tpString &sep);
+    static tpString join(const tpArray<tpString> &strarr, const tpString &sep);
 
 protected:
 
@@ -219,8 +210,13 @@ inline bool operator != (const tpString& l, const tpString& r)
 }
 
 
+//////////////////////////////////////////////////////////////////////////
+
 TP_API tpString tpStringFormat(const tpString& format, ... );
 
+//////////////////////////////////////////////////////////////////////////
+
+typedef tpArray<tpString> tpStringArray;
 
 #if 0
 

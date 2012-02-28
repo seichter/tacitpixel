@@ -27,7 +27,7 @@
 #define _TACITPIXEL_GLOBALS_H_
 
 
-#if defined(_MSC_VER)
+#if defined(__WIN32)
 
 	// switch of warning for simple types in tpListIterator
 	#pragma warning( disable: 4284)

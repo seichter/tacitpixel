@@ -10,7 +10,7 @@
 #include <tp/rtl.h>
 #include <tp/egl.h>
 #include <tp/log.h>
-#include <tp/rendersurface.h>
+#include <tp/window.h>
 
 
 int main(int argc, char* argv[])
@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 
 	tpEGL::get()->load(file);
 
-	tpRefPtr<tpRenderSurface> surface = tpRenderSurface::create();
+	tpRefPtr<tpWindow> surface = tpWindow::create();
 
 	surface->setCaption("Tacit Pixel EGL Test");
 	surface->show(true);

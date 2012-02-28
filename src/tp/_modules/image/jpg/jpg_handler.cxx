@@ -159,14 +159,14 @@ bool tpJPEGLoader_Save(const tpString& filename,const tpImage* img)
     jpeg_destroy_compress(&cinfo); //Free resources
 
 	return TRUE;
-};
+}
 
 
 class tpImageFactoryJPEG : public tpImageHandler {
 
 public:
 
-	TP_TYPE_DECLARE;
+    TP_TYPE_DECLARE
 
 	tpImageFactoryJPEG() : tpImageHandler() 
 	{
@@ -191,6 +191,7 @@ public:
 
 	virtual tpImage* read(const tpString& name)
 	{
+        tpLogMessage("?%s",name.c_str());
 		tpImage* img = tpJPEGLoader(name);
 
 		return img;

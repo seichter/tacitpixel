@@ -1,5 +1,5 @@
 
-#include "rendersurface_win32.h"
+#include "window_win32.h"
 #include "rendercontext_wgl.h"
 
 #include "tp/log.h"
@@ -20,7 +20,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	tpUByte mouse_button(0);
 	tpUByte mouse_state(0);
 
-	tpRenderSurfaceWin32* rendersurface = (tpRenderSurfaceWin32*)GetWindowLongPtr(hWnd,GWL_USERDATA);
+	tpWindowWin32* rendersurface = (tpWindowWin32*)GetWindowLongPtr(hWnd,GWL_USERDATA);
 
 	//tpLogNotify("%s: 0x%x",__FUNCTION__,rendersurface);
 
@@ -43,7 +43,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 
 			CREATESTRUCT *cs = (CREATESTRUCT*)lParam;
-			rendersurface = (tpRenderSurfaceWin32*)cs->lpCreateParams;
+			rendersurface = (tpWindowWin32*)cs->lpCreateParams;
 			SetWindowLongPtr(hWnd,GWL_USERDATA,(LONG_PTR)rendersurface);
 			PostMessage(hWnd,WM_CREATED,0,0);
 			return 0;
@@ -76,8 +76,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
     case WM_SIZE:
     {
-        tpRenderSurfaceEvent e(rendersurface);
-        e.setId(tpRenderSurfaceEvent::kWindowSize);
+        tpWindowEvent e(rendersurface);
+        e.setId(tpWindowEvent::kWindowSize);
         rendersurface->getEventHandler().process(e);
     }
         break;
@@ -91,21 +91,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:
-        mouse_state = tpRenderSurfaceEvent::kMouseDown;
+        mouse_state = tpWindowEvent::kMouseDown;
 	case WM_LBUTTONUP:
 	case WM_RBUTTONUP:
 	case WM_MBUTTONUP:
-        if (!mouse_state) mouse_state = tpRenderSurfaceEvent::kMouseUp;
+        if (!mouse_state) mouse_state = tpWindowEvent::kMouseUp;
 	case WM_MOUSEMOVE:
 		{
-            if (wParam & MK_LBUTTON) mouse_button = tpRenderSurfaceEvent::kMouseKeyLeft;
-            if (wParam & MK_RBUTTON) mouse_button = tpRenderSurfaceEvent::kMouseKeyRight;
-            if (wParam & MK_MBUTTON) mouse_button = tpRenderSurfaceEvent::kMouseKeyMiddle;
+            if (wParam & MK_LBUTTON) mouse_button = tpWindowEvent::kMouseKeyLeft;
+            if (wParam & MK_RBUTTON) mouse_button = tpWindowEvent::kMouseKeyRight;
+            if (wParam & MK_MBUTTON) mouse_button = tpWindowEvent::kMouseKeyMiddle;
 
 			tpInt mouse_x = LOWORD(lParam);
 			tpInt mouse_y = HIWORD(lParam);
 
-            tpRenderSurfaceEvent e(rendersurface);
+            tpWindowEvent e(rendersurface);
             e.setMousePosition(mouse_x,mouse_y);
             e.setMouseState(mouse_state);
             e.setMouseKey(mouse_button);
@@ -123,8 +123,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 }
 
-tpRenderSurfaceWin32::tpRenderSurfaceWin32( tpRenderSurfaceTraits* traits )
-	: tpRenderSurface( traits )
+tpWindowWin32::tpWindowWin32( tpWindowTraits* traits )
+	: tpWindow( traits )
 	,_handle(0)
 	,_instance(0)
 {
@@ -134,7 +134,7 @@ tpRenderSurfaceWin32::tpRenderSurfaceWin32( tpRenderSurfaceTraits* traits )
 
 static int __tempwnd_id = 0;
 
-void tpRenderSurfaceWin32::doCreate( tpRenderSurfaceTraits* traits )
+void tpWindowWin32::doCreate( tpWindowTraits* traits )
 {
 	_classname = tpStringFormat("tpGLRenderSurface_%d",__tempwnd_id++);
 
@@ -229,15 +229,14 @@ void tpRenderSurfaceWin32::doCreate( tpRenderSurfaceTraits* traits )
 
 #endif
 
-
 }
 
-void tpRenderSurfaceWin32::doKill()
+void tpWindowWin32::doKill()
 {
 }
 
 tpVec2i
-tpRenderSurfaceWin32::getSize() const {
+tpWindowWin32::getSize() const {
     tpVec2i result;
     RECT r;
     GetClientRect(_handle,&r);
@@ -247,7 +246,7 @@ tpRenderSurfaceWin32::getSize() const {
 }
 
 
-void tpRenderSurfaceWin32::destroy()
+void tpWindowWin32::destroy()
 {
 	if (_handle)
 	{
@@ -262,14 +261,14 @@ void tpRenderSurfaceWin32::destroy()
 	doKill();
 }
 
-bool tpRenderSurfaceWin32::show( bool doShow )
+bool tpWindowWin32::show( bool doShow )
 {
 	BOOL res = ShowWindow(_handle, doShow ? SW_SHOW : SW_HIDE );
 	UpdateWindow(_handle);
 	return (res != 0L);
 }
 
-void tpRenderSurfaceWin32::update()
+void tpWindowWin32::update()
 {
 
 	if (this->mDone) return;
@@ -290,17 +289,17 @@ void tpRenderSurfaceWin32::update()
 	}
 }
 
-tpString tpRenderSurfaceWin32::getName() const
+tpString tpWindowWin32::getName() const
 {
 	return "Windows RenderSurface";
 }
 
-void tpRenderSurfaceWin32::setCaption( const tpString& caption)
+void tpWindowWin32::setCaption( const tpString& caption)
 {
 	SetWindowText(this->_handle,caption.c_str());
 }
 
-tpString tpRenderSurfaceWin32::getCaption()
+tpString tpWindowWin32::getCaption()
 {
 	tpArray<tpChar> buf; buf.resize(1000);
 	GetWindowText(this->_handle,buf.getData(),buf.getSize());
@@ -309,7 +308,7 @@ tpString tpRenderSurfaceWin32::getCaption()
 }
 
 void
-tpRenderSurfaceWin32::setContext(tpRenderContext* context)
+tpWindowWin32::setContext(tpRenderContext* context)
 {
 	if (context == 0)
 	{
@@ -319,35 +318,54 @@ tpRenderSurfaceWin32::setContext(tpRenderContext* context)
 	tpRenderTarget::setContext(context);
 }
 
-tpRawPtr tpRenderSurfaceWin32::getDisplay()
+tpRawPtr tpWindowWin32::getDisplay()
 {
 	return GetWindowDC(_handle);
 }
 
-tpRawPtr tpRenderSurfaceWin32::getWindow()
+tpRawPtr tpWindowWin32::getWindow()
 {
 	return _handle;
 }
 
+void tpWindowWin32::setSize( tpInt w, tpInt h )
+{
+	SetWindowPos(_handle,0,0,0,w,h,SWP_NOMOVE | SWP_NOZORDER);
+}
 
-TP_TYPE_REGISTER(tpRenderSurfaceWin32,tpRenderSurface,RenderSurfaceWin32);
+void tpWindowWin32::setPosition( tpInt x, tpInt y )
+{
+	SetWindowPos(_handle,0,x,y,0,0,SWP_NOSIZE | SWP_NOZORDER);
+}
+
+tpVec2i tpWindowWin32::getPosition() const
+{
+	tpVec2i r(-1,-1);
+	RECT w;
+	GetWindowRect(_handle,&w);
+	r[0] = w.left; r[1] = w.top;
+	return r;
+}
 
 
-class tpRenderSurfaceFactoryWin32 : public tpRenderSurfaceFactory {
+TP_TYPE_REGISTER(tpWindowWin32,tpWindow,RenderSurfaceWin32);
+
+
+class tpRenderSurfaceFactoryWin32 : public tpWindowFactory {
 public:
 
 	TP_TYPE_DECLARE;
 
-	tpRenderSurfaceFactoryWin32() : tpRenderSurfaceFactory()
+	tpRenderSurfaceFactoryWin32() : tpWindowFactory()
 	{
 		tpLogNotify("%s Windows RenderSurface",tpGetVersionString());
 	}
 
-	tpRenderSurface* create( tpRenderSurfaceTraits* traits )
+	tpWindow* create( tpWindowTraits* traits )
 	{
-		return new tpRenderSurfaceWin32( traits );
+		return new tpWindowWin32( traits );
 	}
 };
 
-TP_TYPE_REGISTER(tpRenderSurfaceFactoryWin32,tpRenderSurfaceFactory,RenderSurfaceFactoryWin32);
+TP_TYPE_REGISTER(tpRenderSurfaceFactoryWin32,tpWindowFactory,RenderSurfaceFactoryWin32);
 TP_MODULE_REGISTER(win32surface,tpRenderSurfaceFactoryWin32);

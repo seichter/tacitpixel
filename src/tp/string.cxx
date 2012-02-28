@@ -42,7 +42,7 @@ tpString::tpString()
 
 tpString::tpString(const char* str)
 {
-	set( str, tpStrLen(str) );
+    set( str, tpStrLen(str) );
 }
 
 tpString::tpString(const tpString& str)
@@ -404,10 +404,10 @@ long tpString::toLong() const {
 }
 
 tpString
-tpString::join(const tpStringArray& strarr,const tpString& sep)
+tpString::join(const tpArray<tpString> &strarr,const tpString& sep)
 {
 	tpString result;
-	for (tpStringArray::const_iterator it = strarr.begin();
+    for ( tpArray<tpString>::const_iterator it = strarr.begin();
 		 it != strarr.end();
 		 ++it)
 	{

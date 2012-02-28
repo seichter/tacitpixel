@@ -8,7 +8,7 @@
 #include <tp/stringtokenizer.h>
 #include <tp/node.h>
 #include <tp/renderer.h>
-#include <tp/rendersurface.h>
+#include <tp/window.h>
 #include <tp/thread.h>
 #include <tp/timer.h>
 #include <tp/primitive.h>
@@ -22,7 +22,7 @@ public:
 
 
 	virtual void
-	onSurfaceEvent(tpRenderSurfaceEvent& e)
+	onSurfaceEvent(tpWindowEvent& e)
 	{
 
 		tpLogMessage("Mouse: %d %d (%d) [%d] Key: %d %d",
@@ -34,15 +34,15 @@ public:
 		tpLog::get() << camera->getTranslation() << "\n";
 
 
-		if (e.getKeyCode() == 'q' && e.getKeyState() == tpRenderSurfaceEvent::kKeyUp) {
+		if (e.getKeyCode() == 'q' && e.getKeyState() == tpWindowEvent::kKeyUp) {
 			e.getRenderSurface()->setDone();
 		}
 
-		if (e.getMouseState() == tpRenderSurfaceEvent::kMouseDown) {
+		if (e.getMouseState() == tpWindowEvent::kMouseDown) {
 
 			tpVec3r delta(0.05,0,0);
 
-			if (e.getMouseKey() == tpRenderSurfaceEvent::kMouseKeyLeft) {
+			if (e.getMouseKey() == tpWindowEvent::kMouseKeyLeft) {
 				camera->setTranslation(camera->getTranslation() + delta);
 			} else {
 				camera->setTranslation(camera->getTranslation() - delta);

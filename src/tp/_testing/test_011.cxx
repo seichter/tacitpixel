@@ -12,13 +12,14 @@ int main(int argc, char* argv[])
 {
 
 	tpRefPtr<tpViewer> viewer = new tpViewer();
+	viewer->create();
 
 	tpRefPtr<tpPrimitive> axis = tpPrimitiveFactory::create(tpPrimitiveFactory::kAxis);
 
 	tpRefPtr<tpNode> root = new tpNode;
 
-	// standard orhographic camera
-	tpRefPtr<tpCamera> cam_1 = new tpCamera;
+	// standard orthographic camera
+	tpRefPtr<tpCamera> cam_1 = viewer->getScene().getActiveCamera();
 	cam_1->setName("Ortho");
 
 	// offset camera

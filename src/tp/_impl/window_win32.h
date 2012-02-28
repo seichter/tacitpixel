@@ -2,13 +2,13 @@
 #define TPRENDERSURFACE_WIN32_H
 
 
-#include <tp/rendersurface.h>
+#include <tp/window.h>
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
 
-class tpRenderSurfaceWin32 : public tpRenderSurface {
+class tpWindowWin32 : public tpWindow {
 
 	HWND _handle;
 	HINSTANCE _instance;
@@ -19,9 +19,9 @@ public:
 	TP_TYPE_DECLARE
 
 
-	tpRenderSurfaceWin32( tpRenderSurfaceTraits* traits );
+	tpWindowWin32( tpWindowTraits* traits );
 
-	void doCreate(tpRenderSurfaceTraits*);
+	void doCreate(tpWindowTraits*);
 
 	void doKill();
 
@@ -41,7 +41,12 @@ public:
 	tpRawPtr getWindow();
 
     void setContext(tpRenderContext* context);
+
     tpVec2i getSize() const;
+	void setSize(tpInt w, tpInt h);
+
+	void setPosition(tpInt x, tpInt y);
+	tpVec2i getPosition() const;
 };
 
 

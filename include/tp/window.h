@@ -31,23 +31,24 @@
 #include <tp/refptr.h>
 #include <tp/string.h>
 #include <tp/vec.h>
-#include <tp/rendercontext.h>
 #include <tp/image.h>
 #include <tp/event.h>
 
+#include <tp/rendercontext.h>
+#include <tp/rendertarget.h>
 
 //////////////////////////////////////////////////////////////////////////
 
+class tpWindow;
+class tpWindowTraits;
 class tpRenderBuffer;
-class tpRenderSurface;
-class tpRenderSurfaceTraits;
 
-class TP_API tpRenderSurfaceFactory : public tpReferenced {
+class TP_API tpWindowFactory : public tpReferenced {
 protected:
-	friend class tpRenderSurface;
+	friend class tpWindow;
 public:
-	TP_TYPE_DECLARE;
-	virtual tpRenderSurface* create( tpRenderSurfaceTraits* ) = 0;
+    TP_TYPE_DECLARE
+	virtual tpWindow* create( tpWindowTraits* ) = 0;
 };
 
 
@@ -55,7 +56,7 @@ class TP_API tpRenderBufferFactory : public tpReferenced {
 protected:
 	friend class tpRenderBuffer;
 public:
-	TP_TYPE_DECLARE;
+    TP_TYPE_DECLARE
 	virtual tpRenderBuffer* create( const tpSize& size, tpUInt pixelformat ) = 0;
 };
 
@@ -78,7 +79,7 @@ public:
 //};
 
 
-class tpRenderSurfaceEvent : public tpEvent {
+class tpWindowEvent : public tpEvent {
 
 	tpUInt mMouseKey;
 	tpUInt mMouseState;
@@ -87,7 +88,7 @@ class tpRenderSurfaceEvent : public tpEvent {
 	tpULong mKeyCode;
 	tpUInt mKeyState;
 
-	tpRenderSurface* mRenderSurface;
+	tpWindow* mRenderSurface;
 
 public:
 
@@ -115,7 +116,7 @@ public:
 		kKeyDown
 	};
 
-	tpRenderSurfaceEvent(tpRenderSurface* surface)
+	tpWindowEvent(tpWindow* surface)
 		: mRenderSurface(surface)
 		, mMouseKey(0)
 		, mMouseState(0)
@@ -139,45 +140,12 @@ public:
 	tpUInt getKeyState() const { return mKeyState; }
 	void setKeyState(tpUInt state) { mKeyState = state; }
 
-	tpRenderSurface* getRenderSurface() { return mRenderSurface; }
-	void setRenderSurface(tpRenderSurface* surface) { mRenderSurface = surface; }
+	tpWindow* getRenderSurface() { return mRenderSurface; }
+	void setRenderSurface(tpWindow* surface) { mRenderSurface = surface; }
 
 };
 
-//////////////////////////////////////////////////////////////////////////
 
-class TP_API tpRenderTarget : public tpReferenced {
-public:
-
-	TP_TYPE_DECLARE;
-
-	enum {
-		kPbuffer = 0,
-		kPixmap,
-		kWindow
-	};
-
-	tpRenderTarget();
-	tpUChar getTargetType() const { return kWindow; }
-
-	virtual tpRawPtr getWindow() { return 0L; }
-	virtual tpRawPtr getDisplay() { return 0L; }
-
-
-	virtual void setContext(tpRenderContext *context);
-
-	virtual tpRenderContext *getContext();
-
-	bool hasContext() const { return mContext.isValid(); }
-
-//	virtual tpInt getWidth() const { return 0; }
-//	virtual tpInt getHeight() const { return 0; }
-
-protected:
-
-	tpRefPtr<tpRenderContext> mContext;
-
-};
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -204,12 +172,12 @@ protected:
 
 //////////////////////////////////////////////////////////////////////////
 
-class TP_API tpRenderSurface : public tpRenderTarget {
+class TP_API tpWindow : public tpRenderTarget {
 public:
 
 	TP_TYPE_DECLARE
 
-	static tpRenderSurface* create( tpRenderSurfaceTraits* traits = 0);
+	static tpWindow* create( tpWindowTraits* traits = 0);
 
 	virtual void destroy() = 0;
 
@@ -220,6 +188,10 @@ public:
 	virtual tpString getName() const;
 
 	virtual tpVec2i getSize() const;
+	virtual void setSize(tpInt w, tpInt h);
+
+	virtual void setPosition(tpInt x, tpInt y);
+	virtual tpVec2i getPosition() const;
 
 	virtual void setCaption(const tpString& ) {}
 	virtual tpString getCaption() { return tpString(); }
@@ -230,19 +202,16 @@ public:
 
 	tpEventHandler& getEventHandler() { return mEventHandler; }
 
-
-
-
 protected:
 
-	tpRenderSurface();
-	tpRenderSurface( tpRenderSurfaceTraits* traits );
+	tpWindow();
+	tpWindow( tpWindowTraits* traits );
 
 	tpEventHandler mEventHandler;
 
 	bool mDone;
 
-	virtual ~tpRenderSurface();
+	virtual ~tpWindow();
 };
 
 
@@ -254,7 +223,7 @@ protected:
  *
  * Initializes a window with predefined traits
  */
-class TP_API tpRenderSurfaceTraits {
+class TP_API tpWindowTraits {
 
 	tpString title;
 	tpVec2i size;
@@ -281,42 +250,42 @@ public:
 		kRenderOpenGLES2
 	};
 
-	tpRenderSurfaceTraits();
+	tpWindowTraits();
 
 
-	tpRenderSurfaceTraits& setEmbedded(bool flag) { embedded = true; return *this; }
+	tpWindowTraits& setEmbedded(bool flag) { embedded = true; return *this; }
 	bool getEmbedded() const { return embedded; }
 
 
-	tpRenderSurfaceTraits& setRenderBackend(tpUInt be) { renderbackend = be; return *this; }
+	tpWindowTraits& setRenderBackend(tpUInt be) { renderbackend = be; return *this; }
 	tpUInt getRenderBackend() const { return renderbackend; }
 
 
 	tpVec2i getSize() const;
-	tpRenderSurfaceTraits& setSize(tpVec2i val);
-	tpRenderSurfaceTraits& setSize(tpInt width, tpInt height);
+	tpWindowTraits& setSize(tpVec2i val);
+	tpWindowTraits& setSize(tpInt width, tpInt height);
 
-	tpRenderSurfaceTraits& setDefaultSize();
+	tpWindowTraits& setDefaultSize();
 	//tpRenderSurfaceTraits& setBitPerPixel(tpUInt val);
 	//tpRenderSurfaceTraits& setAntiAlias(bool val);
 
 	bool useDefaultSize();
 
 	tpVec2i getPosition() const;
-	tpRenderSurfaceTraits& setPosition(tpVec2i val);
-	tpRenderSurfaceTraits& setPosition(tpInt width, tpInt height);
-	tpRenderSurfaceTraits& setDefaultPosition();
+	tpWindowTraits& setPosition(tpVec2i val);
+	tpWindowTraits& setPosition(tpInt width, tpInt height);
+	tpWindowTraits& setDefaultPosition();
 
 	bool useDefaultPosition();
 
 	tpString getTitle() const;
-	tpRenderSurfaceTraits& setTitle(const tpString& val);
+	tpWindowTraits& setTitle(const tpString& val);
 
 	void* getWindowHandle() const;
-	tpRenderSurfaceTraits& setWindowHandle(void* val);
+	tpWindowTraits& setWindowHandle(void* val);
 
 	bool isFullscreen() const;
-	tpRenderSurfaceTraits& setFullscreen(bool val = true);
+	tpWindowTraits& setFullscreen(bool val = true);
 
 };
 

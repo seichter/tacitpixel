@@ -26,7 +26,7 @@ class tpImageHandler_PNG : public tpImageHandler
 {
 public:
 
-	TP_TYPE_DECLARE;
+    TP_TYPE_DECLARE
 
 	bool getCapability(tpUInt capability,const tpString& name);
 
@@ -69,6 +69,7 @@ tpImageHandler_PNG::getCapability( tpUInt capability,const tpString& name )
 tpImage*
 tpImageHandler_PNG::read( const tpString& name )
 {
+    tpLogNotify("%s loading %s",__FUNCTION__,name.c_str());
 	png_infop info_ptr;
 	int number_of_passes;
 	png_bytep * row_pointers;
@@ -201,6 +202,5 @@ tpImageHandler_PNG::write(const tpImage* img, const tpString& name)
 }
 
 TP_TYPE_REGISTER(tpImageHandler_PNG,tpImageHandler,ImageFactoryPNG);
-
 tpModuleInitializer<tpImageHandler_PNG> g_imagefactory_png;
 

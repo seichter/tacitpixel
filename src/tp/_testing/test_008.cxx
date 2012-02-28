@@ -16,9 +16,9 @@ public:
 	tpTimer t;
 
 	void
-	onSurfaceEvent(tpRenderSurfaceEvent& e)
+	onSurfaceEvent(tpWindowEvent& e)
 	{
-		if (e.getKeyCode() == 27 && e.getKeyState() == tpRenderSurfaceEvent::kKeyUp) {
+		if (e.getKeyCode() == 27 && e.getKeyState() == tpWindowEvent::kKeyUp) {
 			e.getRenderSurface()->setDone();
 			e.setHandled();
 		}

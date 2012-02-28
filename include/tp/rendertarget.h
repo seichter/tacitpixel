@@ -23,44 +23,43 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TPVIEWER_H
-#define TPVIEWER_H
+#ifndef TP_RENDERTARGET_H
+#define TP_RENDERTARGET_H
 
-#include <tp/referenced.h>
 #include <tp/refptr.h>
-#include <tp/window.h>
-#include <tp/renderer.h>
-#include <tp/camera.h>
-#include <tp/scene.h>
+#include <tp/referenced.h>
+#include <tp/rendercontext.h>
 
-class TP_API tpViewer : public tpReferenced {
-protected:
-
-	tpRefPtr<tpWindow> mSurface;
-	tpRefPtr<tpRenderer> mRenderer;
-	tpRefPtr<tpScene> mScene;
-
+class TP_API tpRenderTarget : public tpReferenced {
 public:
 
-	tpViewer();
+    TP_TYPE_DECLARE
 
-	bool create(const tpString &title = "tpViewer", tpUInt w = 640, tpUInt h = 480, tpUInt x = 0, tpUInt y = 0, tpUInt flags = 0);
+    enum {
+        kPbuffer = 0,
+        kPixmap,
+        kWindow
+    };
 
-	void frame();
+    tpRenderTarget();
+    tpUChar getTargetType() const { return kWindow; }
 
-	int run();
+    virtual tpRawPtr getWindow() { return 0L; }
+    virtual tpRawPtr getDisplay() { return 0L; }
 
-	tpScene& getScene() {
-		return *mScene.get();
-	}
 
-	virtual void onSurfaceEvent(tpWindowEvent &e);
+    virtual void setContext(tpRenderContext *context);
 
-private:
+    virtual tpRenderContext *getContext();
 
-    virtual void _dispatch(tpWindowEvent &e);
+    bool hasContext() const { return mContext.isValid(); }
 
+
+protected:
+
+    tpRefPtr<tpRenderContext> mContext;
 
 };
+
 
 #endif
