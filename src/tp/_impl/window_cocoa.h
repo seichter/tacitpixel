@@ -25,14 +25,12 @@
 	struct NSObject;
 #endif
 
-#include <tp/rendersurface.h>
-#include <tp/log.h>
+#include <tp/window.h>
 
-
-class tpRenderSurfaceCocoa : public tpRenderSurface {
+class tpRenderSurfaceCocoa : public tpWindow {
 public:
 
-	TP_TYPE_DECLARE;
+	TP_TYPE_DECLARE
 
 	tpRenderSurfaceCocoa( tpRenderSurfaceTraits* traits );
 

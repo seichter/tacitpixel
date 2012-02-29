@@ -10,7 +10,7 @@
  *
  */
 
-#import "rendersurface_cocoa.h"
+#import "window_cocoa.h"
 
 #if defined(TP_USE_COCOA)
 

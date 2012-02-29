@@ -136,8 +136,8 @@ if (APPLE)
 
 	if (TP_USE_COCOA)
 		list(APPEND tp_impl_srcs
-			_impl/rendersurface_cocoa.mm
-			_impl/rendersurface_cocoa.h
+			_impl/window_cocoa.mm
+			_impl/window_cocoa.h
 			_impl/rendercontext_cocoa.mm
 			_impl/rendercontext_cocoa.h
 			)
