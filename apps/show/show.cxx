@@ -76,8 +76,8 @@ int main(int argc,char* argv[])
 
 	tpRefPtr<tpLight> l = new tpLight();
 	l->setPosition(tpVec3f(5,5,5));
-    //l->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
-    l->setDiffuseColor(tpVec4f(1.f,1.f,1.f,0.f));
+    l->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
+    //l->setDiffuseColor(tpVec4f(1.f,1.f,1.f,1.f));
 
 	root->addChild(l.get());
 

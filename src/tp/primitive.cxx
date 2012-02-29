@@ -314,6 +314,11 @@ void tpPrimitiveAttribute::clear()
 	mData.clear();
 }
 
+const tpFloat*
+tpPrimitiveAttribute::getDataOffset(tpSizeT elements) const
+{
+    return mData.getData() + (this->getStride()*elements);
+}
 
 //////////////////////////////////////////////////////////////////////////
 

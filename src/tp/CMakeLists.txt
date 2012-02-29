@@ -293,7 +293,6 @@ configure_file(config.h.in
 	@ONLY IMMEDIATE
 	)
 
-
 add_library(${tp_name} SHARED
 	${tp_srcs}
 	${tp_hdrs}

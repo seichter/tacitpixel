@@ -172,7 +172,7 @@ tpNodeHandler_3DS::read(const tpString& name)
 
             tpVec3r normal(normals3ds[faceIdx][0],normals3ds[faceIdx][1],normals3ds[faceIdx][2]);
 
-            //normal.normalize();
+            normal.normalize();
 
 			for (int i = 0; i < 3; ++i) {
 
