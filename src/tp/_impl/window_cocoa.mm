@@ -12,7 +12,7 @@
 
 #import "window_cocoa.h"
 
-#if defined(TP_USE_COCOA)
+#if 1//defined(TP_USE_COCOA)
 
 #import "rendercontext_cocoa.h"
 
@@ -23,9 +23,9 @@
 #include <tp/logutils.h>
 
 
-@interface tpGLRenderSurfaceCocoaDelegate : NSResponder
+@interface tpWindowCocoaDelegate : NSResponder
 {
-	tpRenderSurfaceCocoa* rendersurface;
+	tpWindowCocoa* rendersurface;
 };
 - (BOOL)acceptsFirstResponder;
 - (BOOL)becomeFirstResponder;
@@ -36,7 +36,7 @@
 
 @end
 
-@implementation tpGLRenderSurfaceCocoaDelegate;
+@implementation tpWindowCocoaDelegate;
 
 -(id)init
 {
@@ -44,7 +44,7 @@
 	return self;
 }
 
--(void)setRenderSurface: (tpRenderSurfaceCocoa*)arendersurface
+-(void)setWindow: (tpWindowCocoa*)arendersurface
 {
 	[[NSNotificationCenter defaultCenter]
 		addObserver:self
@@ -90,8 +90,8 @@
 
 -(void) windowDidResize: (NSNotification*)notification
 {
-	tpRenderSurfaceEvent e(rendersurface);
-	e.setId(tpRenderSurfaceEvent::kWindowSize);
+	tpWindowEvent e(rendersurface);
+	e.setId(tpWindowEvent::kWindowSize);
 	e.setRenderSurface(rendersurface);
 	rendersurface->getEventHandler().process(e);
 }
@@ -114,8 +114,8 @@
 @end
 
 
-tpRenderSurfaceCocoa::tpRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
-	: tpRenderSurface(traits)
+tpWindowCocoa::tpWindowCocoa(tpWindowTraits* traits)
+	: tpWindow(traits)
 	, window(NULL)
 	, delegate(NULL)
 {
@@ -135,8 +135,8 @@ tpRenderSurfaceCocoa::tpRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 			  defer:false];
 
 	/* set notification interfaces */
-	tpGLRenderSurfaceCocoaDelegate* mdelegate = [[tpGLRenderSurfaceCocoaDelegate alloc] init];
-	[mdelegate setRenderSurface:this];
+	tpWindowCocoaDelegate* mdelegate = [[tpWindowCocoaDelegate alloc] init];
+	[mdelegate setWindow:this];
 
 	delegate = mdelegate;
 	[window setDelegate:[NSApp delegate]];
@@ -160,30 +160,32 @@ tpRenderSurfaceCocoa::tpRenderSurfaceCocoa(tpRenderSurfaceTraits* traits)
 	GetCurrentProcess(&PSN);
 	TransformProcessType(&PSN,kProcessTransformToForegroundApplication);
 
+	this->setSize(width,height);
+
 	[pool release];
 
 }
 
 
 void
-tpRenderSurfaceCocoa::destroy()
+tpWindowCocoa::destroy()
 {
 	//\todo implement!
 }
 
 
-tpRenderSurfaceCocoa::~tpRenderSurfaceCocoa()
+tpWindowCocoa::~tpWindowCocoa()
 {
 	window = NULL;
 }
 
-bool tpRenderSurfaceCocoa::show(bool doShow)
+bool tpWindowCocoa::show(bool doShow)
 {
 	[window setIsVisible:(BOOL)doShow];
 	return [window isVisible];
 }
 
-tpVec2i tpRenderSurfaceCocoa::getSize() const {
+tpVec2i tpWindowCocoa::getSize() const {
 	NSRect rect = [window contentRectForFrameRect:[window frame]];
 	NSSize size = rect.size;
 
@@ -192,10 +194,21 @@ tpVec2i tpRenderSurfaceCocoa::getSize() const {
 	s[0] =  (int)floor(size.width);
 	s[1] = (int)floor(size.height);
 
+
+	tpLogNotify("Size: %dx%d",s[0],s[1]);
+
 	return s;
 }
 
-void tpRenderSurfaceCocoa::update()
+void
+tpWindowCocoa::setSize(tpInt w, tpInt h) {
+	NSRect rect = [window frame];
+	rect.size.width = w;
+	rect.size.height = h;
+	[window setFrame:rect display:true animate: true];
+}
+
+void tpWindowCocoa::update()
 {
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
@@ -210,7 +223,7 @@ void tpRenderSurfaceCocoa::update()
 		NSRect size = [window contentRectForFrameRect:[window frame]];
 		NSPoint point = [window mouseLocationOutsideOfEventStream];
 
-		tpRenderSurfaceEvent e(this);
+		tpWindowEvent e(this);
 		e.setMousePosition(point.x,point.y);
 		e.setRenderSurface(this);
 
@@ -221,29 +234,29 @@ void tpRenderSurfaceCocoa::update()
 
 		case NSLeftMouseDown:
 		{
-			e.setMouseState(tpRenderSurfaceEvent::kMouseDown);
-			e.setMouseKey(tpRenderSurfaceEvent::kMouseKeyLeft);
+			e.setMouseState(tpWindowEvent::kMouseDown);
+			e.setMouseKey(tpWindowEvent::kMouseKeyLeft);
 			submit = true;
 			break;
 		}
 		case NSLeftMouseUp:
 		{
-			e.setMouseState(tpRenderSurfaceEvent::kMouseUp);
-			e.setMouseKey(tpRenderSurfaceEvent::kMouseKeyLeft);
+			e.setMouseState(tpWindowEvent::kMouseUp);
+			e.setMouseKey(tpWindowEvent::kMouseKeyLeft);
 			submit = true;
 			break;
 		}
 		case NSRightMouseDown:
 		{
-			e.setMouseState(tpRenderSurfaceEvent::kMouseDown);
-			e.setMouseKey(tpRenderSurfaceEvent::kMouseKeyRight);
+			e.setMouseState(tpWindowEvent::kMouseDown);
+			e.setMouseKey(tpWindowEvent::kMouseKeyRight);
 			submit = true;
 			break;
 		}
 		case NSRightMouseUp:
 		{
-			e.setMouseState(tpRenderSurfaceEvent::kMouseUp);
-			e.setMouseKey(tpRenderSurfaceEvent::kMouseKeyRight);
+			e.setMouseState(tpWindowEvent::kMouseUp);
+			e.setMouseKey(tpWindowEvent::kMouseKeyRight);
 			submit = true;
 			break;
 		}
@@ -251,7 +264,7 @@ void tpRenderSurfaceCocoa::update()
 		{
 			NSString* str = [event characters];
 			tpString s([str UTF8String]);
-			e.setKeyState(tpRenderSurfaceEvent::kKeyDown);
+			e.setKeyState(tpWindowEvent::kKeyDown);
 			e.setKeyCode((unsigned int)s.c_str()[0]);
 
 			submit = true;
@@ -261,7 +274,7 @@ void tpRenderSurfaceCocoa::update()
 		{
 			NSString* str = [event characters];
 			tpString s([str UTF8String]);
-			e.setKeyState(tpRenderSurfaceEvent::kKeyUp);
+			e.setKeyState(tpWindowEvent::kKeyUp);
 			e.setKeyCode((unsigned int)s.c_str()[0]);
 
 			submit = true;
@@ -286,7 +299,7 @@ void tpRenderSurfaceCocoa::update()
 
 
 void
-tpRenderSurfaceCocoa::setCaption(const tpString& caption)
+tpWindowCocoa::setCaption(const tpString& caption)
 {
 	NSString* name = [[NSString alloc] initWithCString: caption.c_str() encoding: NSASCIIStringEncoding ];
 	[window setTitle:name];
@@ -294,7 +307,7 @@ tpRenderSurfaceCocoa::setCaption(const tpString& caption)
 }
 
 void
-tpRenderSurfaceCocoa::setContext(tpRenderContext* context)
+tpWindowCocoa::setContext(tpRenderContext* context)
 {
 	if (context == 0)
 	{
@@ -307,28 +320,27 @@ tpRenderSurfaceCocoa::setContext(tpRenderContext* context)
 
 ////////////////////////////////////////////////////////////////////////////
 
-class tpRenderSurfaceFactoryCocoa : public tpRenderSurfaceFactory {
+class tpWindowCocoaFactory : public tpWindowFactory {
 public:
 
-	TP_TYPE_DECLARE;
+	TP_TYPE_DECLARE
 
-	tpRenderSurfaceFactoryCocoa() : tpRenderSurfaceFactory()
+	tpWindowCocoaFactory() : tpWindowFactory()
 	{
 		tpLogNotify("%s Cocoa rendering surface",tpGetVersionString());
 	}
 protected:
-	tpRenderSurface* create( tpRenderSurfaceTraits* traits )
+	tpWindow* create( tpWindowTraits* traits )
 	{
-		return new tpRenderSurfaceCocoa( traits );
+		return new tpWindowCocoa( traits );
 	}
 };
 
 ////////////////////////////////////////////////////////////////////////////
 
 
-TP_TYPE_REGISTER(tpRenderSurfaceFactoryCocoa,tpRenderSurfaceFactory,RenderSurfaceFactoryCocoa);
-TP_TYPE_REGISTER(tpRenderSurfaceCocoa,tpRenderSurface,RenderSurfaceCocoa);
-
-TP_MODULE_REGISTER(cocoasurface,tpRenderSurfaceFactoryCocoa)
+TP_TYPE_REGISTER(tpWindowCocoaFactory,tpWindowFactory,WindowCocoaFactory);
+TP_TYPE_REGISTER(tpWindowCocoa,tpWindow,WindowCocoa);
+TP_MODULE_REGISTER(cocoasurface,tpWindowCocoaFactory)
 
 #endif

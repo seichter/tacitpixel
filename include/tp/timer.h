@@ -53,7 +53,7 @@ public:
 	/**
 	  * @brief c'tor - will reset the timer (call ::start())
 	  */
-    explicit tpTimer();
+	explicit tpTimer();
 
 	/**
 	  * @brief d'tor
@@ -72,12 +72,11 @@ public:
 	  */
 	tpDouble getElapsed(tpUInt scale) const;
 
-    //! static function to get the current time
-    static void getCurrentTick(tpTimerTick& val);
+	//! static function to get the current time
+	static void getCurrentTick(tpTimerTick& val);
 
 
 protected:
-
 
 	tpTimerTick mStart;
 	tpDouble mSecondsPerTick;

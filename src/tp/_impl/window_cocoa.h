@@ -15,7 +15,7 @@
 
 #include <tp/config.h>
 
-#if defined(TP_USE_COCOA)
+#if 1 //defined(TP_USE_COCOA)
 
 #ifdef __OBJC__
 	#import <Cocoa/Cocoa.h>
@@ -27,12 +27,12 @@
 
 #include <tp/window.h>
 
-class tpRenderSurfaceCocoa : public tpWindow {
+class tpWindowCocoa : public tpWindow {
 public:
 
 	TP_TYPE_DECLARE
 
-	tpRenderSurfaceCocoa( tpRenderSurfaceTraits* traits );
+	tpWindowCocoa( tpWindowTraits *traits );
 
 	virtual bool show(bool doShow);
 
@@ -41,6 +41,8 @@ public:
 	virtual void update();
 
 	virtual tpVec2i getSize() const;
+	virtual void setSize(tpInt w, tpInt h);
+
 
 	void setCaption(const tpString& caption);
 
@@ -53,7 +55,7 @@ protected:
 	NSWindow *window;
 	NSObject *delegate;
 
-	virtual ~tpRenderSurfaceCocoa();
+	virtual ~tpWindowCocoa();
 
 };
 

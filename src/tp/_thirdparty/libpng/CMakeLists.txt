@@ -22,18 +22,18 @@ set(png_srcs
 	png.h
 	pngconf.h
 	)
-	
+
 add_library(png STATIC ${png_srcs})
 
 if(CMAKE_COMPILER_IS_GNUCC)
-    set_target_properties(
-        png
-        PROPERTIES
-        COMPILE_FLAGS -fPIC
-        )
+	set_target_properties(
+		png
+		PROPERTIES
+		COMPILE_FLAGS -fPIC
+		)
 endif()
 
 set_target_properties(png
 	PROPERTIES
 	PROJECT_LABEL "Dependency libpng"
-)
+	)

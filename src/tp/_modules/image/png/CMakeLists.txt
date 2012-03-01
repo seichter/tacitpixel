@@ -9,7 +9,7 @@ if(PNG_FOUND)
 	# if we found a implementation use it
 	option(TP_USE_SYSTEM_PNG OFF)
 	if (TP_USE_SYSTEM_PNG)
-		include_directories(${PNG_INCLUDE_DIR})
+		include_directories(${PNG_INCLUDE_DIRS})
 		set(module_libs ${PNG_LIBRARIES})
 	endif()
 else()

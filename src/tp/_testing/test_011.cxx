@@ -6,8 +6,6 @@
 #include <tp/matop.h>
 #include <tp/camera.h>
 
-
-
 int main(int argc, char* argv[])
 {
 
@@ -38,8 +36,6 @@ int main(int argc, char* argv[])
 
 	cam_1->addChild(axis.get());
 	cam_2->addChild(axis.get());
-
-	viewer->create();
 
 	return viewer->run();
 

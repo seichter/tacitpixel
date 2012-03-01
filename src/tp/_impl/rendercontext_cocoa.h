@@ -7,7 +7,7 @@
 	struct NSOpenGLContext;
 #endif
 
-#include <tp/rendersurface.h>
+#include <tp/rendercontext.h>
 #include <tp/log.h>
 
 
@@ -18,7 +18,7 @@ class tpRenderContextCocoa : public tpRenderContext {
 
 public:
 
-	TP_TYPE_DECLARE;
+	TP_TYPE_DECLARE
 
 	virtual bool create(tpRenderTarget *target);
 	virtual bool makeCurrent();
