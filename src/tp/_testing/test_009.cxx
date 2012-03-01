@@ -42,7 +42,6 @@ int main(int argc,char* argv[]) {
 
     // add some light
 	tpRefPtr<tpLight> light = new tpLight();
-	light->setPosition(tpVec3f(2,2,2));
 	light->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
 
 

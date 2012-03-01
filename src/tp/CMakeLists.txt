@@ -290,7 +290,7 @@ set(tp_srcs_sg
 
 configure_file(config.h.in
 	${CMAKE_BINARY_DIR}/include/tp/config.h
-	@ONLY IMMEDIATE
+	@ONLY
 	)
 
 add_library(${tp_name} SHARED

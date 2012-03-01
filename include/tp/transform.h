@@ -43,6 +43,8 @@ public:
 	tpTransform(const tpString& name = "transform");
 	tpTransform(const tpTransform& transform);
 
+    tpTransform(const tpMat44r& m);
+
 
 	void setMatrix(const tpMat44r& m) { m_matrix = m; }
 	const tpMat44r& getMatrix() const { return m_matrix; }

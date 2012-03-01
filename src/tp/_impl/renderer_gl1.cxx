@@ -271,8 +271,9 @@ public:
 	void operator()(tpScene* scene)
 	{
 
-        glGetIntegerv(GL_MAX_ELEMENTS_VERTICES,&mMaxVertices);
-        glGetIntegerv(GL_MAX_ELEMENTS_INDICES,&mMaxElements);
+		mMaxVertices = 2048;
+        //glGetIntegerv(GL_MAX_ELEMENTS_VERTICES,&mMaxVertices);
+        //glGetIntegerv(GL_MAX_ELEMENTS_INDICES,&mMaxElements);
 
         static int count(0);
 
@@ -379,25 +380,21 @@ public:
     void
     onLight(const tpLight& light, const tpMatrixStack& stack)
 	{
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
 
-//		tpCamera* camera = getActiveCamera();
+        // get the light transformation
+        const tpMat<4,4,float>& lt = stack.model * stack.view;
 
-		// just compile the modelviewprojection matrix (prepared for OpenGL 2.0 / ES 2.0)
-//		tpMat<4,4,float> mvp = stack.model * camera->getViewInverse() * camera->getProjection();
-		tpMat<4,4,float> mvp = stack.model * stack.view * stack.projection;
+        // make a vector out of it
+        tpVec4f pos(lt(0,3),lt(1,3),lt(2,3),light.isDirectional() ? 0.f : 1.f);
 
-		// HACK!
-		mvp.at(11) += light.getPosition()[0];
-		mvp.at(12) += light.getPosition()[1];
-		mvp.at(13) += light.getPosition()[2];
-
-        // load model view
-//        glMatrixMode(GL_MODELVIEW);
-//        glLoadMatrixf(mvp.data());
-
-		GLenum lid = light.getID()+GL_LIGHT0;
+        // enable the light with the respective id
+        GLenum lid = light.getID()+GL_LIGHT0;
 		glEnable(lid);
-		glLightfv(lid,GL_POSITION,light.getPosition().getData());
+
+        // set parameters
+        glLightfv(lid,GL_POSITION,pos.getData());
 		glLightfv(lid,GL_AMBIENT,light.getAmbientColor().getData());
 		glLightfv(lid,GL_DIFFUSE,light.getDiffuseColor().getData());
 		glLightfv(lid,GL_SPECULAR,light.getSpecularColor().getData());
@@ -458,7 +455,7 @@ public:
 	{
 
 
-#if 0
+#if 1
 		// setup alpha
 		if (prim.hasAlpha())
 		{
@@ -510,8 +507,8 @@ public:
 		glLoadMatrixf(mvp.data());
 
 
-        quickTest();
-        return;
+//        quickTest();
+//        return;
 
         // enable all relevant states
         if (prim.hasNormals()) glEnableClientState(GL_NORMAL_ARRAY);

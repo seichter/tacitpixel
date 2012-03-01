@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 	camera->setClearColor(tpVec4f(0,.15f,.3f,1.f));
 
 	tpRefPtr<tpLight> light = new tpLight();
-	light->setPosition(tpVec3f(5,5,5));
+//	light->setPosition(tpVec3f(5,5,5));
 	light->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
 
 	camera->addChild(light.get());

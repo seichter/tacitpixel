@@ -64,11 +64,15 @@ int main(int argc,char* argv[])
     tpMat44r m; m.identity();  m.scale(.001,.001,.001);
 	t->setMatrix(m);
 
-	tpRefPtr<tpLight> light = new tpLight();
-	light->setPosition(tpVec3f(5,5,5));
+    tpRefPtr<tpTransform> lt = new tpTransform();
+    lt->setMatrix(tpMat44Op::translation(5.f,5.f,5.f));
+
+    tpRefPtr<tpLight> light = new tpLight();
 	light->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
 
-	root->addChild(light.get());
+    lt->addChild(light.get());
+
+    root->addChild(lt.get());
 	root->addChild(axis);
 	root->addChild(t);
 

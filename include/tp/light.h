@@ -43,13 +43,15 @@ public:
 	void setAmbientColor(const tpVec4f& color) { mAmbientColor = color; }
 	void setDiffuseColor(const tpVec4f& color) { mDiffuseColor = color; }
 	void setSpecularColor(const tpVec4f& color) { mSpecularColor = color; }
+    void setDirectional(bool d = true) { mDirectional = d; }
 
 	const tpVec4f& getAmbientColor() const { return mAmbientColor; }
 	const tpVec4f& getDiffuseColor() const { return mDiffuseColor; }
 	const tpVec4f& getSpecularColor() const { return mSpecularColor; }
 
-    void setPosition(const tpVec4f& position) { mPosition = position; }
-    const tpVec4f& getPosition() const { return mPosition; }
+    bool isDirectional() const { return mDirectional; }
+
+
 
 protected:
 
@@ -60,16 +62,15 @@ protected:
 	tpVec4f mDiffuseColor;
 	tpVec4f mSpecularColor;
 
-	/* position & orientation */
-    tpVec4f mPosition;
-    tpVec4f mOrientation;
-
 	/* light model */
 	tpFloat mExponent;
 	tpFloat mCutOff;
 	tpFloat mConstantAttenuation;
 	tpFloat mLinearAttenuation;
 	tpFloat mQuadraticAttenuation;
+
+    /* directional */
+    bool mDirectional;
 
 	/* ID management */
 	tpUInt mID;

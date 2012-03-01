@@ -146,6 +146,12 @@ struct TP_API tpMat44Op {
 		matOut(3,3) = 1;
 	}
 
+    template <typename T>
+    static tpMat<4,4,T> translation(T x, T y, T z)
+    {
+        tpMat44<T> out; out.setTranslation(x,y,z); return out;
+    }
+
 };
 
 

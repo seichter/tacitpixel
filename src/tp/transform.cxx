@@ -36,7 +36,12 @@ tpTransform::tpTransform(const tpTransform& transform) : tpNode(transform), m_sc
 {
 	m_matrix = transform.m_matrix;
 	m_fields.add(new tpRefField< tpMat44r > (m_matrix,"matrix"));
-	m_fields.add(new tpRefField< tpUByte >(m_scope,"scope"));
+    m_fields.add(new tpRefField< tpUByte >(m_scope,"scope"));
+}
+
+tpTransform::tpTransform(const tpMat44r &m)
+{
+    this->setMatrix(m);
 }
 
 void
