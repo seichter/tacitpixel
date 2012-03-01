@@ -33,7 +33,6 @@ public:
 
 	void destroy();
 
-
     tpString getString(const tpUInt& e);
 
     void *getProcAddress(const char *name);

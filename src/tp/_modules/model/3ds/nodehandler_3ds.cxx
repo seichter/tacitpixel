@@ -151,10 +151,13 @@ tpNodeHandler_3DS::read(const tpString& name)
 		mesh->addChild(prim);
 		node->addChild(mesh);
 
+#if 1
 		Lib3dsVector* normals3ds = new Lib3dsVector[mesh3ds->nfaces];
-
-		lib3ds_mesh_calculate_face_normals(mesh3ds,&normals3ds[0]);
-
+        lib3ds_mesh_calculate_face_normals(mesh3ds,&normals3ds[0]);
+#else
+        Lib3dsVector* normals3ds = new Lib3dsVector[mesh3ds->nfaces * 3];
+        lib3ds_mesh_calculate_vertex_normals(mesh3ds,&normals3ds[0]);
+#endif
 		for (size_t faceIdx = 0;
 			 faceIdx < mesh3ds->nfaces;
 			 ++faceIdx)
@@ -166,10 +169,13 @@ tpNodeHandler_3DS::read(const tpString& name)
 				if (m.isValid()) prim->setMaterial(m.get());
 			}
 
-			tpVec3r normal(normals3ds[faceIdx][0],normals3ds[faceIdx][1],normals3ds[faceIdx][2]);
-			normal.normalize();
+
+            tpVec3r normal(normals3ds[faceIdx][0],normals3ds[faceIdx][1],normals3ds[faceIdx][2]);
+
+            normal.normalize();
 
 			for (int i = 0; i < 3; ++i) {
+
 
 				//mesh3ds->vertices[ face3ds->index[ i ] ];
 

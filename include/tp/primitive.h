@@ -65,7 +65,9 @@ public:
 	tpPrimitiveAttribute& add(const tpVec4f& v);
 	tpPrimitiveAttribute& add(const tpVec3f& v);
 	tpPrimitiveAttribute& add( const tpVec2f& v );
-	tpPrimitiveAttribute& add( const tpFloat *v, tpSizeT size );
+    tpPrimitiveAttribute& add( const tpFloat *v, tpSizeT size );
+
+    const tpFloat *getDataOffset(tpSizeT elements) const;
 };
 
 
@@ -147,7 +149,8 @@ public:
 
 	void scale(const tpVec3f &vec);
 
-	void flipNormals();
+    void flipNormals();
+    void checkNormals() const;
 };
 
 

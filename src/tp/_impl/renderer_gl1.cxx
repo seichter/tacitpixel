@@ -23,6 +23,38 @@
 //#include <GL/gl.h>
 //#endif
 
+void
+tpDebugPrimitive(const tpPrimitive& p)
+{
+    for (int i = 0; i < p.getVertices().getSize();++i)
+    {
+        tpVec4f v(p.getVertices().getData()[i*4],
+                  p.getVertices().getData()[i*4+1],
+                  p.getVertices().getData()[i*4+2],
+                  p.getVertices().getData()[i*4+3]
+                  );
+
+        tpVec4f n(p.getNormals().getData()[i*p.getNormals().getStride()],
+                  p.getNormals().getData()[i*p.getNormals().getStride()+1],
+                  p.getNormals().getData()[i*p.getNormals().getStride()+2],
+                  p.getNormals().getData()[i*p.getNormals().getStride()+3]
+                  );
+
+//        tpVec4f c(p.getColors().getData()[i*4],
+//                  p.getColors().getData()[i*4+1],
+//                  p.getColors().getData()[i*4+2],
+//                  p.getColors().getData()[i*4+3]
+//                  );
+
+
+        tpLog::get() << "\nv " << v <<
+                        "\nn " << n <<
+//                        "\nc " << c <<
+                        "\n";
+    }
+}
+
+
 
 #if defined(TP_USE_OPENGL)
 	#if defined(__APPLE__)
@@ -35,6 +67,7 @@
 		#define GL_BGRA 0x80E1
 	#else
 		#include <GL/gl.h>
+        #include <GL/glut.h> // for debugging
 	#endif
 #endif
 
@@ -221,6 +254,9 @@ class tpRendererGL1x : public tpRenderer
 {
 public:
 
+    tpInt mMaxVertices;
+    tpInt mMaxElements;
+
 	tpRendererGL1x()
 		: tpRenderer()
 	{
@@ -232,10 +268,13 @@ public:
 	static tpGLRendererTraits mRendererTraits;
 	const tpRendererTraits& getTraits() const { return mRendererTraits; }
 
-
 	void operator()(tpScene* scene)
 	{
-		static int count(0);
+
+        glGetIntegerv(GL_MAX_ELEMENTS_VERTICES,&mMaxVertices);
+        glGetIntegerv(GL_MAX_ELEMENTS_INDICES,&mMaxElements);
+
+        static int count(0);
 
 		count++;
 
@@ -291,7 +330,7 @@ public:
 
 		glShadeModel(GL_SMOOTH);
 		glEnable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
+        glEnable(GL_CULL_FACE);
 
 
 //        glEnable(GL_NORMALIZE);
@@ -323,6 +362,8 @@ public:
 		{
 			tpPrimitive* p = static_cast<tpPrimitive*>((*i).getKey());
 			onPrimitive(*p,(*i).getValue());
+
+//            tpDebugPrimitive(*p);
 		}
 
 		glErrorCheck;
@@ -335,7 +376,8 @@ public:
 //                    t.getElapsed(tpTimer::kTimeMilliSeconds));
 	}
 
-	void onLight(const tpLight& light, const tpMatrixStack& stack)
+    void
+    onLight(const tpLight& light, const tpMatrixStack& stack)
 	{
 
 //		tpCamera* camera = getActiveCamera();
@@ -349,9 +391,9 @@ public:
 		mvp.at(12) += light.getPosition()[1];
 		mvp.at(13) += light.getPosition()[2];
 
-		// load model view
-		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(mvp.data());
+        // load model view
+//        glMatrixMode(GL_MODELVIEW);
+//        glLoadMatrixf(mvp.data());
 
 		GLenum lid = light.getID()+GL_LIGHT0;
 		glEnable(lid);
@@ -381,9 +423,8 @@ public:
 	{
 		if (0 == mat) return;
 
-//		const tpMaterial* actual_mat = (mat) ? mat : tpDefaultMaterial;
-
-		glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
+        glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
+        glEnable(GL_COLOR_MATERIAL);
 
 		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, mat->getAmbientColor().getData() );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, mat->getDiffuseColor().getData() );
@@ -416,6 +457,8 @@ public:
 	void onPrimitive(const tpPrimitive& prim,const tpMatrixStack& stack,bool secondPass = false)
 	{
 
+
+#if 0
 		// setup alpha
 		if (prim.hasAlpha())
 		{
@@ -440,94 +483,92 @@ public:
 			{
 				glDisable(GL_LIGHTING);
 			}
-
 		}
-
-
+#endif
 
         if (prim.hasTexture()) {
-			(*this)(const_cast<tpTexture*>(prim.getTexture()));
+//			(*this)(const_cast<tpTexture*>(prim.getTexture()));
         } else if (prim.hasMaterial()) {
-			(*this)(prim.getMaterial());
+            (*this)(prim.getMaterial());
 		} else if (prim.hasColors()) {
-			glEnable(GL_COLOR_MATERIAL);
+//			glEnable(GL_COLOR_MATERIAL);
 		}
 
-//		tpCamera* camera = getActiveCamera();
+
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
 
 		// we are using our own transformation stack
 		glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
 
-//		 hence just compile the modelviewprojection matrix (prepared for OpenGL 2.0 / ES 2.0)
-//		tpMat<4,4,float> mvp = stack.model * camera->getViewInverse() * stack.projection;
-
-		// actually the view matrix is the view inverse already
-		tpMat<4,4,float> mvp = stack.model * stack.view * stack.projection;
+        // hence just compile the modelviewprojection matrix (prepared for OpenGL 2.0 / ES 2.0)
+        // actually the view matrix is the view inverse already
+        tpMat<4,4,float> mvp = stack.model * stack.view * stack.projection;
 
 		// load on the stack
 		glLoadMatrixf(mvp.data());
 
-//        quickTest();
-//        return;
 
-		// render scene
-		if (prim.hasNormals())
-		{
-            glNormalPointer(GL_FLOAT,
-                            prim.getNormals().getStride()*sizeof(float),
-                            prim.getNormals().getData()
+        quickTest();
+        return;
+
+        // enable all relevant states
+        if (prim.hasNormals()) glEnableClientState(GL_NORMAL_ARRAY);
+        if (prim.hasColors()) glEnableClientState(GL_COLOR_ARRAY);
+        if (prim.hasTextureCoordinates()) glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_VERTEX_ARRAY);
+
+        tpSizeT countAll = 0;
+
+        while (countAll < prim.getVertices().getSize()) {
+
+            tpSizeT countRun = tpMin(prim.getVertices().getSize()-countAll,(tpSizeT)mMaxVertices);
+
+//            tpLogNotify("%d %d",countAll,countRun);
+
+            // render scene
+            if (prim.hasNormals()) {
+                glNormalPointer(GL_FLOAT,
+                                prim.getNormals().getStride()*sizeof(float),
+                                prim.getNormals().getDataOffset(countAll)
+                                );
+            }
+
+            if (prim.hasTextureCoordinates()) {
+                glTexCoordPointer(prim.getTextureCoordinates().getStride(),
+                                  GL_FLOAT,
+                                  prim.getTextureCoordinates().getStride()*sizeof(float),
+                                  prim.getTextureCoordinates().getDataOffset(countAll)
+                                  );
+            }
+
+            if (prim.hasColors()) {
+                glColorPointer(prim.getColors().getStride(),
+                               GL_FLOAT,
+                               prim.getColors().getStride()*sizeof(float),
+                               prim.getColors().getDataOffset(countAll)
+                               );
+            }
+
+
+            glVertexPointer(prim.getVertices().getStride(),
+                            GL_FLOAT, 0,
+                            prim.getVertices().getDataOffset(countAll)
                             );
-            glEnableClientState(GL_NORMAL_ARRAY);
-		} else {
-			// no normals no fun
-			glDisable(GL_LIGHTING);
-		}
 
-		if (prim.hasTextureCoordinates())
-		{
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glTexCoordPointer(prim.getTextureCoordinates().getStride(),
-							  GL_FLOAT,
-							  prim.getTextureCoordinates().getStride()*sizeof(float),
-							  prim.getTextureCoordinates().getData()
-							  );
-		}
+            glDrawArrays(prim.getPrimitiveType(),0,countRun);
 
-		if (prim.hasColors())
-		{
-			glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+            countAll+=countRun;
 
-			glColorPointer(prim.getColors().getStride(),
-						   GL_FLOAT,
-						   prim.getColors().getStride()*sizeof(float),
-						   prim.getColors().getData()
-						   );
+        }
 
-			glEnableClientState(GL_COLOR_ARRAY);
-		}
+        // is it necess
+        glDisableClientState(GL_VERTEX_ARRAY);
 
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(prim.getVertices().getStride(), GL_FLOAT, 0, prim.getVertices().getData());
-
-		glDrawArrays(prim.getPrimitiveType(),0,prim.getVertices().getSize());
-
-		glDisableClientState(GL_VERTEX_ARRAY);
-
-		if (prim.hasNormals())
-		{
-			glDisableClientState(GL_NORMAL_ARRAY);
-		}
-
-		if (prim.hasTextureCoordinates())
-		{
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		}
-
-		if (prim.hasColors())
-		{
-			glDisable(GL_COLOR_MATERIAL);
-			glDisableClientState(GL_COLOR_ARRAY);
-		}
+        if (prim.hasNormals()) glDisableClientState(GL_NORMAL_ARRAY);
+        if (prim.hasTextureCoordinates()) glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        if (prim.hasColors()) glDisableClientState(GL_COLOR_ARRAY);
 
 
 		// disable state

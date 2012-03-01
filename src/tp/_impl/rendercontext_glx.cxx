@@ -2,7 +2,7 @@
 
 #if defined(TP_USE_X11)
 
-#include <tp/rendersurface.h>
+#include <tp/window.h>
 #include <tp/log.h>
 
 #define GLX_SAMPLE_BUFFERS_SGIS         100000
@@ -39,7 +39,7 @@ tpRenderContextGLX::create(tpRenderTarget *target)
                     glx_extensions.c_str());
 	}
 
-    if (target->getType()->isOfType(tpRenderSurface::getTypeInfo()))
+    if (target->getType()->isOfType(tpWindow::getTypeInfo()))
     {
 
 

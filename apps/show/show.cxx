@@ -76,14 +76,15 @@ int main(int argc,char* argv[])
 
 	tpRefPtr<tpLight> l = new tpLight();
 	l->setPosition(tpVec3f(5,5,5));
-	l->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
+    l->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
+    //l->setDiffuseColor(tpVec4f(1.f,1.f,1.f,1.f));
 
 	root->addChild(l.get());
 
 	tpRefPtr<tpViewer> viewer = new tpViewerShow;
 
 	viewer->getScene().getActiveCamera()->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
-	viewer->getScene().getActiveCamera()->setProjectionPerspective(30,1.4,0.1,100);
+    viewer->getScene().getActiveCamera()->setProjectionPerspective(60,1.4,1,100);
 	viewer->getScene().getActiveCamera()->setClearColor(tpVec4f(.5,.5,.5,1));
 	viewer->getScene().getActiveCamera()->setClearFlags(tpCamera::kClearDepth | tpCamera::kClearColor);
 	viewer->getScene().getActiveCamera()->addChild(root.get());

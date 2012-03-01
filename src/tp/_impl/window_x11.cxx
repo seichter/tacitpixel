@@ -14,7 +14,7 @@
 
 #if defined(TP_USE_X11)
 
-#include "rendersurface_x11.h"
+#include "window_x11.h"
 #include "rendercontext_glx.h"
 
 #include <tp/log.h>
@@ -26,8 +26,8 @@
 #include <X11/keysym.h>
 
 
-tpRenderSurfaceX11::tpRenderSurfaceX11( tpRenderSurfaceTraits* traits )
-	: tpRenderSurface( traits )
+tpWindowX11::tpWindowX11( tpWindowTraits* traits )
+    : tpWindow( traits )
 	, dpy(0)
 	, win(0)
 {
@@ -35,7 +35,7 @@ tpRenderSurfaceX11::tpRenderSurfaceX11( tpRenderSurfaceTraits* traits )
 }
 
 void
-tpRenderSurfaceX11::doCreate( tpRenderSurfaceTraits* traits ) {
+tpWindowX11::doCreate( tpWindowTraits* traits ) {
 
 	XVisualInfo *vi(0L);
 	long screen(0L);
@@ -100,7 +100,7 @@ tpRenderSurfaceX11::doCreate( tpRenderSurfaceTraits* traits ) {
 }
 
 bool
-tpRenderSurfaceX11::show(bool doShow)
+tpWindowX11::show(bool doShow)
 {
     if (doShow) {
         XRaiseWindow(dpy,win);
@@ -112,7 +112,7 @@ tpRenderSurfaceX11::show(bool doShow)
 }
 
 tpVec2i
-tpRenderSurfaceX11::getSize() const {
+tpWindowX11::getSize() const {
     tpVec2i r;
     XWindowAttributes xwa;
     XGetWindowAttributes(dpy,win,&xwa);
@@ -123,13 +123,13 @@ tpRenderSurfaceX11::getSize() const {
 }
 
 void
-tpRenderSurfaceX11::setCaption(const tpString& caption)
+tpWindowX11::setCaption(const tpString& caption)
 {
 	XStoreName(dpy,win,caption.c_str());
 }
 
 void
-tpRenderSurfaceX11::update()
+tpWindowX11::update()
 {
 
     XFlush(dpy);
@@ -139,7 +139,7 @@ tpRenderSurfaceX11::update()
 		XEvent event;
 		XNextEvent(dpy,&event);
 
-        tpRenderSurfaceEvent e(this);
+        tpWindowEvent e(this);
 
         tpPoint point;
 
@@ -153,7 +153,7 @@ tpRenderSurfaceX11::update()
 
 		switch (event.type) {
 		case ConfigureNotify:
-            e.setId(tpRenderSurfaceEvent::kWindowSize);
+            e.setId(tpWindowEvent::kWindowSize);
             submit = true;
             //tpLogNotify("%s - configure",__FUNCTION__);
 			break;
@@ -166,8 +166,8 @@ tpRenderSurfaceX11::update()
                 tpLogNotify("%s - key pressed %d (%s)",__FUNCTION__,kstr.c_str()[0],kstr.c_str());
                 e.setKeyCode(kstr.c_str()[0]);
                 e.setKeyState((event.type == KeyPress) ?
-                                  tpRenderSurfaceEvent::kKeyDown :
-                                  tpRenderSurfaceEvent::kKeyUp );
+                                  tpWindowEvent::kKeyDown :
+                                  tpWindowEvent::kKeyUp );
 			}
             submit = true;
 			break;
@@ -175,8 +175,8 @@ tpRenderSurfaceX11::update()
         case ButtonRelease:
             e.setMouseKey(event.xbutton.button);
             e.setMouseState((event.type == ButtonPress) ?
-                                tpRenderSurfaceEvent::kMouseDown :
-                                tpRenderSurfaceEvent::kMouseUp);
+                                tpWindowEvent::kMouseDown :
+                                tpWindowEvent::kMouseUp);
             tpLogNotify("%s - button released/pressed (%d)",__FUNCTION__,event.xbutton.button);
             submit = true;
 			break;
@@ -201,7 +201,7 @@ tpRenderSurfaceX11::update()
 }
 
 void
-tpRenderSurfaceX11::destroy()
+tpWindowX11::destroy()
 {
     mContext = 0;
 
@@ -209,13 +209,13 @@ tpRenderSurfaceX11::destroy()
 	XCloseDisplay(dpy);
 }
 
-tpRenderSurfaceX11::~tpRenderSurfaceX11()
+tpWindowX11::~tpWindowX11()
 {
 	destroy();
 }
 
 void
-tpRenderSurfaceX11::setContext(tpRenderContext* context)
+tpWindowX11::setContext(tpRenderContext* context)
 {
     if (context == 0)
     {
@@ -229,25 +229,25 @@ tpRenderSurfaceX11::setContext(tpRenderContext* context)
 
 ////////////////////////////////////////////////////////////////////////////
 
-class tpRenderSurfaceFactoryX11 : public tpRenderSurfaceFactory {
+class tpWindowFactoryX11 : public tpWindowFactory {
 public:
 
     TP_TYPE_DECLARE
 
-    tpRenderSurfaceFactoryX11() : tpRenderSurfaceFactory()
+    tpWindowFactoryX11() : tpWindowFactory()
     {
         tpLogNotify("%s X11 RenderSurface",tpGetVersionString());
     }
 
-    tpRenderSurface* create( tpRenderSurfaceTraits* traits )
+    tpWindow* create( tpWindowTraits* traits )
     {
-        return new tpRenderSurfaceX11( traits );
+        return new tpWindowX11( traits );
     }
 };
 
-TP_TYPE_REGISTER(tpRenderSurfaceX11,tpRenderSurface,RenderSurfaceX11);
-TP_TYPE_REGISTER(tpRenderSurfaceFactoryX11,tpRenderSurfaceFactory,RenderSurfaceFactoryX11);
-TP_MODULE_REGISTER(x11surface,tpRenderSurfaceFactoryX11)
+TP_TYPE_REGISTER(tpWindowX11,tpWindow,WindowX11);
+TP_TYPE_REGISTER(tpWindowFactoryX11,tpWindowFactory,WindowFactoryX11);
+TP_MODULE_REGISTER(x11surface,tpWindowFactoryX11)
 
 
 #endif
