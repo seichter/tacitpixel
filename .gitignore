@@ -4,3 +4,4 @@ build*
 .project
 *.blend1
 *.blend2
+qtcreator-build
