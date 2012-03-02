@@ -1,18 +1,10 @@
 #include <tp/arguments.h>
-
+#include <tp/stringtokenizer.h>
 
 
 tpArguments::tpArguments(int *argc, char* argv[])
 {
-	if (argc)
-	{
-		for (tpUInt i = 0;
-			 i < *argc;
-			 ++i)
-		{
-			this->mArguments.add(argv[i]);
-		}
-	}
+    setArguments(argc,argv);
 }
 
 bool
@@ -40,6 +32,11 @@ bool tpArguments::get(const tpString &param, tpUInt &value) const
     return ok;
 }
 
+void tpArguments::setArguments(const tpString &args)
+{
+    mArguments = tpStringTokenizer::split(args," ");
+}
+
 bool
 tpArguments::get(const tpString& param) const
 {
@@ -52,7 +49,20 @@ tpArguments::get(const tpString& param) const
 			return true;
 		}
 	}
-	return false;
+    return false;
+}
+
+void tpArguments::setArguments(int *argc, char *argv[])
+{
+    if (argc)
+    {
+        for (tpUInt i = 0;
+             i < *argc;
+             ++i)
+        {
+            this->mArguments.add(argv[i]);
+        }
+    }
 }
 
 

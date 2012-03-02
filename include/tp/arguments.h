@@ -28,16 +28,50 @@
 #include <tp/array.h>
 #include <tp/string.h>
 
+
+/**
+  * Argument parser for handling command line arguments
+  */
 class TP_API tpArguments {
 public:
 
+    /**
+      * Default constructor for assigning the arguments
+      * based on what has been passed in by a standard main.
+      *
+      * @param argc pointer to the argument count
+      * @param argv pointer to the argument values
+      */
 	explicit tpArguments(int *argc, char* argv[]);
+
 
 	bool get(const tpString &param) const;
     bool get(const tpString &param, tpString &value) const;
     bool get(const tpString &param, tpUInt &value) const;
 
+    /**
+      * A reference to the arguments passed in
+      *
+      * @return a reference to the string array
+      */
 	const tpStringArray& get() const { return mArguments; }
+
+    /**
+      * Convenience method for Windows. Here we only get the
+      * whole string and need to tokenize it.
+      *
+      * @param args argument string
+      */
+    void setArguments(const tpString& args);
+
+
+    /**
+      * Convenience method.
+      *
+      * @param argc pointer to the argument count
+      * @param argv pointer to the argument values
+      */
+    void setArguments(int *argc, char* argv[]);
 
 protected:
 

@@ -36,22 +36,57 @@ public:
     TP_TYPE_DECLARE
 
     enum {
-        kPbuffer = 0,
-        kPixmap,
-        kWindow
+        kPbuffer = 0,   //!< pixelbuffer
+        kPixmap,        //!< pixmap
+        kWindow         //!< on-screen window
     };
 
+    /**
+      * Default c'tor
+      */
     tpRenderTarget();
+
+    /**
+      * Get the type of the implementation!
+      */
     tpUChar getTargetType() const { return kWindow; }
 
+    /**
+      * Returns the window handle. This handle is being
+      * used for creating the tpRenderContext
+      * @return pointer to handle
+      */
     virtual tpRawPtr getWindow() { return 0L; }
+
+    /**
+      * Returns the display handle. This handle is beign
+      * used for creating the tpRenderContext
+      * @return pointer to handle
+      */
     virtual tpRawPtr getDisplay() { return 0L; }
 
 
+    /**
+      * Set the current context. If you provide 0L as
+      * input, the tpRenderTarget implementation will
+      * create a default context.
+      *
+      * @param context 0 for default or a pointer to a already existing context
+      */
     virtual void setContext(tpRenderContext *context);
 
+    /**
+      * Return the handle for the render context.
+      *
+      * @return pointer to context
+      */
     virtual tpRenderContext *getContext();
 
+    /**
+      * convenience method for checking if the context is already set
+      *
+      * @return true if the this instance holds already a context
+      */
     bool hasContext() const { return mContext.isValid(); }
 
 

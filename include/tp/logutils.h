@@ -32,8 +32,8 @@
 inline tpLog&
 operator << (tpLog& out, const char* s)
 {
-	out.printf(s);
-	return out;
+    out.printf(s);
+    return out;
 }
 
 template <typename T>

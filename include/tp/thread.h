@@ -42,7 +42,7 @@ struct TP_API tpRunnable {
 	  */
 	virtual void run() = 0;
 
-	virtual ~tpRunnable() {};
+    virtual ~tpRunnable() {}
 };
 
 /** structure holding the handle of the threading implementation */
@@ -91,6 +91,10 @@ public:
 	  */
 	void join();
 
+    /**
+      * Detaches the thread from the calling thread.
+      * This only has effect on pthreads!
+      */
 	void detach();
 
 	/**
@@ -107,6 +111,7 @@ public:
 	
 	/**
 	 * @brief get number of CPUs available
+     * @return returns number of cores or -1 if not available
 	 */
 	static int getCoreCount();
 

@@ -28,6 +28,10 @@
 #include <tp/globals.h>
 #include <tp/types.h>
 
+/**
+  * This is basically a wrapper around the dlmalloc library
+  * which provides aligned memory allocation.
+  */
 struct TP_API tpAllocator {
 
 	static void* malloc(tpSizeT size);

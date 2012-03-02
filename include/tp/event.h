@@ -153,6 +153,4 @@ public:
 };
 
 
-void TP_API tpEventHandlerTest();
-
 #endif
