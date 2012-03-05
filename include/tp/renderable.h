@@ -29,9 +29,43 @@
 #include <tp/node.h>
 #include <tp/material.h>
 #include <tp/texture.h>
+#include <tp/map.h>
 
-class TP_API tpRenderable : public tpNode
-{
+struct tpRenderFlag {
+
+    enum {
+        kLighting,
+        kBlending,
+        kColorMaterial
+    };
+
+    enum {
+        kLightAll,
+        kLightId
+    };
+
+    enum {
+        kBlendZero          = 0,
+        kBlendOne           = 1,
+        kBlendSrcAlpha,
+        kBlendOneMinusAlpha
+    };
+
+
+
+    tpUInt value1;
+    tpUInt value2;
+    tpRenderFlag(tpUInt value1_ = 0, tpUInt value2_ = 0) :
+        value1(value1_),
+        value2(value2_)
+    {
+    }
+};
+
+typedef tpMap<tpUInt,tpRenderFlag> tpRenderFlagMap;
+
+
+class TP_API tpRenderable : public tpNode {
 public:
 
 	TP_TYPE_DECLARE
@@ -60,26 +94,19 @@ public:
 	//! check if this material has a texture
 	bool hasTexture() const { return mTexture.isValid(); }
 
-	//! set if this material is renderable is for culling only
-	void setCulling(bool flag) { mCulling = flag; }
-	bool getCulling() const { return mCulling; }
+    void addRenderFlag(tpUInt scope, tpUInt value1 = 0, tpUInt value2 = 0)
+    { mFlags.add(scope,tpRenderFlag(value1,value2)); }
 
-	void setLighting(bool on) { mLighting = on; }
-	bool getLighting() const { return mLighting; }
+    void clearRenderFlags() { mFlags.clear(); }
 
-	void setAlpha(tpReal alpha) { mAlpha = alpha; }
-	tpReal getAlpha() const { return mAlpha; }
-	bool hasAlpha() const { return (mAlpha < 1.f); }
+    const tpRenderFlagMap& getRenderFlags() const { return mFlags; }
 
 
 protected:
 
 	tpRefPtr<tpMaterial>	mMaterial;
 	tpRefPtr<tpTexture>		mTexture;
-
-	bool		mCulling;
-	bool        mLighting;
-	tpReal		mAlpha;
+    tpRenderFlagMap         mFlags;
 
 };
 

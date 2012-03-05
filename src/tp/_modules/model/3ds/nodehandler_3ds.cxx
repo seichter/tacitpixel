@@ -146,7 +146,7 @@ tpNodeHandler_3DS::read(const tpString& name)
 
 		tpPrimitive* prim = new tpPrimitive(tpPrimitive::kTriangles);
 
-		tpPrimitive* pn = new tpPrimitive();
+        prim->addRenderFlag(tpRenderFlag::kLighting);
 
 		mesh->addChild(prim);
 		node->addChild(mesh);
@@ -166,7 +166,11 @@ tpNodeHandler_3DS::read(const tpString& name)
 
 			if (0 == prim->getMaterial()) {
 				tpRefPtr<tpMaterial> m = materialcache[face3ds->material];
-				if (m.isValid()) prim->setMaterial(m.get());
+                if (m.isValid()) {
+                    prim->addRenderFlag(tpRenderFlag::kColorMaterial);
+                    prim->setMaterial(m.get());
+                }
+
 			}
 
 

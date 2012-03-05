@@ -53,23 +53,25 @@ int main(int argc, char* argv[])
 	tpPrimitive* sphr_opaque = tpPrimitiveFactory::create(tpPrimitiveFactory::kSphere);
 	tpPrimitive* sphr_mat = tpPrimitiveFactory::create(tpPrimitiveFactory::kSphere);
 
-
-	prim->setAlpha(0.4f);
+    prim->addRenderFlag(tpRenderFlag::kBlending,tpRenderFlag::kBlendSrcAlpha,tpRenderFlag::kBlendOneMinusAlpha);
+    prim->addRenderFlag(tpRenderFlag::kColorMaterial);
 	prim->setUniformColor(tpVec4f(0.3,0.5,0.5,.3));
 	prim->scale(tpVec3f(3,3,3));
 
-
 	sphr->scale(tpVec3f(.3f,.3f,.3f));
 	sphr->translate(tpVec3f(0,0,-1));
+    sphr->addRenderFlag(tpRenderFlag::kColorMaterial);
 	sphr->setUniformColor(tpVec4f(1,0,0,.3));
 
 	sphr_opaque->scale(tpVec3f(.8,.8,.8));
 	sphr_opaque->translate(tpVec3f(0,0,-2));
 	sphr_opaque->setUniformColor(tpVec4f(0,1,0,1));
+    sphr_opaque->addRenderFlag(tpRenderFlag::kColorMaterial);
 
 	sphr_mat->scale(tpVec3f(.8,.8,.8));
 	sphr_mat->translate(tpVec3f(-2,0,0));
 	sphr_mat->setMaterial(tpMaterial::createDefault(0.64, 0.04814919, 0, .5));
+    sphr_mat->addRenderFlag(tpRenderFlag::kColorMaterial);
 
 	tpDebugPrimitive(*prim);
 
@@ -83,7 +85,7 @@ int main(int argc, char* argv[])
 
     tpRefPtr<tpTransform> lt = new tpTransform(tpMat44Op::translation(0.f,5.f,1.f));
 	tpRefPtr<tpLight> light = new tpLight();
-	light->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
+//	light->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
 
     lt->addChild(light.get());
 

@@ -27,9 +27,6 @@
 
 tpRenderable::tpRenderable(const tpString& name)
 	: tpNode(name)
-	, mCulling(false)
-	, mLighting(true)
-	, mAlpha(1.f)
 {
 }
 
@@ -47,9 +44,7 @@ tpRenderable::clone()
 }
 
 
-struct tpRenderFlag {
-    bool isOn() const { return false; }
-};
+
 
 
 TP_TYPE_REGISTER(tpRenderable,tpNode,Geometry);

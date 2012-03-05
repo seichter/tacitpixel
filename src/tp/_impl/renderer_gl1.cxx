@@ -420,10 +420,7 @@ public:
 	{
 		if (0 == mat) return;
 
-        glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
-        glEnable(GL_COLOR_MATERIAL);
-
-		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, mat->getAmbientColor().getData() );
+        glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, mat->getAmbientColor().getData() );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, mat->getDiffuseColor().getData() );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, mat->getSpecularColor().getData() );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, mat->getEmissiveColor().getData() );
@@ -450,46 +447,79 @@ public:
 
     }
 
+    GLenum getGL(const tpUInt blendval) {
+
+//        tpMap<tpUInt,GLenum> tp2glblend;
+//        tp2glblend.add(tpRenderFlag::kBlendOneMinusAlpha,GL_ONE_MINUS_SRC_ALPHA);
+
+        switch (blendval) {
+            case tpRenderFlag::kBlendOneMinusAlpha : return GL_ONE_MINUS_SRC_ALPHA;
+            case tpRenderFlag::kBlendZero : return GL_ZERO;
+            case tpRenderFlag::kBlendOne : return GL_ONE;
+            case tpRenderFlag::kBlendSrcAlpha : return GL_SRC_ALPHA;
+
+            // color material
+        }
+    }
+
+
+    void pushRenderFlags(const tpRenderFlagMap& map)
+    {
+        for(tpRenderFlagMap::const_iterator it = map.begin();
+            it != map.end();
+            it++)
+        {
+            switch (it->getKey()) {
+            case tpRenderFlag::kColorMaterial:
+                glEnable(GL_COLOR_MATERIAL);
+                break;
+            case tpRenderFlag::kLighting:
+                glEnable(GL_LIGHTING);
+                break;
+            case tpRenderFlag::kBlending:
+                glEnable(GL_BLEND);
+                glBlendFunc(getGL(it->getValue().value1),getGL(it->getValue().value2));
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
+    void popRenderFlags(const tpRenderFlagMap& map)
+    {
+        for(tpRenderFlagMap::const_iterator it = map.begin();
+            it != map.end();
+            it++)
+        {
+            switch (it->getKey()) {
+            case tpRenderFlag::kColorMaterial:
+                glDisable(GL_COLOR_MATERIAL);
+                break;
+            case tpRenderFlag::kLighting:
+                glDisable(GL_LIGHTING);
+                break;
+            case tpRenderFlag::kBlending:
+                glDisable(GL_BLEND);
+                glBlendFunc(GL_ONE,GL_ZERO);
+                break;
+            default:
+                break;
+            }
+        }
+
+    }
+
 
 	void onPrimitive(const tpPrimitive& prim,const tpMatrixStack& stack,bool secondPass = false)
 	{
-
-
-#if 1
-		// setup alpha
-		if (prim.hasAlpha())
-		{
-			if (!secondPass)
-			{
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-				glEnable( GL_BLEND );
-				glDisable(GL_LIGHTING);
-			} else {
-//				glDisable(GL_BLEND);
-//				glEnable(GL_LIGHTING);
-//				glDepthFunc(GL_EQUAL);
-			}
-
-		} else {
-
-			// first setup the lighting
-			if (prim.getLighting())
-			{
-				glEnable(GL_LIGHTING);
-			} else
-			{
-				glDisable(GL_LIGHTING);
-			}
-		}
-#endif
+        pushRenderFlags(prim.getRenderFlags());
 
         if (prim.hasTexture()) {
-//			(*this)(const_cast<tpTexture*>(prim.getTexture()));
+            (*this)(const_cast<tpTexture*>(prim.getTexture()));
         } else if (prim.hasMaterial()) {
             (*this)(prim.getMaterial());
-		} else if (prim.hasColors()) {
-//			glEnable(GL_COLOR_MATERIAL);
-		}
+        }
 
 
         glMatrixMode(GL_PROJECTION);
@@ -514,51 +544,41 @@ public:
         if (prim.hasNormals()) glEnableClientState(GL_NORMAL_ARRAY);
         if (prim.hasColors()) glEnableClientState(GL_COLOR_ARRAY);
         if (prim.hasTextureCoordinates()) glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
         glEnableClientState(GL_VERTEX_ARRAY);
 
-        tpSizeT countAll = 0;
-
-        while (countAll < prim.getVertices().getSize()) {
-
-            tpSizeT countRun = tpMin(prim.getVertices().getSize()-countAll,(tpSizeT)mMaxVertices);
-
-//            tpLogNotify("%d %d",countAll,countRun);
-
-            // render scene
-            if (prim.hasNormals()) {
-                glNormalPointer(GL_FLOAT,
-                                prim.getNormals().getStride()*sizeof(float),
-                                prim.getNormals().getDataOffset(countAll)
-                                );
-            }
-
-            if (prim.hasTextureCoordinates()) {
-                glTexCoordPointer(prim.getTextureCoordinates().getStride(),
-                                  GL_FLOAT,
-                                  prim.getTextureCoordinates().getStride()*sizeof(float),
-                                  prim.getTextureCoordinates().getDataOffset(countAll)
-                                  );
-            }
-
-            if (prim.hasColors()) {
-                glColorPointer(prim.getColors().getStride(),
-                               GL_FLOAT,
-                               prim.getColors().getStride()*sizeof(float),
-                               prim.getColors().getDataOffset(countAll)
-                               );
-            }
-
-
-            glVertexPointer(prim.getVertices().getStride(),
-                            GL_FLOAT, 0,
-                            prim.getVertices().getDataOffset(countAll)
+        // render scene
+        if (prim.hasNormals()) {
+            glNormalPointer(GL_FLOAT,
+                            prim.getNormals().getStride()*sizeof(float),
+                            prim.getNormals().getData()
                             );
-
-            glDrawArrays(prim.getPrimitiveType(),0,countRun);
-
-            countAll+=countRun;
-
         }
+
+        if (prim.hasTextureCoordinates()) {
+            glTexCoordPointer(prim.getTextureCoordinates().getStride(),
+                              GL_FLOAT,
+                              prim.getTextureCoordinates().getStride()*sizeof(float),
+                              prim.getTextureCoordinates().getData()
+                              );
+        }
+
+        if (prim.hasColors()) {
+            glColorPointer(prim.getColors().getStride(),
+                           GL_FLOAT,
+                           prim.getColors().getStride()*sizeof(float),
+                           prim.getColors().getData()
+                           );
+        }
+
+
+        glVertexPointer(prim.getVertices().getStride(),
+                        GL_FLOAT, 0,
+                        prim.getVertices().getData()
+                        );
+
+        glDrawArrays(prim.getPrimitiveType(),0,prim.getVertices().getSize());
+
 
         // is it necess
         glDisableClientState(GL_VERTEX_ARRAY);
@@ -569,21 +589,13 @@ public:
 
 
 		// disable state
-
-
 		if (prim.hasTexture()) {
 			const_cast<tpTexture*>(prim.getTexture())->getTextureObject()->deactivate();
 		}
 
-		if (prim.hasAlpha()) {
-			if (!secondPass) {
-//				onPrimitive(prim,stack,true);
-				glDepthFunc(GL_LESS);
-			}
-		}
+        popRenderFlags(prim.getRenderFlags());
 
-
-	}
+    }
 };
 
 tpGLRendererTraits tpRendererGL1x::mRendererTraits;

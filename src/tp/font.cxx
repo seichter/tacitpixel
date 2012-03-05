@@ -61,8 +61,7 @@ public:
 			return;
 		}
 
-		prim.clear();
-		prim.setLighting(false);
+        prim.clear();
 
 		float x(0),y(0);
 

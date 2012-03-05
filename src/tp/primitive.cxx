@@ -560,8 +560,7 @@ tpPrimitiveFactory::create( tpUShort primitive_type )
 		res->addVertexNormalColor(tpVec3r(0,0,0),tpVec3r(0,0,1),tpVec4r(0,0,1,1));
 		res->addVertexNormalColor(tpVec3r(0,0,1),tpVec3r(0,0,1),tpVec4r(0,0,1,1));
 
-		res->setLighting(false);
-		break;
+        break;
 
 	case kPlane:
 		res = new tpPrimitive(tpPrimitive::kTriangleStrip);
@@ -570,6 +569,8 @@ tpPrimitiveFactory::create( tpUShort primitive_type )
 		res->addVertexNormalTextureCoordinateColor(tpVec3r(1,0,0),tpVec3r(0,0,1),tpVec2r(1,1),tpVec4r(1,0,0,1)); // v1
 		res->addVertexNormalTextureCoordinateColor(tpVec3r(0,1,0),tpVec3r(0,0,1),tpVec2r(0,0),tpVec4r(0,1,0,1)); // v3
 		res->addVertexNormalTextureCoordinateColor(tpVec3r(1,1,0),tpVec3r(0,0,1),tpVec2r(1,0),tpVec4r(1,1,1,1)); // v2
+
+        res->addRenderFlag(tpRenderFlag::kLighting);
 
 		break;
 
@@ -619,6 +620,9 @@ tpPrimitiveFactory::create( tpUShort primitive_type )
 
 				}
 			}
+
+            res->addRenderFlag(tpRenderFlag::kLighting);
+
 		}
 
 	}
