@@ -31,12 +31,17 @@
 #include <tp/texture.h>
 #include <tp/map.h>
 
+/**
+  * A renderflag is wrapping the state of OpenGL in an
+  * abstract structure. This allows also other renderbackends
+  * to interprete it without relying on OpenGL.
+  */
 struct tpRenderFlag {
 
     enum {
-        kLighting,
-        kBlending,
-        kColorMaterial
+        kLighting,          //!< enables lighting (default is off)
+        kBlending,          //!< enables blending (default is off)
+        kColorMaterial      //!< enables materials (default is off)
     };
 
     enum {
@@ -51,8 +56,6 @@ struct tpRenderFlag {
         kBlendOneMinusAlpha
     };
 
-
-
     tpUInt value1;
     tpUInt value2;
     tpRenderFlag(tpUInt value1_ = 0, tpUInt value2_ = 0) :
@@ -62,6 +65,7 @@ struct tpRenderFlag {
     }
 };
 
+//! a storage type for the renderflags
 typedef tpMap<tpUInt,tpRenderFlag> tpRenderFlagMap;
 
 
@@ -94,13 +98,15 @@ public:
 	//! check if this material has a texture
 	bool hasTexture() const { return mTexture.isValid(); }
 
+    //! add a renderflag
     void addRenderFlag(tpUInt scope, tpUInt value1 = 0, tpUInt value2 = 0)
     { mFlags.add(scope,tpRenderFlag(value1,value2)); }
 
+    //! clear all renderflags
     void clearRenderFlags() { mFlags.clear(); }
 
+    //! get the list of renderflags
     const tpRenderFlagMap& getRenderFlags() const { return mFlags; }
-
 
 protected:
 

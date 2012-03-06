@@ -19,13 +19,14 @@
 #include <tp/version.h>
 #include <tp/map.h>
 #include <tp/stringformater.h>
+#include <tp/logutils.h>
 
 #include <lib3ds.h>
 
 class tpNodeHandler_3DS : public tpNodeHandler {
 public:
 
-	TP_TYPE_DECLARE;
+    TP_TYPE_DECLARE
 
 	tpNodeHandler_3DS()
 		: tpNodeHandler()
@@ -52,8 +53,6 @@ public:
 tpMaterial*
 createMaterial(Lib3dsMaterial* m3ds)
 {
-//	if (0 == m3ds) return tpDefaultMaterial;
-
 	if (0 == m3ds) return 0L;
 
 	tpLogNotify("created material %s",m3ds->name);
@@ -64,6 +63,12 @@ createMaterial(Lib3dsMaterial* m3ds)
 	material->setSpecularColor(tpVec4f(m3ds->specular[0] * m3ds->shin_strength,m3ds->specular[1] * m3ds->shin_strength,m3ds->specular[2] * m3ds->shin_strength,1));
 
 	material->setShininess(m3ds->shininess*128.f);
+
+    tpLog::get() << "a" << material->getAmbientColor() << "\n";
+    tpLog::get() << "d" << material->getDiffuseColor() << "\n";
+
+    exit(0);
+
 
 	return material;
 }
