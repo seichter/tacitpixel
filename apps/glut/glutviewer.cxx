@@ -16,12 +16,12 @@
 #include <tp/light.h>
 #include <tp/viewer.h>
 
-#include <GL/glut.h>
+//#include <GL/glut.h>
 
 int main(int argc, char* argv[])
 {
 	tpModuleManager::get()->load("3ds,obj");
 
 
-	glutInit(&argc,argv);
+//	glutInit(&argc,argv);
 }

@@ -29,19 +29,19 @@
 void
 tpDebugPrimitive(const tpPrimitive& p)
 {
-    for (int i = 0; i < p.getVertices().getSize();++i)
-    {
-        tpVec4f v(p.getVertices().getData()[i*4],
-                  p.getVertices().getData()[i*4+1],
-                  p.getVertices().getData()[i*4+2],
-                  p.getVertices().getData()[i*4+3]
-                  );
+	for (int i = 0; i < p.getVertices().getSize();++i)
+	{
+		tpVec4f v(p.getVertices().getData()[i*4],
+				  p.getVertices().getData()[i*4+1],
+				  p.getVertices().getData()[i*4+2],
+				  p.getVertices().getData()[i*4+3]
+				  );
 
-        tpVec4f n(p.getNormals().getData()[i*p.getNormals().getStride()],
-                  p.getNormals().getData()[i*p.getNormals().getStride()+1],
-                  p.getNormals().getData()[i*p.getNormals().getStride()+2],
-                  p.getNormals().getData()[i*p.getNormals().getStride()+3]
-                  );
+		tpVec4f n(p.getNormals().getData()[i*p.getNormals().getStride()],
+				  p.getNormals().getData()[i*p.getNormals().getStride()+1],
+				  p.getNormals().getData()[i*p.getNormals().getStride()+2],
+				  p.getNormals().getData()[i*p.getNormals().getStride()+3]
+				  );
 
 //        tpVec4f c(p.getColors().getData()[i*4],
 //                  p.getColors().getData()[i*4+1],
@@ -50,11 +50,11 @@ tpDebugPrimitive(const tpPrimitive& p)
 //                  );
 
 
-        tpLog::get() << "\nv " << v <<
-                        "\nn " << n <<
+		tpLog::get() << "\nv " << v <<
+						"\nn " << n <<
 //                        "\nc " << c <<
-                        "\n";
-    }
+						"\n";
+	}
 }
 
 
@@ -62,6 +62,7 @@ tpDebugPrimitive(const tpPrimitive& p)
 #if defined(TP_USE_OPENGL)
 	#if defined(__APPLE__)
 		#include <OpenGL/gl.h>
+		#include <OpenGL/glu.h>
 	#elif defined(_WIN32) || defined(__MINGW32__)
 		#define WIN32_LEAN_AND_MEAN 1
 		#include <Windows.h>
@@ -70,7 +71,7 @@ tpDebugPrimitive(const tpPrimitive& p)
 		#define GL_BGRA 0x80E1
 	#else
 		#include <GL/gl.h>
-        #include <GL/glu.h>
+		#include <GL/glu.h>
 	#endif
 #endif
 
@@ -178,7 +179,7 @@ public:
 
 			// hack!
 			glEnable(GL_BLEND);
-            glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+			glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 
 			GLenum format = getFormat(texture);
 
@@ -257,8 +258,8 @@ class tpRendererGL1x : public tpRenderer
 {
 public:
 
-    tpInt mMaxVertices;
-    tpInt mMaxElements;
+	tpInt mMaxVertices;
+	tpInt mMaxElements;
 
 	tpRendererGL1x()
 		: tpRenderer()
@@ -273,7 +274,7 @@ public:
 
 	void operator()(tpScene* scene)
 	{
-        static int count(0);
+		static int count(0);
 
 		count++;
 
@@ -282,8 +283,8 @@ public:
 			 it != scene->getCameras().end();
 			 ++it)
 		{
-            onCamera((*it).get());
-            onNode((*it).get());
+			onCamera((*it).get());
+			onNode((*it).get());
 		}
 
 		if (0 == (count % 100))
@@ -291,20 +292,20 @@ public:
 			tpLogNotify("t %lf ms",t.getElapsed(tpTimer::kTimeMilliSeconds));
 		}
 
+		glFlush();
+
 		glErrorCheck
 	}
 
 
-    bool
+	bool
 	onCamera(const tpCamera* camera)
 	{
-        // if the viewport is not being set just skip
-//        if (camera->getViewport()[2] && camera->getViewport()[3])
-//            glViewport(0,0,camera->getViewport()[2],camera->getViewport()[3]);
-//        else
-//            return false;
+		// if the viewport is not being set just skip
+		if (camera->getViewport()[2] && camera->getViewport()[3])
+			glViewport(0,0,camera->getViewport()[2],camera->getViewport()[3]);
 
-        tpUInt glclearflag(0);
+		tpUInt glclearflag(0);
 		if (camera->hasClearFlag(tpCamera::kClearColor))
 		{
 			glClearColor(camera->getClearColor()[0],camera->getClearColor()[1],camera->getClearColor()[2],camera->getClearColor()[3] );
@@ -318,7 +319,7 @@ public:
 
 		if (glclearflag) glClear(glclearflag);
 
-        return true;
+		return true;
 	}
 
 	void
@@ -331,8 +332,8 @@ public:
 
 		glShadeModel(GL_SMOOTH);
 		glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
-        glEnable(GL_AUTO_NORMAL);
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_AUTO_NORMAL);
 
 		// setup lights
 		tpNodeMatrixStackMap nodemap_lights = tpNodeOps::getNodeMatrixStackMap(node,tpLight::getTypeInfo());
@@ -370,30 +371,30 @@ public:
 //                    t.getElapsed(tpTimer::kTimeMilliSeconds));
 	}
 
-    void
-    onLight(const tpLight& light, const tpMatrixStack& stack)
+	void
+	onLight(const tpLight& light, const tpMatrixStack& stack)
 	{
-        // set modelview mode
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+		// set modelview mode
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 
-        // get the light transformation
-        tpMat<4,4,float> lpos = stack.model * stack.view * stack.projection;
-        lpos.transpose();
+		// get the light transformation
+		tpMat<4,4,float> lpos = stack.model * stack.view * stack.projection;
+		lpos.transpose();
 
 
-        // load it onto the stack
-        //glLoadMatrixf(lpos.data());
+		// load it onto the stack
+		//glLoadMatrixf(lpos.data());
 
-        // make a vector out of it
-        tpVec4f pos(0,0,0,light.isDirectional() ? 0.f : 1.f);
+		// make a vector out of it
+		tpVec4f pos(0,0,0,light.isDirectional() ? 0.f : 1.f);
 
-        // enable the light with the respective id
-        GLenum lid = light.getID()+GL_LIGHT0;
+		// enable the light with the respective id
+		GLenum lid = light.getID()+GL_LIGHT0;
 		glEnable(lid);
 
-        // set parameters and position
-        glLightfv(lid,GL_POSITION,pos.getData());
+		// set parameters and position
+		glLightfv(lid,GL_POSITION,pos.getData());
 		glLightfv(lid,GL_AMBIENT,light.getAmbientColor().getData());
 		glLightfv(lid,GL_DIFFUSE,light.getDiffuseColor().getData());
 		glLightfv(lid,GL_SPECULAR,light.getSpecularColor().getData());
@@ -415,16 +416,16 @@ public:
 		tex->getTextureObject()->activate();
 	}
 
-    void
-    onMaterial(const tpMaterial* mat) const
+	void
+	onMaterial(const tpMaterial* mat) const
 	{
-        return;
-        if (0 == mat) return;
+		return;
+		if (0 == mat) return;
 
 //        tpLog::get()<< "a " <<mat->getAmbientColor() << "\n";
 //        tpLog::get()<< "d " <<mat->getDiffuseColor() << "\n";
 
-        glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, mat->getAmbientColor().getData() );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, mat->getAmbientColor().getData() );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, mat->getDiffuseColor().getData() );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, mat->getSpecularColor().getData() );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, mat->getEmissiveColor().getData() );
@@ -432,197 +433,168 @@ public:
 	}
 
 
-    void quickTest()
-    {
-        float vertices[] = { 0,0,0, 0,1,0, 0,0,1, 0,0,1 };
-        float normals[] =  { 0,0,1, 0,0,1, 0,0,1, 0,0,1 };
+	void quickTest()
+	{
+		float vertices[] = { 0,0,0, 0,1,0, 0,0,1, 0,0,1 };
+		float normals[] =  { 0,0,1, 0,0,1, 0,0,1, 0,0,1 };
 
 
-        glEnableClientState(GL_NORMAL_ARRAY);
-        glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glEnableClientState(GL_VERTEX_ARRAY);
 
-        glNormalPointer(GL_FLOAT, 0, normals);
-        glVertexPointer(3, GL_FLOAT, 0, vertices);
+		glNormalPointer(GL_FLOAT, 0, normals);
+		glVertexPointer(3, GL_FLOAT, 0, vertices);
 
-        glDrawArrays(GL_TRIANGLES,0,4);
+		glDrawArrays(GL_TRIANGLES,0,4);
 
-        glDisableClientState(GL_NORMAL_ARRAY);
-        glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
 
-    }
+	}
 
-    GLenum getGL(const tpUInt blendval) {
+	GLenum getGL(const tpUInt blendval) {
 
 //        tpMap<tpUInt,GLenum> tp2glblend;
 //        tp2glblend.add(tpRenderFlag::kBlendOneMinusAlpha,GL_ONE_MINUS_SRC_ALPHA);
 
-        switch (blendval) {
-            case tpRenderFlag::kBlendOneMinusAlpha : return GL_ONE_MINUS_SRC_ALPHA;
-            case tpRenderFlag::kBlendZero : return GL_ZERO;
-            case tpRenderFlag::kBlendOne : return GL_ONE;
-            case tpRenderFlag::kBlendSrcAlpha : return GL_SRC_ALPHA;
+		switch (blendval) {
+			case tpRenderFlag::kBlendOneMinusAlpha : return GL_ONE_MINUS_SRC_ALPHA;
+			case tpRenderFlag::kBlendZero : return GL_ZERO;
+			case tpRenderFlag::kBlendOne : return GL_ONE;
+			case tpRenderFlag::kBlendSrcAlpha : return GL_SRC_ALPHA;
 
-            // color material
-        }
-    }
+			// color material
+		}
+	}
 
 
-    void pushRenderFlags(const tpRenderFlagMap& map)
-    {
-        // basically we are going back to OpenGL defaults
-        for(tpRenderFlagMap::const_iterator it = map.begin();
-            it != map.end();
-            it++)
-        {
-            switch (it->getKey()) {
-            case tpRenderFlag::kColorMaterial:
-                glEnable(GL_COLOR_MATERIAL);
-                break;
-            case tpRenderFlag::kLighting:
-                glEnable(GL_LIGHTING);
-                break;
-            case tpRenderFlag::kBlending:
-                glEnable(GL_BLEND);
-                glBlendFunc(getGL(it->getValue().value1),getGL(it->getValue().value2));
-                break;
-            default:
-                break;
-            }
-        }
-    }
+	void pushRenderFlags(const tpRenderFlagMap& map)
+	{
+		// basically we are going back to OpenGL defaults
+		for(tpRenderFlagMap::const_iterator it = map.begin();
+			it != map.end();
+			it++)
+		{
+			switch (it->getKey()) {
+			case tpRenderFlag::kColorMaterial:
+				glEnable(GL_COLOR_MATERIAL);
+				break;
+			case tpRenderFlag::kLighting:
+				glEnable(GL_LIGHTING);
+				break;
+			case tpRenderFlag::kBlending:
+				glEnable(GL_BLEND);
+				glBlendFunc(getGL(it->getValue().value1),getGL(it->getValue().value2));
+				break;
+			default:
+				break;
+			}
+		}
+	}
 
-    void popRenderFlags(const tpRenderFlagMap& map)
-    {
-        for(tpRenderFlagMap::const_iterator it = map.begin();
-            it != map.end();
-            it++)
-        {
-            switch (it->getKey()) {
-            case tpRenderFlag::kColorMaterial:
-                glDisable(GL_COLOR_MATERIAL);
-                break;
-            case tpRenderFlag::kLighting:
-                glDisable(GL_LIGHTING);
-                break;
-            case tpRenderFlag::kBlending:
-                glDisable(GL_BLEND);
-                glBlendFunc(GL_ONE,GL_ZERO);
-                break;
-            default:
-                break;
-            }
-        }
-    }
+	void popRenderFlags(const tpRenderFlagMap& map)
+	{
+		for(tpRenderFlagMap::const_iterator it = map.begin();
+			it != map.end();
+			it++)
+		{
+			switch (it->getKey()) {
+			case tpRenderFlag::kColorMaterial:
+				glDisable(GL_COLOR_MATERIAL);
+				break;
+			case tpRenderFlag::kLighting:
+				glDisable(GL_LIGHTING);
+				break;
+			case tpRenderFlag::kBlending:
+				glDisable(GL_BLEND);
+				glBlendFunc(GL_ONE,GL_ZERO);
+				break;
+			default:
+				break;
+			}
+		}
+	}
 
 
 	void onPrimitive(const tpPrimitive& prim,const tpMatrixStack& stack,bool secondPass = false)
 	{
-        pushRenderFlags(prim.getRenderFlags());
+		pushRenderFlags(prim.getRenderFlags());
 
-        if (prim.hasTexture()) {
-            (*this)(const_cast<tpTexture*>(prim.getTexture()));
-        } else if (prim.hasMaterial()) {
-            onMaterial(prim.getMaterial());
-        }
+		if (prim.hasTexture()) {
+			(*this)(const_cast<tpTexture*>(prim.getTexture()));
+		} else if (prim.hasMaterial()) {
+			onMaterial(prim.getMaterial());
+		}
 
-        // just sanity check - we are not touching the projection matrix usually
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
+		// just sanity check - we are not touching the projection matrix usually
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
 
-        gluPerspective(60,1.3,.1,100);
-
-        tpMat44f mpgl;
-        glGetFloatv(GL_PROJECTION_MATRIX,mpgl.data());
-
-        tpLog::get() << "p (gl) " << mpgl << "\n";
-        tpLog::get() << "p (tp) " << stack.projection << "\n";
-
-
-        // we are using our own transformation stack - hence all is done in the MV
+		// we are using our own transformation stack - hence all is done in the MV
 		glMatrixMode(GL_MODELVIEW);
 
-        // hence just compile the modelviewprojection matrix (prepared for OpenGL 2.0 / ES 2.0)
-        // actually the view matrix is the view inverse already
-        tpMat<4,4,float> mvp = stack.model * stack.view * stack.projection;
-
-//        tpMat<4,4,float> mvp = stack.projection * stack.view * stack.model;
+		// hence just compile the modelviewprojection matrix (prepared for OpenGL 2.0 / ES 2.0)
+		// actually the view matrix is the view inverse already
+		tpMat<4,4,float> mvp = stack.model * stack.view * stack.projection;
 
 		// load on the stack
-        glLoadMatrixf(mvp.data());
+		glLoadMatrixf(mvp.data());
 
-//        //glLoadMatrixf(mv.data());
-//        glLoadIdentity();
-//        gluLookAt(2,2,2,
-//                  0,0,0,
-//                  0,1,0);
-
-//        tpMat44f mv;
-//        glGetFloatv(GL_MODELVIEW_MATRIX,mv.data());
-
-//        tpLog::get() << "mv (tp) " << mvp << "\n";
-//        tpLog::get() << "mv (gl) " << mv << "\n";
+		// enable all relevant states
+		if (prim.hasNormals()) glEnableClientState(GL_NORMAL_ARRAY);
+		if (prim.hasColors()) glEnableClientState(GL_COLOR_ARRAY);
+		if (prim.hasTextureCoordinates()) glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 
+		// setup rendering state
+		glEnableClientState(GL_VERTEX_ARRAY);
 
-#if 1
-        // enable all relevant states
-        if (prim.hasNormals()) glEnableClientState(GL_NORMAL_ARRAY);
-        if (prim.hasColors()) glEnableClientState(GL_COLOR_ARRAY);
-        if (prim.hasTextureCoordinates()) glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		if (prim.hasNormals()) {
+			glNormalPointer(GL_FLOAT,
+							prim.getNormals().getStride()*sizeof(float),
+							prim.getNormals().getData()
+							);
+		}
 
+		if (prim.hasTextureCoordinates()) {
+			glTexCoordPointer(prim.getTextureCoordinates().getStride(),
+							  GL_FLOAT,
+							  prim.getTextureCoordinates().getStride()*sizeof(float),
+							  prim.getTextureCoordinates().getData()
+							  );
+		}
 
-        // setup rendering state
-        glEnableClientState(GL_VERTEX_ARRAY);
+		if (prim.hasColors()) {
+			glColorPointer(prim.getColors().getStride(),
+						   GL_FLOAT,
+						   prim.getColors().getStride()*sizeof(float),
+						   prim.getColors().getData()
+						   );
+		}
 
-        if (prim.hasNormals()) {
-            glNormalPointer(GL_FLOAT,
-                            prim.getNormals().getStride()*sizeof(float),
-                            prim.getNormals().getData()
-                            );
-        }
+		glVertexPointer(prim.getVertices().getStride(),
+						GL_FLOAT, 0,
+						prim.getVertices().getData()
+						);
 
-        if (prim.hasTextureCoordinates()) {
-            glTexCoordPointer(prim.getTextureCoordinates().getStride(),
-                              GL_FLOAT,
-                              prim.getTextureCoordinates().getStride()*sizeof(float),
-                              prim.getTextureCoordinates().getData()
-                              );
-        }
-
-        if (prim.hasColors()) {
-            glColorPointer(prim.getColors().getStride(),
-                           GL_FLOAT,
-                           prim.getColors().getStride()*sizeof(float),
-                           prim.getColors().getData()
-                           );
-        }
-
-        glVertexPointer(prim.getVertices().getStride(),
-                        GL_FLOAT, 0,
-                        prim.getVertices().getData()
-                        );
-
-        glDrawArrays(prim.getPrimitiveType(),0,prim.getVertices().getSize());
+		glDrawArrays(prim.getPrimitiveType(),0,prim.getVertices().getSize());
 
 
-        // and all off again
-        glDisableClientState(GL_VERTEX_ARRAY);
+		// and all off again
+		glDisableClientState(GL_VERTEX_ARRAY);
 
-        if (prim.hasNormals()) glDisableClientState(GL_NORMAL_ARRAY);
-        if (prim.hasTextureCoordinates()) glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-        if (prim.hasColors()) glDisableClientState(GL_COLOR_ARRAY);
-#else
+		if (prim.hasNormals()) glDisableClientState(GL_NORMAL_ARRAY);
+		if (prim.hasTextureCoordinates()) glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		if (prim.hasColors()) glDisableClientState(GL_COLOR_ARRAY);
 
-        quickTest();
-#endif
-        // disable texture state
+		// disable texture state
 		if (prim.hasTexture()) {
 			const_cast<tpTexture*>(prim.getTexture())->getTextureObject()->deactivate();
 		}
 
-        popRenderFlags(prim.getRenderFlags());
+		popRenderFlags(prim.getRenderFlags());
 
-    }
+	}
 };
 
 tpGLRendererTraits tpRendererGL1x::mRendererTraits;

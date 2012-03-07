@@ -85,23 +85,23 @@ struct TP_API tpMat44Op {
 	  * @param matOut output of the calculation
 	  */
 	template <typename T>
-    static void frustum(T Left,T Right,T Bottom,T Top,T zNear,T zFar,tpMat<4,4,T>& matOut)
+	static void frustum(T Left,T Right,T Bottom,T Top,T zNear,T zFar,tpMat<4,4,T>& matOut)
 	{
-        printf("n:%3.3f f:%3.3f\n",zNear,zFar);
+		printf("n:%3.3f f:%3.3f\n",zNear,zFar);
 
 		matOut.fill(0);
 
-        matOut(0,0) = 2 * zNear/(Right-Left);
-        matOut(1,1) = 2 * zNear/(Top-Bottom);
+		matOut(0,0) = 2 * zNear/(Right-Left);
+		matOut(1,1) = 2 * zNear/(Top-Bottom);
 
-        matOut(0,2) =     (Right+Left)/(Right-Left);	//A
-        matOut(1,2) =     (Top+Bottom)/(Top-Bottom);	//B
-        matOut(2,2) = -   (zFar+zNear)/(zFar-zNear);		//C
-        matOut(3,2) = -(2 * zFar*zNear)/(zFar-zNear);     //D
+		matOut(0,2) =     (Right+Left)/(Right-Left);	//A
+		matOut(1,2) =     (Top+Bottom)/(Top-Bottom);	//B
+		matOut(2,2) = -   (zFar+zNear)/(zFar-zNear);		//C
+		matOut(3,2) = -(2 * zFar*zNear)/(zFar-zNear);     //D
 
-        printf("ud %3.3f",matOut(3,2));
+		printf("ud %3.3f",matOut(3,2));
 
-        printf("ud %3.3f",-(T(2) * zFar*zNear)/(zFar-zNear));
+		printf("ud %3.3f",-(T(2) * zFar*zNear)/(zFar-zNear));
 
 		matOut(2,3) = -1;
 	}
@@ -116,16 +116,12 @@ struct TP_API tpMat44Op {
 	  * @param matOut output of the calculation
 	  */
 	template <typename T>
-    static void perspective(T fovY, T aspectRatio, T Near, T Far, tpMat<4,4,T>& matOut)
-    {
+	static void perspective(T fovY, T aspectRatio, T zNear, T zFar, tpMat<4,4,T>& matOut)
+	{
+		T height = zNear * tan(fovY/T(360)*TP_PI);          // half height of near plane
+		T width = height * aspectRatio;      // half width of near plane
 
-        const T DEG2RAD = TP_PI / 180;
-
-        T tangent = tan(fovY/2 * DEG2RAD);   // tangent of half fovY
-        T height = Near * tangent;          // half height of near plane
-        T width = height * aspectRatio;      // half width of near plane
-
-        tpMat44Op::frustum( -width, width, -height, height, Near, Far, matOut );
+		tpMat44Op::frustum( -width, width, -height, height, zNear, zFar, matOut );
 	}
 
 	/**
@@ -153,11 +149,11 @@ struct TP_API tpMat44Op {
 		matOut(3,3) = 1;
 	}
 
-    template <typename T>
-    static tpMat44<T> translation(T x, T y, T z)
-    {
-        tpMat44<T> out; out.setTranslation(x,y,z); return out;
-    }
+	template <typename T>
+	static tpMat44<T> translation(T x, T y, T z)
+	{
+		tpMat44<T> out; out.setTranslation(x,y,z); return out;
+	}
 
 };
 

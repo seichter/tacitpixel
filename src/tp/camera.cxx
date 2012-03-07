@@ -80,12 +80,7 @@ tpCamera::setTranslation(const tpVec3r &t)
 
 void tpCamera::setProjectionPerspective( const tpReal& fov, const tpReal& aspect, const tpReal& n, const tpReal& f )
 {
-    printf("n:%3.3f f:%3.3f\n",n,f);
-
 	tpMat44Op::perspective(fov,aspect,n,f,mProjection);
-
-    tpLog::get() << "Cp " << mProjection << "\n";
-    exit(0);
 }
 
 void tpCamera::setProjectionFrustum( const tpReal& l, const tpReal& r, const tpReal& b, const tpReal& t, const tpReal& n, const tpReal& f )
