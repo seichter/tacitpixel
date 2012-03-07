@@ -6,6 +6,7 @@ if(GLUT_FOUND)
 	include_directories(
 		${CMAKE_SOURCE_DIR}/include
 		${GLUT_INCLUDE_DIRS}
+		${OPENGL_INCLUDE_DIRS}
 		)
 
 	set(srcs
@@ -21,6 +22,7 @@ if(GLUT_FOUND)
 	target_link_libraries(glutviewer
 		tacit
 		${GLUT_LIBRARIES}
+		${OPENGL_LIBRARIES}
 		)
 		
 endif()

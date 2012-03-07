@@ -42,8 +42,6 @@ tpNode* tpOBJ(const tpString& filename)
 	// regenerate the model structure
 	glmUnitize(model);
 
-	glmReverseWinding(model);
-	glmReverseWinding(model);
 	glmFacetNormals(model);
 	// should make the crease angle an option
 	glmVertexNormals(model,89);
@@ -128,6 +126,7 @@ tpNode* tpOBJ(const tpString& filename)
 				if (material->name) mat->setName(material->name);
 
 				mesh->setMaterial(mat);
+                mesh->addRenderFlag(tpRenderFlag::kLighting);
 
 				tpLogNotify("%s - Ambient: %3.3f %3.3f %3.3f %3.3f",
 						__FUNCTION__,

@@ -292,6 +292,7 @@ public:
 			tpLogNotify("t %lf ms",t.getElapsed(tpTimer::kTimeMilliSeconds));
 		}
 
+        glFinish();
 		glFlush();
 
 		glErrorCheck
@@ -332,8 +333,6 @@ public:
 
 		glShadeModel(GL_SMOOTH);
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
-		glEnable(GL_AUTO_NORMAL);
 
 		// setup lights
 		tpNodeMatrixStackMap nodemap_lights = tpNodeOps::getNodeMatrixStackMap(node,tpLight::getTypeInfo());
@@ -374,30 +373,47 @@ public:
 	void
 	onLight(const tpLight& light, const tpMatrixStack& stack)
 	{
-		// set modelview mode
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+        applyStack(stack);
 
-		// get the light transformation
-		tpMat<4,4,float> lpos = stack.model * stack.view * stack.projection;
-		lpos.transpose();
+        // enable the light with the respective id
+        GLenum lid = light.getID()+GL_LIGHT0;
 
 
-		// load it onto the stack
-		//glLoadMatrixf(lpos.data());
+        tpVec4f pos,dir;
 
-		// make a vector out of it
-		tpVec4f pos(0,0,0,light.isDirectional() ? 0.f : 1.f);
+        if (light.isDirectional()) {
 
-		// enable the light with the respective id
-		GLenum lid = light.getID()+GL_LIGHT0;
-		glEnable(lid);
+            tpLogNotify("Spot light");
 
-		// set parameters and position
-		glLightfv(lid,GL_POSITION,pos.getData());
-		glLightfv(lid,GL_AMBIENT,light.getAmbientColor().getData());
-		glLightfv(lid,GL_DIFFUSE,light.getDiffuseColor().getData());
-		glLightfv(lid,GL_SPECULAR,light.getSpecularColor().getData());
+            float focus = 1.f;
+            float angle = 45.f;
+
+            // just all zero
+            glLightfv(lid, GL_POSITION,         &pos[0]);
+            glLightfv(lid, GL_SPOT_DIRECTION,   dir.getData());
+
+            // set parameters and position
+            glLightf (lid, GL_SPOT_EXPONENT,    focus);
+            glLightf (lid, GL_SPOT_CUTOFF,      angle);
+
+        } else {
+
+            // for a point light the coordinates are in homogenous
+            // object coordinates.
+            GLfloat null[] = {0.0, 0.0, 1.0, 0.0};
+            glLightfv(lid, GL_POSITION,null);
+        }
+
+
+        glLightfv(lid,GL_AMBIENT,light.getAmbientColor().getData());
+        glLightfv(lid,GL_DIFFUSE,light.getDiffuseColor().getData());
+        glLightfv(lid,GL_SPECULAR,light.getSpecularColor().getData());
+
+//        glLightf (GL_LIGHT1, GL_LINEAR_ATTENUATION,    0.0f);
+//        glLightf (GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.0f);
+//        glLightf (GL_LIGHT1, GL_CONSTANT_ATTENUATION,  0.0);
+
+        glEnable(lid);
 
 		//#define GL_SEPARATE_SPECULAR_COLOR 0x81FA
 		//glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
@@ -465,6 +481,7 @@ public:
 
 			// color material
 		}
+        return 0;
 	}
 
 
@@ -515,6 +532,21 @@ public:
 		}
 	}
 
+    void applyStack(const tpMatrixStack& stack)
+    {
+        // just sanity check - we are not touching the projection matrix usually
+        glMatrixMode(GL_PROJECTION);
+        glLoadMatrixf(stack.projection.data());
+
+        // we are using our own transformation stack - hence all is done in the MV
+        glMatrixMode(GL_MODELVIEW);
+        glLoadMatrixf(stack.view.data());
+
+        // load on the stack
+        glMultMatrixf(stack.model.data());
+
+    }
+
 
 	void onPrimitive(const tpPrimitive& prim,const tpMatrixStack& stack,bool secondPass = false)
 	{
@@ -526,19 +558,7 @@ public:
 			onMaterial(prim.getMaterial());
 		}
 
-		// just sanity check - we are not touching the projection matrix usually
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-
-		// we are using our own transformation stack - hence all is done in the MV
-		glMatrixMode(GL_MODELVIEW);
-
-		// hence just compile the modelviewprojection matrix (prepared for OpenGL 2.0 / ES 2.0)
-		// actually the view matrix is the view inverse already
-		tpMat<4,4,float> mvp = stack.model * stack.view * stack.projection;
-
-		// load on the stack
-		glLoadMatrixf(mvp.data());
+        applyStack(stack);
 
 		// enable all relevant states
 		if (prim.hasNormals()) glEnableClientState(GL_NORMAL_ARRAY);
@@ -577,7 +597,7 @@ public:
 						prim.getVertices().getData()
 						);
 
-		glDrawArrays(prim.getPrimitiveType(),0,prim.getVertices().getSize());
+        glDrawArrays(prim.getPrimitiveType(),0,prim.getVertices().getSize());
 
 
 		// and all off again

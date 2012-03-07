@@ -87,9 +87,7 @@ struct TP_API tpMat44Op {
 	template <typename T>
 	static void frustum(T Left,T Right,T Bottom,T Top,T zNear,T zFar,tpMat<4,4,T>& matOut)
 	{
-		printf("n:%3.3f f:%3.3f\n",zNear,zFar);
-
-		matOut.fill(0);
+        matOut.fill(0);
 
 		matOut(0,0) = 2 * zNear/(Right-Left);
 		matOut(1,1) = 2 * zNear/(Top-Bottom);
@@ -98,10 +96,6 @@ struct TP_API tpMat44Op {
 		matOut(1,2) =     (Top+Bottom)/(Top-Bottom);	//B
 		matOut(2,2) = -   (zFar+zNear)/(zFar-zNear);		//C
 		matOut(3,2) = -(2 * zFar*zNear)/(zFar-zNear);     //D
-
-		printf("ud %3.3f",matOut(3,2));
-
-		printf("ud %3.3f",-(T(2) * zFar*zNear)/(zFar-zNear));
 
 		matOut(2,3) = -1;
 	}

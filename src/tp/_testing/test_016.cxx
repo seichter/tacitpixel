@@ -72,6 +72,7 @@ int main(int argc, char* argv[])
 	sphr_mat->translate(tpVec3f(-2,0,0));
 	sphr_mat->setMaterial(tpMaterial::createDefault(0.64, 0.04814919, 0, .5));
     sphr_mat->addRenderFlag(tpRenderFlag::kColorMaterial);
+    sphr_mat->addRenderFlag(tpRenderFlag::kLighting);
 
 	tpDebugPrimitive(*prim);
 
@@ -85,6 +86,7 @@ int main(int argc, char* argv[])
 
     tpRefPtr<tpTransform> lt = new tpTransform(tpMat44Op::translation(0.f,5.f,1.f));
 	tpRefPtr<tpLight> light = new tpLight();
+    light->setDirectional(true);
 //	light->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
 
     lt->addChild(light.get());
