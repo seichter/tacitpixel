@@ -19,6 +19,12 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${LIB_OUTPUT_PATH} CACHE 
 # prevent direct installation into the host machine
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/staging CACHE PATH "Installation directory" FORCE)
 
+if(NOT MINGW AND ${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+endif()
+
+
 # shut up the compiler
 if(MSVC)
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
