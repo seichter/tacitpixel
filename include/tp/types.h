@@ -96,7 +96,7 @@ struct tpPoint {
 	tpInt x, y;
 
 	inline
-	tpPoint(tpInt x_, tpInt y_)
+    tpPoint(tpInt x_ = 0, tpInt y_ = 0)
 		: x(x_)
 		, y(y_)
 	{}

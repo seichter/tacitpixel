@@ -23,5 +23,5 @@ int main(int argc, char* argv[])
 	tpModuleManager::get()->load("3ds,obj");
 
 
-	glutInit(argc,argv);
+	glutInit(&argc,argv);
 }

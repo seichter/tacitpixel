@@ -20,6 +20,7 @@ if(GLUT_FOUND)
 
 	target_link_libraries(glutviewer
 		tacit
+		${GLUT_LIBRARIES}
 		)
 		
 endif()

@@ -64,10 +64,10 @@ createMaterial(Lib3dsMaterial* m3ds)
 
 	material->setShininess(m3ds->shininess*128.f);
 
-    tpLog::get() << "a" << material->getAmbientColor() << "\n";
-    tpLog::get() << "d" << material->getDiffuseColor() << "\n";
+//    tpLog::get() << "a" << material->getAmbientColor() << "\n";
+//    tpLog::get() << "d" << material->getDiffuseColor() << "\n";
 
-    exit(0);
+//    exit(0);
 
 
 	return material;

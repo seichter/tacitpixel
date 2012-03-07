@@ -70,6 +70,7 @@ tpDebugPrimitive(const tpPrimitive& p)
 		#define GL_BGRA 0x80E1
 	#else
 		#include <GL/gl.h>
+        #include <GL/glu.h>
 	#endif
 #endif
 
@@ -281,8 +282,8 @@ public:
 			 it != scene->getCameras().end();
 			 ++it)
 		{
-			this->onCamera((*it).get());
-			this->onNode((*it).get());
+            onCamera((*it).get());
+            onNode((*it).get());
 		}
 
 		if (0 == (count % 100))
@@ -294,11 +295,16 @@ public:
 	}
 
 
-	void
+    bool
 	onCamera(const tpCamera* camera)
 	{
+        // if the viewport is not being set just skip
+//        if (camera->getViewport()[2] && camera->getViewport()[3])
+//            glViewport(0,0,camera->getViewport()[2],camera->getViewport()[3]);
+//        else
+//            return false;
 
-		tpUInt glclearflag(0);
+        tpUInt glclearflag(0);
 		if (camera->hasClearFlag(tpCamera::kClearColor))
 		{
 			glClearColor(camera->getClearColor()[0],camera->getClearColor()[1],camera->getClearColor()[2],camera->getClearColor()[3] );
@@ -312,8 +318,7 @@ public:
 
 		if (glclearflag) glClear(glclearflag);
 
-        glViewport(0,0,camera->getViewport()[2],camera->getViewport()[3]);
-
+        return true;
 	}
 
 	void
@@ -327,6 +332,7 @@ public:
 		glShadeModel(GL_SMOOTH);
 		glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
+        glEnable(GL_AUTO_NORMAL);
 
 		// setup lights
 		tpNodeMatrixStackMap nodemap_lights = tpNodeOps::getNodeMatrixStackMap(node,tpLight::getTypeInfo());
@@ -369,13 +375,15 @@ public:
 	{
         // set modelview mode
         glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
 
         // get the light transformation
         tpMat<4,4,float> lpos = stack.model * stack.view * stack.projection;
         lpos.transpose();
 
+
         // load it onto the stack
-        glLoadMatrixf(lpos.data());
+        //glLoadMatrixf(lpos.data());
 
         // make a vector out of it
         tpVec4f pos(0,0,0,light.isDirectional() ? 0.f : 1.f);
@@ -410,10 +418,11 @@ public:
     void
     onMaterial(const tpMaterial* mat) const
 	{
+        return;
         if (0 == mat) return;
 
-        tpLog::get()<< "a " <<mat->getAmbientColor() << "\n";
-        tpLog::get()<< "d " <<mat->getDiffuseColor() << "\n";
+//        tpLog::get()<< "a " <<mat->getAmbientColor() << "\n";
+//        tpLog::get()<< "d " <<mat->getDiffuseColor() << "\n";
 
         glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, mat->getAmbientColor().getData() );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, mat->getDiffuseColor().getData() );
@@ -503,7 +512,6 @@ public:
                 break;
             }
         }
-
     }
 
 
@@ -521,6 +529,15 @@ public:
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
 
+        gluPerspective(60,1.3,.1,100);
+
+        tpMat44f mpgl;
+        glGetFloatv(GL_PROJECTION_MATRIX,mpgl.data());
+
+        tpLog::get() << "p (gl) " << mpgl << "\n";
+        tpLog::get() << "p (tp) " << stack.projection << "\n";
+
+
         // we are using our own transformation stack - hence all is done in the MV
 		glMatrixMode(GL_MODELVIEW);
 
@@ -528,9 +545,26 @@ public:
         // actually the view matrix is the view inverse already
         tpMat<4,4,float> mvp = stack.model * stack.view * stack.projection;
 
-		// load on the stack
-		glLoadMatrixf(mvp.data());
+//        tpMat<4,4,float> mvp = stack.projection * stack.view * stack.model;
 
+		// load on the stack
+        glLoadMatrixf(mvp.data());
+
+//        //glLoadMatrixf(mv.data());
+//        glLoadIdentity();
+//        gluLookAt(2,2,2,
+//                  0,0,0,
+//                  0,1,0);
+
+//        tpMat44f mv;
+//        glGetFloatv(GL_MODELVIEW_MATRIX,mv.data());
+
+//        tpLog::get() << "mv (tp) " << mvp << "\n";
+//        tpLog::get() << "mv (gl) " << mv << "\n";
+
+
+
+#if 1
         // enable all relevant states
         if (prim.hasNormals()) glEnableClientState(GL_NORMAL_ARRAY);
         if (prim.hasColors()) glEnableClientState(GL_COLOR_ARRAY);
@@ -577,7 +611,10 @@ public:
         if (prim.hasNormals()) glDisableClientState(GL_NORMAL_ARRAY);
         if (prim.hasTextureCoordinates()) glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         if (prim.hasColors()) glDisableClientState(GL_COLOR_ARRAY);
+#else
 
+        quickTest();
+#endif
         // disable texture state
 		if (prim.hasTexture()) {
 			const_cast<tpTexture*>(prim.getTexture())->getTextureObject()->deactivate();
