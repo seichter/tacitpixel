@@ -16,94 +16,97 @@
 #include <tp/light.h>
 #include <tp/viewer.h>
 
-#include <GL/glut.h>
-
+#if defined(__APPLE__)
+	#include <GLUT/glut.h>
+#else
+	#include <GL/glut.h>
+#endif
 
 
 tpRefPtr<tpPrimitive> prim;
 
 
 struct tpGL_TestRig {
-    tpRefPtr<tpCamera> camera;
+	tpRefPtr<tpCamera> camera;
 
-    tpGL_TestRig()
-    {
+	tpGL_TestRig()
+	{
 
-        camera = new tpCamera;
-        camera->setProjectionPerspective(45,1.3,1,100);
-        camera->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
+		camera = new tpCamera;
+		camera->setProjectionPerspective(45,1.3,1,100);
+		camera->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
 
-        tpLog::get() << "tp (p) " << camera->getProjection() << "\n";
-        tpLog::get() << "tp (v) " << camera->getView() << "\n";
-        tpLog::get() << "tp (vi) " << camera->getViewInverse() << "\n";
-    }
-
-
-    void setup(unsigned int v)
-    {
-        switch (v) {
-
-        case 0:
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            gluPerspective(45,1.3,1,100);
-
-            glMatrixMode(GL_MODELVIEW);
-            glLoadIdentity();
-            gluLookAt(2,2,2,
-                      0,0,0,
-                      0,1,0);
-
-            break;
-
-       case 1:
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            glLoadMatrixf(camera->getProjection().data());
+		tpLog::get() << "tp (p) " << camera->getProjection() << "\n";
+		tpLog::get() << "tp (v) " << camera->getView() << "\n";
+		tpLog::get() << "tp (vi) " << camera->getViewInverse() << "\n";
+	}
 
 
-            glMatrixMode(GL_MODELVIEW);
-            glLoadIdentity();
-            gluLookAt(2,2,2,
-                      0,0,0,
-                      0,1,0);
+	void setup(unsigned int v)
+	{
+		switch (v) {
 
-            break;
+		case 0:
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			gluPerspective(45,1.3,1,100);
 
-        case 2:
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+			gluLookAt(2,2,2,
+					  0,0,0,
+					  0,1,0);
 
-        {
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            glLoadMatrixf(camera->getProjection().data());
+			break;
+
+	   case 1:
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glLoadMatrixf(camera->getProjection().data());
 
 
-            glMatrixMode(GL_MODELVIEW);
-            glLoadIdentity();
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+			gluLookAt(2,2,2,
+					  0,0,0,
+					  0,1,0);
 
-            glLoadMatrixf(camera->getViewInverse().data());
-        }
-            break;
-        case 3:
+			break;
 
-        {
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
+		case 2:
 
-            glMatrixMode(GL_MODELVIEW);
-            glLoadIdentity();
+		{
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glLoadMatrixf(camera->getProjection().data());
 
-            tpMat44f mvp = tpMat44f::Identity();
-            mvp *= camera->getProjection();
-            mvp *= camera->getViewInverse();
 
-            glLoadMatrixf(mvp.data());
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
 
-        }
+			glLoadMatrixf(camera->getViewInverse().data());
+		}
+			break;
+		case 3:
 
-        }
+		{
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
 
-    }
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+			tpMat44f mvp = tpMat44f::Identity();
+			mvp *= camera->getProjection();
+			mvp *= camera->getViewInverse();
+
+			glLoadMatrixf(mvp.data());
+
+		}
+
+		}
+
+	}
 
 };
 
@@ -112,49 +115,49 @@ tpGL_TestRig tpgl_testrig;
 
 void display() {
 
-    tpVec4f c(.2,.3,.4,1);
-    glClearColor(c[0],c[1],c[2],c[3]);
+	tpVec4f c(.2,.3,.4,1);
+	glClearColor(c[0],c[1],c[2],c[3]);
 
-    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-    tpgl_testrig.setup(3);
+	tpgl_testrig.setup(3);
 
-    glutSolidTeapot(1);
+	glutSolidTeapot(1);
 
-    glutSwapBuffers();
+	glutSwapBuffers();
 
-    tpMat44f m;
-    glGetFloatv(GL_PROJECTION_MATRIX,m.data());
-    tpLog::get() << "gl (p) " << m << "\n";
+	tpMat44f m;
+	glGetFloatv(GL_PROJECTION_MATRIX,m.data());
+	tpLog::get() << "gl (p) " << m << "\n";
 
-    glGetFloatv(GL_MODELVIEW_MATRIX,m.data());
-    tpLog::get() << "gl (mv) " << m << "\n";
+	glGetFloatv(GL_MODELVIEW_MATRIX,m.data());
+	tpLog::get() << "gl (mv) " << m << "\n";
 
 }
 
 
 int main(int argc, char* argv[])
 {
-    tpModuleManager::get()->load("3ds,obj");
+	tpModuleManager::get()->load("3ds,obj");
 
-    glutInit(&argc,argv);
+	glutInit(&argc,argv);
 
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 
-    glutCreateWindow("tacit pixel + GLUT");
-
-
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-
-    glEnable(GL_DEPTH_TEST);
+	glutCreateWindow("tacit pixel + GLUT");
 
 
-    glutDisplayFunc(display);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
 
-    glutMainLoop();
+	glEnable(GL_DEPTH_TEST);
 
 
-    return 0;
+	glutDisplayFunc(display);
+
+	glutMainLoop();
+
+
+	return 0;
 
 }

@@ -160,7 +160,7 @@ tpWindowCocoa::tpWindowCocoa(tpWindowTraits* traits)
 	GetCurrentProcess(&PSN);
 	TransformProcessType(&PSN,kProcessTransformToForegroundApplication);
 
-	this->setSize(width,height);
+	this->setClientAreaSize(width,height);
 
 	[pool release];
 
@@ -194,10 +194,28 @@ tpVec2i tpWindowCocoa::getSize() const {
 	s[0] =  (int)floor(size.width);
 	s[1] = (int)floor(size.height);
 
-
-	tpLogNotify("Size: %dx%d",s[0],s[1]);
-
 	return s;
+}
+
+tpVec2i
+tpWindowCocoa::getClientAreaSize() const
+{
+	NSView* view = [window contentView];
+	NSRect rect = [view frame];
+	return tpVec2i(rect.size.width,rect.size.height);
+}
+
+void
+tpWindowCocoa::setClientAreaSize(tpUInt w, tpUInt h)
+{
+	NSView* view = [window contentView];
+
+	NSRect rect = [view frame];
+
+	rect.size.width = w; rect.size.height = h;
+
+	[view setNeedsDisplay: YES];
+
 }
 
 void
@@ -205,7 +223,8 @@ tpWindowCocoa::setSize(tpInt w, tpInt h) {
 	NSRect rect = [window frame];
 	rect.size.width = w;
 	rect.size.height = h;
-	[window setFrame:rect display:true animate: true];
+
+	[window contentRectForFrameRect:[window frame]];
 }
 
 void tpWindowCocoa::update()

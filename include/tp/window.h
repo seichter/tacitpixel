@@ -47,7 +47,7 @@ class TP_API tpWindowFactory : public tpReferenced {
 protected:
 	friend class tpWindow;
 public:
-    TP_TYPE_DECLARE
+	TP_TYPE_DECLARE
 	virtual tpWindow* create( tpWindowTraits* ) = 0;
 };
 
@@ -56,7 +56,7 @@ class TP_API tpRenderBufferFactory : public tpReferenced {
 protected:
 	friend class tpRenderBuffer;
 public:
-    TP_TYPE_DECLARE
+	TP_TYPE_DECLARE
 	virtual tpRenderBuffer* create( const tpSize& size, tpUInt pixelformat ) = 0;
 };
 
@@ -152,7 +152,7 @@ public:
 class TP_API tpRenderBuffer : public tpRenderTarget {
 public:
 
-    TP_TYPE_DECLARE
+	TP_TYPE_DECLARE
 
 	static tpRenderBuffer* create(const tpSize& size, const tpUInt pixelformat);
 
@@ -201,6 +201,11 @@ public:
 	void setDone(bool done = true) { mDone = done; }
 
 	tpEventHandler& getEventHandler() { return mEventHandler; }
+
+
+	virtual void setClientAreaSize(tpUInt w, tpUInt h);
+	virtual tpVec2i getClientAreaSize() const;
+
 
 protected:
 

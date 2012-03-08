@@ -89,6 +89,17 @@ void tpWindow::setSize( tpInt w, tpInt h )
 {
 }
 
+tpVec2i
+tpWindow::getClientAreaSize() const
+{
+	return tpVec2i(-1,-1);
+}
+
+void
+tpWindow::setClientAreaSize( tpUInt w, tpUInt h )
+{
+}
+
 void tpWindow::setPosition( tpInt x, tpInt y )
 {
 

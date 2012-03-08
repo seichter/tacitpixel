@@ -44,11 +44,16 @@ public:
 	virtual void setSize(tpInt w, tpInt h);
 
 
+	virtual tpVec2i getClientAreaSize() const;
+	virtual void setClientAreaSize(tpUInt w, tpUInt h);
+
+
 	void setCaption(const tpString& caption);
 
 	tpRawPtr getWindow() { return window; }
 
 	void setContext(tpRenderContext *context);
+
 
 protected:
 

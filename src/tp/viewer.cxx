@@ -35,7 +35,7 @@ tpViewer::create(const tpString& title/* = "tpViewer"*/,
 	mSurface->getEventHandler().attach<tpWindowEvent,tpViewer>(this,&tpViewer::_dispatch);
 
 
-	mSurface->setSize(w,h);
+	mSurface->setClientAreaSize(w,h);
 
 
 	return true;
@@ -67,8 +67,8 @@ tpViewer::_dispatch(tpWindowEvent& e)
 {
 	if (e.getId() == tpWindowEvent::kWindowSize) {
 
-		tpVec2i size = e.getRenderSurface()->getSize();
-        this->getScene().getActiveCamera()->setViewport(tpVec4i(0,0,size[0],size[1]));
+		tpVec2i size = e.getRenderSurface()->getClientAreaSize();
+		this->getScene().getActiveCamera()->setViewport(tpVec4i(0,0,size[0],size[1]));
 	}
 
 	this->onSurfaceEvent(e);
