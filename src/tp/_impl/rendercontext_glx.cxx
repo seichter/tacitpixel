@@ -56,10 +56,9 @@ tpRenderContextGLX::create(tpRenderTarget *target)
                 .add(GLX_BUFFER_SIZE).add(24)
                 .add(GLX_DEPTH_SIZE).add(depth_bits);
 
-        if (glx_extensions.find("SGIS_multisample") != tpString::kNotFound)
+        if (glx_extensions.find("GLX_ARB_multisample") != tpString::kNotFound)
         {
-//            configuration.add(GLX_SAMPLES_SGIS).add(4);
-  //                  .add(GLX_SAMPLE_BUFFERS_SGIS).add(2);
+            //configuration.add(GLX_SAMPLE_BUFFERS).add(1);
         }
 
 
