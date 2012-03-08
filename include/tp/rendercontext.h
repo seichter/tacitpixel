@@ -42,6 +42,8 @@ public:
 
 protected:
 
+    void reportToConsole();
+
 	tpString mVendor;
 	tpString mVersion;
 	tpString mExtensions;

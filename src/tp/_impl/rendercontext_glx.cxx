@@ -49,16 +49,17 @@ tpRenderContextGLX::create(tpRenderTarget *target)
         configuration
                 .add(GLX_DOUBLEBUFFER)
                 .add(GLX_RGBA)
-                .add(GLX_RED_SIZE).add(8)
-                .add(GLX_GREEN_SIZE).add(8)
-                .add(GLX_BLUE_SIZE).add(8)
- //               .add(GLX_ALPHA_SIZE).add(8)
-                .add(GLX_BUFFER_SIZE).add(24)
+//                .add(GLX_RED_SIZE).add(8)
+//                .add(GLX_GREEN_SIZE).add(8)
+//                .add(GLX_BLUE_SIZE).add(8)
+//                .add(GLX_ALPHA_SIZE).add(8)
+//                .add(GLX_BUFFER_SIZE).add(24)
                 .add(GLX_DEPTH_SIZE).add(depth_bits);
 
         if (glx_extensions.find("GLX_ARB_multisample") != tpString::kNotFound)
         {
-            //configuration.add(GLX_SAMPLE_BUFFERS).add(1);
+            //configuration.add(GLX_SAMPLE_BUFFERS_ARB).add(1);
+            //configuration.add(GLX_SAMPLE_BUFFERS_ARB).add(1);
         }
 
 
@@ -85,8 +86,9 @@ tpRenderContextGLX::create(tpRenderTarget *target)
                 mRenderer = this->getString(GL_RENDERER);
                 mExtensions = this->getString(GL_EXTENSIONS);
 
-                tpLogNotify("OpenGL %s %s",mVendor.c_str(),mVersion.c_str());
+                reportToConsole();
 
+                glEnable(GL_MULTISAMPLE_ARB);
 
                 return true;
             }

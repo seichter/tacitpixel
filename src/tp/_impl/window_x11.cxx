@@ -122,6 +122,20 @@ tpWindowX11::getSize() const {
     return r;
 }
 
+tpVec2i
+tpWindowX11::getClientAreaSize() const
+{
+    return getSize();
+}
+
+
+void
+tpWindowX11::setClientAreaSize(tpUInt w, tpUInt h)
+{
+    setSize(w,h);
+}
+
+
 void
 tpWindowX11::setCaption(const tpString& caption)
 {

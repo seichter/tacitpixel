@@ -29,6 +29,9 @@ public:
 
     tpVec2i getSize() const;
 
+    void setClientAreaSize(tpUInt w, tpUInt h);
+    tpVec2i getClientAreaSize() const;
+
 
 	void update();
 

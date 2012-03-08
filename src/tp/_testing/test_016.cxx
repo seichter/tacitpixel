@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
 
     tpRefPtr<tpTransform> lt = new tpTransform(tpMat44Op::translation(0.f,5.f,1.f));
 	tpRefPtr<tpLight> light = new tpLight();
-    light->setDirectional(true);
+//    light->setDirectional(true);
 //	light->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
 
     lt->addChild(light.get());
