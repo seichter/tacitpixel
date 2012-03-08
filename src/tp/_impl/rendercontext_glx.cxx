@@ -39,41 +39,43 @@ tpRenderContextGLX::create(tpRenderTarget *target)
                     glx_extensions.c_str());
 	}
 
+
+    const unsigned int depth_bits = 24;
+
+    tpArray<int> configuration;
+    configuration
+            .add(GLX_DOUBLEBUFFER)
+            .add(GLX_RGBA)
+    //                .add(GLX_RED_SIZE).add(8)
+    //                .add(GLX_GREEN_SIZE).add(8)
+    //                .add(GLX_BLUE_SIZE).add(8)
+    //                .add(GLX_ALPHA_SIZE).add(8)
+    //                .add(GLX_BUFFER_SIZE).add(24)
+            .add(GLX_DEPTH_SIZE).add(depth_bits);
+
+    if (glx_extensions.find("GLX_ARB_multisample") != tpString::kNotFound)
+    {
+        //configuration.add(GLX_SAMPLE_BUFFERS_ARB).add(1);
+        //configuration.add(GLX_SAMPLE_BUFFERS_ARB).add(1);
+    }
+
+
+    configuration.add(None);
+
+
+    XVisualInfo* vi = 0;
+
+    vi = glXChooseVisual(display, screen, &configuration[0]);
+
+    if (vi == NULL)
+    {
+        tpLogError("%s GLX could not find a matching visual",__FUNCTION__);
+    }
+
+
+    // for a window
     if (target->getType()->isOfType(tpWindow::getTypeInfo()))
     {
-
-
-        const unsigned int depth_bits = 24;
-
-        tpArray<int> configuration;
-        configuration
-                .add(GLX_DOUBLEBUFFER)
-                .add(GLX_RGBA)
-//                .add(GLX_RED_SIZE).add(8)
-//                .add(GLX_GREEN_SIZE).add(8)
-//                .add(GLX_BLUE_SIZE).add(8)
-//                .add(GLX_ALPHA_SIZE).add(8)
-//                .add(GLX_BUFFER_SIZE).add(24)
-                .add(GLX_DEPTH_SIZE).add(depth_bits);
-
-        if (glx_extensions.find("GLX_ARB_multisample") != tpString::kNotFound)
-        {
-            //configuration.add(GLX_SAMPLE_BUFFERS_ARB).add(1);
-            //configuration.add(GLX_SAMPLE_BUFFERS_ARB).add(1);
-        }
-
-
-        configuration.add(None);
-
-
-        XVisualInfo* vi = 0;
-
-        vi = glXChooseVisual(display, screen, &configuration[0]);
-
-        if (vi == NULL)
-        {
-            tpLogError("%s GLX could not find a matching visual",__FUNCTION__);
-        }
 
         glxcontext = glXCreateContext(display,vi,0,True);
 
@@ -93,9 +95,12 @@ tpRenderContextGLX::create(tpRenderTarget *target)
                 return true;
             }
         }
+
     } else {
 
-        //window = glXCreateGLXPixmap(display,vi,window);
+        GLXPixmap glxpix = glXCreateGLXPixmap(display,vi,window);
+
+        tpLogNotify("Got glxpixmap");
 
     }
 

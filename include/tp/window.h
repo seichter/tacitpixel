@@ -60,25 +60,6 @@ public:
 	virtual tpRenderBuffer* create( const tpSize& size, tpUInt pixelformat ) = 0;
 };
 
-//////////////////////////////////////////////////////////////////////////
-
-//class tpRenderSurfaceCallback : public tpReferenced {
-//public:
-
-//	enum {
-//		kMouseNone,
-//		kMouseMove,
-//		kMouseUp,
-//		kMouseDown
-//	};
-
-//	virtual bool onMouseMotion( const tpInt& h, const tpInt& v) { return false; }
-
-//	virtual bool onMouseClick( const tpInt& h, const tpInt& v, const tpUShort& state ) { return false; }
-
-//};
-
-
 class tpWindowEvent : public tpEvent {
 
 	tpUInt mMouseKey;
@@ -157,7 +138,7 @@ public:
 	static tpRenderBuffer* create(const tpSize& size, const tpUInt pixelformat);
 
 	virtual void destroy() = 0;
-	virtual void copy(tpImage& image) = 0;
+    virtual void copy(tpImage& image) = 0;
 
 	virtual tpRawPtr getDisplay() = 0;
 	virtual tpRawPtr getBuffer() = 0;

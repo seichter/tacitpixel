@@ -41,17 +41,17 @@ public:
 
 	inline tpReferenced& operator = (const tpReferenced&);
 
-	tpVoid popRef() const;
-	tpVoid pushRef() const;
+    void popRef() const;
+    void pushRef() const { ++mRefCount; }
 
-	tpSizeT getReferenceCount() const;
+    tpSizeT getReferenceCount() const { return mRefCount; }
 
 
 protected:
 
 	virtual ~tpReferenced();
 
-	mutable tpSizeT m_refcount;
+    mutable tpSizeT mRefCount;
 };
 
 

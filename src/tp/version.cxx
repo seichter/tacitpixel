@@ -38,7 +38,7 @@ tpGetVersionString()
 {
 	static char pbuf[88];
 	const char gs_version[] = "tacitpixel %d.%d.%d";
-	sprintf(pbuf,gs_version,TP_VERSION_MAJOR,TP_VERSION_MINOR,TP_VERSION_BUILD);
+    snprintf(pbuf,88,gs_version,TP_VERSION_MAJOR,TP_VERSION_MINOR,TP_VERSION_BUILD);
 	return &pbuf[0];
 }
 

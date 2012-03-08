@@ -15,6 +15,8 @@ class tpRenderBufferX11 : public tpRenderBuffer {
     tpSize size;
     tpUInt depth;
 
+    tpRefPtr<tpImage> image;
+
 public:
 
     TP_TYPE_DECLARE
@@ -39,9 +41,20 @@ public:
 
         depth = DefaultDepth(dpy, screen);
 
-        pixmap = XCreatePixmap(dpy, InputOnly, size.width, size.height, depth);
+        image = new tpImage();
+        image->allocate(size_.width,size_.height,tpPixelFormat::kRGB_888);
 
-        tpLogMessage("%s using display %s created pixmap on %d",__FUNCTION__,s_display.c_str(),pixmap);
+        pixmap = XCreatePixmapFromBitmapData(dpy,InputOutput,
+                                             (char*)image->getData(),
+                                             image->getWidth(),
+                                             image->getHeight(),
+                                             0,0,depth);
+
+
+//        pixmap = XCreatePixmap(dpy, InputOnly, size.width, size.height, depth);
+
+        tpLogMessage("%s using display %s pixmap 0x%x @%dbpp",
+                     __FUNCTION__,s_display.c_str(),pixmap,depth);
 
     }
 

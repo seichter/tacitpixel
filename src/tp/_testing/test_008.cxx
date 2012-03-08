@@ -23,7 +23,7 @@ public:
 			e.setHandled();
 		}
 
-		text->set(tpString::format("%3.3f",t.getElapsed(tpTimer::kTimeSeconds)));
+        text->set(tpString::format("tacit pixel %3.3f",t.getElapsed(tpTimer::kTimeSeconds)));
 	}
 };
 

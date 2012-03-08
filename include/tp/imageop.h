@@ -37,7 +37,7 @@ struct TP_API tpImageOperator {
 		kGrey
 	};
 
-	virtual tpImageOperator& operator()(const tpImage* in, tpImage* out) { return *this; };
+    virtual tpImageOperator& operator()(const tpImage* in, tpImage* out) { return *this; }
 	
 	static tpImageOperator& o(tpUByte op);
 

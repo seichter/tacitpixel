@@ -27,37 +27,29 @@
 #include <tp/log.h>
 
 tpReferenced::tpReferenced()
-	: m_refcount(0)
+    : mRefCount(0)
 {
 }
 
 tpReferenced::~tpReferenced() 
 {
-	if (m_refcount > 0)
+    if (mRefCount > 0)
 	{
-		tpLogError("%s goes out of scope with %d references dangling",__FUNCTION__,m_refcount);
+        tpLogError("%s goes out of scope with %d references dangling",
+                   __FUNCTION__,
+                   mRefCount);
 	}	
 }
 
 
-tpSizeT tpReferenced::getReferenceCount() const
-{
-	return m_refcount;
-}
-
-tpVoid
+void
 tpReferenced::popRef() const
 {	
-	if (0 == --m_refcount) {
+    if (0 == --mRefCount) {
 	    delete this;
 	}
 }
 
-tpVoid 
-tpReferenced::pushRef() const
-{
-	++m_refcount;
-}
 
 
 TP_TYPE_REGISTER_BASE(tpReferenced,Reference);

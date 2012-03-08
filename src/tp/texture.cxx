@@ -41,7 +41,8 @@ tpTexture::~tpTexture()
 {
 }
 
-void tpTexture::setImage( tpImage* image ) {
+void tpTexture::setImage( tpImage* image )
+{
 	mImage = image;
 }
 
@@ -53,7 +54,8 @@ tpTexture::setWrapMode(tpUInt wrap_u,tpUInt wrap_v,tpUInt wrap_w)
 }
 
 
-tpVec3<tpUInt> tpTexture::getWrapMode() const
+tpVec3<tpUInt>
+tpTexture::getWrapMode() const
 {
 	return mWrap;
 }

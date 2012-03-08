@@ -34,9 +34,17 @@
 #include <tp/primitive.h>
 #include <tp/string.h>
 
+/**
+  * Utilities to handle fonts and generate rasterized images for them
+  */
 
+/// forward declaration
 class tpFontRasterizer;
 
+
+/**
+  * This class wraps the font rasterization
+  */
 class TP_API tpFont : public tpReferenced {
 protected:
 
