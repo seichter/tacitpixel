@@ -77,8 +77,8 @@ tpDebugPrimitive(const tpPrimitive& p)
 
 
 #define glErrorCheck \
-		GLenum err = glGetError(); \
-		if (err) tpLogNotify("OpenGL error 0x%x %d",err,err);
+        { GLenum err = glGetError(); \
+        if (err) tpLogNotify("OpenGL error 0x%x %d line:%d",err,err,__LINE__); }
 
 class tpTextureObjectGL : public tpTextureObject {
 protected:
@@ -278,6 +278,9 @@ public:
 
 		count++;
 
+        // defaults
+        glEnable(GL_DEPTH_TEST);
+
 		tpTimer t;
 		for (tpRefCameraArray::iterator it = scene->getCameras().begin();
 			 it != scene->getCameras().end();
@@ -292,19 +295,26 @@ public:
 			tpLogNotify("t %lf ms",t.getElapsed(tpTimer::kTimeMilliSeconds));
 		}
 
+        glErrorCheck;
+
+
 		glFinish();
 		glFlush();
 
-		glErrorCheck
-	}
+        glErrorCheck;
+    }
 
 
 	bool
 	onCamera(const tpCamera* camera)
 	{
-		// if the viewport is not being set just skip
-		if (camera->getViewport()[2] && camera->getViewport()[3])
+        glErrorCheck;
+
+        // if the viewport is not being set just skip
+        if ((camera->getViewport()[2] > 0) && (camera->getViewport()[3] > 0))
 			glViewport(0,0,camera->getViewport()[2],camera->getViewport()[3]);
+
+        glErrorCheck;
 
 		tpUInt glclearflag(0);
 		if (camera->hasClearFlag(tpCamera::kClearColor))
@@ -320,6 +330,9 @@ public:
 
 		if (glclearflag) glClear(glclearflag);
 
+        glErrorCheck;
+
+
 		return true;
 	}
 
@@ -331,8 +344,9 @@ public:
 		// ok, now we can bail out if there are actually no nodes
 		if (0 == node) return;
 
-		glShadeModel(GL_SMOOTH);
-		glEnable(GL_DEPTH_TEST);
+        //glShadeModel(GL_SMOOTH);
+        //glEnable(GL_DEPTH_TEST);
+
 
 		// setup lights
 		tpNodeMatrixStackMap nodemap_lights = tpNodeOps::getNodeMatrixStackMap(node,tpLight::getTypeInfo());
@@ -346,6 +360,8 @@ public:
 				onLight(*static_cast<tpLight*>((*i).getKey()),(*i).getValue());
 			}
 		}
+
+        glErrorCheck;
 
 		// render nodes
 		tpNodeMatrixStackMap nodemap_primitives = tpNodeOps::getNodeMatrixStackMap(node,tpPrimitive::getTypeInfo());
@@ -492,6 +508,7 @@ public:
 		{
 			switch (it->getKey()) {
 			case tpRenderFlag::kColorMaterial:
+                //glColorMaterial(GL_FRONT_AND_BACK,GL_);
 				glEnable(GL_COLOR_MATERIAL);
 				break;
 			case tpRenderFlag::kLighting:

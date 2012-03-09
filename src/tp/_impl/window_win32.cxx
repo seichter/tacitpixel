@@ -330,7 +330,19 @@ tpRawPtr tpWindowWin32::getWindow()
 
 void tpWindowWin32::setSize( tpInt w, tpInt h )
 {
-	SetWindowPos(_handle,0,0,0,w,h,SWP_NOMOVE | SWP_NOZORDER);
+    SetWindowPos(_handle,0,0,0,w,h,SWP_NOMOVE | SWP_NOZORDER);
+}
+
+tpVec2i tpWindowWin32::getClientAreaSize() const
+{
+    RECT rect;
+    GetClientRect(_handle,&rect);
+    return tpVec2i(rect.right-rect.left,rect.bottom-rect.top);
+}
+
+void tpWindowWin32::setClientAreaSize(tpUInt w, tpUInt h)
+{
+    //AdjustWindowRectEx()
 }
 
 void tpWindowWin32::setPosition( tpInt x, tpInt y )
