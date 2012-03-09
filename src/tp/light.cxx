@@ -34,29 +34,70 @@ tpLight::tpLight()
 	, mAmbientColor(tpVec4f(0.0f,0.0f,0.0f,1.0f))
 	, mDiffuseColor(tpVec4f(0.0f,0.0f,0.0f,1.0f))
 	, mSpecularColor(tpVec4f(0.0f,0.0f,0.0f,1.0f))
-    , mDirectional(false)
+	, mPositionH(tpVec4f(0.f,0.f,1.f,0.f))
 	, mExponent(0)
-    , mCutOff(128)
+	, mCutOff(128)
 	, mConstantAttenuation(1)
 	, mLinearAttenuation(0)
 	, mQuadraticAttenuation(0)
+	, mId(tpLight::getNewId())
 {
-	tpInt _id = msLightID.getSize();
-	while (-1 != msLightID.find(_id) ) {
+	if (mId == 0) {
+		// use OpenGL defaults for ID0
+		mDiffuseColor = mSpecularColor = tpVec4f(1.0f,1.0f,1.0f,0.0f);
+		mSpecularColor[3] = 1.f;
+	}
+}
+
+tpUInt
+tpLight::getNewId()
+{
+	tpUInt _id = msLightID.getSize();
+	while (tpArray<tpUInt>::kNotFound != msLightID.find(_id) ) {
 		++_id;
 	}
 	msLightID.add(_id);
-	mID = _id;
-	if (mID == 0) {
-		// use OpenGL defaults for ID0
-        mDiffuseColor = mSpecularColor = tpVec4f(1.0f,1.0f,1.0f,0.0f);
-        mSpecularColor[3] = 1.f;
+	return _id;
+}
+
+tpLight::tpLight(const tpLight &rhs)
+	: tpNode(rhs)
+{
+}
+
+tpLight &tpLight::operator =(const tpLight &rhs)
+{
+	if (this != &rhs)
+	{
+		// copy everything except the id
+
+		//*this = tpNode::operator =(rhs);
+
+		mAmbientColor = rhs.mAmbientColor;
+		mDiffuseColor = rhs.mDiffuseColor;
+		mSpecularColor = rhs.mSpecularColor;
+		mPositionH = rhs.mPositionH;
+
+		mExponent = rhs.mExponent;
+		mCutOff = rhs.mCutOff;
+		mConstantAttenuation = rhs.mConstantAttenuation;
+		mLinearAttenuation = rhs.mLinearAttenuation;
+		mQuadraticAttenuation = rhs.mQuadraticAttenuation;
+
 	}
+
+	return *this;
+}
+
+bool tpLight::isValid() const
+{
+	// a quick check for correct homogenous coordinates
+	return (isSpot()) ? true : (mPositionH.getSquareLength() > 0);
 }
 
 tpLight::~tpLight()
 {
-	msLightID.erase(mID);
+	msLightID.erase(mId);
 }
 
 TP_TYPE_REGISTER(tpLight,tpNode,Light);

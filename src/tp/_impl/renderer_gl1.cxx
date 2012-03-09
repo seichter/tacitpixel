@@ -292,7 +292,7 @@ public:
 			tpLogNotify("t %lf ms",t.getElapsed(tpTimer::kTimeMilliSeconds));
 		}
 
-        glFinish();
+		glFinish();
 		glFlush();
 
 		glErrorCheck
@@ -373,47 +373,48 @@ public:
 	void
 	onLight(const tpLight& light, const tpMatrixStack& stack)
 	{
-        applyStack(stack);
+		applyStack(stack);
 
-        // enable the light with the respective id
-        GLenum lid = light.getID()+GL_LIGHT0;
-
-
-        tpVec4f pos,dir;
-
-        if (light.isDirectional()) {
-
-            tpLogNotify("Spot light");
-
-            float focus = 1.f;
-            float angle = 45.f;
-
-            // just all zero
-            glLightfv(lid, GL_POSITION,         &pos[0]);
-            glLightfv(lid, GL_SPOT_DIRECTION,   dir.getData());
-
-            // set parameters and position
-            glLightf (lid, GL_SPOT_EXPONENT,    focus);
-            glLightf (lid, GL_SPOT_CUTOFF,      angle);
-
-        } else {
-
-            // for a point light the coordinates are in homogenous
-            // object coordinates.
-            GLfloat null[] = {0.0, 0.0, 1.0, 0.0};
-            glLightfv(lid, GL_POSITION,null);
-        }
+		// enable the light with the respective id
+		GLenum lid = light.getID()+GL_LIGHT0;
 
 
-        glLightfv(lid,GL_AMBIENT,light.getAmbientColor().getData());
-        glLightfv(lid,GL_DIFFUSE,light.getDiffuseColor().getData());
-        glLightfv(lid,GL_SPECULAR,light.getSpecularColor().getData());
+		tpVec4f pos,dir;
+
+		if (light.isSpot()) {
+
+			tpLogNotify("Spot light");
+
+			float focus = 1.f;
+			float angle = 45.f;
+
+			// just all zero
+			glLightfv(lid, GL_POSITION, light.getPosition().getData());
+			glLightfv(lid, GL_SPOT_DIRECTION,   dir.getData());
+
+			// set parameters and position
+			glLightf (lid, GL_SPOT_EXPONENT,    focus);
+			glLightf (lid, GL_SPOT_CUTOFF,      angle);
+
+		} else {
+
+			// default light to avoid a bug in the r200 drivers on linux
+			// if the position is being set wrong
+			GLfloat defaultPos[] = {0.0, 0.0, 1.0, 0.0};
+
+			glLightfv(lid, GL_POSITION, light.isValid() ? light.getPosition().getData() : defaultPos);
+		}
+
+
+		glLightfv(lid,GL_AMBIENT,light.getAmbientColor().getData());
+		glLightfv(lid,GL_DIFFUSE,light.getDiffuseColor().getData());
+		glLightfv(lid,GL_SPECULAR,light.getSpecularColor().getData());
 
 //        glLightf (GL_LIGHT1, GL_LINEAR_ATTENUATION,    0.0f);
 //        glLightf (GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.0f);
 //        glLightf (GL_LIGHT1, GL_CONSTANT_ATTENUATION,  0.0);
 
-        glEnable(lid);
+		glEnable(lid);
 
 		//#define GL_SEPARATE_SPECULAR_COLOR 0x81FA
 		//glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
@@ -435,12 +436,9 @@ public:
 	void
 	onMaterial(const tpMaterial* mat) const
 	{
-		return;
 		if (0 == mat) return;
 
-//        tpLog::get()<< "a " <<mat->getAmbientColor() << "\n";
-//        tpLog::get()<< "d " <<mat->getDiffuseColor() << "\n";
-
+		// we are simulating OpenGL ES - hence front and back are always set together
 		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, mat->getAmbientColor().getData() );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, mat->getDiffuseColor().getData() );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, mat->getSpecularColor().getData() );
@@ -481,7 +479,7 @@ public:
 
 			// color material
 		}
-        return 0;
+		return 0;
 	}
 
 
@@ -532,33 +530,37 @@ public:
 		}
 	}
 
-    void applyStack(const tpMatrixStack& stack)
-    {
-        // just sanity check - we are not touching the projection matrix usually
-        glMatrixMode(GL_PROJECTION);
-        glLoadMatrixf(stack.projection.data());
+	void applyStack(const tpMatrixStack& stack)
+	{
+		// just sanity check - we are not touching the projection matrix usually
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(stack.projection.data());
 
-        // we are using our own transformation stack - hence all is done in the MV
-        glMatrixMode(GL_MODELVIEW);
-        glLoadMatrixf(stack.view.data());
+		// we are using our own transformation stack - hence all is done in the MV
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(stack.view.data());
 
-        // load on the stack
-        glMultMatrixf(stack.model.data());
+		// load on the stack
+		glMultMatrixf(stack.model.data());
 
-    }
+	}
 
 
 	void onPrimitive(const tpPrimitive& prim,const tpMatrixStack& stack,bool secondPass = false)
 	{
+
+		// set render flags
 		pushRenderFlags(prim.getRenderFlags());
 
+		// apply all transforms
+		applyStack(stack);
+
+		// update textures/materials
 		if (prim.hasTexture()) {
 			(*this)(const_cast<tpTexture*>(prim.getTexture()));
 		} else if (prim.hasMaterial()) {
 			onMaterial(prim.getMaterial());
 		}
-
-        applyStack(stack);
 
 		// enable all relevant states
 		if (prim.hasNormals()) glEnableClientState(GL_NORMAL_ARRAY);
@@ -597,7 +599,7 @@ public:
 						prim.getVertices().getData()
 						);
 
-        glDrawArrays(prim.getPrimitiveType(),0,prim.getVertices().getSize());
+		glDrawArrays(prim.getPrimitiveType(),0,prim.getVertices().getSize());
 
 
 		// and all off again

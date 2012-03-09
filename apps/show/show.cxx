@@ -76,33 +76,33 @@ int main(int argc,char* argv[])
 	}
 
 
-    tpRefPtr<tpTransform> lt = new tpTransform();
+	tpRefPtr<tpTransform> lt = new tpTransform();
 	tpRefPtr<tpLight> l = new tpLight();
 
-    lt->addChild(l.get());
+	lt->addChild(l.get());
 
-    lt->setMatrix(tpMat44Op::translation<tpReal>(0,3,0));
+	lt->setMatrix(tpMat44Op::translation<tpReal>(0,3,0));
 
-    //l->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
-    l->setDiffuseColor(tpVec4f(1.f,1.f,1.f,0.f));
-    //l->setDirectional(true);
+	l->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
+	l->setDiffuseColor(tpVec4f(.8f,.8f,.8f,1.f));
+	l->setPosition(tpVec4f(0.f,1.f,0.f,0.f));
 
-    root->addChild(lt.get());
+	root->addChild(lt.get());
 
 	tpRefPtr<tpViewer> viewer = new tpViewerShow;
 
 #if 1
-    viewer->getScene().getActiveCamera()->setViewLookAt(tpVec3r(5,5,5),tpVec3r(0,0,0),tpVec3r(0,1,0));
-    viewer->getScene().getActiveCamera()->setProjectionPerspective(45,1.3,.1,100);
+	viewer->getScene().getActiveCamera()->setViewLookAt(tpVec3r(5,5,5),tpVec3r(0,0,0),tpVec3r(0,1,0));
+	viewer->getScene().getActiveCamera()->setProjectionPerspective(45,1.3,.1,100);
 #else
-    viewer->getScene().getActiveCamera()->setViewLookAt(tpVec3r(0,0,1),tpVec3r(0,0,0),tpVec3r(0,1,0));
-    viewer->getScene().getActiveCamera()->setProjection(tpMat44r::Identity());
+	viewer->getScene().getActiveCamera()->setViewLookAt(tpVec3r(0,0,1),tpVec3r(0,0,0),tpVec3r(0,1,0));
+	viewer->getScene().getActiveCamera()->setProjection(tpMat44r::Identity());
 #endif
 
-    viewer->getScene().getActiveCamera()->setClearColor(tpVec4f(.3,.4,.5,1));
-    viewer->getScene().getActiveCamera()->setClearFlags(tpCamera::kClearDepth | tpCamera::kClearColor);
+	viewer->getScene().getActiveCamera()->setClearColor(tpVec4f(.3,.4,.5,1));
+	viewer->getScene().getActiveCamera()->setClearFlags(tpCamera::kClearDepth | tpCamera::kClearColor);
 
-    viewer->getScene().getActiveCamera()->addChild(root.get());
+	viewer->getScene().getActiveCamera()->addChild(root.get());
 
 	viewer->create();
 	viewer->run();

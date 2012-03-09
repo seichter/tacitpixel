@@ -41,6 +41,7 @@ public:
 
 	static const tpUInt element_size = sizeof(T);
 	static const tpUInt max_capacity = sizeof(Tidx);
+	static const Tidx	kNotFound = -1;
 
 
 	/** Constructor */

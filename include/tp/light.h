@@ -38,22 +38,32 @@ public:
 
 	tpLight();
 
-	tpUInt getID() const { return mID; }
+	tpLight(const tpLight& rhs);
+
+	tpLight& operator = (const tpLight& rhs);
+
+	tpUInt getID() const { return mId; }
 
 	void setAmbientColor(const tpVec4f& color) { mAmbientColor = color; }
 	void setDiffuseColor(const tpVec4f& color) { mDiffuseColor = color; }
 	void setSpecularColor(const tpVec4f& color) { mSpecularColor = color; }
-    void setDirectional(bool d = true) { mDirectional = d; }
+	void setPosition(const tpVec4f& pos) { mPositionH = pos; }
+
 
 	const tpVec4f& getAmbientColor() const { return mAmbientColor; }
 	const tpVec4f& getDiffuseColor() const { return mDiffuseColor; }
 	const tpVec4f& getSpecularColor() const { return mSpecularColor; }
+	const tpVec4f& getPosition() const { return mPositionH; }
 
-    bool isDirectional() const { return mDirectional; }
+	//! checks if we have a spotlight
+	bool isSpot() const { return (mPositionH[3] > 0); }
 
-
+	//! checks if the coordinates are correct
+	bool isValid() const;
 
 protected:
+
+	static tpUInt getNewId();
 
 	virtual ~tpLight();
 
@@ -69,11 +79,11 @@ protected:
 	tpFloat mLinearAttenuation;
 	tpFloat mQuadraticAttenuation;
 
-    /* directional */
-    bool mDirectional;
+	/* position in homogenous coordinates */
+	tpVec4f mPositionH;
 
 	/* ID management */
-	tpUInt mID;
+	tpUInt mId;
 	static tpArray<tpUInt> msLightID;
 
 };
