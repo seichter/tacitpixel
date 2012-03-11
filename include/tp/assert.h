@@ -22,43 +22,19 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-
-#ifndef TPTRANSFORM_H
-#define TPTRANSFORM_H
-
-#include <tp/node.h>
-#include <tp/vec.h>
-#include <tp/mat.h>
-
-class TP_API tpTransform : public tpNode {
-public:
-
-    TP_TYPE_DECLARE
-
-	enum {
-		kRelative = 0x0,
-		kAbsolute
-	};
-
-	tpTransform(const tpString& name = "transform");
-	tpTransform(const tpTransform& transform);
-
-    tpTransform(const tpMat44r& m);
+#ifndef _TP_ASSERT_H_
+#define _TP_ASSERT_H_
 
 
-	void setMatrix(const tpMat44r& m) { m_matrix = m; }
-	const tpMat44r& getMatrix() const { return m_matrix; }
+template <bool cond>
+struct tpStaticAssert {};
 
-	tpUByte getScope() const { return m_scope; }
-	void setScope(tpUByte val) { m_scope = val; }
-
-	void getMatrix(bool toWorld, tpMat44r &m) const;
-
-protected:
-
-	tpUByte m_scope;
-	tpMat44r m_matrix;
+template <>
+struct tpStaticAssert<true> {
+    static void isValid() {}
 };
 
+#define TP_STATIC_ASSERT(cond) \
+    tpStaticAssert<(cond)>::isValid();
 
 #endif

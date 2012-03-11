@@ -49,6 +49,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/allocator.h
 	${tp_include_path}/tp/array.h
 	${tp_include_path}/tp/arguments.h
+	${tp_include_path}/tp/assert.h
 	${tp_include_path}/tp/chunk.h
 	${tp_include_path}/tp/event.h
 	${tp_include_path}/tp/field.h

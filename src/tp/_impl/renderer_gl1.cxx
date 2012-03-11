@@ -281,7 +281,6 @@ public:
         // defaults
         glEnable(GL_DEPTH_TEST);
 
-		tpTimer t;
 		for (tpRefCameraArray::iterator it = scene->getCameras().begin();
 			 it != scene->getCameras().end();
 			 ++it)
@@ -290,13 +289,7 @@ public:
 			onNode((*it).get());
 		}
 
-		if (0 == (count % 100))
-		{
-			tpLogNotify("t %lf ms",t.getElapsed(tpTimer::kTimeMilliSeconds));
-		}
-
         glErrorCheck;
-
 
 		glFinish();
 		glFlush();
