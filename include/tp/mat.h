@@ -60,14 +60,13 @@ public:
     T& operator()(tpUInt r,tpUInt c) { return (rowMajor) ? mStorage[r*C+c] : mStorage[c*R+r]; }
     const T& operator()(tpUInt r,tpUInt c) const { return (rowMajor) ? mStorage[r*C+c] : mStorage[c*R+r]; }
 
-//    getTranspose(tpMatRef<C,R,T>& rot) const
-//    {
-//        for (register tpUInt r = 0; r < R; r++)
-//            for (register tpUInt c = 0; c < C; c++ )
-//            {
-//                rot(c,r) = (*this)(r,c);
-//            }
-//    }
+    void
+    getTranspose(tpMatRef<C,R,T>& transp) const
+    {
+        for (register tpUInt r = 0; r < R; r++)
+            for (register tpUInt c = 0; c < C; c++ )
+                transp(c,r) = (*this)(r,c);
+    }
 
     int getDiagonalSize() const { return tpMin(R,C); }
 
@@ -89,6 +88,14 @@ public:
         return *this;
     }
 
+    void
+    transpose()
+    {
+        TP_STATIC_ASSERT(R==C)
+
+        for (tpUInt r = 0;r < R; r++)
+            for (tpUInt c = r; c < C; ++c) tpSwap((*this)(c,r),(*this)(r,c));
+    }
 
 protected:
 
@@ -112,24 +119,15 @@ public:
 //	template <typename Tout>
 //	void copy(tpMat<R,C,Tout>& out) const { for (tpUInt i = 0; i < tpMat<R,C,T>::cells; ++i) out[i] = Tout(m[i]); }
 
-	tpMat<R,C,T>&
-	transpose()
-	{
-		tpMat<C,R,T> r;
-		this->getTranspose(r);
-		*this = r;
-		return *this;
-	}
-
-    void
-    getTranspose(tpMat<C,R,T>& rot) const
-    {
-        for (register tpUInt r = 0; r < R; r++)
-            for (register tpUInt c = 0; c < R; c++ )
-            {
-                rot(c,r) = (*this)(r,c);
-            }
-    }
+//    tpMat<R,C,T>
+//    getTranspose() const
+//    {
+//        tpMat<C,R,T> res;
+//        // compute all resulting cells
+//        for (tpUInt r = 0; r < R; ++r)
+//            for (tpUInt c = 0; c < C; ++c) res(c,r) = A(r,c);
+//        return res;
+//    }
 
     inline void
     getInverse(tpMat<R,C,T>& resMat) const
@@ -160,12 +158,6 @@ public:
 	void getMinor(tpMat<R-1,C-1,T>& res, tpUInt r0, tpUInt c0) const;
 
 	T getDeterminant() const;
-
-//	T& at(tpUInt idx) { return m[idx]; }
-//	const T& at(tpUInt idx) const { return m[idx]; }
-
-//	T& operator()(tpUInt r,tpUInt c);
-//	const T& operator()(tpUInt r,tpUInt c) const;
 
 	tpMat<R,C,T>& operator = (const tpMat<R,C,T>& rhs);
 
@@ -243,6 +235,11 @@ mul(const tpMat<aR,aCbR,T>& A, const tpMat<aCbR,bC,T>& B)
     return res;
 }
 
+//template <tpUInt R, tpUInt C, typename T>
+//tpMat<C,R,T> static inline
+//tpMatTranspose(const tpMat<R,C>& A)
+//{
+//}
 
 /////////////////////////////////////////////////////////////////////////////
 

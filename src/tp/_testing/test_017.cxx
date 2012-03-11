@@ -131,6 +131,9 @@ int main(int argc, char* argv[])
 
     tpMat<3,3,float> X; X = mul(A,B);
     tpLog::get() << "X = "<< X << "\n";
+    X.transpose();
+    tpLog::get() << "Xt = "<< X << "\n";
+
 
     return 0;
 }

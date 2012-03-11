@@ -46,7 +46,8 @@ int main(int argc, char* argv[])
 
     mat.setIdentity();
 	mat(0,1) = 3.3; mat(1,0) = 5.5;
-	mat.transpose().invert();
+    mat.transpose();
+    mat.invert();
 
     mat.setIdentity();
     s.setIdentity();
