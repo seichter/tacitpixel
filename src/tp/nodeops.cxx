@@ -175,7 +175,7 @@ tpNodeOps::getNodeMatrixMap(const tpNode *node,const tpRTTI* rtti)
 		 i != nodearray.end();
 		 ++i)
 	{
-		tpMat44r m; m.identity();
+        tpMat44r m(tpMat44r::Identity());
 
 		for (tpNodeArray::iterator j = (*i).begin();
 			 j != (*i).end();

@@ -61,7 +61,7 @@ int main(int argc,char* argv[])
 
 
 
-    tpMat44r m; m.identity();  m.scale(.001,.001,.001);
+    tpMat44r m(tpMat44r::Identity()); m.scale(.001,.001,.001);
 	t->setMatrix(m);
 
     tpRefPtr<tpTransform> lt = new tpTransform();

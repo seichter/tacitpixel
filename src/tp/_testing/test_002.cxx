@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 
 	// first one
 	tpRefPtr<tpTransform> t = new tpTransform();
-	tpMat44r mat; mat.identity();
+    tpMat44r mat(tpMat44r::Identity());
 	mat.setTranslation(0,0,-1);
 
 	t->setMatrix(mat);

@@ -44,12 +44,12 @@ int main(int argc, char* argv[])
 
 	tpMat44r mat; tpMat44r s;
 
-	mat.fill(0).identity();
+    mat.setIdentity();
 	mat(0,1) = 3.3; mat(1,0) = 5.5;
 	mat.transpose().invert();
 
-	mat.identity();
-	s.identity();
+    mat.setIdentity();
+    s.setIdentity();
 
 	mat.setCellIdValue();
 	s.setCellIdValue();

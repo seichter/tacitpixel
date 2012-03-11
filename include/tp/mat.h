@@ -41,7 +41,7 @@ public:
 
 	tpMat() {}
 
-	tpMat(const tpMat<R,C,T>& mtc) { *this = mtc; }
+    tpMat(const tpMat<R,C,T>& mtc) { *this = mtc; }
 
 	tpMat(const T* val) { for (int i = 0; i < tpMat<R,C,T>::cells; ++i) m[i] = val[i]; }
 
@@ -60,12 +60,12 @@ public:
 
 	int getDiagonalSize() const { return tpMin(R,C); }
 
-	tpMat<R,C,T>& identity()
+    tpMat<R,C,T>& setIdentity()
 	{
 		this->fill(0);
 		for (int i = 0; i < getDiagonalSize(); ++i)
 		{
-			m[i*C+i] = T(1);
+            (*this)(i,i) = T(1);
 		}
 		return *this;
 	}
@@ -161,13 +161,22 @@ public:
 		return this->multiply(r);
 	}
 
-	static tpMat<R,C,T>
+    inline
+    static const tpMat<R,C,T>
 	Identity()
 	{
 		tpMat<R,C,T> r; r.fill(0);
 		for (register int i = 0; i < r.getDiagonalSize(); ++i) r(i,i) = T(1);
 		return r;
 	}
+
+    inline
+    static tpMat<R,C,T>
+    All(T value)
+    {
+        tpMat<R,C,T> r; r.fill(value);
+        return r;
+    }
 
 protected:
 
@@ -295,7 +304,7 @@ public:
 	tpMat<4,4,T>&
 	setTranslation(const T& v1,const T& v2,const T& v3)
 	{
-		this->identity();
+        this->setIdentity();
 		this->m[12] = v1;
 		this->m[13] = v2;
 		this->m[14] = v3;

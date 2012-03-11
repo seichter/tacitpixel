@@ -143,11 +143,8 @@ int main(int argc, char* argv[])
 
 	tpRefPtr<tpReferenced> r(new tpReferenced());
 
-	tpMat44f m44f;
-	tpMat44x m44x;
-
-	m44f.identity();
-	m44x.identity();
+    tpMat44f m44f(tpMat44f::Identity());
+    tpMat44x m44x(tpMat44x::Identity());
 
 	m44f.invert();
 	m44x.invert();
