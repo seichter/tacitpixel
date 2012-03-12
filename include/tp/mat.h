@@ -42,25 +42,27 @@ public:
     static const tpUInt cells = R*C;
     static const bool rowmajor = rowMajor;
 
+	//! assignment constructor 
     tpMatRef(T* ptr = 0) : mStorage(ptr) {}
 
-    inline const T*
-    data() const { return mStorage; }
+	//! return pointer to data
+    inline const T* data() const { return mStorage; }
 
-    inline T*
-    data() { return mStorage; }
+    inline T* data() { return mStorage; }
 
-    tpMatRef<R,C,T>& fill(const T& val) {
+	inline 
+	tpMatRef<R,C,T>& 
+	fill(const T& val) {
         for (tpUInt i = 0; i < tpMatRef<R,C,T>::cells; ++i) this->at(i) = val; return *this;
     }
 
-    T& at(tpUInt idx) { return mStorage[idx]; }
-    const T& at(tpUInt idx) const { return mStorage[idx]; }
+    inline T& at(tpUInt idx) { return mStorage[idx]; }
+    inline const T& at(tpUInt idx) const { return mStorage[idx]; }
 
-    T& operator()(tpUInt r,tpUInt c) { return (rowMajor) ? mStorage[r*C+c] : mStorage[c*R+r]; }
-    const T& operator()(tpUInt r,tpUInt c) const { return (rowMajor) ? mStorage[r*C+c] : mStorage[c*R+r]; }
+    inline T& operator()(tpUInt r,tpUInt c) { return (rowMajor) ? mStorage[r*C+c] : mStorage[c*R+r]; }
+    inline const T& operator()(tpUInt r,tpUInt c) const { return (rowMajor) ? mStorage[r*C+c] : mStorage[c*R+r]; }
 
-    void
+    inline void
     getTranspose(tpMatRef<C,R,T>& transp) const
     {
         for (register tpUInt r = 0; r < R; r++)
@@ -68,10 +70,11 @@ public:
                 transp(c,r) = (*this)(r,c);
     }
 
-    int getDiagonalSize() const { return tpMin(R,C); }
+    inline tpUInt getDiagonalSize() const { return tpMin(R,C); }
 
-    bool isSquare() const { return C == R; }
+    inline bool isSquare() const { return C == R; }
 
+	inline 
     tpMatRef<R,C,T>&
     setIdentity()
     {
@@ -81,13 +84,15 @@ public:
         return *this;
     }
 
+	inline
     tpMatRef<R,C,T>&
     setCellIdValue()
     {
-        for (register tpUInt i = 0; i < tpMatRef<R,C,T>::cells;++i) {this->at(i) = i;}
+        for (register tpUInt i = 0; i < tpMatRef<R,C,T>::cells;++i) {this->at(i) = static_cast<T>(i);}
         return *this;
     }
 
+	inline 
     void
     transpose()
     {
@@ -96,6 +101,13 @@ public:
         for (tpUInt r = 0;r < R; r++)
             for (tpUInt c = r; c < C; ++c) tpSwap((*this)(c,r),(*this)(r,c));
     }
+
+	tpMatRef<R,C,T>&
+	operator *= (const T& rhs)
+	{
+		for (tpUInt i = 0; i < tpMat<R,C,T>::cells; i++) this->at(i) *= rhs;
+		return *this;
+	}
 
 protected:
 
@@ -115,20 +127,6 @@ public:
 
     tpMat(const tpMat<R,C,T>& mtc) { *this = mtc; }
 
-//	tpMat(const T* val) { for (int i = 0; i < tpMat<R,C,T>::cells; ++i) m[i] = val[i]; }
-//	template <typename Tout>
-//	void copy(tpMat<R,C,Tout>& out) const { for (tpUInt i = 0; i < tpMat<R,C,T>::cells; ++i) out[i] = Tout(m[i]); }
-
-//    tpMat<R,C,T>
-//    getTranspose() const
-//    {
-//        tpMat<C,R,T> res;
-//        // compute all resulting cells
-//        for (tpUInt r = 0; r < R; ++r)
-//            for (tpUInt c = 0; c < C; ++c) res(c,r) = A(r,c);
-//        return res;
-//    }
-
     inline void
     getInverse(tpMat<R,C,T>& resMat) const
     {
@@ -143,7 +141,7 @@ public:
             }
         }
         resMat.transpose();
-        resMat *= T(1)/getDeterminant();
+        resMat *= static_cast<value_type>(1/this->getDeterminant());
     }
 
 	inline
@@ -163,7 +161,7 @@ public:
 
 	tpMat<R,C,T>& operator *= (const tpMat<R,C,T>& rhs);
 
-	tpMat<R,C,T>& operator *= (const T& rhs);
+	//tpMat<R,C,T>& operator *= (const T& rhs);
 
 	tpMat<R,C,T>& copyFrom(const T* src) { for (int i = 0; i < tpMat::cells; ++i) { this->m[i] = src[i]; } return *this; }
 
@@ -195,7 +193,7 @@ public:
     Identity()
     {
         tpMat<R,C,T> r = tpMat<R,C,T>::All(0);
-        for (register int i = 0; i < r.getDiagonalSize(); ++i) r(i,i) = T(1);
+        for (register tpUInt i = 0; i < r.getDiagonalSize(); ++i) r(i,i) = T(1);
         return r;
     }
 
@@ -269,16 +267,6 @@ tpMat<R,C,T>& tpMat<R,C,T>::operator *= (const tpMat<R,C,T>& rhs)
 	return *this;
 }
 
-template <tpUInt R, tpUInt C,typename T>
-tpMat<R,C,T>& tpMat<R,C,T>::operator *= (const T& rhs)
-{
-	for (tpUInt i = 0; i < tpMat<R,C,T>::cells; i++)
-	{
-		m[i] *= rhs;
-	}
-
-	return *this;
-}
 
 /////////////////////////////////////////////////////////////////////////////
 
