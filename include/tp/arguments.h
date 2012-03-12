@@ -25,6 +25,8 @@
 #ifndef _TP_ARGUMENTS_H_
 #define _TP_ARGUMENTS_H_ 1
 
+
+#include <tp/globals.h>
 #include <tp/array.h>
 #include <tp/string.h>
 

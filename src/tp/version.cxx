@@ -28,6 +28,12 @@
 
 #include <stdio.h>
 
+#if defined(_MSC_VER)
+#define tp_sprintf sprintf_s
+#else 
+#define tp_sprintf sprintf
+#endif
+
 int tpGetMajorVersion() { return TP_VERSION_MAJOR; }
 int tpGetMinorVersion() { return TP_VERSION_MINOR; }
 int tpGetBuildVersion() { return TP_VERSION_BUILD; }
@@ -38,7 +44,7 @@ tpGetVersionString()
 {
 	static char pbuf[88];
 	const char gs_version[] = "tacitpixel %d.%d.%d";
-    snprintf(pbuf,88,gs_version,TP_VERSION_MAJOR,TP_VERSION_MINOR,TP_VERSION_BUILD);
+    tp_sprintf(pbuf,gs_version,TP_VERSION_MAJOR,TP_VERSION_MINOR,TP_VERSION_BUILD);
 	return &pbuf[0];
 }
 

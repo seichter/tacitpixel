@@ -293,22 +293,28 @@ configure_file(config.h.in
 	${CMAKE_BINARY_DIR}/include/tp/config.h
 	@ONLY
 	)
-
-add_library(${tp_name} SHARED
+	
+set(tp_srcs_all
 	${tp_srcs}
 	${tp_hdrs}
 	${tp_hdrs_sg}
 	${tp_srcs_sg}
 	${tp_impl_srcs}
 	)
+	
+#set_property(SOURCE ${tp_srcs_all}
+#	APPEND PROPERTY
+#	COMPILE_DEFINITIONS
+#	"TACIT_EXPORTS"
+	
 
+add_library(${tp_name} SHARED
+	${tp_srcs_all}
+	)
+
+set_property(TARGET ${tp_name} PROPERTY COMPILE_DEFINITIONS "TACIT_EXPORTS")
 
 target_link_libraries(${tp_name} ${tp_impl_libs} dlmalloc )
-
-set_target_properties(${tp_name}
-	PROPERTIES
-	COMPILE_DEFINITIONS TP_BUILD_LIBRARY=1
-	)
 
 target_link_libraries(${tp_name} jpeg png z ogg vorbis)
 

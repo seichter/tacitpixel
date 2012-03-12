@@ -23,3 +23,8 @@ void tpText::setFont(const tpString &name)
 		mFont = font;
 	}
 }
+
+tpText::~tpText()
+{
+
+}

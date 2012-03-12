@@ -103,24 +103,17 @@ tpNode* tpOBJ(const tpString& filename)
 			}
 
 
-			if (1)//group->material)
+			if (group->material)
 			{
 				GLMmaterial* material;
-
 				material = &model->materials[group->material];
-
 				tpMaterial* mat = new tpMaterial();
 
 				mat->setSpecularColor(tpVec4f(material->specular[0],material->specular[1],material->specular[2],material->specular[3]));
-
 				mat->setDiffuseColor(tpVec4f(material->diffuse[0],material->diffuse[1],material->diffuse[2],material->diffuse[3]));
-
 				mat->setEmissiveColor(tpVec4f(material->emmissive[0],material->emmissive[1],material->emmissive[2],material->emmissive[3]));
-
 				mat->setAmbientColor(tpVec4f(material->ambient[0],material->ambient[1],material->ambient[2],material->ambient[3]));
-
 				mat->setTransparency(material->transparency);
-
 				mat->setShininess(material->shininess);
 
 				if (material->name) mat->setName(material->name);
@@ -161,7 +154,14 @@ tpNode* tpOBJ(const tpString& filename)
 						__FUNCTION__,mat->getName().c_str()
 						);
 
-			};
+			} else {
+
+				// if its purple something went wrong!
+				mesh->setMaterial(tpMaterial::createDefault(.3,.1,.5));
+				mesh->addRenderFlag(tpRenderFlag::kLighting);
+
+				tpLogError("Couldn't find material - using default");
+			}
 
 
 			root->addChild(mesh);

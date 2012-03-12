@@ -167,8 +167,8 @@ public:
 
 	tpMat<R,C,T>& copyFrom(const T* src) { for (int i = 0; i < tpMat::cells; ++i) { this->m[i] = src[i]; } return *this; }
 
-	tpMat<R,C,T> operator * (const tpMat<R,C,T>& r) const {
-		return this->multiply(r);
+    tpMat<R,C,T> operator * (const tpMat<R,C,T>& rhs) const {
+        return mul(*this,rhs);
 	}
 
     tpMat<C,R,T>
