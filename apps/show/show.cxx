@@ -26,28 +26,59 @@ public:
 	onSurfaceEvent(tpWindowEvent& e)
 	{
 
-		tpLogMessage("Mouse: %d %d (%d) [%d] Key: %d %d",
-					 e.getMousePosition()[0],e.getMousePosition()[1],
+		tpLogMessage("Mouse: %d %d (%d) [%d] Key: %d (%c) %d",
+					 e.getMousePosition()(0),e.getMousePosition()(1),
 					 e.getMouseKey(),e.getMouseState(),
-					 e.getKeyCode(),e.getKeyState());
+					 e.getKeyCode(),e.getKeyCode(),e.getKeyState());
 		tpCamera* camera = mScene->getActiveCamera();
 
 		tpLog::get() << camera->getTranslation() << "\n";
 
+		if (e.getKeyState() == tpWindowEvent::kKeyUp)
+		{
+			switch (e.getKeyCode()) {
+				case 27:
+				case 'q':
+				case 'Q': e.getRenderSurface()->setDone();
+					break;
+				default:
+					break;
+			}
+		}
 
-		if (e.getKeyCode() == 'q' && e.getKeyState() == tpWindowEvent::kKeyUp) {
-			e.getRenderSurface()->setDone();
+		if (e.getKeyState() == tpWindowEvent::kKeyDown)
+		{
+
+			tpVec3r pos = camera->getTranslation();
+
+			switch (e.getKeyCode()) {
+				case 'x':
+				case 'X':
+					pos += tpVec3r::All(.5);
+					break;
+				case 'z':
+				case 'Z':
+					pos -= tpVec3r::All(.5);
+					break;
+				default:
+					break;
+			}
+
+			camera->setTranslation(pos);
 		}
 
 		if (e.getMouseState() == tpWindowEvent::kMouseDown) {
 
 			tpVec3r delta(0.05,0,0);
+			tpVec3r pos = camera->getTranslation();
 
 			if (e.getMouseKey() == tpWindowEvent::kMouseKeyLeft) {
-				camera->setTranslation(camera->getTranslation() + delta);
+				pos -= delta;
 			} else {
-				camera->setTranslation(camera->getTranslation() - delta);
+				pos += delta;
 			}
+
+			camera->setTranslation(pos);
 		}
 
 		e.setHandled(true);
@@ -57,7 +88,7 @@ public:
 
 int main(int argc,char* argv[])
 {
-	tpModuleManager::get()->load("obj,3ds,jpeg");
+	tpModuleManager::get()->load("obj,3ds,jpg");
 
 	tpString file,plugins;
 	tpArguments args(&argc,argv);

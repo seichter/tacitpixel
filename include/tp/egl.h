@@ -124,8 +124,8 @@ public:
 	{
 	}
 
-	tpInt getWidth() const { return mSize[0]; }
-	tpInt getHeight() const { return mSize[1]; }
+	tpInt getWidth() const { return mSize(0); }
+	tpInt getHeight() const { return mSize(1); }
 
 };
 

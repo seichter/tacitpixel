@@ -50,10 +50,20 @@ public:
 
 };
 
-tpMaterial*
-createMaterial(Lib3dsMaterial* m3ds)
+typedef tpArray< tpRefPtr<tpMaterial> > tpMaterialCache;
+typedef tpArray< tpRefPtr<tpTexture> >  tpTextureCache;
+
+tpMaterialCache gsMatCache;
+tpTextureCache gsTexCache;
+
+
+bool hasTexture(const Lib3dsMaterial* m3ds) {
+	return (m3ds->texture1_map.name[0] > 0);
+}
+
+void parseMaterial(Lib3dsMaterial* m3ds, const tpString& path)
 {
-	if (0 == m3ds) return 0L;
+	if (0 == m3ds) return;
 
 	tpLogNotify("created material %s",m3ds->name);
 
@@ -64,30 +74,45 @@ createMaterial(Lib3dsMaterial* m3ds)
 
 	material->setShininess(m3ds->shininess*128.f);
 
-//    tpLog::get() << "a" << material->getAmbientColor() << "\n";
-//    tpLog::get() << "d" << material->getDiffuseColor() << "\n";
+	gsMatCache.add(material);
 
-//    exit(0);
+	if (hasTexture(m3ds)) 
+	{
+		tpTexture* texture = new tpTexture(tpString(m3ds->texture1_map.name));
+		tpImage* image = tpImage::read(path+"/"+texture->getName());
 
+		texture->setFormat(tpTexture::kFormatRGB);
+		texture->setImage(image);
 
-	return material;
-}
+		gsTexCache.add(texture);
 
-typedef tpArray<tpRefPtr<tpMaterial> > tpMaterialCache;
+		tpLogNotify("Name %s",m3ds->texture1_map.name);
 
-void
-cacheMaterials(Lib3dsFile* file,tpMaterialCache& cache) {
-	for (int i = 0; i < file->nmaterials;++i) {
-		tpMaterial* m = createMaterial(file->materials[i]);
-		cache.add(m);
+	} else {
+		// we do that to use the same id from the face
+		gsTexCache.add(0);
 	}
 }
+
+
+void
+cacheAssets(Lib3dsFile* file,const tpString& path) {
+
+	gsTexCache.clear();
+	gsMatCache.clear();
+
+	for (int i = 0; i < file->nmaterials;++i) {
+		parseMaterial(file->materials[i],path);
+	}
+}
+
+
 
 
 tpNode*
 tpNodeHandler_3DS::read(const tpString& name)
 {
-	tpMaterialCache materialcache;
+	tpString path = name.beforeLast('/');
 
 	tpLogNotify("%s loading '%s'",tpGetVersionString(),name.c_str());
 
@@ -108,7 +133,7 @@ tpNodeHandler_3DS::read(const tpString& name)
 	tpLogNotify("\tnodes %d",0 != file3ds->nodes);
 	tpLogNotify("\tframes %d",0 != file3ds->frames);
 
-	cacheMaterials(file3ds,materialcache);
+	cacheAssets(file3ds,path);
 
 
 	tpNode* node = new tpNode();
@@ -122,7 +147,7 @@ tpNodeHandler_3DS::read(const tpString& name)
 		 meshIdx < file3ds->nmeshes;
 		 ++meshIdx)
 	{
-		if(meshIdx > 0 ) continue;
+		//if(meshIdx > 0 ) continue;
 
 		Lib3dsMesh* mesh3ds = file3ds->meshes[meshIdx];
 
@@ -150,7 +175,6 @@ tpNodeHandler_3DS::read(const tpString& name)
 		mesh->setMatrix(m);
 
 		tpPrimitive* prim = new tpPrimitive(tpPrimitive::kTriangles);
-
 		prim->addRenderFlag(tpRenderFlag::kLighting);
 
 		mesh->addChild(prim);
@@ -163,6 +187,8 @@ tpNodeHandler_3DS::read(const tpString& name)
 		Lib3dsVector* normals3ds = new Lib3dsVector[mesh3ds->nfaces * 3];
 		lib3ds_mesh_calculate_vertex_normals(mesh3ds,&normals3ds[0]);
 #endif
+
+
 		for (size_t faceIdx = 0;
 			 faceIdx < mesh3ds->nfaces;
 			 ++faceIdx)
@@ -170,11 +196,17 @@ tpNodeHandler_3DS::read(const tpString& name)
 			Lib3dsFace* face3ds = &mesh3ds->faces[faceIdx];
 
 			if (0 == prim->getMaterial()) {
-				tpRefPtr<tpMaterial> m = materialcache[face3ds->material];
+				tpRefPtr<tpMaterial> m = gsMatCache[face3ds->material];
 				if (m.isValid()) {
 					prim->setMaterial(m.get());
 				}
+			}
 
+			if (!prim->hasTexture()) {
+				tpRefPtr<tpTexture> t = gsTexCache[face3ds->material];
+				if (t.isValid()) {
+					prim->setTexture(t.get());
+				}
 			}
 
 			tpVec3r normal(normals3ds[faceIdx][0],normals3ds[faceIdx][1],normals3ds[faceIdx][2]);
@@ -184,12 +216,16 @@ tpNodeHandler_3DS::read(const tpString& name)
 
 			for (int i = 0; i < 3; ++i) {
 
+				tpVec2r txc(mesh3ds->texcos[ face3ds->index[ i ] ][0],
+							mesh3ds->texcos[ face3ds->index[ i ] ][1]);
+
+
 				tpVec3r vtx(mesh3ds->vertices[ face3ds->index[ i ] ][0],
 							mesh3ds->vertices[ face3ds->index[ i ] ][1],
 							mesh3ds->vertices[ face3ds->index[ i ] ][2]
 							);
 
-				prim->addVertexNormal(vtx,normal);
+				prim->addVertexNormalTextureCoordinate(vtx,normal,txc);
 
 			}
 		}
@@ -198,7 +234,8 @@ tpNodeHandler_3DS::read(const tpString& name)
 
 	}
 
-	materialcache.clear();
+	gsMatCache.clear();
+	gsTexCache.clear();
 
 	lib3ds_file_free(file3ds);
 

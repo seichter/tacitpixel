@@ -13,7 +13,7 @@
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {	
 
-    HDC hdc;
+//    HDC hdc;
     int wmId, wmEvent;
 	PAINTSTRUCT ps;
 
@@ -114,6 +114,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             break;
 		}
+	case WM_KEYDOWN:
+		{
+			tpWindowEvent e(rendersurface);
+			e.setKeyState(tpWindowEvent::kKeyDown);
+			e.setKeyCode((TCHAR)wParam);
+			rendersurface->getEventHandler().process(e);
+		}
+		break;
+	case WM_KEYUP:
+		{
+			tpWindowEvent e(rendersurface);
+			e.setKeyState(tpWindowEvent::kKeyUp);
+			e.setKeyCode((TCHAR)wParam);
+			rendersurface->getEventHandler().process(e);
+		}
+		break;
 
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
@@ -184,10 +200,10 @@ void tpWindowWin32::doCreate( tpWindowTraits* traits )
 		_classname.c_str(),
 		(traits) ? traits->getTitle().c_str() : _classname.c_str(),
 		windowstyle,//WS_BORDER | WS_CAPTION | WS_POPUP, //WS_POPUP is good for fullscreen
-		(traits) ? traits->getPosition()[0] : CW_USEDEFAULT,
-		(traits) ? traits->getPosition()[1] : CW_USEDEFAULT,
-		(traits) ? traits->getSize()[0] : CW_USEDEFAULT,
-		(traits) ? traits->getSize()[1] : CW_USEDEFAULT,
+		(traits) ? traits->getPosition()(0) : CW_USEDEFAULT,
+		(traits) ? traits->getPosition()(1) : CW_USEDEFAULT,
+		(traits) ? traits->getSize()(0) : CW_USEDEFAULT,
+		(traits) ? traits->getSize()(1) : CW_USEDEFAULT,
 		0,
 		0,
 		_instance,
@@ -240,8 +256,8 @@ tpWindowWin32::getSize() const {
     tpVec2i result;
     RECT r;
     GetClientRect(_handle,&r);
-    result[0] = r.right-r.left;
-    result[1] = r.bottom-r.top;
+    result(0) = r.right-r.left;
+    result(1) = r.bottom-r.top;
     return result;
 }
 
@@ -355,7 +371,7 @@ tpVec2i tpWindowWin32::getPosition() const
 	tpVec2i r(-1,-1);
 	RECT w;
 	GetWindowRect(_handle,&w);
-	r[0] = w.left; r[1] = w.top;
+	r(0) = w.left; r(1) = w.top;
 	return r;
 }
 

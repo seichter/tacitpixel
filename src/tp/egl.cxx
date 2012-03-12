@@ -32,11 +32,11 @@ tpEGL* tpEGL::get( bool destroy /*= false*/ )
 }
 
 bool tpRenderContextEGL::swapBuffers() {
-	return tpEGL::a().SwapBuffers.f(display,surface);
+	return (tpEGL::a().SwapBuffers.f(display,surface) > 0);
 }
 
 bool tpRenderContextEGL::makeCurrent() {
-	return tpEGL::a().MakeCurrent.f(display,surface,surface,context);
+	return (tpEGL::a().MakeCurrent.f(display,surface,surface,context) > 0);
 }
 
 bool tpRenderContextEGL::create(tpRenderTarget* target) {

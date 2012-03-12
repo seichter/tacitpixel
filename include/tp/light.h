@@ -56,7 +56,7 @@ public:
 	const tpVec4f& getPosition() const { return mPositionH; }
 
 	//! checks if we have a spotlight
-	bool isSpot() const { return (mPositionH[3] > 0); }
+	bool isSpot() const { return (mPositionH(3) > 0); }
 
 	//! checks if the coordinates are correct
 	bool isValid() const;

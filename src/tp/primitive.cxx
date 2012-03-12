@@ -296,17 +296,17 @@ tpPrimitiveAttribute& tpPrimitiveAttribute::add( const tpFloat *v, tpSizeT size 
 
 tpPrimitiveAttribute& tpPrimitiveAttribute::add( const tpVec4f& v )
 {
-	return add(v.getData(),4);
+	return add(v.data(),4);
 }
 
 tpPrimitiveAttribute& tpPrimitiveAttribute::add( const tpVec3f& v )
 {
-	return add(v.getData(),3);
+	return add(v.data(),3);
 }
 
 tpPrimitiveAttribute& tpPrimitiveAttribute::add( const tpVec2f& v )
 {
-	return add(v.getData(),2);
+	return add(v.data(),2);
 }
 
 void tpPrimitiveAttribute::clear()
@@ -487,35 +487,35 @@ void
 tpPrimitive::setUniformColor(const tpVec4f& color)
 {
 	mColors = 0;
-	for (int i = 0; i < getVertices().getSize();++i) getColors().add(color);
+	for (tpUInt i = 0; i < getVertices().getSize();++i) getColors().add(color);
 }
 
 void
 tpPrimitive::translate(const tpVec3f& vec)
 {
-	for (int i = 0; i < getVertices().getSize();++i)
+	for (tpUInt i = 0; i < getVertices().getSize();++i)
 	{
-		getVertices().getData()[i*getVertices().getStride()+0] += vec[0];
-		getVertices().getData()[i*getVertices().getStride()+1] += vec[1];
-		getVertices().getData()[i*getVertices().getStride()+2] += vec[2];
+		getVertices().getData()[i*getVertices().getStride()+0] += vec(0);
+		getVertices().getData()[i*getVertices().getStride()+1] += vec(1);
+		getVertices().getData()[i*getVertices().getStride()+2] += vec(2);
 	}
 }
 
 void
 tpPrimitive::scale(const tpVec3f& vec)
 {
-	for (int i = 0; i < getVertices().getSize();++i)
+	for (tpUInt i = 0; i < getVertices().getSize();++i)
 	{
-		getVertices().getData()[i*getVertices().getStride()+0] *= vec[0];
-		getVertices().getData()[i*getVertices().getStride()+1] *= vec[1];
-		getVertices().getData()[i*getVertices().getStride()+2] *= vec[2];
+		getVertices().getData()[i*getVertices().getStride()+0] *= vec(0);
+		getVertices().getData()[i*getVertices().getStride()+1] *= vec(1);
+		getVertices().getData()[i*getVertices().getStride()+2] *= vec(2);
 	}
 }
 
 void
 tpPrimitive::flipNormals()
 {
-	for (int i = 0; i < getNormals().getSize();++i)
+	for (tpUInt i = 0; i < getNormals().getSize();++i)
 	{
 		getNormals().getData()[i*getNormals().getStride()+0] *= -1;
 		getNormals().getData()[i*getNormals().getStride()+1] *= -1;
@@ -527,7 +527,7 @@ tpPrimitive::flipNormals()
 void
 tpPrimitive::checkNormals() const
 {
-    for (int i = 0; i < getNormals().getSize();++i)
+    for (tpUInt i = 0; i < getNormals().getSize();++i)
     {
         tpVec3f n(getNormals().getData()[i*getNormals().getStride()+0],
                   getNormals().getData()[i*getNormals().getStride()+1],

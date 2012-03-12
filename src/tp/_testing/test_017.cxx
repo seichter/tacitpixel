@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
 
     tpLog::get() << "v " << vf3_2 << "\n";
 
-    vf3 *= 3;
+    vf3 *= 3.f;
 
     tpLog::get() << "v " << vf3 << "\n";
 
@@ -129,10 +129,12 @@ int main(int argc, char* argv[])
     tpLog::get() << "B = "<< B << "\n";
 
 
-    tpMat<3,3,float> X; X = mul(A,B);
+    tpMat<3,3,float> X; X = tpMatMul(A,B);
     tpLog::get() << "X = "<< X << "\n";
     X.transpose();
     tpLog::get() << "Xt = "<< X << "\n";
+
+	system("pause");
 
 
     return 0;

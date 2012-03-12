@@ -58,6 +58,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/globals.h
 	${tp_include_path}/tp/egl.h
 	${tp_include_path}/tp/font.h
+	${tp_include_path}/tp/fixed.h
 	${tp_include_path}/tp/gl.h
 	${tp_include_path}/tp/hash.h
 	${tp_include_path}/tp/image.h

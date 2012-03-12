@@ -14,7 +14,7 @@
 void
 tpDebugPrimitive(const tpPrimitive& p)
 {
-	for (int i = 0; i < p.getVertices().getSize();++i)
+	for (tpUInt i = 0; i < p.getVertices().getSize();++i)
 	{
 		tpVec4f v(p.getVertices().getData()[i*4],
 				  p.getVertices().getData()[i*4+1],

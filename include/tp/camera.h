@@ -81,7 +81,7 @@ public:
 
 	void setViewLookAt(const tpVec3r& eye, const tpVec3r& target, const tpVec3r& up);
 
-	tpVec3r getTranslation();
+	tpVec3r getTranslation() const;
 
 	void setTranslation(const tpVec3r& t);
 

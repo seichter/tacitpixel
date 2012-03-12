@@ -154,7 +154,7 @@ public:
 
 	GLint getInternalFormat(const tpTexture& texture) {
 
-		// GL_ALPHA and GL_LUMINANCE need to be set simultanously
+		// GL_ALPHA and GL_LUMINANCE need to be set simultaneously
 		if (texture.getFormat() == tpTexture::kFormatAlpha) {
 			return GL_ALPHA;
 		}
@@ -177,23 +177,23 @@ public:
 			// bind!
 			this->activate();
 
-			// hack!
-			glEnable(GL_BLEND);
-			glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+			//// hack!
+			//glEnable(GL_BLEND);
+			//glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 
 			GLenum format = getFormat(texture);
 
 			if (mChangeCount < 0) {
 
-				npot[0] = tpNextPowerOfTwo(texture.getImage()->getWidth());
-				npot[1] = tpNextPowerOfTwo(texture.getImage()->getHeight());
+				npot(0) = tpNextPowerOfTwo(texture.getImage()->getWidth());
+				npot(1) = tpNextPowerOfTwo(texture.getImage()->getHeight());
 
 				GLint internalFormat = getInternalFormat(texture);
 
 				//
 				tpLogNotify("%s 0x%x 0x%x %dx%d (%dx%d)",__FUNCTION__,format,internalFormat,
 							texture.getImage()->getWidth(),texture.getImage()->getHeight(),
-							npot[0],npot[1]);
+							npot(0),npot(1));
 
 				glPixelStorei(GL_UNPACK_ALIGNMENT,1);
 
@@ -201,7 +201,7 @@ public:
 //				glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 
 
-				glTexImage2D(GL_TEXTURE_2D,0,internalFormat,npot[0],npot[1],0,format,GL_UNSIGNED_BYTE,0);
+				glTexImage2D(GL_TEXTURE_2D,0,internalFormat,npot(0),npot(1),0,format,GL_UNSIGNED_BYTE,0);
 
 
 			}
@@ -212,8 +212,8 @@ public:
 							format,GL_UNSIGNED_BYTE,texture.getImage()->getData());
 
 
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, getWrapMode(texture.getWrapMode()[0]));
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, getWrapMode(texture.getWrapMode()[0]));
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, getWrapMode(texture.getWrapMode()(0)));
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, getWrapMode(texture.getWrapMode()(1)));
 
 
 
@@ -304,15 +304,15 @@ public:
         glErrorCheck;
 
         // if the viewport is not being set just skip
-        if ((camera->getViewport()[2] > 0) && (camera->getViewport()[3] > 0))
-			glViewport(0,0,camera->getViewport()[2],camera->getViewport()[3]);
+        if ((camera->getViewport()(2) > 0) && (camera->getViewport()(3) > 0))
+			glViewport(0,0,camera->getViewport()(2),camera->getViewport()(3));
 
         glErrorCheck;
 
 		tpUInt glclearflag(0);
 		if (camera->hasClearFlag(tpCamera::kClearColor))
 		{
-			glClearColor(camera->getClearColor()[0],camera->getClearColor()[1],camera->getClearColor()[2],camera->getClearColor()[3] );
+			glClearColor(camera->getClearColor()(0),camera->getClearColor()(1),camera->getClearColor()(2),camera->getClearColor()(2) );
 			glclearflag |= GL_COLOR_BUFFER_BIT;
 		}
 
@@ -398,8 +398,8 @@ public:
 			float angle = 45.f;
 
 			// just all zero
-			glLightfv(lid, GL_POSITION, light.getPosition().getData());
-			glLightfv(lid, GL_SPOT_DIRECTION,   dir.getData());
+			glLightfv(lid, GL_POSITION,			light.getPosition().data());
+			glLightfv(lid, GL_SPOT_DIRECTION,   dir.data());
 
 			// set parameters and position
 			glLightf (lid, GL_SPOT_EXPONENT,    focus);
@@ -411,13 +411,13 @@ public:
 			// if the position is being set wrong
 			GLfloat defaultPos[] = {0.0, 0.0, 1.0, 0.0};
 
-			glLightfv(lid, GL_POSITION, light.isValid() ? light.getPosition().getData() : defaultPos);
+			glLightfv(lid, GL_POSITION, light.isValid() ? light.getPosition().data() : defaultPos);
 		}
 
 
-		glLightfv(lid,GL_AMBIENT,light.getAmbientColor().getData());
-		glLightfv(lid,GL_DIFFUSE,light.getDiffuseColor().getData());
-		glLightfv(lid,GL_SPECULAR,light.getSpecularColor().getData());
+		glLightfv(lid,GL_AMBIENT,light.getAmbientColor().data());
+		glLightfv(lid,GL_DIFFUSE,light.getDiffuseColor().data());
+		glLightfv(lid,GL_SPECULAR,light.getSpecularColor().data());
 
 //        glLightf (GL_LIGHT1, GL_LINEAR_ATTENUATION,    0.0f);
 //        glLightf (GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.0f);
@@ -448,10 +448,10 @@ public:
 		if (0 == mat) return;
 
 		// we are simulating OpenGL ES - hence front and back are always set together
-		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, mat->getAmbientColor().getData() );
-		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, mat->getDiffuseColor().getData() );
-		glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, mat->getSpecularColor().getData() );
-		glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, mat->getEmissiveColor().getData() );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, mat->getAmbientColor().data() );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, mat->getDiffuseColor().data() );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, mat->getSpecularColor().data() );
+		glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, mat->getEmissiveColor().data() );
 		glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, mat->getShininess() );
 	}
 

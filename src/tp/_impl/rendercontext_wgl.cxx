@@ -134,6 +134,7 @@ int chooseVisual(HDC hdc)
 		NULL,
 		NULL,
 		NULL);
+
 	HDC tmpDC = GetDC(tmpWin);
 	SetPixelFormat(tmpDC, PFD, &pfd);
 	HGLRC rc = wglCreateContext(tmpDC);
@@ -191,6 +192,8 @@ int chooseVisual(HDC hdc)
 			wglGetPixelFormatAttribivARB,wglChoosePixelFormatARB);
 	}
 
+	system("pause");
+
 	return -1;
 }
 
@@ -205,6 +208,10 @@ tpRenderContextWGL::create(tpRenderTarget *target)
 		tpLogError("%s could not create a DC",__FUNCTION__);
 		return false;
 	}
+
+	//int wglVisual = chooseVisual(_dc);
+	//tpLogMessage("Visual 0x%x",wglVisual);
+
 
 	
 #if 0
@@ -258,6 +265,8 @@ tpRenderContextWGL::create(tpRenderTarget *target)
 
 	if (this->makeCurrent())
     {
+
+
 		mVersion = this->getString(GL_VERSION);
 		mVendor = this->getString(GL_VENDOR);
 		mRenderer = this->getString(GL_RENDERER);
