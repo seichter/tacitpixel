@@ -32,4 +32,6 @@ set_target_properties(z
 	PROPERTIES
 	PROJECT_LABEL "Dependency libz"
 	)
+	
+add_subdirectory(minizip)
 

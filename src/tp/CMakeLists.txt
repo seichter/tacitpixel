@@ -105,6 +105,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/version.h
 	${tp_include_path}/tp/viewer.h
 	${tp_include_path}/tp/xml.h
+	${tp_include_path}/tp/zipstream.h
 	)
 
 if(OPENGL_FOUND)
@@ -225,6 +226,7 @@ set(tp_srcs
 	version.cxx
 	viewer.cxx
 	xml.cxx
+	zipstream.cxx
 	)
 
 #
