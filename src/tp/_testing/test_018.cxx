@@ -1,5 +1,5 @@
 
-#include <tp/zipstream.h>
+#include <tp/gzipio.h>
 #include <tp/file.h>
 #include <tp/log.h>
 
@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
     tpFile infile;
 
     if (!infile.open(argv[1],"rb")) return -1;
-    tpZipStream zipstream;
+    tpGZipIO zipstream;
 
     tpArray<tpChar> buffer; buffer.resize(16384);
 
@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 
         zipstream.read(buffer.getData(),buffer.getSize());
 
-        tpLogNotify("'%s'",buffer.getData());
+        tpLogNotify("\n%s\n",buffer.getData());
     }
 
     return 0;

@@ -79,10 +79,10 @@ tpWindowX11::doCreate( tpWindowTraits* traits ) {
 
 	if (traits)
 	{
-		width = traits->getSize()[0];
-		height = traits->getSize()[1];
-		pos_x = traits->getPosition()[0];
-		pos_y = traits->getPosition()[1];
+        width = traits->getSize()(0);
+        height = traits->getSize()(1);
+        pos_x = traits->getPosition()(0);
+        pos_y = traits->getPosition()(1);
 	}
 
 
@@ -116,8 +116,8 @@ tpWindowX11::getSize() const {
     tpVec2i r;
     XWindowAttributes xwa;
     XGetWindowAttributes(dpy,win,&xwa);
-    r[0] = xwa.width;
-    r[1] = xwa.height;
+    r(0) = xwa.width;
+    r(1) = xwa.height;
 
     return r;
 }

@@ -1,5 +1,5 @@
 
-#include "tp/zipstream.h"
+#include "tp/gzipio.h"
 #include "tp/array.h"
 #include "tp/log.h"
 
@@ -7,27 +7,23 @@
 
 #include <cassert>
 
-struct tpZipStreamHandle {
+struct tpGZipIOHandle {
 
     tpIO* stream;
     z_stream strm;
 
 };
 
-
-tpZipStream gszipfile;
-
-tpZipStream::tpZipStream() : mHandle(0)
+tpGZipIO::tpGZipIO() : mHandle(0)
 {
-
 }
 
-bool tpZipStream::open( tpIO* input )
+bool tpGZipIO::open( tpIO* input )
 {
 
     tpLogNotify("tpZipStream using %s",zlibVersion());
 
-	mHandle = new tpZipStreamHandle;
+    mHandle = new tpGZipIOHandle;
 	mHandle->stream = input;
 
 	mHandle->strm.zalloc = Z_NULL;
@@ -36,7 +32,7 @@ bool tpZipStream::open( tpIO* input )
 	mHandle->strm.avail_in = Z_NULL;
 	mHandle->strm.next_in = Z_NULL;
 
-    const int max_wbits = 15+32; // gzip
+	const int max_wbits = 15+16; // gzip
 
     int ret = inflateInit2(&mHandle->strm,max_wbits);
 
@@ -50,7 +46,7 @@ bool tpZipStream::open( tpIO* input )
 	return (ret == Z_ERRNO);
 }
 
-bool tpZipStream::close()
+bool tpGZipIO::close()
 {
 	if (mHandle) {
 		inflateEnd(&mHandle->strm);
@@ -61,7 +57,7 @@ bool tpZipStream::close()
 	return (mHandle == 0);
 }
 
-tpIO& tpZipStream::read( char *buffer, tpSizeT buffer_size )
+tpIO& tpGZipIO::read( char *buffer, tpSizeT buffer_size )
 {
     tpArray<tpUChar> zipdata; zipdata.resize(16384);
     tpUChar* inputbuffer = (tpUChar*)buffer;
@@ -113,26 +109,26 @@ tpIO& tpZipStream::read( char *buffer, tpSizeT buffer_size )
 	return *this;
 }
 
-tpIO& tpZipStream::write( const char *buffer, tpSizeT buffer_size )
+tpIO& tpGZipIO::write( const char *buffer, tpSizeT buffer_size )
 {
 	return *this;
 }
 
-tpIO& tpZipStream::seek( tpSizeT pos, tpUByte rel )
+tpIO& tpGZipIO::seek( tpSizeT pos, tpUByte rel )
 {
 	return *this;
 }
 
-tpSizeT tpZipStream::tell() const
+tpSizeT tpGZipIO::tell() const
 {
 	return 0;
 }
 
-tpSizeT tpZipStream::getCount() const
+tpSizeT tpGZipIO::getCount() const
 {
 	return mGCount;
 }
 
-void tpZipStream::sync()
+void tpGZipIO::sync()
 {
 }

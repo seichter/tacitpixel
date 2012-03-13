@@ -25,7 +25,6 @@
 #ifndef _TP_ASSERT_H_
 #define _TP_ASSERT_H_
 
-
 template <bool cond>
 struct tpStaticAssert {};
 

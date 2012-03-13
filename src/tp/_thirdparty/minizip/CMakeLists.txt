@@ -12,12 +12,17 @@ set(mz_srcs
 	ioapi.h
 #	minizip.pc.in
 #	miniunz.c
-	iowin32.h
-	iowin32.c
 	unzip.h
 	zip.h
 	crypt.h
 	)
+
+if(WIN32)
+	list(ADD mz_srcs
+		iowin32.h
+		iowin32.c
+	)
+endif()
 	
 add_library(minizip
 	STATIC

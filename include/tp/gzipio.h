@@ -23,22 +23,22 @@
 * SUCH DAMAGE.
 */
 
-#ifndef TPZIPSTREAM_H
-#define TPZIPSTREAM_H
+#ifndef TPGZIPIO_H
+#define TPGZIPIO_H
 
 #include <tp/io.h>
 
 
-typedef struct tpZipStreamHandle tpZipStreamHandle;
+typedef struct tpGZipIOHandle tpGZipIOHandle;
 
-class TP_API tpZipStream : public tpIO {
+class TP_API tpGZipIO : public tpIO {
 
-	tpZipStreamHandle *mHandle;
+    tpGZipIOHandle *mHandle;
 	tpSizeT mGCount;
 
 public:
 
-	tpZipStream();
+    tpGZipIO();
 
 	bool open(tpIO* input);
 
