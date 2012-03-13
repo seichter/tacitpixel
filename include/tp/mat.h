@@ -186,7 +186,7 @@ public:
 	tpMat<R,C,T>& operator *= (const tpMat<R,C,T>& rhs);
 
 
-	tpMat<R,C,T>& copyFrom(const T* src) { for (int i = 0; i < tpMat::cells; ++i) { this->m[i] = src[i]; } return *this; }
+    tpMat<R,C,T>& copyFrom(const T* src) { for (tpUInt i = 0; i < R*C; ++i) { (*this).at(i) = src[i]; } return *this; }
 
     tpMat<R,C,T> operator * (const tpMat<R,C,T>& rhs) const {
         return tpMatMul(*this,rhs);

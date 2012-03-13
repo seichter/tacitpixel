@@ -43,7 +43,6 @@ public:
 		return 0;
 	}
 
-
 	~tpNodeHandler_3DS() {}
 
 	tpNode* read(const tpString& name);
@@ -63,7 +62,7 @@ bool hasTexture(const Lib3dsMaterial* m3ds) {
 
 void parseMaterial(Lib3dsMaterial* m3ds, const tpString& path)
 {
-	if (0 == m3ds) return;
+    if (0 == m3ds) return;
 
 	tpLogNotify("created material %s",m3ds->name);
 
@@ -181,13 +180,8 @@ tpNodeHandler_3DS::read(const tpString& name)
 		mesh->addChild(prim);
 		node->addChild(mesh);
 
-#if 1
-		Lib3dsVector* normals3ds = new Lib3dsVector[mesh3ds->nfaces];
-		lib3ds_mesh_calculate_face_normals(mesh3ds,&normals3ds[0]);
-#else
 		Lib3dsVector* normals3ds = new Lib3dsVector[mesh3ds->nfaces * 3];
 		lib3ds_mesh_calculate_vertex_normals(mesh3ds,&normals3ds[0]);
-#endif
 
 
 		for (size_t faceIdx = 0;
@@ -210,23 +204,32 @@ tpNodeHandler_3DS::read(const tpString& name)
 				}
 			}
 
-			tpVec3r normal(normals3ds[faceIdx][0],normals3ds[faceIdx][1],normals3ds[faceIdx][2]);
-
-			// just to make sure
-			normal.normalize();
-
 			for (int i = 0; i < 3; ++i) {
 
-				tpVec2r txc(mesh3ds->texcos[ face3ds->index[ i ] ][0],
-							mesh3ds->texcos[ face3ds->index[ i ] ][1]);
+                tpVec3r nrm(normals3ds[ faceIdx * 3 + i][0] ,
+                            normals3ds[ faceIdx * 3 + i][1] ,
+                            normals3ds[ faceIdx * 3 + i][2] );
 
 
-				tpVec3r vtx(mesh3ds->vertices[ face3ds->index[ i ] ][0],
-							mesh3ds->vertices[ face3ds->index[ i ] ][1],
-							mesh3ds->vertices[ face3ds->index[ i ] ][2]
-							);
+                tpVec3r vtx(mesh3ds->vertices[ face3ds->index[ i ] ][0],
+                            mesh3ds->vertices[ face3ds->index[ i ] ][1],
+                            mesh3ds->vertices[ face3ds->index[ i ] ][2]
+                            );
 
-				prim->addVertexNormalTextureCoordinate(vtx,normal,txc);
+                if (mesh3ds->texcos)
+                {
+                    tpVec2r txc(mesh3ds->texcos[ face3ds->index[ i ] ][0],
+                                mesh3ds->texcos[ face3ds->index[ i ] ][1]);
+
+
+                    prim->addVertexNormalTextureCoordinate(vtx,nrm,txc);
+
+                } else {
+
+                    prim->addVertexNormal(vtx,nrm);
+
+                }
+
 
 			}
 		}

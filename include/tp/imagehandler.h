@@ -37,8 +37,8 @@ class TP_API tpImageHandler : public tpReferenced {
 public:
 
 	enum {
-		kCanRead = (1 << 1),
-		kCanWrite = (1 << 2)
+        kCanRead    = (1 << 1),
+        kCanWrite   = (1 << 2)
 	};
 
     TP_TYPE_DECLARE
@@ -47,8 +47,8 @@ public:
 
 	virtual bool getCapability(tpUInt capability,const tpString& name) { return false; }
 
-    virtual tpImage* read(const tpString& name) = 0;
-	virtual bool write(const tpImage* img, const tpString& name) { return false; }
+    virtual tpImage* read(const tpString& name) const = 0;
+    virtual bool write(const tpImage* img, const tpString& name) const { return false; }
 
 protected:
 

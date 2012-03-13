@@ -52,14 +52,6 @@ add_library(ogg STATIC
         src/framing.c
     )
 
-if(CMAKE_COMPILER_IS_GNUCC)
-    set_target_properties(
-        ogg
-        PROPERTIES
-        COMPILE_FLAGS -fPIC
-        )
-endif()
-
 set_target_properties(ogg
 	PROPERTIES
 	PROJECT_LABEL "Dependency libogg"

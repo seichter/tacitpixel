@@ -22,13 +22,13 @@
 class tpImageHandler_BMP : public tpImageHandler {
 public:
 
-	TP_TYPE_DECLARE;
+    TP_TYPE_DECLARE
 
 	bool getCapability(tpUInt capability,const tpString& name);
 
 	tpImageHandler_BMP();
 
-	virtual tpImage* read(const tpString& name);
+    virtual tpImage* read(const tpString& name) const;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ bool tpImageHandler_BMP::getCapability( tpUInt capability,const tpString& name )
 	return false;
 }
 
-tpImage* tpImageHandler_BMP::read( const tpString& name )
+tpImage* tpImageHandler_BMP::read( const tpString& name ) const
 {
 	tpUInt _uival;
 	tpUShort _usval;
