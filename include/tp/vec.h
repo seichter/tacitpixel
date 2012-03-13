@@ -38,7 +38,7 @@ public:
 
 	tpVec(const tpVec& other) : tpMat<components,1,T>(other) {}
 
-	tpVec(const tpMat& other) : tpMat<components,1,T>(other) {}
+    tpVec(const tpMat<components,1,T>& other) : tpMat<components,1,T>(other) {}
 
 	const T& operator()(tpUInt c) const { return this->m[c]; }
 	T& operator()(tpUInt c) { return this->m[c]; }

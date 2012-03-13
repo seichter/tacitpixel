@@ -86,7 +86,9 @@ void parseMaterial(Lib3dsMaterial* m3ds, const tpString& path)
 
 		gsTexCache.add(texture);
 
-		tpLogNotify("Name %s",m3ds->texture1_map.name);
+		//
+		//tpLogNotify("Name %s\n\tscale %f",m3ds->texture1_map.name,
+		//	m3ds->texture1_map.flags);
 
 	} else {
 		// we do that to use the same id from the face
@@ -134,7 +136,6 @@ tpNodeHandler_3DS::read(const tpString& name)
 	tpLogNotify("\tframes %d",0 != file3ds->frames);
 
 	cacheAssets(file3ds,path);
-
 
 	tpNode* node = new tpNode();
 

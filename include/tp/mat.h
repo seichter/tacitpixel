@@ -128,14 +128,14 @@ protected:
 //////////////////////////////////////////////////////////////////////////
 
 template <tpUInt R, tpUInt C, typename T> class tpMat
-        : public tpMatRef<R,C,T>
+        : public tpMatRef<R,C,T,true>
 {
 
 public:
 
-	tpMat() : tpMatRef(&m[0]) {}
+    tpMat() : tpMatRef<R,C,T>(&m[0]) {}
 
-	tpMat(const tpMat& mtc) : tpMatRef(&m[0]) { *this = mtc; }
+    tpMat(const tpMat& mtc) : tpMatRef<R,C,T>(&m[0]) { *this = mtc; }
 
 	inline const tpMat operator - (const tpMat& r) const {
 		return tpMat(*this)-=r;
@@ -159,7 +159,7 @@ public:
             }
         }
         resMat.transpose();
-        resMat.mul(static_cast<value_type>((T)1/this->getDeterminant()));
+        resMat.mul(static_cast<T>((T)1/this->getDeterminant()));
     }
 
 	inline
@@ -171,10 +171,10 @@ public:
 		return *this;
 	}
 
-	tpMatRef<R,C,T>& operator *= (const T& rhs) { return tpMatRef::operator*=(rhs); }
-	tpMatRef<R,C,T>& operator += (const T& rhs) { return tpMatRef::operator+=(rhs); }
-	tpMatRef<R,C,T>& operator /= (const T& rhs) { return tpMatRef::operator/=(rhs); }
-	tpMatRef<R,C,T>& operator -= (const T& rhs) { return tpMatRef::operator-=(rhs); }
+    tpMatRef<R,C,T>& operator *= (const T& rhs) { return tpMatRef<R,C,T>::operator*=(rhs); }
+    tpMatRef<R,C,T>& operator += (const T& rhs) { return tpMatRef<R,C,T>::operator+=(rhs); }
+    tpMatRef<R,C,T>& operator /= (const T& rhs) { return tpMatRef<R,C,T>::operator/=(rhs); }
+    tpMatRef<R,C,T>& operator -= (const T& rhs) { return tpMatRef<R,C,T>::operator-=(rhs); }
 
 
 	void getMinor(tpMat<R-1,C-1,T>& res, tpUInt r0, tpUInt c0) const;
@@ -189,7 +189,7 @@ public:
 	tpMat<R,C,T>& copyFrom(const T* src) { for (int i = 0; i < tpMat::cells; ++i) { this->m[i] = src[i]; } return *this; }
 
     tpMat<R,C,T> operator * (const tpMat<R,C,T>& rhs) const {
-        return mul(*this,rhs);
+        return tpMatMul(*this,rhs);
 	}
 
     tpMat<C,R,T>
@@ -302,7 +302,7 @@ tpMatMul(const tpMat<aR,aCbR,T>& A, const tpMat<aCbR,bC,T>& B)
 //}
 
 template <tpUInt R, tpUInt C,typename T>
-tpMat<R,C,T>& tpMat<R,C,T>::operator *= (const tpMat<R,C,T>& rhs)
+tpMat<R,C,T>& tpMat<R,C,T>::operator *= (const tpMat& rhs)
 {
     *this = tpMatMul(*this,rhs);
 	return *this;
