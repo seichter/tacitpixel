@@ -14,6 +14,8 @@
 #include <tp/timer.h>
 #include <tp/scene.h>
 #include <tp/thread.h>
+#include <tp/mutex.h>
+#include <tp/scopelock.h>
 
 #include <tp/config.h>
 
@@ -274,6 +276,9 @@ public:
 
 	void operator()(tpScene* scene)
 	{
+        tpMutex mutex;
+        tpScopeLock<tpMutex> lock(mutex);
+
 		static int count(0);
 
 		count++;
