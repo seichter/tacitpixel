@@ -16,6 +16,10 @@
 #include <tp/light.h>
 #include <tp/viewer.h>
 #include <tp/transform.h>
+#include <tp/dialogs.h>
+#include <tp/system.h>
+
+
 
 class tpViewerShow : public tpViewer {
 
@@ -41,8 +45,23 @@ public:
 				case 'q':
 				case 'Q': e.getRenderSurface()->setDone();
 					break;
+				case 'o':
+				case 'O' :
+					{
+						static tpString searchpath;
+						if (searchpath.isEmpty()) searchpath = tpSystem::get()->getCWD();
+						tpString filename = tpDialogs::fileSelector("Open File",searchpath,"",0);
+						if (!filename.isEmpty()) {
+							tpRefPtr<tpNode> node = tpNode::read(filename);
+							if (node.isValid()) {
+								mScene->getActiveCamera()->removeAllChildren();
+								mScene->getActiveCamera()->addChild(node.get());
+							}
+						}
+					}
 				default:
 					break;
+
 			}
 		}
 

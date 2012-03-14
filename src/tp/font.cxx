@@ -125,14 +125,15 @@ tpFont::text(const tpString& text,tpPrimitive& p) {
     if (0 == p.getTexture())
     {
         tpTexture* rasterfont = new tpTexture();
-        rasterfont->setFormat(tpTexture::kFormatAlpha);
         rasterfont->setImage(getImage());
-        p.clearRenderFlags();
+		rasterfont->setFormat(tpTexture::kFormatAlpha);
+		p.clearRenderFlags();
         p.addRenderFlag(tpRenderFlag::kBlending,
                         tpRenderFlag::kBlendSrcAlpha,
                         tpRenderFlag::kBlendOneMinusAlpha);
+		p.addRenderFlag(tpRenderFlag::kLighting);
 
-        p.setMaterial(0);
+//        p.setMaterial(0);
         p.setTexture(rasterfont);
     }
 

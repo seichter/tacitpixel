@@ -1,6 +1,9 @@
 set(lib_name minizip)
 
-include_directories(..)
+include_directories(
+	${CMAKE_CURRENT_SOURCE_DIR}/../zlib
+	${CMAKE_BINARY_DIR}/include
+	)
 
 set(mz_srcs
 #	minizip.c
@@ -18,7 +21,7 @@ set(mz_srcs
 	)
 
 if(WIN32)
-	list(ADD mz_srcs
+	list(APPEND mz_srcs
 		iowin32.h
 		iowin32.c
 	)
