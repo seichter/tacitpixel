@@ -276,8 +276,8 @@ public:
 
 	void operator()(tpScene* scene)
 	{
-        tpMutex mutex;
-        tpScopeLock<tpMutex> lock(mutex);
+//        tpMutex mutex;
+//        tpScopeLock<tpMutex> lock(mutex);
 
 		static int count(0);
 
