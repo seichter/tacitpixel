@@ -51,6 +51,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/arguments.h
 	${tp_include_path}/tp/assert.h
 	${tp_include_path}/tp/chunk.h
+	${tp_include_path}/tp/dialogs.h
 	${tp_include_path}/tp/event.h
 	${tp_include_path}/tp/field.h
 	${tp_include_path}/tp/file.h
@@ -188,6 +189,8 @@ if(WIN32)
 			_impl/window_win32.h
 			_impl/rendercontext_wgl.cxx
 			_impl/rendercontext_wgl.h
+			_impl/dialogs_win32.h
+			_impl/dialogs_win32.cxx
 			)
 endif()
 
@@ -197,6 +200,7 @@ set(tp_srcs
 	arguments.cxx
 	allocator.cxx
 	chunk.cxx
+	dialogs.cxx
 	egl.cxx
 	event.cxx
 	file.cxx
@@ -319,7 +323,7 @@ set_property(TARGET ${tp_name} PROPERTY COMPILE_DEFINITIONS "TACIT_EXPORTS")
 
 target_link_libraries(${tp_name} ${tp_impl_libs} dlmalloc )
 
-target_link_libraries(${tp_name} jpeg png z ogg vorbis)
+target_link_libraries(${tp_name} jpeg png zlib ogg vorbis)
 
 if(APPLE)
 	target_link_libraries(${tp_name}

@@ -7,6 +7,8 @@
 
 #include <tp/viewer.h>
 #include <tp/transform.h>
+#include <tp/dialogs.h>
+#include <tp/system.h>
 
 class tpMyViewer : public tpViewer {
 public:
@@ -18,10 +20,29 @@ public:
 	void
 	onSurfaceEvent(tpWindowEvent& e)
 	{
-		if (e.getKeyCode() == 27 && e.getKeyState() == tpWindowEvent::kKeyUp) {
-			e.getRenderSurface()->setDone();
-			e.setHandled();
+		if (e.getKeyState() == tpWindowEvent::kKeyUp) {
+
+			switch (e.getKeyCode()) {
+				case 27:
+				case 'q':
+				case 'Q':
+					e.getRenderSurface()->setDone(true);
+					e.setHandled();
+					break;
+				case 'F':
+				case 'f':
+					tpDialogs::showMessage("Hey there","TASDDASDASDASDASDAS ",
+						tpDialogs::kButtonsOk | tpDialogs::kStyleInfo);
+					break;
+				case 'S':
+				case 's':
+					tpDialogs::fileSelector("Open File",tpSystem::get()->getCWD(),"",tpDialogs::kButtonsOkCancel);
+					break;
+
+			}
 		}
+
+		e.setHandled();
 
         text->set(tpString::format("tacit pixel %3.3f",t.getElapsed(tpTimer::kTimeSeconds)));
 	}
@@ -82,6 +103,9 @@ int main(int argc,char* argv[])
 	viewer->getScene().getActiveCamera()->addChild(root.get());
 	viewer->getScene().getActiveCamera()->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
 	viewer->getScene().getActiveCamera()->setClearColor(tpVec4f(0,.15f,.3f,1.f));
+
+	viewer->getScene().getActiveCamera()->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
+	viewer->getScene().getActiveCamera()->setProjectionPerspective(35,1.3,0.1,100);
 
 
 

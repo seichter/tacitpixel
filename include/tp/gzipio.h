@@ -26,6 +26,8 @@
 #ifndef TPGZIPIO_H
 #define TPGZIPIO_H
 
+
+#include <tp/globals.h>
 #include <tp/io.h>
 
 

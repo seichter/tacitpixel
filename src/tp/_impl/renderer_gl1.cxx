@@ -203,7 +203,7 @@ public:
 //				glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 
 
-				glTexImage2D(GL_TEXTURE_2D,0,internalFormat,npot(0),npot(1),0,format,GL_UNSIGNED_BYTE,0);
+				glTexImage2D(GL_TEXTURE_2D,0,internalFormat,npot(0),npot(1),0,format,GL_BYTE,0);
 
 
 			}
@@ -513,8 +513,9 @@ public:
 				glEnable(GL_LIGHTING);
 				break;
 			case tpRenderFlag::kBlending:
+				//glBlendFunc(getGL(it->getValue().value1),getGL(it->getValue().value2));
+				glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 				glEnable(GL_BLEND);
-				glBlendFunc(getGL(it->getValue().value1),getGL(it->getValue().value2));
 				break;
 			default:
 				break;
@@ -613,6 +614,8 @@ public:
 						GL_FLOAT, 0,
 						prim.getVertices().getData()
 						);
+
+		// if indices 
 
 		glDrawArrays(prim.getPrimitiveType(),0,prim.getVertices().getSize());
 
