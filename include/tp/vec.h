@@ -26,293 +26,96 @@
 #ifndef TP_VEC_H
 #define TP_VEC_H
 
-/*!
-	\class tpVec
-	\brief base class for vectors
 
-	This is the base class for vector
-	calculations.
-*/
+#include <tp/mat.h>
 
-#include <tp/math.h>
 
-template <class T, tpUInt N> class tpVec
+template <tpUInt components,typename T>
+class tpVec : public tpMat<components,1,T>
 {
 public:
+	tpVec() : tpMat<components,1,T>() {}
 
-	typedef T value_type;
-	const static tpUInt dimensions = N;
+	tpVec(const tpVec& other) : tpMat<components,1,T>(other) {}
 
-	//! c'tor initializes all to 0
-	tpVec();
+    tpVec(const tpMat<components,1,T>& other) : tpMat<components,1,T>(other) {}
 
-	//! copy constructor
-	tpVec(const tpVec<T,N>& v);
+	const T& operator()(tpUInt c) const { return this->m[c]; }
+	T& operator()(tpUInt c) { return this->m[c]; }
 
-	//! d'tor
-	~tpVec();
-
-	//! get the dimension of a vector
-	tpUInt dimension() const;
-
-	//! get the raw vector data
-	const T* getData() const { return &vec[0]; }
-
-	//! get the raw vector data
-	T* getData() { return &vec[0]; }
-
-	//! substract a vector
-	const tpVec operator -(const tpVec& rs) const;
-	//! add a vector
-	const tpVec operator +(const tpVec& rs) const;
-
-	//! substract from self vector
-	tpVec& operator -= (const tpVec& v);
-	//! add to the vector
-	tpVec& operator += (const tpVec& v);
-
-	//! copy data from other representations
-	void set(const tpVec& v);
-
-	//! copy data from simple buffer
-	void set(const T* buf);
-
-	//! dot product with other vector
-	T dot(const tpVec<T,N>& v) const;
-
-	//! get the angle between this and another vector
-	T getAngle(tpVec<T,N> v) const;
-
-	//! normalizes this vector
-	void normalize();
-
-	//! return length
-	T getLength() const;
-
-	//! returns squared length
-	T getSquareLength() const;
-
-	//! uniformly scales the vector
-	tpVec<T,N>& scaleUniform(T scale);
-
-	//! another uniform scale
-	tpVec<T,N> operator* (T scale) const;
-
-	//! return the component at position i
-	T& operator [] (const tpUInt& i) { return vec[i]; }
-
-	//! return the component at position i
-	const T& operator [] (const tpUInt& i) const { return vec[i]; }
-
-
-	//! swap components in the vector
-	tpVec<T,N>& swapComponent(tpUInt c1,tpUInt c2);
-
-	inline const tpVec<T,N> operator - () const
+	void
+		normalize()
 	{
-		tpVec<T,N> r;
-		for (int i = 0; i < N; ++i) { r.vec[i] = -this->vec[i]; }
-		return r;
+		T norm = getNorm();
+		if (norm > 0)
+			for (register tpUInt i = 0; i < components; i++) (*this)(i) /= norm;
 	}
 
-	tpVec<T,N>& operator -= (const tpVec<T,N>& rhs) const
+	T
+		getSquaredNorm() const
 	{
-		for (int i = 0; i < N; ++i) { this->vec[i] -= rhs.vec[i]; }
+		T squareLen = 0;
+		for (register tpUInt i = 0; i < components; i++) squareLen += (this->m[i] * this->m[i]);
+		return squareLen;
+	}
+
+	T
+		getNorm() const
+	{
+		return ::sqrt(this->getSquaredNorm());
+	}
+
+	T
+		dot(const tpVec<components,T>& other) const
+	{
+		T res = 0;
+		for (tpUInt i = 0; i < components; i++) res += (*this)(i) * other(i);
+		return res;
+	}
+
+	T
+		getAngle(const tpVec<components,T>& other) const
+	{
+		tpVec<components,T> nself(*this); tpVec<components,T> nothr = other;
+		nself.normalize(); nothr.normalize();
+		return acos( nothr.dot(nself) );
+	}
+
+	tpVec<components,T>&
+		operator -= (const tpVec& other)
+	{
+		for (tpUInt i = 0; i < components; ++i) { this->m[i] -= other.m[i]; }
 		return *this;
 	}
 
-	tpVec<T,N>& operator += (const tpVec<T,N>& rhs) const
+	tpVec<components,T>&
+		operator += (const tpVec& other)
 	{
-		for (int i = 0; i < N; ++i) { this->vec[i] += rhs.vec[i]; }
+		for (tpUInt i = 0; i < components; ++i) { this->m[i] += other.m[i]; }
 		return *this;
 	}
 
+	tpVec(const tpVec<components-1,T> & small,T v = 0)
+	{
+		for (tpUInt i = 0; i < components-1;++i) {this->m[i] = small.at(i); }
+		(*this)(components-1) = v;
+	}
 
-	//! assignment operator
-	tpVec& operator = (const tpVec& rs);
-
-	//! assignment operator using raw data
-	tpVec& operator = (const T* rs);
-
-	//! comparison
-	bool operator == (const tpVec<T,N>& rs) const;
-
-	//! inverted comparison
-	bool operator != (const tpVec<T,N>& rs) const;
-
-
-protected:
-	T vec[N];
 };
-
-
-// Vec -----------------------------------------------------------------------------------------
-
-template <class T,tpUInt N> inline
-tpVec<T,N>::tpVec()
-{
-	for (tpUInt i = 0; i < N; i++) vec[i] = T(0);
-}
-
-template <class T,tpUInt N> inline
-tpVec<T,N>::tpVec(const tpVec& v)
-{
-	for (tpUInt i = 0; i < N; i++) this->vec[i] = v.vec[i];
-}
-
-
-template <class T,tpUInt N> inline
-tpVec<T,N>::~tpVec()
-{
-}
-
-template <class T,tpUInt N> inline
-tpVec<T,N>& tpVec<T,N>::operator -= (const tpVec<T,N>& v)
-{
-	for (tpUInt i = 0; i < N; i++) vec[i] -= v.vec[i];
-	return *this;
-}
-
-template <class T,tpUInt N> inline
-tpVec<T,N>& tpVec<T,N>::operator += (const tpVec& v)
-{
-	for (tpUInt i = 0; i < N; i++) vec[i] += v.vec[i];
-	return *this;
-}
-
-template <class T,tpUInt N> inline
-void tpVec<T,N>::set(const tpVec<T,N>& v)
-{
-	for (tpUInt i = 0; i < N; i++) vec[i] = v.vec[i];
-}
-
-template <class T,tpUInt N> inline
-void tpVec<T,N>::set(const T* buf)
-{
-	for (tpUInt i =0; i < N; ++i) vec[i] = *buf[i];
-}
-
-template <class T,tpUInt N> inline
-T tpVec<T,N>::dot(const tpVec<T,N>& v) const
-{
-	T res = 0;
-	for (tpUInt i = 0; i < N; i++) res = res + (vec[i] * v.vec[i]);
-	return res;
-}
-
-template <class T,tpUInt N> inline
-T tpVec<T,N>::getAngle(tpVec<T,N> v) const
-{
-	tpVec<T,N> nself = *this;
-	tpVec<T,N> nothr = v;
-	nself.normalize();
-	nothr.normalize();
-	return acos( nothr.dot(nself) );
-}
-
-template <class T,tpUInt N>
-inline tpVec<T,N>& tpVec<T,N>::operator = (const tpVec& rs)
-{
-	for (tpUInt i = 0; i < N; i++) this->vec[i] = rs.vec[i];
-	return *this;
-}
-
-template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::operator = (const T* rs)
-{
-	this->vec = rs;
-	return *this;
-}
-
-template <class T,tpUInt N> inline bool tpVec<T,N>::operator == (const tpVec<T,N>& rs) const
-{
-	if (this == &rs) return true;
-	for (tpUInt i = 0; i < N; i++) if (rs.vec[i] != vec[i]) return false;
-	return true;
-}
-
-template <class T,tpUInt N> inline bool tpVec<T,N>::operator != (const tpVec<T,N>& rs) const
-{
-	return ! operator==(rs);
-}
-
-template <class T,tpUInt N> inline
-void tpVec<T,N>::normalize()
-{
-	T _length = getLength();
-	if (_length > 0)
-	{
-		for (register tpUInt i = 0; i < N; i++) vec[i] /= _length;//vec[i] = T(vec[i] / _length);
-	}
-}
-
-template <class T,tpUInt N> inline
-T tpVec<T,N>::getLength() const
-{
-	return sqrt(getSquareLength());
-}
-
-template <class T,tpUInt N> inline
-T tpVec<T,N>::getSquareLength() const
-{
-	T sum = 0;
-	for (register tpUInt i = 0; i < N; i++) sum += (vec[i] * vec[i]);
-	return sum;
-}
-
-template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::scaleUniform(T scale)
-{
-	for (tpUInt i = 0; i < N; i++) vec[i] = vec[i] * scale;
-	return *this;
-}
-
-template <class T,tpUInt N> inline
-tpVec<T,N> tpVec<T,N>::operator* (T scale) const
-{
-	tpVec<T,N> v = *this;
-	v.scaleUniform(scale);
-	return v;
-}
-
-template <class T,tpUInt N> inline
-tpVec<T,N>& tpVec<T,N>::swapComponent(tpUInt c1,tpUInt c2)
-{
-	T _swp = vec[c1];
-	vec[c1] = vec[c2];
-	vec[c2] = _swp;
-
-	return *this;
-}
-
-// Generic Operators ---------------------------------------------------------
-
-template <class T, tpUInt N> inline
-const tpVec<T,N> tpVec<T,N>::operator + (const tpVec<T,N>& r) const
-{
-	return tpVec<T,N>(*this)+=r;
-}
-
-template <class T, tpUInt N> inline
-const tpVec<T,N> tpVec<T,N>::operator - (const tpVec<T,N>& r) const
-{
-	return tpVec<T,N>(*this)-=r;
-}
-
 
 
 // Vec3 -----------------------------------------------------------------------
 
 template <class T>
-class tpVec3 : public tpVec<T,3>
+class tpVec3 : public tpVec<3,T>
 {
 public:
 
-	tpVec3() { this->vec[0] = T(); this->vec[1] = T(); this->vec[2] = T(); }
+	tpVec3() : tpVec<3,T>() {}
 
-	tpVec3(const tpVec<T,3>& in) { this->vec[0] = in[0]; this->vec[1] = in[1]; this->vec[2] = in[2]; }
+	tpVec3(T c1, T c2, T c3) { this->set(c1,c2,c3); }
 
-	tpVec3(T c1, T c2, T c3) {this->vec[0] = c1; this->vec[1] = c2; this->vec[2] = c3;}
-
-	void set(T c1, T c2, T c3) { this->vec[0] = c1; this->vec[1] = c2; this->vec[2] = c3; }
+	void set(T c1, T c2, T c3) { (*this)(0) = c1; (*this)(1) = c2; (*this)(2) = c3; }
 
 	tpVec3 cross(const tpVec3<T>&) const;
 };
@@ -321,48 +124,80 @@ public:
 
 template <class T> inline tpVec3<T> tpVec3<T>::cross(const tpVec3<T>& vec2) const
 {
-	T _v1 = this->vec[1] * vec2.vec[2] - vec2.vec[1] * this->vec[2];
-	T _v2 = this->vec[2] * vec2.vec[0] - vec2.vec[2] * this->vec[0];
-	T _v3 = this->vec[0] * vec2.vec[1] - vec2.vec[0] * this->vec[1];
+	T _v1 = (*this)(1) * vec2(2) - vec2(1) * (*this)(2);
+	T _v2 = (*this)(2) * vec2(0) - vec2(2) * (*this)(0);
+	T _v3 = (*this)(0) * vec2(1) - vec2(0) * (*this)(1);
 
 	return tpVec3<T>(_v1,_v2,_v3);
 }
 
 
-
 // Vec2x -----------------------------------------------------------------------
 
-/*!	\brief a two dimensional vector
-*/
-template <class T> class tpVec2 : public tpVec<T,2>
+template <class T> class tpVec2 : public tpVec<2,T>
 {
 public:
 
-	tpVec2()
-	{
-		this->vec[0] = this->vec[1] = (T)0;
+	tpVec2() {}
+
+	tpVec2(T v1,T v2) {
+		this->set(v1,v2);
 	}
 
-	tpVec2(T v1,T v2)
-	{
-		this->vec[0] = v1; this->vec[1] = v2;
-	}
-
-	void set(T v1,T v2)
-	{
-		this->vec[0] = v1; this->vec[1] = v2;
+	void set(T v1,T v2) {
+		(*this)(0) = v1; (*this)(1) = v2;
 	}
 };
+
+// Vec4 -----------------------------------------------------------------------
+
+template <typename T> class tpVec4 : public tpVec<4,T>
+{
+public:
+
+	tpVec4() {}
+
+    tpVec4(const tpVec<3,T>& rv,T pad = T(0))
+	{
+       this->set(rv(0),rv(1),rv(2),pad);
+	}
+
+	tpVec4(T v1,T v2,T v3,T v4)
+	{
+		this->set(v1,v2,v3,v4);
+	}
+
+	void set(T v1,T v2,T v3,T v4)
+	{
+		(*this)(0) = v1;
+		(*this)(1) = v2;
+		(*this)(2) = v3;
+		(*this)(3) = v4;
+	}
+
+
+	tpVec3<T> xyz() const
+	{
+		return tpVec3<T>((*this)(0),(*this)(1),(*this)(2));
+	}
+
+	tpVec2<T> xy() const
+	{
+		return tpVec2<T>((*this)(0),(*this)(1));
+	}
+
+
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+
 
 typedef tpVec2<tpDouble> tpVec2d;
 typedef tpVec2<tpFloat> tpVec2f;
 typedef tpVec2<tpReal> tpVec2r;
 typedef tpVec2<tpInt> tpVec2i;
-
-
-
-
-
+typedef tpVec2<tpUInt> tpVec2ui;
 
 typedef tpVec3<tpReal> tpVec3r;
 typedef tpVec3<tpDouble> tpVec3d;
@@ -371,67 +206,420 @@ typedef tpVec3<tpInt> tpVec3i;
 typedef tpVec3<tpUInt> tpVec3ui;
 
 
-
-// Vec4 -----------------------------------------------------------------------
-
-template <typename T> class tpVec4 : public tpVec<T,4>
-{
-public:
-
-	tpVec4()
-	{
-		this->vec[0] = this->vec[1] = this->vec[2] = this->vec[3] = T(0);
-	}
-
-    tpVec4(const tpVec<T,3>& rv,T pad = T(0))
-	{
-        this->vec[0] = rv[0]; this->vec[1] = rv[1]; this->vec[2] = rv[2]; this->vec[3] = pad;
-	}
-
-	tpVec4(T v1,T v2,T v3,T v4)
-	{
-		this->vec[0] = v1; this->vec[1] = v2; this->vec[2] = v3; this->vec[3] = v4;
-	}
-
-	void set(T v1,T v2,T v3,T v4)
-	{
-		this->vec[0] = v1; this->vec[1] = v2; this->vec[2] = v3; this->vec[3] = v4;
-	}
-
-
-	tpVec3<T> xyz() const
-	{
-		return tpVec3<T>(this->vec[0],this->vec[1],this->vec[2]);
-	}
-
-	tpVec2<T> xy() const
-	{
-		return tpVec2<T>(this->vec[0],this->vec[1]);
-	}
-
-
-};
-
 typedef tpVec4<tpReal> tpVec4r;
-typedef tpVec4<tpInt> tpVec4i;
-
-typedef tpVec4<tpFloat> tpVec4f;
 typedef tpVec4<tpDouble> tpVec4d;
+typedef tpVec4<tpFloat> tpVec4f;
+typedef tpVec4<tpInt> tpVec4i;
+typedef tpVec4<tpUInt> tpVec4ui;
 
 
 
-// Quaternion
-template <typename T>
-class tpQuat : public tpVec<T,4> {
-public:
-
-	tpVec3<T> rotate( const tpVec3<T>& v )
-	{
-		tpVec3<T> result; // = v + 2 * v.cross(
-
-
-	}
-};
+///*!
+//	\class tpVec
+//	\brief base class for vectors
+//
+//	This is the base class for vector
+//	calculations.
+//*/
+//
+//#include <tp/math.h>
+//
+//template <class T, tpUInt N> class tpVec
+//{
+//public:
+//
+//	typedef T value_type;
+//	const static tpUInt dimensions = N;
+//
+//	//! c'tor initializes all to 0
+//	tpVec();
+//
+//	//! copy constructor
+//	tpVec(const tpVec<T,N>& v);
+//
+//	//! d'tor
+//	~tpVec();
+//
+//	//! get the dimension of a vector
+//	tpUInt dimension() const;
+//
+//	//! get the raw vector data
+//	const T* getData() const { return &vec[0]; }
+//
+//	//! get the raw vector data
+//	T* getData() { return &vec[0]; }
+//
+//	//! substract a vector
+//	const tpVec operator -(const tpVec& rs) const;
+//	//! add a vector
+//	const tpVec operator +(const tpVec& rs) const;
+//
+//	//! substract from self vector
+//	tpVec& operator -= (const tpVec& v);
+//	//! add to the vector
+//	tpVec& operator += (const tpVec& v);
+//
+//	//! copy data from other representations
+//	void set(const tpVec& v);
+//
+//	//! copy data from simple buffer
+//	void set(const T* buf);
+//
+//	//! dot product with other vector
+//	T dot(const tpVec<T,N>& v) const;
+//
+//	//! get the angle between this and another vector
+//	T getAngle(tpVec<T,N> v) const;
+//
+//	//! normalizes this vector
+//	void normalize();
+//
+//	//! return length
+//	T getLength() const;
+//
+//	//! returns squared length
+//	T getSquareLength() const;
+//
+//	//! uniformly scales the vector
+//	tpVec<T,N>& scaleUniform(T scale);
+//
+//	//! another uniform scale
+//	tpVec<T,N> operator* (T scale) const;
+//
+//	//! return the component at position i
+//	T& operator [] (const tpUInt& i) { return vec[i]; }
+//
+//	//! return the component at position i
+//	const T& operator [] (const tpUInt& i) const { return vec[i]; }
+//
+//
+//	//! swap components in the vector
+//	tpVec<T,N>& swapComponent(tpUInt c1,tpUInt c2);
+//
+//	inline const tpVec<T,N> operator - () const
+//	{
+//		tpVec<T,N> r;
+//		for (int i = 0; i < N; ++i) { r.vec[i] = -this->vec[i]; }
+//		return r;
+//	}
+//
+//	tpVec<T,N>& operator -= (const tpVec<T,N>& rhs) const
+//	{
+//		for (int i = 0; i < N; ++i) { this->vec[i] -= rhs.vec[i]; }
+//		return *this;
+//	}
+//
+//	tpVec<T,N>& operator += (const tpVec<T,N>& rhs) const
+//	{
+//		for (int i = 0; i < N; ++i) { this->vec[i] += rhs.vec[i]; }
+//		return *this;
+//	}
+//
+//
+//	//! assignment operator
+//	tpVec& operator = (const tpVec& rs);
+//
+//	//! assignment operator using raw data
+//	tpVec& operator = (const T* rs);
+//
+//	//! comparison
+//	bool operator == (const tpVec<T,N>& rs) const;
+//
+//	//! inverted comparison
+//	bool operator != (const tpVec<T,N>& rs) const;
+//
+//
+//protected:
+//	T vec[N];
+//};
+//
+//
+//// Vec -----------------------------------------------------------------------------------------
+//
+//template <class T,tpUInt N> inline
+//tpVec<T,N>::tpVec()
+//{
+//	for (tpUInt i = 0; i < N; i++) vec[i] = T(0);
+//}
+//
+//template <class T,tpUInt N> inline
+//tpVec<T,N>::tpVec(const tpVec& v)
+//{
+//	for (tpUInt i = 0; i < N; i++) this->vec[i] = v.vec[i];
+//}
+//
+//
+//template <class T,tpUInt N> inline
+//tpVec<T,N>::~tpVec()
+//{
+//}
+//
+//template <class T,tpUInt N> inline
+//tpVec<T,N>& tpVec<T,N>::operator -= (const tpVec<T,N>& v)
+//{
+//	for (tpUInt i = 0; i < N; i++) vec[i] -= v.vec[i];
+//	return *this;
+//}
+//
+//template <class T,tpUInt N> inline
+//tpVec<T,N>& tpVec<T,N>::operator += (const tpVec& v)
+//{
+//	for (tpUInt i = 0; i < N; i++) vec[i] += v.vec[i];
+//	return *this;
+//}
+//
+//template <class T,tpUInt N> inline
+//void tpVec<T,N>::set(const tpVec<T,N>& v)
+//{
+//	for (tpUInt i = 0; i < N; i++) vec[i] = v.vec[i];
+//}
+//
+//template <class T,tpUInt N> inline
+//void tpVec<T,N>::set(const T* buf)
+//{
+//	for (tpUInt i =0; i < N; ++i) vec[i] = *buf[i];
+//}
+//
+//template <class T,tpUInt N> inline
+//T tpVec<T,N>::dot(const tpVec<T,N>& v) const
+//{
+//	T res = 0;
+//	for (tpUInt i = 0; i < N; i++) res = res + (vec[i] * v.vec[i]);
+//	return res;
+//}
+//
+//template <class T,tpUInt N> inline
+//T tpVec<T,N>::getAngle(tpVec<T,N> v) const
+//{
+//	tpVec<T,N> nself = *this;
+//	tpVec<T,N> nothr = v;
+//	nself.normalize();
+//	nothr.normalize();
+//	return acos( nothr.dot(nself) );
+//}
+//
+//template <class T,tpUInt N>
+//inline tpVec<T,N>& tpVec<T,N>::operator = (const tpVec& rs)
+//{
+//	for (tpUInt i = 0; i < N; i++) this->vec[i] = rs.vec[i];
+//	return *this;
+//}
+//
+//template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::operator = (const T* rs)
+//{
+//	this->vec = rs;
+//	return *this;
+//}
+//
+//template <class T,tpUInt N> inline bool tpVec<T,N>::operator == (const tpVec<T,N>& rs) const
+//{
+//	if (this == &rs) return true;
+//	for (tpUInt i = 0; i < N; i++) if (rs.vec[i] != vec[i]) return false;
+//	return true;
+//}
+//
+//template <class T,tpUInt N> inline bool tpVec<T,N>::operator != (const tpVec<T,N>& rs) const
+//{
+//	return ! operator==(rs);
+//}
+//
+//template <class T,tpUInt N> inline
+//void tpVec<T,N>::normalize()
+//{
+//	T _length = getLength();
+//	if (_length > 0)
+//	{
+//		for (register tpUInt i = 0; i < N; i++) vec[i] /= _length;//vec[i] = T(vec[i] / _length);
+//	}
+//}
+//
+//template <class T,tpUInt N> inline
+//T tpVec<T,N>::getLength() const
+//{
+//	return sqrt(getSquareLength());
+//}
+//
+//template <class T,tpUInt N> inline
+//T tpVec<T,N>::getSquareLength() const
+//{
+//	T sum = 0;
+//	for (register tpUInt i = 0; i < N; i++) sum += (vec[i] * vec[i]);
+//	return sum;
+//}
+//
+//template <class T,tpUInt N> inline tpVec<T,N>& tpVec<T,N>::scaleUniform(T scale)
+//{
+//	for (tpUInt i = 0; i < N; i++) vec[i] = vec[i] * scale;
+//	return *this;
+//}
+//
+//template <class T,tpUInt N> inline
+//tpVec<T,N> tpVec<T,N>::operator* (T scale) const
+//{
+//	tpVec<T,N> v = *this;
+//	v.scaleUniform(scale);
+//	return v;
+//}
+//
+//template <class T,tpUInt N> inline
+//tpVec<T,N>& tpVec<T,N>::swapComponent(tpUInt c1,tpUInt c2)
+//{
+//	T _swp = vec[c1];
+//	vec[c1] = vec[c2];
+//	vec[c2] = _swp;
+//
+//	return *this;
+//}
+//
+//// Generic Operators ---------------------------------------------------------
+//
+//template <class T, tpUInt N> inline
+//const tpVec<T,N> tpVec<T,N>::operator + (const tpVec<T,N>& r) const
+//{
+//	return tpVec<T,N>(*this)+=r;
+//}
+//
+//template <class T, tpUInt N> inline
+//const tpVec<T,N> tpVec<T,N>::operator - (const tpVec<T,N>& r) const
+//{
+//	return tpVec<T,N>(*this)-=r;
+//}
+//
+//
+//
+//// Vec3 -----------------------------------------------------------------------
+//
+//template <class T>
+//class tpVec3 : public tpVec<T,3>
+//{
+//public:
+//
+//	tpVec3() { this->vec[0] = T(); this->vec[1] = T(); this->vec[2] = T(); }
+//
+//	tpVec3(const tpVec<T,3>& in) { this->vec[0] = in[0]; this->vec[1] = in[1]; this->vec[2] = in[2]; }
+//
+//	tpVec3(T c1, T c2, T c3) { this->set(c1,c2,c3); }
+//
+//	void set(T c1, T c2, T c3) { this->vec[0] = c1; this->vec[1] = c2; this->vec[2] = c3; }
+//
+//	tpVec3 cross(const tpVec3<T>&) const;
+//};
+//
+//// Vec3 Implementation
+//
+//template <class T> inline tpVec3<T> tpVec3<T>::cross(const tpVec3<T>& vec2) const
+//{
+//	T _v1 = this->vec[1] * vec2.vec[2] - vec2.vec[1] * this->vec[2];
+//	T _v2 = this->vec[2] * vec2.vec[0] - vec2.vec[2] * this->vec[0];
+//	T _v3 = this->vec[0] * vec2.vec[1] - vec2.vec[0] * this->vec[1];
+//
+//	return tpVec3<T>(_v1,_v2,_v3);
+//}
+//
+//
+//
+//// Vec2x -----------------------------------------------------------------------
+//
+///*!	\brief a two dimensional vector
+//*/
+//template <class T> class tpVec2 : public tpVec<T,2>
+//{
+//public:
+//
+//	tpVec2()
+//	{
+//		this->vec[0] = this->vec[1] = (T)0;
+//	}
+//
+//	tpVec2(T v1,T v2)
+//	{
+//		this->vec[0] = v1; this->vec[1] = v2;
+//	}
+//
+//	void set(T v1,T v2)
+//	{
+//		this->vec[0] = v1; this->vec[1] = v2;
+//	}
+//};
+//
+//typedef tpVec2<tpDouble> tpVec2d;
+//typedef tpVec2<tpFloat> tpVec2f;
+//typedef tpVec2<tpReal> tpVec2r;
+//typedef tpVec2<tpInt> tpVec2i;
+//
+//
+//
+//
+//
+//
+//typedef tpVec3<tpReal> tpVec3r;
+//typedef tpVec3<tpDouble> tpVec3d;
+//typedef tpVec3<tpFloat> tpVec3f;
+//typedef tpVec3<tpInt> tpVec3i;
+//typedef tpVec3<tpUInt> tpVec3ui;
+//
+//
+//
+//// Vec4 -----------------------------------------------------------------------
+//
+//template <typename T> class tpVec4 : public tpVec<T,4>
+//{
+//public:
+//
+//	tpVec4()
+//	{
+//		this->vec[0] = this->vec[1] = this->vec[2] = this->vec[3] = T(0);
+//	}
+//
+//    tpVec4(const tpVec<T,3>& rv,T pad = T(0))
+//	{
+//        this->vec[0] = rv[0]; this->vec[1] = rv[1]; this->vec[2] = rv[2]; this->vec[3] = pad;
+//	}
+//
+//	tpVec4(T v1,T v2,T v3,T v4)
+//	{
+//		this->vec[0] = v1; this->vec[1] = v2; this->vec[2] = v3; this->vec[3] = v4;
+//	}
+//
+//	void set(T v1,T v2,T v3,T v4)
+//	{
+//		this->vec[0] = v1; this->vec[1] = v2; this->vec[2] = v3; this->vec[3] = v4;
+//	}
+//
+//
+//	tpVec3<T> xyz() const
+//	{
+//		return tpVec3<T>(this->vec[0],this->vec[1],this->vec[2]);
+//	}
+//
+//	tpVec2<T> xy() const
+//	{
+//		return tpVec2<T>(this->vec[0],this->vec[1]);
+//	}
+//
+//
+//};
+//
+//typedef tpVec4<tpReal> tpVec4r;
+//typedef tpVec4<tpInt> tpVec4i;
+//
+//typedef tpVec4<tpFloat> tpVec4f;
+//typedef tpVec4<tpDouble> tpVec4d;
+//
+//
+//
+//// Quaternion
+//template <typename T>
+//class tpQuat : public tpVec<T,4> {
+//public:
+//
+//	tpVec3<T> rotate( const tpVec3<T>& v )
+//	{
+//		tpVec3<T> result; // = v + 2 * v.cross(
+//
+//
+//	}
+//};
 
 
 #endif

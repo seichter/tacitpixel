@@ -1,6 +1,7 @@
 
 #include <tp/array.h>
 #include <tp/mat.h>
+#include <tp/vec.h>
 #include <tp/log.h>
 #include <tp/logutils.h>
 
@@ -31,10 +32,10 @@ TEST(tpMat, positive) {
 
 TEST(tpVec, create) {
 	tpVec4f v(1,2,3,4);
-	EXPECT_EQ(1,v[0]);
-	EXPECT_EQ(2,v[1]);
-	EXPECT_EQ(3,v[2]);
-	EXPECT_EQ(4,v[3]);
+    EXPECT_EQ(1,v(0));
+    EXPECT_EQ(2,v(1));
+    EXPECT_EQ(3,v(2));
+    EXPECT_EQ(4,v(3));
 
 //	tpVec4f v2(v - v);
 //	EXPECT_EQ(2,v2[0]);

@@ -27,19 +27,22 @@
 #define _TACITPIXEL_GLOBALS_H_
 
 
-#if defined(__WIN32)
-
+#if defined(_MSC_VER)
 	// switch of warning for simple types in tpListIterator
 	#pragma warning( disable: 4284)
 	#pragma warning( disable: 4251 )
+#endif
 
-	#if defined(TP_BUILD_LIBRARY)
-		#define TP_API __declspec(dllexport)
-	#else
-		#define TP_API __declspec(dllimport)
-	#endif
-#else // non MSC
-	#define TP_API
+#if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
+#  if defined( TACIT_STATIC )
+#    define TP_API
+#  elif defined( TACIT_EXPORTS )
+#    define TP_API __declspec(dllexport)
+#  else
+#    define TP_API __declspec(dllimport)
+#  endif
+#else
+#  define TP_API
 #endif
 
 

@@ -78,6 +78,8 @@ protected:
 	tpRefPtr<tpPrimitiveAttribute> mTexCoords;
 	tpRefPtr<tpPrimitiveAttribute> mColors;
 
+    tpArray<tpUInt16> mIndices;
+
 	typedef tpArray<tpRefPtr<tpPrimitiveAttribute> > tpRefPrimitiveAttributeArray;
 
 	tpRefPrimitiveAttributeArray mUserAttributes;
@@ -136,6 +138,18 @@ public:
 	tpPrimitive& addVertexNormalColor(const tpVec3r& vertex,const tpVec3f& normal,const tpVec4f& color);
 
 	tpPrimitive& addVertexNormalTextureCoordinateColor( const tpVec3r& vertex,const tpVec3f& normal,const tpVec2f& texcoord,const tpVec4f& color );
+
+    void clearIndices() { mIndices.clear(); }
+
+    void addIndex(tpUInt16 idx) { mIndices.add(idx); }
+
+    template <typename T>
+    void copyIndices(T* idx, tpSizeT size)
+    {
+        for (tpSizeT i = 0; i < size; ++i) mIndices.add(idx[i]);
+    }
+
+    const tpUInt16* getIndices() const { return mIndices.getData(); }
 
 	void clear();
 

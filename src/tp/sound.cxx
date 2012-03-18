@@ -5,6 +5,7 @@
 #include <tp/node.h>
 #include <tp/scopeptr.h>
 #include <tp/mat.h>
+#include <tp/vec.h>
 #include <tp/rendercontext.h>
 #include <tp/file.h>
 #include <tp/system.h>

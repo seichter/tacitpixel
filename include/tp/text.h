@@ -26,6 +26,7 @@
 #ifndef TPTEXT_H
 #define TPTEXT_H
 
+#include <tp/globals.h>
 #include <tp/font.h>
 #include <tp/primitive.h>
 
@@ -39,6 +40,8 @@ public:
 	void setFont(const tpString& name);
 
 protected:
+
+	virtual ~tpText();
 
 	tpRefPtr<tpFont> mFont;
 	tpString mText;

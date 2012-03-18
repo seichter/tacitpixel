@@ -102,7 +102,7 @@ tpImage::read( const tpString& name )
 
 					tpLogNotify("%s using %s",__FUNCTION__,item->getType()->getName());
 
-					result = nf->read(filename);
+                    result = nf->read(name);
 
 					if (result && result->isValid()) {
 						//result->setFileName(filename);

@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
 	tpVec3<tpFixed32> vec3x;
 	tpVec2<tpFixed32> vec2x(tpFixed32(3),tpFixed32(5));
 
-	tpLogMessage("Vec2<Fixed> > float squared length (34.0,5.83)  %f %f",vec2x.getSquareLength().getFloat(),vec2x.getLength().getFloat());
+	tpLogMessage("Vec2<Fixed> > float squared length (34.0,5.83)  %f %f",vec2x.getSquaredNorm().getFloat(),vec2x.getNorm().getFloat());
 
 	tpLogMessage("Sizeof vec4<float>, vec4<fixed> %d=%d",sizeof(tpVec4<tpFloat>),sizeof(tpVec4<tpFixed32>));
 
@@ -143,11 +143,8 @@ int main(int argc, char* argv[])
 
 	tpRefPtr<tpReferenced> r(new tpReferenced());
 
-	tpMat44f m44f;
-	tpMat44x m44x;
-
-	m44f.identity();
-	m44x.identity();
+    tpMat44f m44f(tpMat44f::Identity());
+    tpMat44x m44x(tpMat44x::Identity());
 
 	m44f.invert();
 	m44x.invert();

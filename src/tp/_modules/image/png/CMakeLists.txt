@@ -18,12 +18,13 @@ else()
 		${CMAKE_SOURCE_DIR}/src/tp/_thirdparty/zlib
 		${CMAKE_SOURCE_DIR}/src/tp/_thirdparty/libpng
 		)
-	set(module_libs png z)
+	set(module_libs png zlib)
 endif()
 
 include_directories(
 	${CMAKE_SOURCE_DIR}/include
 	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_BINARY_DIR}/include
 	)
 
 

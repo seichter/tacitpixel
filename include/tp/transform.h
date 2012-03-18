@@ -33,7 +33,7 @@
 class TP_API tpTransform : public tpNode {
 public:
 
-	TP_TYPE_DECLARE;
+    TP_TYPE_DECLARE
 
 	enum {
 		kRelative = 0x0,

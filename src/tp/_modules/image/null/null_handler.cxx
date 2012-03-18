@@ -22,15 +22,15 @@ class tpImageHandler_Null : public tpImageHandler
 {
 public:
 
-	TP_TYPE_DECLARE;
+    TP_TYPE_DECLARE
 
 	bool getCapability(tpUInt capability,const tpString& name);
 
 	tpImageHandler_Null();
 
-	virtual tpImage* read(const tpString& name);
+    virtual tpImage* read(const tpString& name) const;
 
-	virtual bool write(const tpImage *img, const tpString &name);
+    virtual bool write(const tpImage *img, const tpString &name) const;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -48,13 +48,13 @@ tpImageHandler_Null::getCapability( tpUInt capability,const tpString& name )
 }
 
 tpImage*
-tpImageHandler_Null::read( const tpString& name )
+tpImageHandler_Null::read( const tpString& name ) const
 {
 	return 0L;
 }
 
 bool
-tpImageHandler_Null::write(const tpImage* img, const tpString& name)
+tpImageHandler_Null::write(const tpImage* img, const tpString& name) const
 {
 	return false;
 }

@@ -49,7 +49,9 @@ set(tp_hdrs
 	${tp_include_path}/tp/allocator.h
 	${tp_include_path}/tp/array.h
 	${tp_include_path}/tp/arguments.h
+	${tp_include_path}/tp/assert.h
 	${tp_include_path}/tp/chunk.h
+	${tp_include_path}/tp/dialogs.h
 	${tp_include_path}/tp/event.h
 	${tp_include_path}/tp/field.h
 	${tp_include_path}/tp/file.h
@@ -57,7 +59,9 @@ set(tp_hdrs
 	${tp_include_path}/tp/globals.h
 	${tp_include_path}/tp/egl.h
 	${tp_include_path}/tp/font.h
+	${tp_include_path}/tp/fixed.h
 	${tp_include_path}/tp/gl.h
+	${tp_include_path}/tp/gzipio.h
 	${tp_include_path}/tp/hash.h
 	${tp_include_path}/tp/image.h
 	${tp_include_path}/tp/imagehandler.h
@@ -185,6 +189,8 @@ if(WIN32)
 			_impl/window_win32.h
 			_impl/rendercontext_wgl.cxx
 			_impl/rendercontext_wgl.h
+			_impl/dialogs_win32.h
+			_impl/dialogs_win32.cxx
 			)
 endif()
 
@@ -194,12 +200,14 @@ set(tp_srcs
 	arguments.cxx
 	allocator.cxx
 	chunk.cxx
+	dialogs.cxx
 	egl.cxx
 	event.cxx
 	file.cxx
 	filename.cxx
 	functoid.cxx
 	font.cxx
+	gzipio.cxx
 #	gl.cxx
 	hash.cxx
 	image.cxx
@@ -292,24 +300,30 @@ configure_file(config.h.in
 	${CMAKE_BINARY_DIR}/include/tp/config.h
 	@ONLY
 	)
-
-add_library(${tp_name} SHARED
+	
+set(tp_srcs_all
 	${tp_srcs}
 	${tp_hdrs}
 	${tp_hdrs_sg}
 	${tp_srcs_sg}
 	${tp_impl_srcs}
 	)
+	
+#set_property(SOURCE ${tp_srcs_all}
+#	APPEND PROPERTY
+#	COMPILE_DEFINITIONS
+#	"TACIT_EXPORTS"
+	
 
+add_library(${tp_name} SHARED
+	${tp_srcs_all}
+	)
+
+set_property(TARGET ${tp_name} PROPERTY COMPILE_DEFINITIONS "TACIT_EXPORTS")
 
 target_link_libraries(${tp_name} ${tp_impl_libs} dlmalloc )
 
-set_target_properties(${tp_name}
-	PROPERTIES
-	COMPILE_DEFINITIONS TP_BUILD_LIBRARY=1
-	)
-
-target_link_libraries(${tp_name} jpeg png z ogg vorbis)
+target_link_libraries(${tp_name} jpeg png zlib ogg vorbis)
 
 if(APPLE)
 	target_link_libraries(${tp_name}

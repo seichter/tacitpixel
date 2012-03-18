@@ -116,7 +116,7 @@ tpGL_TestRig tpgl_testrig;
 void display() {
 
 	tpVec4f c(.2,.3,.4,1);
-	glClearColor(c[0],c[1],c[2],c[3]);
+    glClearColor(c(0),c(1),c(2),c(3));
 
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 

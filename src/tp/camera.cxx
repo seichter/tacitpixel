@@ -65,7 +65,7 @@ void tpCamera::setViewLookAt( const tpVec3r& eye, const tpVec3r& target, const t
 }
 
 tpVec3r
-tpCamera::getTranslation()
+tpCamera::getTranslation() const
 {
 	return tpVec3r(mView(3,0),mView(3,1),mView(3,2));
 }
@@ -73,7 +73,7 @@ tpCamera::getTranslation()
 void
 tpCamera::setTranslation(const tpVec3r &t)
 {
-	mView(3,0) = t[0]; mView(3,1) = t[1]; mView(3,2) = t[2];
+	mView(3,0) = t(0); mView(3,1) = t(1); mView(3,2) = t(2);
 	update();
 }
 

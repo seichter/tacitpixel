@@ -23,7 +23,7 @@
  * SUCH DAMAGE.
  */
 
-#include <tp/transform.h>
+#include "tp/transform.h"
 
 
 tpTransform::tpTransform(const tpString& name) : tpNode(name), m_scope(kRelative)

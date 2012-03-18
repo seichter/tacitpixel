@@ -27,6 +27,8 @@
 
 #include "tp/config.h"
 #include "tp/file.h"
+#include "tp/array.h"
+#include "tp/types.h"
 
 #if defined(HAVE_STDIO_H)
 
@@ -104,3 +106,4 @@ tpSizeT tpFile::tell() const
 }
 
 #endif
+

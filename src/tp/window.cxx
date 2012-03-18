@@ -200,7 +200,7 @@ tpWindowTraits& tpWindowTraits::setTitle( const tpString& val )
 
 bool tpWindowTraits::useDefaultSize()
 {
-	return (size[0] < 0 || size[1] < 0);
+	return (size(0) < 0 || size(1) < 0);
 }
 
 tpWindowTraits& tpWindowTraits::setDefaultSize()
@@ -231,7 +231,7 @@ tpWindowTraits& tpWindowTraits::setDefaultPosition()
 
 bool tpWindowTraits::useDefaultPosition()
 {
-	return (position[0] < 0 || position[1] < 0);
+	return (position(0) < 0 || position(1) < 0);
 }
 
 void* tpWindowTraits::getWindowHandle() const

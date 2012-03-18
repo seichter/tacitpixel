@@ -27,6 +27,7 @@
 #define TP_MATOP_H
 
 #include <tp/mat.h>
+#include <tp/vec.h>
 
 
 /**
@@ -52,24 +53,24 @@ struct TP_API tpMat44Op {
 		Ud.normalize();
 
 
-		matOut(0,0) = S[0];
-		matOut(1,0) = S[1];
-		matOut(2,0) = S[2];
+		matOut(0,0) = S(0);
+		matOut(1,0) = S(1);
+		matOut(2,0) = S(2);
 		matOut(3,0) = T(0);
 
-		matOut(0,1) = Ud[0];
-		matOut(1,1) = Ud[1];
-		matOut(2,1) = Ud[2];
+		matOut(0,1) = Ud(0);
+		matOut(1,1) = Ud(1);
+		matOut(2,1) = Ud(2);
 		matOut(3,1) = T(0);
 
-		matOut(0,2) = -L[0];
-		matOut(1,2) = -L[1];
-		matOut(2,2) = -L[2];
+		matOut(0,2) = -L(0);
+		matOut(1,2) = -L(1);
+		matOut(2,2) = -L(2);
 		matOut(3,2) = T(0);
 
-		matOut(0,3) = eye[0];
-		matOut(1,3) = eye[1];
-		matOut(2,3) = eye[2];
+		matOut(0,3) = eye(0);
+		matOut(1,3) = eye(1);
+		matOut(2,3) = eye(2);
 		matOut(3,3) = 1;
 
 	}

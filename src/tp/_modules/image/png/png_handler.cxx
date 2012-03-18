@@ -32,9 +32,9 @@ public:
 
 	tpImageHandler_PNG();
 
-	virtual tpImage* read(const tpString& name);
+    virtual tpImage* read(const tpString& name) const;
 
-	virtual bool write(const tpImage *img, const tpString &name);
+    virtual bool write(const tpImage *img, const tpString &name) const;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ tpImageHandler_PNG::getCapability( tpUInt capability,const tpString& name )
 
 
 tpImage*
-tpImageHandler_PNG::read( const tpString& name )
+tpImageHandler_PNG::read( const tpString& name ) const
 {
     tpLogNotify("%s loading %s",__FUNCTION__,name.c_str());
 	png_infop info_ptr;
@@ -141,7 +141,7 @@ tpImageHandler_PNG::read( const tpString& name )
 }
 
 bool
-tpImageHandler_PNG::write(const tpImage* img, const tpString& name)
+tpImageHandler_PNG::write(const tpImage* img, const tpString& name) const
 {
 
 	/* create file */

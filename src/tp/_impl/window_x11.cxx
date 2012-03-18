@@ -21,9 +21,12 @@
 #include <tp/image.h>
 #include <tp/module.h>
 #include <tp/version.h>
+#include <tp/mutex.h>
+#include <tp/scopelock.h>
+
 
 #include <X11/Xutil.h>
-#include <X11/keysym.h>
+#include <X11/XKBlib.h>
 
 
 tpWindowX11::tpWindowX11( tpWindowTraits* traits )
@@ -70,7 +73,7 @@ tpWindowX11::doCreate( tpWindowTraits* traits ) {
 
 	Colormap colormap = XCreateColormap( dpy, root_window, vi->visual, AllocNone );
 	swa.colormap = colormap;
-	swa.event_mask = ExposureMask | StructureNotifyMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | KeyPressMask;
+    swa.event_mask = ExposureMask | StructureNotifyMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | KeyPressMask | KeyReleaseMask;
 	unsigned int mask = CWBackPixel | CWBorderPixel | CWEventMask | CWColormap;
 
 
@@ -79,10 +82,10 @@ tpWindowX11::doCreate( tpWindowTraits* traits ) {
 
 	if (traits)
 	{
-		width = traits->getSize()[0];
-		height = traits->getSize()[1];
-		pos_x = traits->getPosition()[0];
-		pos_y = traits->getPosition()[1];
+        width = traits->getSize()(0);
+        height = traits->getSize()(1);
+        pos_x = traits->getPosition()(0);
+        pos_y = traits->getPosition()(1);
 	}
 
 
@@ -116,8 +119,8 @@ tpWindowX11::getSize() const {
     tpVec2i r;
     XWindowAttributes xwa;
     XGetWindowAttributes(dpy,win,&xwa);
-    r[0] = xwa.width;
-    r[1] = xwa.height;
+    r(0) = xwa.width;
+    r(1) = xwa.height;
 
     return r;
 }
@@ -175,7 +178,11 @@ tpWindowX11::update()
 		case KeyRelease:
 			{
                 KeyCode kc = event.xkey.keycode;
+#if TP_USE_OLD_X11
                 KeySym ks = XKeycodeToKeysym(dpy, kc, 0);
+#else
+                KeySym ks = XkbKeycodeToKeysym(dpy, kc, 0, 0);
+#endif
                 tpString kstr = XKeysymToString(ks);
                 tpLogNotify("%s - key pressed %d (%s)",__FUNCTION__,kstr.c_str()[0],kstr.c_str());
                 e.setKeyCode(kstr.c_str()[0]);

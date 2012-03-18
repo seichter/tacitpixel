@@ -57,19 +57,12 @@ set(vorbis_hdrs
 	lib/window.h
 	)
 
-include_directories(include ${CMAKE_CURRENT_SOURCE_DIR}/../libogg/include)
+include_directories(include
+	${CMAKE_CURRENT_SOURCE_DIR}/../libogg/include
+	${CMAKE_BINARY_DIR}/include
+	)
 
 add_library(vorbis STATIC ${vorbis_hdrs} ${vorbis_srcs} ${vorbis_pub_hdrs})
-
-
-if(CMAKE_COMPILER_IS_GNUCC)
-    set_target_properties(
-        vorbis
-        PROPERTIES
-        COMPILE_FLAGS -fPIC
-        )
-endif()
-
 
 target_link_libraries(vorbis
     ogg)

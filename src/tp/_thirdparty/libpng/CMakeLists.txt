@@ -1,4 +1,7 @@
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../zlib)
+include_directories(
+	${CMAKE_CURRENT_SOURCE_DIR}/../zlib
+	${CMAKE_BINARY_DIR}/include
+	)
 
 set(png_srcs
 	png.c
@@ -24,14 +27,6 @@ set(png_srcs
 	)
 
 add_library(png STATIC ${png_srcs})
-
-if(CMAKE_COMPILER_IS_GNUCC)
-	set_target_properties(
-		png
-		PROPERTIES
-		COMPILE_FLAGS -fPIC
-		)
-endif()
 
 set_target_properties(png
 	PROPERTIES

@@ -12,7 +12,7 @@
 // need to force C linking
 extern "C" {
 #include "jpeglib.h"
-};
+}
 
 
 #define TP_JPEG_QUALITY 75
@@ -29,7 +29,7 @@ tpImage* tpJPEGLoader(const tpString& filename)
     cinfo.err = jpeg_std_error(&jerr);
     jpeg_create_decompress(&cinfo);
 
-	tpLogNotify("%s - %s",__FUNCTION__,filename.c_str());
+    tpLogNotify("%s - '%s'",__FUNCTION__,filename.c_str());
 
     FILE *_file=fopen(filename.c_str(), "rb");
 
@@ -189,10 +189,9 @@ public:
 		return false;
 	}
 
-	virtual tpImage* read(const tpString& name)
+    virtual tpImage* read(const tpString& name) const
 	{
-        tpLogMessage("?%s",name.c_str());
-		tpImage* img = tpJPEGLoader(name);
+        tpImage* img = tpJPEGLoader(name);
 
 		return img;
 	}

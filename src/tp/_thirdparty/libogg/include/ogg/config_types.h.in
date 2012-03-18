@@ -2,24 +2,23 @@
 #define __CONFIG_TYPES_H__
 
 /* these are filled in by configure */
-#define INCLUDE_INTTYPES_H @INCLUDE_INTTYPES_H@
-#define INCLUDE_STDINT_H @INCLUDE_STDINT_H@
-#define INCLUDE_SYS_TYPES_H @INCLUDE_SYS_TYPES_H@
+#cmakedefine HAVE_INTTYPES_H
+#cmakedefine HAVE_STDINT_H
+#cmakedefine HAVE_SYS_TYPES
 
-#if defined(INCLUDE_INTTYPES_H)
+#if defined(HAVE_INTTYPES_H)
 #  include <inttypes.h>
-#endif
-#if defined(INCLUDE_STDINT_H)
+#elif defined(HAVE_STDINT_H)
 #  include <stdint.h>
-#endif
-#if defined(INCLUDE_SYS_TYPES_H)
+typedef int16_t ogg_int16_t;
+typedef uint16_t ogg_uint16_t;
+typedef int32_t ogg_int32_t;
+typedef int32_t ogg_uint32_t;
+typedef int64_t ogg_int64_t;
+#elif defined(HAVE_SYS_TYPES)
 #  include <sys/types.h>
-#endif
+#elif defined(_WIN32)
 
-typedef @SIZE16@ ogg_int16_t;
-typedef @USIZE16@ ogg_uint16_t;
-typedef @SIZE32@ ogg_int32_t;
-typedef @USIZE32@ ogg_uint32_t;
-typedef @SIZE64@ ogg_int64_t;
+#endif
 
 #endif

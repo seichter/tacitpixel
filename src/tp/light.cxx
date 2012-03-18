@@ -45,7 +45,7 @@ tpLight::tpLight()
 	if (mId == 0) {
 		// use OpenGL defaults for ID0
 		mDiffuseColor = mSpecularColor = tpVec4f(1.0f,1.0f,1.0f,0.0f);
-		mSpecularColor[3] = 1.f;
+		mSpecularColor(3) = 1.f;
 	}
 }
 
@@ -92,7 +92,7 @@ tpLight &tpLight::operator =(const tpLight &rhs)
 bool tpLight::isValid() const
 {
 	// a quick check for correct homogenous coordinates
-	return (isSpot()) ? true : (mPositionH.getSquareLength() > 0);
+	return (isSpot()) ? true : (mPositionH.getSquaredNorm() > 0);
 }
 
 tpLight::~tpLight()

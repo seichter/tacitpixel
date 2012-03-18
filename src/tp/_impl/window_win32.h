@@ -45,6 +45,9 @@ public:
     tpVec2i getSize() const;
 	void setSize(tpInt w, tpInt h);
 
+    tpVec2i getClientAreaSize() const;
+    void setClientAreaSize(tpUInt w, tpUInt h);
+
 	void setPosition(tpInt x, tpInt y);
 	tpVec2i getPosition() const;
 };

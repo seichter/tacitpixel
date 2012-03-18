@@ -1,3 +1,7 @@
+#ifndef DLMALLOC_H_H_
+#define DLMALLOC_H_H_
+
+
 /* Version identifier to allow people to support multiple versions */
 #ifndef DLMALLOC_VERSION
 #define DLMALLOC_VERSION 20805
@@ -5,6 +9,10 @@
 
 #ifndef DLMALLOC_EXPORT
 #define DLMALLOC_EXPORT extern
+#endif
+
+#ifdef ANDROID
+#define STRUCT_MALLINFO_DECLARED 1
 #endif
 
 #ifndef WIN32
@@ -898,3 +906,5 @@ DLMALLOC_EXPORT int mspace_mallopt(int, int);
 #ifdef __cplusplus
 }  /* end of extern "C" */
 #endif /* __cplusplus */
+
+#endif
