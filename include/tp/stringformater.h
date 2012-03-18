@@ -22,6 +22,25 @@ tpString& operator << (tpString& out, const tpMat<R,C,float>& m)
 	return out.append(result);
 }
 
+template <tpUInt R, tpUInt C>
+tpString& operator << (tpString& out, const tpMat<R,C,int>& m)
+{
+	// we are using MatLab style
+	tpString result("[ ");
+	for (int r = 0; r < m.rows;++r)
+	{
+		for (int c = 0; c < m.cols;++c)
+		{
+			result += tpString::format("%d",m(r,c));
+			if (c != m.cols - 1) result += ", ";
+		}
+		if (r != m.rows - 1) result += "; ";
+	}
+	result += " ]";
+	return out.append(result);
+}
+
+
 //template <tpUInt C>
 //tpString& operator << (tpString& out, const tpVec<C,float>& v)
 //{

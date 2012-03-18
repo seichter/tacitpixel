@@ -12,7 +12,7 @@
 
 #import "window_cocoa.h"
 
-#if 1//defined(TP_USE_COCOA)
+#if defined(TP_USE_COCOA)
 
 #import "rendercontext_cocoa.h"
 
@@ -81,6 +81,7 @@
 
 -(void) mouseMoved:(NSEvent*)theEvent
 {
+	tpLogMessage("Move!");
 }
 
 -(void) windowDidMove: (NSNotification*)notification
@@ -123,8 +124,8 @@ tpWindowCocoa::tpWindowCocoa(tpWindowTraits* traits)
 
 	[NSApplication sharedApplication];
 
-	int width = (traits) ? traits->getSize()[0] : 640;
-	int height = (traits) ? traits->getSize()[1] : 480;
+	int width = (traits) ? traits->getSize()(0) : 640;
+	int height = (traits) ? traits->getSize()(1) : 480;
 
 	tpLogNotify("%s creating window %dx%d",__FUNCTION__,width,height);
 
@@ -140,7 +141,6 @@ tpWindowCocoa::tpWindowCocoa(tpWindowTraits* traits)
 
 	delegate = mdelegate;
 	[window setDelegate:[NSApp delegate]];
-
 
 	[window center];
 	[window setAcceptsMouseMovedEvents:TRUE];
@@ -160,7 +160,7 @@ tpWindowCocoa::tpWindowCocoa(tpWindowTraits* traits)
 	GetCurrentProcess(&PSN);
 	TransformProcessType(&PSN,kProcessTransformToForegroundApplication);
 
-	this->setClientAreaSize(width,height);
+//	this->setClientAreaSize(width,height);
 
 	[pool release];
 
@@ -185,16 +185,11 @@ bool tpWindowCocoa::show(bool doShow)
 	return [window isVisible];
 }
 
-tpVec2i tpWindowCocoa::getSize() const {
+tpVec2i
+tpWindowCocoa::getSize() const {
 	NSRect rect = [window contentRectForFrameRect:[window frame]];
 	NSSize size = rect.size;
-
-	tpVec2i s;
-
-	s[0] =  (int)floor(size.width);
-	s[1] = (int)floor(size.height);
-
-	return s;
+	return tpVec2i((int)floor(size.width),(int)floor(size.height));
 }
 
 tpVec2i
@@ -209,25 +204,25 @@ void
 tpWindowCocoa::setClientAreaSize(tpUInt w, tpUInt h)
 {
 	NSView* view = [window contentView];
-
 	NSRect rect = [view frame];
-
 	rect.size.width = w; rect.size.height = h;
 
+	[view setFrameSize:rect.size];
 	[view setNeedsDisplay: YES];
 
 }
 
 void
-tpWindowCocoa::setSize(tpInt w, tpInt h) {
+tpWindowCocoa::setSize(tpInt w, tpInt h)
+{
 	NSRect rect = [window frame];
 	rect.size.width = w;
 	rect.size.height = h;
-
 	[window contentRectForFrameRect:[window frame]];
 }
 
-void tpWindowCocoa::update()
+void
+tpWindowCocoa::update()
 {
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
@@ -307,11 +302,14 @@ void tpWindowCocoa::update()
 			break;
 		}
 
-		// we only peek into the events - put it back into the queue
-		[NSApp sendEvent:event];
+		if (submit) {
+			// we only peek into the events - put it back into the queue
+			this->getEventHandler().process(e);
+			[NSApp sendEvent:event];
 
-		if (submit) this->getEventHandler().process(e);
+		}
 	}
+
 	[pool release];
 
 }

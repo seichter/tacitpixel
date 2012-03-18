@@ -63,7 +63,10 @@ tpRenderContextCocoa::makeCurrent()
 	if (kCGLNoError == error )
 	{
 		[oglcontext makeCurrentContext];
+		[oglcontext update]; // need this to keep the context in sync with glViewport
+
 		return true;
+
 	} else {
 
 		tpLogError("CGL error %s",CGLErrorString(error));

@@ -25,6 +25,7 @@ tpViewer::create(const tpString& title/* = "tpViewer"*/,
 	tpWindowTraits traits;
 	traits.setSize(w,h).setPosition(x,y).setTitle(title);
 
+	// setup renderer and viewer
 	mRenderer = tpRenderer::create();
 	mSurface = tpWindow::create(&traits);
 	mSurface->setContext(0);
@@ -35,8 +36,8 @@ tpViewer::create(const tpString& title/* = "tpViewer"*/,
 	mSurface->getEventHandler().attach<tpWindowEvent,tpViewer>(this,&tpViewer::_dispatch);
 
 
-	mSurface->setClientAreaSize(w,h);
-
+	tpVec2i s = mSurface->getClientAreaSize();
+	mScene->getActiveCamera()->setViewport(tpVec4i(0,0,s(0),s(1)));
 
 	return true;
 
@@ -65,10 +66,16 @@ tpViewer::onSurfaceEvent(tpWindowEvent& e)
 /*virtual*/ void
 tpViewer::_dispatch(tpWindowEvent& e)
 {
-	if (e.getId() == tpWindowEvent::kWindowSize) {
-
+	if (e.getId() == tpWindowEvent::kWindowSize)
+	{
 		tpVec2i size = e.getRenderSurface()->getClientAreaSize();
 		this->getScene().getActiveCamera()->setViewport(tpVec4i(0,0,size(0),size(1)));
+		e.setHandled(true);
+
+		this->frame();
+
+		return;
+
 	}
 
 	this->onSurfaceEvent(e);
