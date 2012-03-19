@@ -24,6 +24,8 @@ bool tpRenderContextCocoa::create(tpRenderTarget *target)
 	NSOpenGLPixelFormat *format(nil);
 
 	format = [[NSOpenGLPixelFormat alloc] initWithAttributes:window_attribs];
+
+	//CGLCreateContext(CGLPixelFormatObject)
 	oglcontext = [[NSOpenGLContext alloc] initWithFormat:format shareContext:NULL];
 
 	[format release];
