@@ -277,6 +277,14 @@ tpSystem::getTime() const
 
 }
 
+tpULong
+tpSystem::getPID(bool parent /*=false*/) const {
+#if defined(__unix)
+    return (parent) ? getppid() : getpid();
+#endif
+    return 0L;
+}
+
 tpStringArray tpSystem::getFontPaths()
 {
 	tpStringArray res;
