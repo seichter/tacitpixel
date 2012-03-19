@@ -96,8 +96,9 @@ tpWindowX11::doCreate( tpWindowTraits* traits ) {
 
 	if (traits) setCaption(traits->getTitle());
 
-    XMapWindow(dpy, win);
+    delete vi;
 
+    XMapWindow(dpy, win);
     XFlush(dpy);
 
 }

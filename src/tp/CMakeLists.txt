@@ -195,6 +195,14 @@ if(WIN32)
 endif()
 
 
+#find_package(GTK)
+#if(GTK_FOUND)
+#	list(APPEND tp_impl_srcs
+#			_impl/dialogs_gtk.h
+#			_impl/dialogs_gtk.cxx
+#			)
+#endif()
+
 
 set(tp_srcs
 	arguments.cxx
