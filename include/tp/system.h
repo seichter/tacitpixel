@@ -63,8 +63,9 @@ public:
 
 	tpString getTime() const;
 
-	tpString getEnv(const tpString &name) const;
+    tpString getEnv(const tpString &name) const;
 
+    tpULong getPID(bool parent = false) const;
 };
 
 TP_API tpString tpSlash();

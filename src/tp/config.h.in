@@ -39,6 +39,7 @@
 
 #cmakedefine HAVE_CLOCK_GETTIME
 #cmakedefine HAVE_GETTIMEOFDAY
+#cmakedefine HAVE_PTHREAD_YIELD
 #cmakedefine HAVE_PTHREAD_YIELD_NP
 
 

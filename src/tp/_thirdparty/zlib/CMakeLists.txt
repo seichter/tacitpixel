@@ -1,11 +1,6 @@
-cmake_minimum_required(VERSION 2.4.4)
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
+cmake_minimum_required(VERSION 2.8)
 
 project(zlib C)
-
-if(NOT DEFINED BUILD_SHARED_LIBS)
-    option(BUILD_SHARED_LIBS "Build a shared library form of zlib" ON)
-endif()
 
 include(CheckTypeSize)
 include(CheckFunctionExists)
@@ -20,7 +15,9 @@ check_include_file(stddef.h    HAVE_STDDEF_H)
 #
 # Check to see if we have large file support
 #
+
 set(CMAKE_REQUIRED_DEFINITIONS -D_LARGEFILE64_SOURCE=1)
+
 # We add these other definitions here because CheckTypeSize.cmake
 # in CMake 2.4.x does not automatically do so and we want
 # compatibility with CMake 2.4.x.
@@ -52,36 +49,35 @@ endif()
 #
 check_include_file(unistd.h Z_HAVE_UNISTD_H)
 
-if(MSVC)
-    set(CMAKE_DEBUG_POSTFIX "d")
-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
-    add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
-endif()
+#if(MSVC)
+#    set(CMAKE_DEBUG_POSTFIX "d")
+#   add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+#    add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
+#endif()
 
-if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
-    # If we're doing an out of source build and the user has a zconf.h
-    # in their source tree...
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h)
-        message(FATAL_ERROR
-            "You must remove ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h "
-            "from the source tree.  This file is included with zlib "
-            "but CMake generates this file for you automatically "
-            "in the build directory.")
-  endif()
-endif()
+#if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
+#    # If we're doing an out of source build and the user has a zconf.h
+#    # in their source tree...
+#    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h)
+#        message(FATAL_ERROR
+#            "You must remove ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h "
+#            "from the source tree.  This file is included with zlib "
+#            "but CMake generates this file for you automatically "
+#            "in the build directory.")
+#  endif()
+#endif()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/zconf.h.cmakein
-               ${CMAKE_BINARY_DIR}/include/zconf.h @ONLY)
+               ${CMAKE_BINARY_DIR}/include/tacit_zconf.h @ONLY)
 
-include_directories(${CMAKE_BINARY_DIR}/include)
-
+include_directories(${CMAKE_BINARY_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR})
 
 #============================================================================
 # zlib
 #============================================================================
 
 set(ZLIB_PUBLIC_HDRS
-	${CMAKE_BINARY_DIR}/include/zconf.h
+	${CMAKE_BINARY_DIR}/include/tacit_zconf.h
     zlib.h
 )
 set(ZLIB_PRIVATE_HDRS
@@ -113,6 +109,11 @@ set(ZLIB_SRCS
     zutil.c
 )
 
+if(ANDROID)
+	set_property(SOURCE trees.c PROPERTY COMPILE_FLAGS -O2) # any other setting is triggering a bug in gcc shipped with the NDK
+endif()
+
+
 if(NOT MINGW)
     set(ZLIB_SRCS ${ZLIB_SRCS}
         win32/zlib1.rc # If present will override custom build rule below.
@@ -124,26 +125,25 @@ file(READ ${CMAKE_CURRENT_SOURCE_DIR}/zlib.h _zlib_h_contents)
 string(REGEX REPLACE ".*#define[ \t]+ZLIB_VERSION[ \t]+\"([0-9A-Za-z.]+)\".*"
     "\\1" ZLIB_FULL_VERSION ${_zlib_h_contents})
 
-if(MINGW)
+#if(MINGW)
     # This gets us DLL resource information when compiling on MinGW.
-    if(NOT CMAKE_RC_COMPILER)
-        SET(CMAKE_RC_COMPILER windres.exe)
-    endif()
+#    if(NOT CMAKE_RC_COMPILER)
+#        SET(CMAKE_RC_COMPILER windres.exe)
+#    endif()
 
-    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj
-                       COMMAND ${CMAKE_RC_COMPILER}
-                            -D GCC_WINDRES
-                            -I ${CMAKE_CURRENT_SOURCE_DIR}
-                            -I ${CMAKE_CURRENT_BINARY_DIR}
-                            -o ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj
-                            -i ${CMAKE_CURRENT_SOURCE_DIR}/win32/zlib1.rc)
-    set(ZLIB_SRCS ${ZLIB_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj)
-endif(MINGW)
+#    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj
+#                       COMMAND ${CMAKE_RC_COMPILER}
+#                            -D GCC_WINDRES
+#                            -I ${CMAKE_CURRENT_SOURCE_DIR}
+#                            -I ${CMAKE_CURRENT_BINARY_DIR}
+#                            -o ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj
+#                            -i ${CMAKE_CURRENT_SOURCE_DIR}/win32/zlib1.rc)
+#    set(ZLIB_SRCS ${ZLIB_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj)
+#endif(MINGW)
 
-add_library(zlib ${ZLIB_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
-set_target_properties(zlib PROPERTIES DEFINE_SYMBOL ZLIB_DLL)
-
-set_target_properties(zlib PROPERTIES SOVERSION 1)
+add_library(zlib STATIC ${ZLIB_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
+# set_target_properties(zlib PROPERTIES DEFINE_SYMBOL ZLIB_DLL)
+# set_target_properties(zlib PROPERTIES SOVERSION 1)
 
 if(NOT CYGWIN)
     # This property causes shared libraries on Linux to have the full version
@@ -153,15 +153,15 @@ if(NOT CYGWIN)
     #
     # This has no effect with MSVC, on that platform the version info for
     # the DLL comes from the resource file win32/zlib1.rc
-    set_target_properties(zlib PROPERTIES VERSION ${ZLIB_FULL_VERSION})
+#    set_target_properties(zlib PROPERTIES VERSION ${ZLIB_FULL_VERSION})
 endif()
 
 if(UNIX)
     # On unix-like platforms the library is almost always called libz
-   set_target_properties(zlib PROPERTIES OUTPUT_NAME z)
+#   set_target_properties(zlib PROPERTIES OUTPUT_NAME z)
 elseif(BUILD_SHARED_LIBS AND WIN32)
     # Creates zlib1.dll when building shared library version
-    set_target_properties(zlib PROPERTIES SUFFIX "1.dll")
+#    set_target_properties(zlib PROPERTIES SUFFIX "1.dll")
 endif()
 
 if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL )

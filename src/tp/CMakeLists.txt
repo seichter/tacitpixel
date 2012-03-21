@@ -33,6 +33,7 @@ include(CheckSymbolExists)
 check_symbol_exists(clock_gettime sys/time.h HAVE_CLOCK_GETTIME)
 check_symbol_exists(gettimeofday sys/time.h HAVE_GETTIMEOFDAY)
 check_symbol_exists(pthread_yield_np pthread.h HAVE_PTHREAD_YIELD_NP)
+check_symbol_exists(pthread_yield pthread.h HAVE_PTHREAD_YIELD)
 
 
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
@@ -194,6 +195,14 @@ if(WIN32)
 			)
 endif()
 
+
+#find_package(GTK)
+#if(GTK_FOUND)
+#	list(APPEND tp_impl_srcs
+#			_impl/dialogs_gtk.h
+#			_impl/dialogs_gtk.cxx
+#			)
+#endif()
 
 
 set(tp_srcs

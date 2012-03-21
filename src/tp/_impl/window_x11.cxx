@@ -96,9 +96,10 @@ tpWindowX11::doCreate( tpWindowTraits* traits ) {
 
 	if (traits) setCaption(traits->getTitle());
 
-    XMapWindow(dpy, win);
+    delete vi;
 
-    //XFlush(dpy);
+    XMapWindow(dpy, win);
+    XFlush(dpy);
 
 }
 
@@ -149,12 +150,12 @@ void
 tpWindowX11::update()
 {
 
-    XFlush(dpy);
-
-    if (XEventsQueued(dpy,QueuedAlready)) {
+    //if (XEventsQueued(dpy,QueuedAlready)) {
 	
+    while(XPending(dpy)) {
+
 		XEvent event;
-		XNextEvent(dpy,&event);
+        XNextEvent(dpy,&event);
 
         tpWindowEvent e(this);
 
@@ -169,7 +170,13 @@ tpWindowX11::update()
         bool submit = false;
 
 		switch (event.type) {
-		case ConfigureNotify:
+        case DestroyNotify:
+        case ClientMessage:
+            tpLogNotify("%s - request to close",__FUNCTION__);
+            this->setDone();
+            submit = true;
+            break;
+        case ConfigureNotify:
             e.setId(tpWindowEvent::kWindowSize);
             submit = true;
             //tpLogNotify("%s - configure",__FUNCTION__);
@@ -201,12 +208,6 @@ tpWindowX11::update()
             tpLogNotify("%s - button released/pressed (%d)",__FUNCTION__,event.xbutton.button);
             submit = true;
 			break;
-		case DestroyNotify:
-		case ClientMessage:
-			tpLogNotify("%s - request to close",__FUNCTION__);
-			this->setDone();
-            submit = true;
-			break;
         case Expose:
         case MapNotify:
         case ReparentNotify:
@@ -217,8 +218,14 @@ tpWindowX11::update()
 			break;
 		}
 
-        if (submit) this->getEventHandler().process(e);
-	}
+        if (submit) {
+            if (!this->getEventHandler().process(e))
+            {
+                //XPutBackEvent(dpy,&event);
+            }
+            XFlush(dpy);
+        }
+    }
 }
 
 void

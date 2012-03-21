@@ -61,8 +61,10 @@ struct tpThreadHandle
 
 #if defined(HAVE_PTHREAD_YIELD_NP)
 #define tpPThreadYield pthread_yield_np
-#else
+#elif defined(HAVE_PTHREAD_YIELD)
 #define tpPThreadYield pthread_yield
+#else
+#define tpPThreadYield()
 #endif
 
 
