@@ -21,7 +21,7 @@ public:
 
 	tpRenderContext();
 
-	virtual bool create(tpRenderTarget* target) = 0;
+	virtual bool init(tpRenderTarget* target) = 0;
 	virtual void destroy() = 0;
 
 	virtual void wait(tpUInt e = kWaitNone) {}
@@ -34,20 +34,28 @@ public:
 	const tpString& getVendor() const { return mVendor; }
 	const tpString& getExtensions() const { return mExtensions; }
 	const tpString& getRenderer() const { return mRenderer; }
+	const tpString& getName() const { return mName; }
 
 	void getExtensions(tpStringArray& e) const;
 
 	virtual void* getProcAddress(const char* name);
 
 
+	/**
+	  * request a module that implements a render context
+	  */
+	static tpRenderContext* create(const tpString& configuration = tpString());
+
 protected:
 
-    void reportToConsole();
+	void reportToConsole();
 
 	tpString mVendor;
 	tpString mVersion;
 	tpString mExtensions;
 	tpString mRenderer;
+
+	tpString mName;
 
 
 	virtual ~tpRenderContext();

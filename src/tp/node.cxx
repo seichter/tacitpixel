@@ -43,7 +43,7 @@ tpNode::~tpNode()
 }
 
 tpObject*
-tpNode::clone()
+tpNode::clone(const tpUByte& copymode) const
 {
 	return new tpNode(*this);
 }

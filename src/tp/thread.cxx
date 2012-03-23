@@ -27,6 +27,14 @@
 
 #include <tp/config.h>
 
+#if defined (__APPLE__)
+#include <TargetConditionals.h>
+#if defined (TARGET_IPHONE_SIMULATOR) || defined (TARGET_OS_IPHONE)
+#define HAVE_PTHREAD_H 1
+#endif
+#endif
+
+
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif

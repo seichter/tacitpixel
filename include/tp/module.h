@@ -72,22 +72,22 @@ public:
 template <class T> class tpModuleInitializer {
 public:
 
-    tpModuleInitializer() : mModule(0)
+	tpModuleInitializer() : mModule(0)
 	{
-        mModule = new T;
-        tpModuleManager::get()->add(mModule.get());
+		mModule = new T;
+		tpModuleManager::get()->add(mModule.get());
 	}
 
 	~tpModuleInitializer()
 	{
-        tpModuleManager::get()->remove(mModule.get());
+		tpModuleManager::get()->remove(mModule.get());
 	}
 
-    T* get() { return mModule.get(); }
+	T* get() { return mModule.get(); }
 
 protected:
 
-    tpRefPtr<T> mModule;
+	tpRefPtr<T> mModule;
 };
 
 extern "C"
@@ -107,6 +107,10 @@ struct tpModuleFunctionProxy
 #define TP_MODULE_REGISTER(name,klass) \
 	extern "C" void tpModule_##name(void) {} \
 	static tpModuleInitializer<klass> gs_module_##klass;
+
+#define TP_MODULE_TRIGGER(name) \
+	tpModule_##name(void);
+
 
 #endif
 

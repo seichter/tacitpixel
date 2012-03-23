@@ -23,56 +23,37 @@
  * SUCH DAMAGE.
  */
 
-#include "tp/renderer.h"
-#include "tp/module.h"
-#include "tp/log.h"
+#ifndef TP_RENDERCONTEXT_EAGL_H
+#define TP_RENDERCONTEXT_EAGL_H 1
+
+#include "tp/rendercontext.h"
 
 
-TP_TYPE_REGISTER(tpRenderer,tpReferenced,Renderer);
+@class EAGLView;
 
-tpRenderer::tpRenderer()
-	: tpReferenced()
-{
-}
+class tpRenderContextEAGL : public tpRenderContext {
+public:
+		
+	TP_TYPE_DECLARE
+	
+	tpRenderContextEAGL();
+	
+	bool useRenderBuffer;
+	
+	virtual bool init(tpRenderTarget *target);
+	virtual bool makeCurrent();
+	virtual bool swapBuffers();
+	virtual void destroy();
 
-tpRenderer::tpRenderer(const tpRenderer& other)
-	: tpReferenced()
-{
-}
-
-tpRenderer::~tpRenderer()
-{
-}
-
-
-tpRenderer*
-tpRenderer::create( const tpRendererTraits& traits )
-{
-
-	tpRenderer* renderer = 0;
-
-	tpModuleList modules = tpModuleManager::get()->getModules();
-
-	for (tpUInt i = 0; i < modules.getSize(); i++)
-	{
-		tpRefPtr<tpReferenced> item = modules[i];
-
-		if (item->getType()->isOfType(tpRenderer::getTypeInfo()))
-		{
-			renderer = static_cast<tpRenderer*>(item.get());
-			if ( renderer->getTraits() == traits )
-			{
-				tpLogNotify( "%s loaded %s",__FUNCTION__, item->getType()->getName());
-
-				return renderer;
-			}
-
-		}
-	}
-
-	return renderer;
-}
+//	tpString getString(const tpUInt &e);
+	
+protected:
+	
+	EAGLView* eaglview;
+	
+	
+};
 
 
 
-
+#endif

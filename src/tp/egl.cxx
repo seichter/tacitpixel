@@ -39,7 +39,7 @@ bool tpRenderContextEGL::makeCurrent() {
 	return (tpEGL::a().MakeCurrent.f(display,surface,surface,context) > 0);
 }
 
-bool tpRenderContextEGL::create(tpRenderTarget* target) {
+bool tpRenderContextEGL::init(tpRenderTarget* target) {
 
 	tpArray<EGLint> attributes;
 

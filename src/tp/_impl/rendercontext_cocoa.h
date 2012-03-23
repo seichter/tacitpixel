@@ -20,7 +20,9 @@ public:
 
 	TP_TYPE_DECLARE
 
-	virtual bool create(tpRenderTarget *target);
+	tpRenderContextCocoa();
+
+	virtual bool init(tpRenderTarget *target);
 	virtual bool makeCurrent();
 	virtual bool swapBuffers();
 	virtual void destroy();

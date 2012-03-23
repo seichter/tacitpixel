@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 
 	tpRenderContextEGL egl_context;
 
-	egl_context.create(surface.get());
+	egl_context.init(surface.get());
 
 	while (surface->isValid()) {
 		surface->update();

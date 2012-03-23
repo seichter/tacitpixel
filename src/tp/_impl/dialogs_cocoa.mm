@@ -40,14 +40,21 @@ tpDialogsCocoa::fileSelector(const tpString& caption,
 	NSString *nsfile = nil;
 	if (!directory.isEmpty()) nsdir = [[NSString alloc] initWithUTF8String:directory.c_str()];
 	if (!filter.isEmpty()) nsfile = [[NSString alloc] initWithUTF8String:filter.c_str()];
+	
+	[opendlg setDirectoryURL:[[NSURL alloc] initFileURLWithPath:nsdir]];
 
-	if (NSOKButton == [opendlg runModalForDirectory:nsdir file:nsfile]) {
+	if (nsfile) [opendlg setNameFieldStringValue:nsfile];
 
-		NSArray* files = [opendlg filenames];
+	if (NSOKButton == [opendlg runModal]) {
 
-		for (size_t i = 0; i < [files count]; i++) {
+		NSArray* urls = [opendlg URLs];
 
-			NSString* filename = [files objectAtIndex:i];
+		for (size_t i = 0; i < [urls count]; i++) {
+
+			NSString* filename = [urls objectAtIndex:i];
+			
+			return tpString([filename UTF8String]);
+			
 		}
 
 	}

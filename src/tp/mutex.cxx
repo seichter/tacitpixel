@@ -27,6 +27,14 @@
 #include <tp/mutex.h>
 #include <tp/config.h>
 
+#if defined (__APPLE__)
+	#include <TargetConditionals.h>
+	#if defined (TARGET_IPHONE_SIMULATOR) || defined (TARGET_OS_IPHONE)
+		#define HAVE_PTHREAD_H 1
+	#endif
+#endif
+
+
 #if defined(HAVE_PTHREAD_H)
 	#include <pthread.h>
 #endif
@@ -60,7 +68,7 @@ public:
 tpMutex::tpMutex()
 {
 	mHandle = new tpMutexHandle();
-#if defined(HAVE_PTHREAD_H)
+#if defined(HAVE_PTHREAD_H) 
 	pthread_mutex_init(&mHandle->handle,NULL);
 #elif defined(_WIN32)
 	mHandle->handle = ::CreateMutex(0, 0, 0);

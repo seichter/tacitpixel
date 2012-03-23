@@ -140,6 +140,13 @@ public:
 	tpString substr( tpSizeT pos, tpSizeT len ) const;
 
 	static tpString format(const char* format, ...);
+	
+	bool contains(const tpString& other) const {
+		
+		return (this->find(other.c_str()) != kNotFound);
+		
+	}
+	
 
 	template <typename T>
 	T to() const { return T(0); }

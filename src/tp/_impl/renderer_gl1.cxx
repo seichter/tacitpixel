@@ -19,6 +19,11 @@
 
 #include <tp/config.h>
 
+
+#if defined (TP_OS_IOS)
+	#include <OpenGLES/es1/gl.h>
+#endif
+
 //#if defined(__APPLE__)
 //    #include <OpenGL/OpenGL.h>
 //#elif defined(_WIN32)
@@ -79,8 +84,8 @@ tpDebugPrimitive(const tpPrimitive& p)
 
 
 #define glErrorCheck \
-        { GLenum err = glGetError(); \
-        if (err) tpLogNotify("OpenGL error 0x%x %d line:%d",err,err,__LINE__); }
+		{ GLenum err = glGetError(); \
+		if (err) tpLogNotify("OpenGL error 0x%x %d line:%d",err,err,__LINE__); }
 
 class tpTextureObjectGL : public tpTextureObject {
 protected:
@@ -103,7 +108,7 @@ public:
 	GLenum getWrapMode(tpUInt mode) {
 		switch (mode) {
 		case tpTexture::kWrapModeClamp:
-			return GL_CLAMP;
+			return GL_CLAMP_TO_EDGE;
 		case tpTexture::kWrapModeRepeat:
 			return GL_REPEAT;
 		}
@@ -144,10 +149,12 @@ public:
 			return GL_RGB;
 		case tpTexture::kFormatRGBA:
 			return GL_RGBA;
+#if defined (GL_BGR)				
 		case tpTexture::kFormatBGR:
 			return GL_BGR;
 		case tpTexture::kFormatBGRA:
 			return GL_BGRA;
+#endif
 		}
 
 		tpLogError("%s invalid image format for texture",__FUNCTION__);
@@ -283,8 +290,8 @@ public:
 
 		count++;
 
-        // defaults
-        glEnable(GL_DEPTH_TEST);
+		// defaults
+		glEnable(GL_DEPTH_TEST);
 
 		for (tpRefCameraArray::iterator it = scene->getCameras().begin();
 			 it != scene->getCameras().end();
@@ -294,25 +301,25 @@ public:
 			onNode((*it).get());
 		}
 
-        glErrorCheck;
+		glErrorCheck;
 
 		glFinish();
 		glFlush();
 
-        glErrorCheck;
-    }
+		glErrorCheck;
+	}
 
 
 	bool
 	onCamera(const tpCamera* camera)
 	{
-        glErrorCheck;
+		glErrorCheck;
 
-        // if the viewport is not being set just skip
-        if ((camera->getViewport()(2) > 0) && (camera->getViewport()(3) > 0))
+		// if the viewport is not being set just skip
+		if ((camera->getViewport()(2) > 0) && (camera->getViewport()(3) > 0))
 			glViewport(0,0,camera->getViewport()(2),camera->getViewport()(3));
 
-        glErrorCheck;
+		glErrorCheck;
 
 		tpUInt glclearflag(0);
 		if (camera->hasClearFlag(tpCamera::kClearColor))
@@ -328,7 +335,7 @@ public:
 
 		if (glclearflag) glClear(glclearflag);
 
-        glErrorCheck;
+		glErrorCheck;
 
 
 		return true;
@@ -342,8 +349,8 @@ public:
 		// ok, now we can bail out if there are actually no nodes
 		if (0 == node) return;
 
-        //glShadeModel(GL_SMOOTH);
-        //glEnable(GL_DEPTH_TEST);
+		//glShadeModel(GL_SMOOTH);
+		//glEnable(GL_DEPTH_TEST);
 
 
 		// setup lights
@@ -359,7 +366,7 @@ public:
 			}
 		}
 
-        glErrorCheck;
+		glErrorCheck;
 
 		// render nodes
 		tpNodeMatrixStackMap nodemap_primitives = tpNodeOps::getNodeMatrixStackMap(node,tpPrimitive::getTypeInfo());
@@ -506,7 +513,7 @@ public:
 		{
 			switch (it->getKey()) {
 			case tpRenderFlag::kColorMaterial:
-                //glColorMaterial(GL_FRONT_AND_BACK,GL_);
+				//glColorMaterial(GL_FRONT_AND_BACK,GL_);
 				glEnable(GL_COLOR_MATERIAL);
 				break;
 			case tpRenderFlag::kLighting:
@@ -615,7 +622,7 @@ public:
 						prim.getVertices().getData()
 						);
 
-		// if indices 
+		// if indices
 
 		glDrawArrays(prim.getPrimitiveType(),0,prim.getVertices().getSize());
 
@@ -640,6 +647,8 @@ public:
 tpGLRendererTraits tpRendererGL1x::mRendererTraits;
 
 TP_TYPE_REGISTER(tpRendererGL1x,tpRenderer,RendererGL1x);
+TP_MODULE_REGISTER(RendererGL1x,tpRendererGL1x)
+TP_MODULE_USE(RendererGL1x)
 
-tpModuleInitializer<tpRendererGL1x> g_gl1_renderer;
+//tpModuleInitializer<tpRendererGL1x> g_gl1_renderer;
 

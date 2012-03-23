@@ -20,7 +20,7 @@
 #include <tp/version.h>
 #include <tp/file.h>
 
-#include <png.h>
+#include <libpng/png.h>
 
 class tpImageHandler_PNG : public tpImageHandler
 {

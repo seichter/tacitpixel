@@ -77,7 +77,7 @@ public:
 	tpNode(const tpNode& node);
 
 	//! cloning interface
-	virtual tpObject* clone();
+	virtual tpObject* clone(const tpUByte& copymode) const;
 
 	//! traversing interface
 	void traverse(tpTraverser& traverser);

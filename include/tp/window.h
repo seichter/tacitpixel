@@ -62,6 +62,8 @@ public:
 
 class tpWindowEvent : public tpEvent {
 
+	tpWindow* mRenderSurface;
+
 	tpUInt mMouseKey;
 	tpUInt mMouseState;
 	tpVec2i mMousePosition;
@@ -69,7 +71,6 @@ class tpWindowEvent : public tpEvent {
 	tpULong mKeyCode;
 	tpUInt mKeyState;
 
-	tpWindow* mRenderSurface;
 
 public:
 

@@ -145,6 +145,8 @@ if (APPLE)
 			_impl/window_cocoa.h
 			_impl/rendercontext_cocoa.mm
 			_impl/rendercontext_cocoa.h
+			_impl/dialogs_cocoa.mm
+			_impl/dialogs_cocoa.h
 			)
 
 		list(APPEND tp_impl_libs
@@ -152,6 +154,19 @@ if (APPLE)
 			"-framework OpenGL"
 			)
 	endif()
+endif()
+
+if(IOS)
+	list(APPEND tp_impl_srcs
+#				_impl/window_cocoa.mm
+#				_impl/window_cocoa.h
+				_impl/rendercontext_eagl.mm
+				_impl/rendercontext_eagl.h
+				_impl/renderer_gl1.cxx
+				_impl/renderer_gl1.h
+#				_impl/dialogs_cocoa.mm
+#				_impl/dialogs_cocoa.h
+				)
 endif()
 
 if(X11_FOUND)
@@ -309,7 +324,7 @@ configure_file(config.h.in
 	${CMAKE_BINARY_DIR}/include/tp/config.h
 	@ONLY
 	)
-	
+
 set(tp_srcs_all
 	${tp_srcs}
 	${tp_hdrs}
@@ -317,14 +332,17 @@ set(tp_srcs_all
 	${tp_srcs_sg}
 	${tp_impl_srcs}
 	)
-	
+
 #set_property(SOURCE ${tp_srcs_all}
 #	APPEND PROPERTY
 #	COMPILE_DEFINITIONS
 #	"TACIT_EXPORTS"
-	
+set(TACIT_LIB_TYPE SHARED)
+if(IOS)
+	set(TACIT_LIB_TYPE STATIC)
+endif()
 
-add_library(${tp_name} SHARED
+add_library(${tp_name} ${TACIT_LIB_TYPE}
 	${tp_srcs_all}
 	)
 

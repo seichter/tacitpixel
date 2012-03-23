@@ -31,7 +31,7 @@ public:
 					break;
 				case 'F':
 				case 'f':
-					tpDialogs::showMessage("Hey there","TASDDASDASDASDASDAS ",
+					tpDialogs::showMessage("Tacit Pixel","This is the font rendering example",
 						tpDialogs::kButtonsOk | tpDialogs::kStyleInfo);
 					break;
 				case 'S':
@@ -44,7 +44,7 @@ public:
 
 		e.setHandled();
 
-        text->set(tpString::format("tacit pixel %3.3f",t.getElapsed(tpTimer::kTimeSeconds)));
+		text->set(tpString::format("tacit pixel %3.3f",t.getElapsed(tpTimer::kTimeSeconds)));
 	}
 };
 
@@ -52,14 +52,14 @@ public:
 int main(int argc,char* argv[])
 {
 
-    if (argc < 2) {
-        tpLogError("No font file provided - usage %s font.ttf",argv[0]);
-        return 0;
-    }
+	if (argc < 2) {
+		tpLogError("No font file provided - usage %s font.ttf",argv[0]);
+		return 0;
+	}
 
 	tpModuleManager::get()->load("jpg,3ds");
 
-    tpRefPtr<tpMyViewer> viewer = new tpMyViewer();
+	tpRefPtr<tpMyViewer> viewer = new tpMyViewer();
 
 
 	tpRefPtr<tpFont> font = new tpFont();
@@ -82,18 +82,18 @@ int main(int argc,char* argv[])
 
 
 
-    tpMat44r m(tpMat44r::Identity()); m.scale(.001,.001,.001);
+	tpMat44r m(tpMat44r::Identity()); m.scale(.001,.001,.001);
 	t->setMatrix(m);
 
-    tpRefPtr<tpTransform> lt = new tpTransform();
-    lt->setMatrix(tpMat44Op::translation(5.f,5.f,5.f));
+	tpRefPtr<tpTransform> lt = new tpTransform();
+	lt->setMatrix(tpMat44Op::translation(5.f,5.f,5.f));
 
-    tpRefPtr<tpLight> light = new tpLight();
+	tpRefPtr<tpLight> light = new tpLight();
 	light->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
 
-    lt->addChild(light.get());
+	lt->addChild(light.get());
 
-    root->addChild(lt.get());
+	root->addChild(lt.get());
 	root->addChild(axis);
 	root->addChild(t);
 

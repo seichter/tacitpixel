@@ -106,7 +106,7 @@ public:
 	EGLSurface surface;
 	EGLContext context;
 
-	bool create(tpRenderTarget *target);
+	bool init(tpRenderTarget *target);
 	void destroy();
 
 	bool makeCurrent();
