@@ -196,7 +196,7 @@ public:
 		return img;
 	}
 
-	virtual bool write(const tpImage* img, const tpString& name)
+    virtual bool write(const tpImage* img, const tpString& name) const
 	{
 		return tpJPEGLoader_Save(name,img);
 	}

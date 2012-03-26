@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 	tpRefPtr<tpNode> root = new tpNode;
 
 	// standard orthographic camera
-	tpRefPtr<tpCamera> cam_1 = viewer->getScene().getActiveCamera();
+	tpRefPtr<tpCamera> cam_1 = viewer->getScene().getCamera();
 	cam_1->setName("Ortho");
 
 	// offset camera

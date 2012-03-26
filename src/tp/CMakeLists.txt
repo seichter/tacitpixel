@@ -15,6 +15,7 @@ include_directories(${tp_include_path}
 find_package(X11)
 find_package(OpenGL)
 find_package(OpenAL)
+find_package(OpenGLES)
 #find_package(Cocoa)
 
 include(CheckIncludeFiles)
@@ -119,6 +120,18 @@ if(OPENGL_FOUND)
 	include_directories(${OPENGL_INCLUDE_DIRS})
 	list(APPEND tp_impl_libs
 		${OPENGL_LIBRARIES}
+		)
+endif()
+
+if(ANDROID AND OPENGLES1_FOUND)
+	set(TP_USE_OPENGLES1 ON)
+	list(APPEND tp_impl_srcs
+		_impl/renderer_gl1.cxx
+		_impl/renderer_gl1.h
+		)
+	include_directories(${OPENGLES1_INCLUDE_DIR})
+	list(APPEND tp_impl_libs
+		${OPENGLES1_gl_LIBRARY}
 		)
 endif()
 
@@ -296,6 +309,7 @@ set(tp_hdrs_sg
 	${tp_include_path}/tp/texture.h
 	${tp_include_path}/tp/transform.h
 	${tp_include_path}/tp/traverser.h
+	${tp_include_path}/tp/ui.h
 	)
 
 set(tp_srcs_sg
@@ -317,6 +331,7 @@ set(tp_srcs_sg
 	texture.cxx
 	transform.cxx
 	traverser.cxx
+	ui.cxx
 	)
 
 

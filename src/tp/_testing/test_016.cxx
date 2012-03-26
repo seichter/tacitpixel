@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
 
 	tpDebugPrimitive(*prim);
 
-	tpRefPtr<tpCamera> camera = viewer->getScene().getActiveCamera();
+    tpRefPtr<tpCamera> camera = viewer->getScene().getCamera();
 	camera->setName("Perspective");
 
 	camera->setProjectionPerspective(33,1.3,1,1000);
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 	camera->addChild(sphr_mat);
 
 
-	viewer->getScene().getActiveCamera()->addChild(prim);
+    viewer->getScene().getCamera()->addChild(prim);
 
 	return viewer->run();
 }

@@ -34,7 +34,7 @@ public:
 					 e.getMousePosition()(0),e.getMousePosition()(1),
 					 e.getMouseKey(),e.getMouseState(),
 					 e.getKeyCode(),e.getKeyCode(),e.getKeyState());
-		tpCamera* camera = mScene->getActiveCamera();
+		tpCamera* camera = mScene->getCamera();
 
 		tpLog::get() << camera->getTranslation() << "\n";
 
@@ -54,8 +54,8 @@ public:
 						if (!filename.isEmpty()) {
 							tpRefPtr<tpNode> node = tpNode::read(filename);
 							if (node.isValid()) {
-								mScene->getActiveCamera()->removeAllChildren();
-								mScene->getActiveCamera()->addChild(node.get());
+								mScene->getCamera()->removeAllChildren();
+								mScene->getCamera()->addChild(node.get());
 							}
 						}
 					}
@@ -142,17 +142,17 @@ int main(int argc,char* argv[])
 	tpRefPtr<tpViewer> viewer = new tpViewerShow;
 
 #if 1
-	viewer->getScene().getActiveCamera()->setViewLookAt(tpVec3r(5,5,5),tpVec3r(0,0,0),tpVec3r(0,1,0));
-	viewer->getScene().getActiveCamera()->setProjectionPerspective(45,1.3,.1,100);
+	viewer->getScene().getCamera()->setViewLookAt(tpVec3r(5,5,5),tpVec3r(0,0,0),tpVec3r(0,1,0));
+	viewer->getScene().getCamera()->setProjectionPerspective(45,1.3,.1,100);
 #else
 	viewer->getScene().getActiveCamera()->setViewLookAt(tpVec3r(0,0,1),tpVec3r(0,0,0),tpVec3r(0,1,0));
 	viewer->getScene().getActiveCamera()->setProjection(tpMat44r::Identity());
 #endif
 
-	viewer->getScene().getActiveCamera()->setClearColor(tpVec4f(.3,.4,.5,1));
-	viewer->getScene().getActiveCamera()->setClearFlags(tpCamera::kClearDepth | tpCamera::kClearColor);
+	viewer->getScene().getCamera()->setClearColor(tpVec4f(.3,.4,.5,1));
+	viewer->getScene().getCamera()->setClearFlags(tpCamera::kClearDepth | tpCamera::kClearColor);
 
-	viewer->getScene().getActiveCamera()->addChild(root.get());
+	viewer->getScene().getCamera()->addChild(root.get());
 
 	viewer->create();
 	viewer->run();

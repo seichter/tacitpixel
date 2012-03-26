@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
 	tpPrimitive* prim = tpPrimitiveFactory::create(tpPrimitiveFactory::kSphere);
     prim->setMaterial(tpMaterial::createDefault(.5,.6,.1,.85));
 
-	tpRefPtr<tpCamera> camera = viewer->getScene().getActiveCamera();
+	tpRefPtr<tpCamera> camera = viewer->getScene().getCamera();
 	camera->setName("Perspective");
 
 	camera->setProjectionPerspective(33,1.3,1,1000);
@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 
 	camera->addChild(light.get());
 
-	viewer->getScene().getActiveCamera()->addChild(prim);
+	viewer->getScene().getCamera()->addChild(prim);
 
 	return viewer->run();
 }

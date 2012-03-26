@@ -13,7 +13,7 @@ int main(int argc,char* argv[]) {
     tpRefPtr<tpViewer> viewer = new tpViewer();
     viewer->create();
 
-    tpRefPtr<tpCamera> camera = viewer->getScene().getActiveCamera();
+    tpRefPtr<tpCamera> camera = viewer->getScene().getCamera();
     camera->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
     camera->setClearColor(tpVec4f(0,.15f,.3f,1.f));
 

@@ -19,9 +19,10 @@
 
 #include <tp/config.h>
 
-
 #if defined (TP_OS_IOS)
 	#include <OpenGLES/es1/gl.h>
+#elif defined(TP_USE_OPENGLES1)
+    #include <GLES/gl.h>
 #endif
 
 //#if defined(__APPLE__)

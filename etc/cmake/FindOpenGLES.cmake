@@ -5,7 +5,6 @@ set(EGL_FOUND FALSE)
 
 set(OPENGLES_MODULE_DEBUG OFF)
 
-
 if(IOS)
 endif()
 
@@ -14,10 +13,11 @@ endif()
 # 
 find_library(EGL_egl_LIBRARY
   NAMES EGL
-  PATHS 
+	PATHS 
 	/opt/graphics/OpenGL/lib
 	/usr/openwin/lib
-	/usr/shlib /usr/X11R6/lib
+	/usr/shlib
+	/usr/X11R6/lib
 	/usr/lib
 	)
 
@@ -28,30 +28,31 @@ find_library(EGL_egl_LIBRARY
 # 
 find_path(OPENGLES1_INCLUDE_DIR GLES/gl.h
 	PATHS
-		/usr/openwin/share/include
-		/opt/graphics/OpenGL/include
-		/usr/X11R6/include
-		/usr/include
+	/usr/openwin/share/include
+	/opt/graphics/OpenGL/include
+	/usr/X11R6/include
+	/usr/include
 	)
 
 
 find_library(OPENGLES1_gl_LIBRARY
-  NAMES GLES_CM
+  NAMES GLES_CM GLESv1_CM
   PATHS 
 	/opt/graphics/OpenGL/lib
 	/usr/openwin/lib
-	/usr/shlib /usr/X11R6/lib
+	/usr/shlib 
+	/usr/X11R6/lib
 	/usr/lib
 	)
 #
 # OpenGL ES 2.x
 # 
-find_path(OPENGLES2_INCLUDE_DIR GLES2/gl.h
+find_path(OPENGLES2_INCLUDE_DIR GLES2/gl2.h
 	PATHS
-		/usr/openwin/share/include
-		/opt/graphics/OpenGL/include
-		/usr/X11R6/include
-		/usr/include
+	/usr/openwin/share/include
+	/opt/graphics/OpenGL/include
+	/usr/X11R6/include
+	/usr/include
 	)
 
 

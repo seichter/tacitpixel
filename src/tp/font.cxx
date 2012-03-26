@@ -46,7 +46,7 @@ public:
 			ffile.read((char*)&buffer[0],buffer.getSize());
 
 			stbtt_BakeFontBitmap( &buffer[0],
-								  0, 90, (tpUChar*)mImage->getData(),mImage->getWidth(),mImage->getHeight(), 32,96, cdata);
+                                  0, 10, (tpUChar*)mImage->getData(),mImage->getWidth(),mImage->getHeight(), 32,96, cdata);
 
 			return true;
 		}
@@ -65,9 +65,23 @@ public:
 
 		float x(0),y(0);
 
-		for (tpSizeT i = 0; i < text.getLength(); ++i) {
+        for (tpSizeT i = 0; i < text.getLength(); ++i)
+        {
+            const tpChar c = text.c_str()[i];
+
+            switch(c) {
+            case '\n':
+                y += 10;
+                x = 0;
+                continue;
+            case '\r':
+                y += 10;
+                continue;
+            }
+
+
 			stbtt_aligned_quad q;
-			stbtt_GetBakedQuad(cdata, getImage()->getWidth() ,getImage()->getHeight(), text.c_str()[i]-32, &x,&y,&q,1);//1=opengl,0=old d3d
+            stbtt_GetBakedQuad(cdata, getImage()->getWidth() ,getImage()->getHeight(), c-32, &x,&y,&q,1);//1=opengl,0=old d3d
 
 			float h = q.t1 - q.t0;
 
@@ -106,6 +120,7 @@ public:
 
 		}
 	}
+
 };
 
 tpFont::tpFont()
