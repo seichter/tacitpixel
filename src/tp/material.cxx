@@ -44,7 +44,7 @@ tpMaterial::tpMaterial(const tpMaterial& node)
 }
 
 
-tpObject* tpMaterial::clone()
+tpObject* tpMaterial::clone(const tpUByte& m) const
 {
 	return new tpMaterial(*this);
 }

@@ -27,11 +27,8 @@
 #include <tp/mutex.h>
 #include <tp/config.h>
 
-#if defined (__APPLE__)
-	#include <TargetConditionals.h>
-	#if defined (TARGET_IPHONE_SIMULATOR) || defined (TARGET_OS_IPHONE)
-		#define HAVE_PTHREAD_H 1
-	#endif
+#if defined(TP_OS_IOS)
+	#define HAVE_PTHREAD_H 1
 #endif
 
 

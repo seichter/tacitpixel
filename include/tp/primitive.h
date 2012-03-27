@@ -104,7 +104,8 @@ public:
 
 	tpPrimitive &operator =(const tpPrimitive &rhs);
 
-	tpObject *clone();
+
+	tpObject *clone(const tpUByte& m) const;
 
 
 	bool hasVertices() const;

@@ -53,17 +53,17 @@
 #cmakedefine TP_USE_OPENGL
 #cmakedefine TP_USE_OPENAL
 
-#ifdef _WIN64
+#if defined(_WIN64)
 	#define TP_OS_WIN64
-#elif _WIN32
+#elif defined(_WIN32)
 	#define TP_OS_WIN32
-#elif __APPLE__
+#elif defined(__APPLE__)
 	#include "TargetConditionals.h"
-	#ifdef TARGET_OS_IPHONE
+	#if defined(TARGET_OS_IPHONE)
 		#define TP_OS_IOS
-	#elif TARGET_IPHONE_SIMULATOR
+	#elif defined(TARGET_IPHONE_SIMULATOR)
 		#define TP_OS_IOS
-	#elif TARGET_OS_MAC
+	#elif defined(TARGET_OS_MAC)
 		#define TP_OS_OSX
 	#else
 		#define TP_OS_UNKNOWN

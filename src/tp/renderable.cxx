@@ -38,7 +38,7 @@ tpRenderable::tpRenderable(const tpRenderable& geo)
 }
 
 tpObject*
-tpRenderable::clone()
+tpRenderable::clone(const tpUByte& m) const
 {
 	return new tpRenderable(*this);
 }

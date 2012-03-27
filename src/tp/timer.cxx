@@ -26,6 +26,11 @@
 #include <tp/timer.h>
 #include <tp/config.h>
 
+#if defined (TP_OS_IOS)
+#define HAVE_SYS_TIME_H
+#define HAVE_GETTIMEOFDAY
+#endif
+
 #if defined(HAVE_TIME_H)
 #	include <time.h>
 #endif

@@ -7,6 +7,7 @@
 #include <tp/module.h>
 #include "tp/primitive.h"
 #include "tp/light.h"
+#include "tp/system.h"
 
 class tpRenderTargetUIView : public tpRenderTarget {
 
@@ -70,8 +71,10 @@ extern "C" void tpModule_RendererGL1x();
 		tpLogError("Could not get EAGL context");
 	}
 	
-	
 	renderer = tpRenderer::create();
+		
+	tpLogMessage("Resource %s",tpSystem::get()->getResourcePath().c_str());
+	tpLogMessage("Executable %s",tpSystem::get()->getExecutablePath().c_str());
 	
 	scene = new tpScene;
 	
