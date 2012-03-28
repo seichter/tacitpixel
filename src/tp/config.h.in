@@ -51,6 +51,7 @@
 #cmakedefine TP_USE_COCOA
 #cmakedefine TP_USE_X11
 #cmakedefine TP_USE_OPENGL
+#cmakedefine TP_USE_OPENGLES1
 #cmakedefine TP_USE_OPENAL
 
 #if defined(_WIN64)
@@ -68,6 +69,8 @@
 	#else
 		#define TP_OS_UNKNOWN
 	#endif
+#elif ANDROID
+    #define TP_OS_ANDROID
 #elif __HAIKU
 	#define TP_OS_HAIKU
 #elif __linux

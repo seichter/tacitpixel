@@ -16,7 +16,7 @@ tpRenderContextGLX::tpRenderContextGLX()
 }
 
 bool
-tpRenderContextGLX::create(tpRenderTarget *target)
+tpRenderContextGLX::init(tpRenderTarget *target)
 {
 	tpInt glx_major(0), glx_minor(0), screen(0);
     tpString glx_extensions;

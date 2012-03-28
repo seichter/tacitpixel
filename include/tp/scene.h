@@ -37,7 +37,7 @@ public:
 
 	tpScene();
 
-	tpCamera* getActiveCamera();
+    tpCamera* getCamera(tpUInt camera = 0);
 
 	void setActiveCamera(tpUInt camera);
 

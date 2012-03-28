@@ -23,31 +23,34 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TPTEXT_H
-#define TPTEXT_H
+#ifndef TP_UI_H
+#define TP_UI_H
 
-#include <tp/globals.h>
-#include <tp/font.h>
+#include <tp/transform.h>
+#include <tp/node.h>
 #include <tp/primitive.h>
+#include <tp/font.h>
+#include <tp/refptr.h>
+#include <tp/types.h>
 
-class TP_API tpText : public tpPrimitive {
+//class TP_API tpWidget {
+//    tpRefPtr<tpNode> mNode;
+//};
+
+class TP_API tpUI {
 public:
 
-	tpText();
+    static tpNode* Button(const tpString &label, tpRect area, const tpImage *icon = 0);
 
-	void set(const tpString &s);
+    static bool setFont(const tpString& fontname);
 
-	void setFont(const tpString& name);
-
-    void setFont(tpFont* font) { mFont = font; }
+    static tpNode *Text(const tpString &str, tpPoint p);
 
 protected:
 
-	virtual ~tpText();
-
-	tpRefPtr<tpFont> mFont;
-	tpString mText;
+    static tpRefPtr<tpFont> mFont;
 
 };
+
 
 #endif

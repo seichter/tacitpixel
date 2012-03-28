@@ -166,6 +166,9 @@ public:
 
     void flipNormals();
     void checkNormals() const;
+
+    void getAABB(tpVec3r &aabb_min, tpVec3r &aabb_max);
+
 };
 
 

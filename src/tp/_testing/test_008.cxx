@@ -100,12 +100,12 @@ int main(int argc,char* argv[])
 	viewer->text = text;
 
 
-	viewer->getScene().getActiveCamera()->addChild(root.get());
-	viewer->getScene().getActiveCamera()->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
-	viewer->getScene().getActiveCamera()->setClearColor(tpVec4f(0,.15f,.3f,1.f));
+	viewer->getScene().getCamera()->addChild(root.get());
+	viewer->getScene().getCamera()->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
+	viewer->getScene().getCamera()->setClearColor(tpVec4f(0,.15f,.3f,1.f));
 
-	viewer->getScene().getActiveCamera()->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
-	viewer->getScene().getActiveCamera()->setProjectionPerspective(35,1.3,0.1,100);
+	viewer->getScene().getCamera()->setViewLookAt(tpVec3r(2,2,2),tpVec3r(0,0,0),tpVec3r(0,1,0));
+	viewer->getScene().getCamera()->setProjectionPerspective(35,1.3,0.1,100);
 
 
 

@@ -30,6 +30,7 @@
 #include "tp/utils.h"
 #include "tp/map.h"
 
+#include <cfloat>
 
 #if 0
 
@@ -540,6 +541,25 @@ tpPrimitive::checkNormals() const
 //        getNormals().getData()[i*getNormals().getStride()+0] *= -1;
 //        getNormals().getData()[i*getNormals().getStride()+1] *= -1;
 //        getNormals().getData()[i*getNormals().getStride()+2] *= -1;
+    }
+}
+
+void
+tpPrimitive::getAABB(tpVec3r& aabb_min,tpVec3r& aabb_max)
+{
+
+    aabb_max(0) = aabb_max(1) = aabb_max(2) = FLT_MIN;
+    aabb_min(0) = aabb_min(1) = aabb_min(2) = FLT_MAX;
+
+    for (tpUInt i = 0; i < getVertices().getSize();++i)
+    {
+        aabb_min(0) = tpMin(aabb_min(0),getVertices().getData()[i*getVertices().getStride()+0]);
+        aabb_min(1) = tpMin(aabb_min(1),getVertices().getData()[i*getVertices().getStride()+1]);
+        aabb_min(2) = tpMin(aabb_min(2),getVertices().getData()[i*getVertices().getStride()+2]);
+
+        aabb_max(0) = tpMax(aabb_max(0),getVertices().getData()[i*getVertices().getStride()+0]);
+        aabb_max(1) = tpMax(aabb_max(1),getVertices().getData()[i*getVertices().getStride()+1]);
+        aabb_max(2) = tpMax(aabb_max(2),getVertices().getData()[i*getVertices().getStride()+2]);
     }
 }
 

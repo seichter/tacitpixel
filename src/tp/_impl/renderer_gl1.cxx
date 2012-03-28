@@ -30,9 +30,11 @@
 	#include <GL/gl.h>
 	#define GL_BGR 0x80E0
 	#define GL_BGRA 0x80E1
-#else
+#elif (TP_USE_X11)
 	#include <GL/gl.h>
 	#include <GL/glu.h>
+#elif defined(TP_USE_OPENGLES1)
+	#include <GLES/gl.h>
 #endif
 
 

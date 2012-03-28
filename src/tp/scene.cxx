@@ -9,7 +9,7 @@ tpScene::tpScene()
 }
 
 tpCamera *
-tpScene::getActiveCamera()
+tpScene::getCamera(tpUInt camera)
 {
 	if (mCameras.isEmpty())
 	{
