@@ -41,8 +41,6 @@ tpNode* tpUI::Text(const tpString& str,tpPoint p)
 tpNode* tpUI::Button(const tpString& label,tpRect area,const tpImage* icon)
 {
 
-    tpModuleManager::get()->load("jpg");
-
     tpNode* button = new tpNode();
 
     tpPrimitive* background = tpPrimitiveFactory::create(tpPrimitiveFactory::kPlane);
@@ -60,8 +58,6 @@ tpNode* tpUI::Button(const tpString& label,tpRect area,const tpImage* icon)
         {
             static_cast<char*>(img->getData())[r*c+c] = r;
         }
-
-    img->write("test.jpg");
 
     tpTexture* bgtxt = new tpTexture();
     bgtxt->setImage(img);
