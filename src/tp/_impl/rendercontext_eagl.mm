@@ -6,6 +6,8 @@
 
 #import <OpenGLES/ES1/gl.h>
 #import <OpenGLES/ES1/glext.h>
+#import <OpenGLES/ES2/gl.h>
+#import <OpenGLES/ES2/glext.h>
 #import <OpenGLES/EAGL.h>
 
 #include "tp/rendertarget.h"
@@ -29,6 +31,7 @@
 
 - (void)create {
 	
+	// should make this configurable
 	context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
 	
 	[EAGLContext setCurrentContext:context];
@@ -36,7 +39,7 @@
 	CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
 	
 	eaglLayer.opaque = YES;
-	eaglLayer.contentsScale = 2.f;
+	eaglLayer.contentsScale = 2.f; //!< for high resolution devices
 	eaglLayer.drawableProperties = 
 		[NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithBool:NO], 

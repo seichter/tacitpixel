@@ -80,7 +80,7 @@ public:
 	tpRenderable(const tpRenderable&);
 
 	//! cloning interface
-	virtual tpObject* clone();
+	virtual tpObject* clone(const tpUByte& method) const;
 
 	//! set a material for the regarding geometry
 	void setMaterial(tpMaterial* material) { mMaterial = material; }

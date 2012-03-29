@@ -21,18 +21,22 @@
 
 #if defined (TP_OS_IOS)
 	#include <OpenGLES/es1/gl.h>
+#elif defined(TP_OS_OSX) && defined(TP_USE_OPENGL)
+	#include <OpenGL/gl.h>
+	#include <OpenGL/glu.h>
+#elif (defined(_WIN32) || defined(__MINGW32__))  && defined(TP_USE_OPENGL)
+	#define WIN32_LEAN_AND_MEAN 1
+	#include <Windows.h>
+	#include <GL/gl.h>
+	#define GL_BGR 0x80E0
+	#define GL_BGRA 0x80E1
+#elif defined(TP_USE_X11)
+	#include <GL/gl.h>
+	#include <GL/glu.h>
 #elif defined(TP_USE_OPENGLES1)
-    #include <GLES/gl.h>
+	#include <GLES/gl.h>
 #endif
 
-//#if defined(__APPLE__)
-//    #include <OpenGL/OpenGL.h>
-//#elif defined(_WIN32)
-////#include <GLES/gl.h>
-////#include <Windows.h>
-//#else
-//#include <GL/gl.h>
-//#endif
 
 void
 tpDebugPrimitive(const tpPrimitive& p)
@@ -66,23 +70,19 @@ tpDebugPrimitive(const tpPrimitive& p)
 }
 
 
+struct tpTimerProbe {
 
-#if defined(TP_USE_OPENGL)
-	#if defined(__APPLE__)
-		#include <OpenGL/gl.h>
-		#include <OpenGL/glu.h>
-	#elif defined(_WIN32) || defined(__MINGW32__)
-		#define WIN32_LEAN_AND_MEAN 1
-		#include <Windows.h>
-		#include <GL/gl.h>
-		#define GL_BGR 0x80E0
-		#define GL_BGRA 0x80E1
-	#else
-		#include <GL/gl.h>
-		#include <GL/glu.h>
-	#endif
-#endif
+	tpArray<tpDouble> probes;
 
+	tpDouble getAverage() const {
+		tpDouble result(0);
+		for (tpArray<tpDouble>::const_iterator it = probes.begin();
+			 it != probes.end();
+			 ++it)
+			result += (*it);
+		return (probes.getSize() ? result/probes.getSize() : 0);
+	}
+};
 
 #define glErrorCheck \
 		{ GLenum err = glGetError(); \
@@ -150,7 +150,7 @@ public:
 			return GL_RGB;
 		case tpTexture::kFormatRGBA:
 			return GL_RGBA;
-#if defined (GL_BGR)				
+#if defined (GL_BGR)
 		case tpTexture::kFormatBGR:
 			return GL_BGR;
 		case tpTexture::kFormatBGRA:
@@ -347,6 +347,8 @@ public:
 	{
 		tpTimer t;
 
+		t.start();
+
 		// ok, now we can bail out if there are actually no nodes
 		if (0 == node) return;
 
@@ -387,9 +389,15 @@ public:
 //		GLint error = glGetError();
 //		if (error) tpLogError("glGetError() 0x%x (%d)",error,error);
 
-//        tpLogNotify("%s %d lights %d nodes %3.3fms",
-//                    __FUNCTION__,nodemap_lights.getSize(),nodemap_primitives.getSize(),
-//                    t.getElapsed(tpTimer::kTimeMilliSeconds));
+		static int loops = 0;
+
+		if (loops > 100) {
+			tpLogNotify("%s %d lights %d nodes %3.3fms",
+						__FUNCTION__,nodemap_lights.getSize(),nodemap_primitives.getSize(),
+						t.getElapsed(tpTimer::kTimeMilliSeconds));
+			loops = 0;
+		}
+		loops++;
 	}
 
 	void
@@ -625,8 +633,14 @@ public:
 
 		// if indices
 
-		glDrawArrays(prim.getPrimitiveType(),0,prim.getVertices().getSize());
+//		if (prim.getIndices().getSize()) {
+//
+//			glDrawElements(prim.get, <#GLsizei count#>, <#GLenum type#>, <#const GLvoid *indices#>)
+//
+//		} else {
 
+			glDrawArrays(prim.getPrimitiveType(),0,prim.getVertices().getSize());
+//		}
 
 		// and all off again
 		glDisableClientState(GL_VERTEX_ARRAY);

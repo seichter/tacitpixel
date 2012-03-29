@@ -37,7 +37,7 @@ public:
 			mImage->allocate(512,512,tpPixelFormat::kGray_8);
 
 			if (name.afterLast('.') == "ttc") {
-
+                tpLogMessage("TTC files not supported out of the box");
 			}
 
 			tpArray<unsigned char> buffer;

@@ -27,12 +27,9 @@
 #include <tp/mutex.h>
 #include <tp/config.h>
 
-#if defined (__APPLE__)
-	#include <TargetConditionals.h>
-	#if defined (TARGET_IPHONE_SIMULATOR) || defined (TARGET_OS_IPHONE)
-		#define HAVE_PTHREAD_H 1
-	#endif
-#endif
+//#if defined(TP_OS_IOS)
+//	#define HAVE_PTHREAD_H 1
+//#endif
 
 
 #if defined(HAVE_PTHREAD_H)
@@ -68,7 +65,7 @@ public:
 tpMutex::tpMutex()
 {
 	mHandle = new tpMutexHandle();
-#if defined(HAVE_PTHREAD_H) 
+#if defined(HAVE_PTHREAD_H)
 	pthread_mutex_init(&mHandle->handle,NULL);
 #elif defined(_WIN32)
 	mHandle->handle = ::CreateMutex(0, 0, 0);
@@ -105,7 +102,7 @@ void tpMutex::unlock()
 {
 
 #if defined(_WIN32)
-    if(::ReleaseMutex(mHandle->handle) == 0)
+	if(::ReleaseMutex(mHandle->handle) == 0)
 #elif defined(HAVE_PTHREAD_H)
 	if (-1 == pthread_mutex_unlock(&mHandle->handle))
 #endif
@@ -117,7 +114,7 @@ void tpMutex::unlock()
 bool tpMutex::tryLock(tpULong timeout)
 {
 #if defined(_WIN32)
-    switch(::WaitForSingleObject(mHandle->handle,timeout))
+	switch(::WaitForSingleObject(mHandle->handle,timeout))
 	{
 	  case WAIT_OBJECT_0:
 		  return true;

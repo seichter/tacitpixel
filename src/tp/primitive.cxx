@@ -343,10 +343,11 @@ tpPrimitive& tpPrimitive::operator =(const tpPrimitive &rhs)
 }
 
 tpObject*
-tpPrimitive::clone()
+tpPrimitive::clone(const tpUByte& m) const
 {
 	return new tpPrimitive(*this);
 }
+
 
 bool
 tpPrimitive::hasTextureCoordinates() const

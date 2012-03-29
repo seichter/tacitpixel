@@ -27,5 +27,12 @@ target_link_libraries(TacitViewer
 	"-framework OpenGLES"
 	)
 
+
+#set_source_files_properties(
+#
+#	PROPERTIES
+#	MACOSX_PACKAGE_LOCATION .
+#	)
+
 # code signing
 set_target_properties(TacitViewer PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "iPhone Developer")

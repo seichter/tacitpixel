@@ -49,7 +49,7 @@ public:
 	tpMaterial(const tpMaterial& mat);
 
 	//! cloning interface
-	virtual tpObject* clone();
+	virtual tpObject* clone(const tpUByte& m) const;
 
 	//!
 	tpMaterial& operator = (const tpMaterial&);

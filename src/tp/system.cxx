@@ -225,7 +225,8 @@ void tpSystem::getDisplaySize( tpInt* w, tpInt* h )
 
 static tpArray<tpString> gs_filesearchpaths;
 
-tpString tpSystem::findFile( const tpString& filename )
+tpString 
+tpSystem::findFile( const tpString& filename )
 {
 	//tpLogNotify("%s - %d",__FUNCTION__,m_filesearchpaths.getSize());
 	//getchar();
@@ -287,7 +288,8 @@ tpSystem::getPID(bool parent /*=false*/) const {
 
 
 
-tpStringArray tpSystem::getFontPaths()
+tpStringArray 
+tpSystem::getFontPaths()
 {
 	tpStringArray res;
 

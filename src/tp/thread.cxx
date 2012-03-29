@@ -27,11 +27,9 @@
 
 #include <tp/config.h>
 
-#if defined (__APPLE__)
-#include <TargetConditionals.h>
-#if defined (TARGET_IPHONE_SIMULATOR) || defined (TARGET_OS_IPHONE)
-#define HAVE_PTHREAD_H 1
-#endif
+#if defined (TP_OS_IOS)
+	#define HAVE_PTHREAD_H 1
+	#define HAVE_PTHREAD_YIELD_NP 1
 #endif
 
 
@@ -94,8 +92,8 @@ struct tpThreadHandle
 
 tpThread::tpThread(tpRunnable* runnable)
 	: mState(kStateNew)
-	, mThreadHandle(new tpThreadHandle())
 	, mRunnable(runnable)
+	, mThreadHandle(new tpThreadHandle())
 {
 }
 
