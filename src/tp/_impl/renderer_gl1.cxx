@@ -262,11 +262,7 @@ public:
 
 };
 
-struct tpGLRendererTraits : tpRendererTraits {
-};
-
-class tpRendererGL1x : public tpRenderer
-{
+class tpRendererGL1x : public tpRenderer {
 public:
 
 	tpInt mMaxVertices;
@@ -280,10 +276,11 @@ public:
 
 	TP_TYPE_DECLARE
 
-	static tpGLRendererTraits mRendererTraits;
-	const tpRendererTraits& getTraits() const { return mRendererTraits; }
+    tpUInt getTraits() const {
+        return (tpRenderer::kOpenGL1x | tpRenderer::kOpenGLES1);
+    }
 
-	void operator()(tpScene* scene)
+    void render(tpScene* scene)
 	{
 //        tpMutex mutex;
 //        tpScopeLock<tpMutex> lock(mutex);

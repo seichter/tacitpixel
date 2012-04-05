@@ -6,6 +6,10 @@
 	#include <OpenGL/OpenGL.h>
 	#include <OpenGL/gl3.h>
 	#include <OpenGL/gl3ext.h>
+#elif defined(TP_OS_LINUX)
+    #define GL_GLEXT_PROTOTYPES
+    #include <GL/gl.h>
+    #include <GL/glext.h>
 #endif
 
 //#define GL_COMPILE_STATUS 0x8B81

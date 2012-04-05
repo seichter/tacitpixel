@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
 
 	window->show(true);
 
-	tpRefPtr<tpRenderer> renderer = tpRenderer::create();
+    tpRefPtr<tpRenderer> renderer = tpRenderer::create(window->getContext()->getRendererTraits());
 
 	while (window->isValid()) {
 

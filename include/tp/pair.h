@@ -53,6 +53,7 @@ public:
 
 	void setValue(const V& v) { mValue=v;}
 
+
 protected:
 
 	K mKey;
@@ -64,9 +65,10 @@ protected:
 template <typename K, typename V>
 bool operator == (const tpPair<K,V>& x,const tpPair<K,V>& y)
 {
-	return ((x.mKey == y.mKey) &&
-			(x.mValue == y.mValue));
+    return ((x.getKey() == y.getKey()) &&
+            (x.getValue()== y.getValue()));
 }
+
 
 template <typename K, typename V>
 bool operator < (const tpPair<K,V>& x,const tpPair<K,V>& y)

@@ -59,7 +59,11 @@ int main(int argc, char* argv[])
 	tpRefPtr<tpWindow> rendersurface = tpWindow::create(&traits);
 
 
-	tpRefPtr<tpRenderer> renderer = tpRenderer::create();
+    rendersurface->setContext(0);
+
+
+    // need for getting the correct renderer
+    tpRefPtr<tpRenderer> renderer = tpRenderer::create(rendersurface->getContext()->getRendererTraits());
 
 	if (!renderer.isValid()) {
 		tpLogError("Could not initialize renderer");

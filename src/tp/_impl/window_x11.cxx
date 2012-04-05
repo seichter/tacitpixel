@@ -255,6 +255,7 @@ tpWindowX11::setContext(tpRenderContext* context)
 
 
 
+
 ////////////////////////////////////////////////////////////////////////////
 
 class tpWindowFactoryX11 : public tpWindowFactory {

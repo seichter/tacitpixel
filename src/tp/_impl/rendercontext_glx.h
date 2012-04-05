@@ -37,6 +37,10 @@ public:
 
     void *getProcAddress(const char *name);
 
+
+    tpUInt getRendererTraits() const;
+
+
 protected:
 
     virtual ~tpRenderContextGLX();

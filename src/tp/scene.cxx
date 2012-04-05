@@ -47,7 +47,7 @@ tpScene::removeCamera(tpCamera *camera)
 void
 tpScene::render(tpRenderer& renderer)
 {
-	renderer(this);
+    renderer.render(this);
 }
 
 

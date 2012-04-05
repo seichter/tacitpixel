@@ -28,19 +28,10 @@
 
 #include <tp/referenced.h>
 #include <tp/camera.h>
+#include <tp/map.h>
+
 
 class tpScene;
-
-struct tpRendererTraits {
-
-	bool isFixedFunction;
-
-	tpRendererTraits() : isFixedFunction(true) {}
-
-	bool operator == (const tpRendererTraits& rhs) const {
-		return isFixedFunction == rhs.isFixedFunction;
-	}
-};
 
 typedef tpArray<tpRefPtr<tpCamera> > tpRefCameraArray;
 
@@ -50,11 +41,19 @@ public:
 
 	TP_TYPE_DECLARE
 
-	virtual void operator()(tpScene* node) = 0;
+    enum {
+        kOpenGL1x       = ( 1 << 1),
+        kOpenGL2x       = ( 1 << 2),
+        kOpenGLES1      = ( 1 << 3),
+        kOpenGLES2      = ( 1 << 4),
+        kDirectX        = ( 1 << 5)
+    };
 
-	virtual const tpRendererTraits& getTraits() const = 0;
+    virtual void render(tpScene* node) = 0;
 
-	static tpRenderer* create(const tpRendererTraits& traits = tpRendererTraits());
+    virtual tpUInt getTraits() const = 0;
+
+    static tpRenderer* create( const tpUInt& traitFlags );
 
 protected:
 

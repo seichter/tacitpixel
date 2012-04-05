@@ -46,7 +46,7 @@ tpRenderer::~tpRenderer()
 
 
 tpRenderer*
-tpRenderer::create( const tpRendererTraits& traits )
+tpRenderer::create( const tpUInt& traitFlags )
 {
 
 	tpRenderer* renderer = 0;
@@ -60,7 +60,7 @@ tpRenderer::create( const tpRendererTraits& traits )
 		if (item->getType()->isOfType(tpRenderer::getTypeInfo()))
 		{
 			renderer = static_cast<tpRenderer*>(item.get());
-			if ( renderer->getTraits() == traits )
+            if ( traitFlags == (renderer->getTraits() & traitFlags) )
 			{
 				tpLogNotify( "%s loaded %s",__FUNCTION__, item->getType()->getName());
 

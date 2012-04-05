@@ -2,8 +2,10 @@
 
 #if defined(TP_USE_X11)
 
-#include <tp/window.h>
-#include <tp/log.h>
+#include "tp/window.h"
+#include "tp/log.h"
+#include "tp/renderer.h"
+
 
 #define GLX_SAMPLE_BUFFERS_SGIS         100000
 #define GLX_SAMPLES_SGIS                100001
@@ -157,6 +159,11 @@ void*
 tpRenderContextGLX::getProcAddress(const char *name)
 {
     return (void*)glXGetProcAddressARB((const unsigned char*)name);
+}
+
+tpUInt tpRenderContextGLX::getRendererTraits() const
+{
+    return tpRenderer::kOpenGL1x;
 }
 
 TP_TYPE_REGISTER(tpRenderContextGLX,tpRenderContext,RenderContextX11);

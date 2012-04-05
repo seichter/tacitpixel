@@ -1,6 +1,6 @@
-#include <tp/egl.h>
-
-#include <tp/log.h>
+#include "tp/egl.h"
+#include "tp/log.h"
+#include "tp/renderer.h"
 
 tpEGL::tpEGL()
 {
@@ -32,7 +32,12 @@ tpEGL* tpEGL::get( bool destroy /*= false*/ )
 }
 
 bool tpRenderContextEGL::swapBuffers() {
-	return (tpEGL::a().SwapBuffers.f(display,surface) > 0);
+    return (tpEGL::a().SwapBuffers.f(display,surface) > 0);
+}
+
+tpUInt tpRenderContextEGL::getRendererTraits() const
+{
+    return (tpRenderer::kOpenGLES1);
 }
 
 bool tpRenderContextEGL::makeCurrent() {

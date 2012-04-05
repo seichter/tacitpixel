@@ -26,9 +26,11 @@ tpViewer::create(const tpString& title/* = "tpViewer"*/,
 	traits.setSize(w,h).setPosition(x,y).setTitle(title);
 
 	// setup renderer and viewer
-	mRenderer = tpRenderer::create();
 	mSurface = tpWindow::create(&traits);
 	mSurface->setContext(0);
+
+    // need to fix
+    mRenderer = tpRenderer::create(mSurface->getContext()->getRendererTraits());
 
 	if (!mRenderer.isValid() || !mSurface.isValid() || !mSurface->hasContext()) return false;
 
@@ -46,10 +48,9 @@ tpViewer::create(const tpString& title/* = "tpViewer"*/,
 void
 tpViewer::frame() {
 
-	if (mSurface->getContext()->makeCurrent())
+    if (mSurface->getContext()->makeCurrent())
 	{
-		(*mRenderer)(mScene.get());
-
+        mRenderer->render(mScene.get());
 		mSurface->getContext()->swapBuffers();
 	}
 

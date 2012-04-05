@@ -111,6 +111,9 @@ public:
 
 	bool makeCurrent();
 	bool swapBuffers();
+
+    tpUInt getRendererTraits() const;
+
 };
 
 

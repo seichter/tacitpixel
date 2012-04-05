@@ -3,27 +3,33 @@
 #include "tp/module.h"
 #include "tp/rtti.h"
 #include "tp/primitive.h"
+#include "tp/scene.h"
 
-struct tpGLRendererTraits : tpRendererTraits {
+class tpPrimitiveRenderNode : public tpRenderNode {
+
+    void
+    operator ()(tpNode* node,tpRenderer* renderer)
+    {
+        tpPrimitive* p = static_cast<tpPrimitive*>(node);
+    }
+
 };
-
-tpGLRendererTraits mTraits;
-
 
 class tpRendererGL2x : public tpRenderer {
 public:
 	TP_TYPE_DECLARE
 
-	virtual void operator ()(tpScene* scene);
+    virtual void render(tpScene* scene);
 
-	virtual const tpRendererTraits& getTraits() const {
-		return mTraits;
+    virtual tpUInt getTraits() const {
+
+        return (tpRenderer::kOpenGL2x | tpRenderer::kOpenGLES2);
 	}
 
 	void onPrimitive(tpPrimitive *p);
 };
 
-void tpRendererGL2x::operator ()(tpScene *scene)
+void tpRendererGL2x::render(tpScene *scene)
 {
 }
 

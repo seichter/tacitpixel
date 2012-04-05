@@ -28,6 +28,8 @@ public:
 	virtual bool makeCurrent() = 0;
 	virtual bool swapBuffers() = 0;
 
+    virtual tpUInt getRendererTraits() const = 0;
+
 	virtual tpString getString(const tpUInt& e);
 
 	const tpString& getVersion() const { return mVersion; }
