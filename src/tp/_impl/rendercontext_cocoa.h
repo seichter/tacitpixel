@@ -28,6 +28,10 @@ public:
 	virtual void destroy();
 
 	tpString getString(const tpUInt &e);
+
+
+	tpUInt getRendererTraits() const;
+
 };
 
 #endif

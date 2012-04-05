@@ -1,6 +1,8 @@
-#import "tp/window.h"
 #import "rendercontext_cocoa.h"
+
+#import "tp/window.h"
 #import "tp/module.h"
+#import "tp/renderer.h"
 
 #import <OpenGL/gl.h>
 
@@ -108,6 +110,12 @@ tpRenderContextCocoa::getString(const tpUInt& e)
 {
 	const tpChar* str = reinterpret_cast<const tpChar*>(glGetString(e));
 	return tpString(str);
+}
+
+tpUInt tpRenderContextCocoa::getRendererTraits() const
+{
+	// need to fix
+	return (tpRenderer::kOpenGL1x);
 }
 
 TP_TYPE_REGISTER(tpRenderContextCocoa,tpRenderContext,RenderContextCocoa);

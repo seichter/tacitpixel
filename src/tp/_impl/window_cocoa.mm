@@ -243,6 +243,7 @@ tpWindowCocoa::update()
 
 
 		bool submit(false);
+		bool requeue(false);
 		switch([(NSEvent *)event type])
 		{
 
@@ -299,13 +300,16 @@ tpWindowCocoa::update()
 			break;
 		case NSFlagsChanged:
 		default:
+			requeue = true;
 			break;
 		}
 
 		if (submit) {
 			// we only peek into the events - put it back into the queue
-			this->getEventHandler().process(e);
-			[NSApp sendEvent:event];
+			if(!this->getEventHandler().process(e) || requeue)
+			{
+				[NSApp sendEvent:event];
+			}
 
 		}
 	}
@@ -333,6 +337,7 @@ tpWindowCocoa::setContext(tpRenderContext* context)
 
 	tpRenderTarget::setContext(context);
 }
+
 
 
 ////////////////////////////////////////////////////////////////////////////
