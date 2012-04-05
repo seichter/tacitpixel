@@ -197,8 +197,6 @@ if(X11_FOUND)
 		list(APPEND tp_impl_srcs
 			_impl/window_x11.cxx
 			_impl/window_x11.h
-			_impl/renderbuffer_x11.cxx
-			_impl/renderbuffer_x11.h
 			)
 
 		list(APPEND tp_impl_libs
@@ -208,6 +206,8 @@ if(X11_FOUND)
 		# only now we add GLX
 		if(OPENGL_FOUND)
 			list(APPEND tp_impl_srcs
+				_impl/renderbuffer_glx.cxx
+				_impl/renderbuffer_glx.h
 				_impl/rendercontext_glx.cxx
 				_impl/rendercontext_glx.h
 				)
