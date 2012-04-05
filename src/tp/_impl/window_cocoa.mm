@@ -234,7 +234,7 @@ tpWindowCocoa::update()
 
 	if (nil != event)
 	{
-		NSRect size = [window contentRectForFrameRect:[window frame]];
+		//NSRect size = [window contentRectForFrameRect:[window frame]];
 		NSPoint point = [window mouseLocationOutsideOfEventStream];
 
 		tpWindowEvent e(this);

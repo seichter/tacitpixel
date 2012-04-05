@@ -83,7 +83,7 @@ public:
 			stbtt_aligned_quad q;
             stbtt_GetBakedQuad(cdata, getImage()->getWidth() ,getImage()->getHeight(), c-32, &x,&y,&q,1);//1=opengl,0=old d3d
 
-			float h = q.t1 - q.t0;
+//			float h = q.t1 - q.t0;
 
 			tpVec3f normal(0,0,1);
 
@@ -93,7 +93,7 @@ public:
 
 			prim.setPrimitiveType(tpPrimitive::kQuads);
 
-			// unlike the suggested version tex-coordinates are upside down and
+			// unlike the example the tex-coordinates are upside down and
 			// we move the vertices into positive y direction - check with
 			// stb_truetype 0.5
 			prim.addVertex(tpVec3f(q.x0,-q.y0,0),normal,tpVec2f(q.s0,q.t0)); // v0

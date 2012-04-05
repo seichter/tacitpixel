@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright (C) 1999-2011 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,42 +23,36 @@
  * SUCH DAMAGE.
  */
 
-#include "tp/texture.h"
+#ifndef TP_HOST_H
+#define TP_HOST_H
 
+#if defined(_WIN64)
+	#define TP_OS_WIN64
+#elif defined(_WIN32)
+	#define TP_OS_WIN32
+#elif defined(__APPLE__)
+	#include <AvailabilityMacros.h>
+	#include <TargetConditionals.h>
+	#if TARGET_OS_IPHONE
+		#include <Availability.h>
+		#define TP_OS_IOS
+	#elif TARGET_IPHONE_SIMULATOR
+		#define TP_OS_IOS
+	#elif TARGET_OS_MAC
+		#define TP_OS_OSX
+	#else
+		#define TP_OS_UNKNOWN
+	#endif
+#elif ANDROID
+    #define TP_OS_ANDROID
+#elif __HAIKU
+	#define TP_OS_HAIKU
+#elif __linux
+	#define TP_OS_LINUX
+#elif __unix // all unices not caught above
+	#define TP_OS_UNIX
+#elif __posix
+	#define TP_OS_POSIX
+#endif
 
-tpTexture::tpTexture(const tpString& name  /* = TP_NONAME */)
-	: tpObject(name)
-	, mFormat(kFormatRGB)
-	, mMinFilter(kFilterNearest | kFilterMipMapNearest)
-	, mMagFilter(kFilterNearest | kFilterMipMapNearest)
-	, mWrap(tpVec3<tpUInt>(kWrapModeClamp,kWrapModeClamp,kWrapModeClamp))
-	, mStatic(false)
-	, mImage(0)
-{
-}
-
-tpTexture::~tpTexture()
-{
-}
-
-void tpTexture::setImage( tpImage* image )
-{
-	mImage = image;
-}
-
-
-void
-tpTexture::setWrapMode(tpUInt wrap_u,tpUInt wrap_v,tpUInt wrap_w)
-{
-	this->mWrap = tpVec3<tpUInt>(wrap_u,wrap_v,wrap_w);
-}
-
-
-tpVec3<tpUInt>
-tpTexture::getWrapMode() const
-{
-	return mWrap;
-}
-
-
-TP_TYPE_REGISTER(tpTexture,tpObject,Texture);
+#endif

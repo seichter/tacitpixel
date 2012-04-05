@@ -116,6 +116,10 @@ if(OPENGL_FOUND)
 	list(APPEND tp_impl_srcs
 		_impl/renderer_gl1.cxx
 		_impl/renderer_gl1.h
+		_impl/renderer_gl2.cxx
+		_impl/renderer_gl2.h
+		_impl/glprogram.h
+		_impl/glprogram.cxx
 		)
 	include_directories(${OPENGL_INCLUDE_DIRS})
 	list(APPEND tp_impl_libs
@@ -177,6 +181,8 @@ if(IOS)
 				_impl/rendercontext_eagl.h
 				_impl/renderer_gl1.cxx
 				_impl/renderer_gl1.h
+				_impl/glprogram.h
+				_impl/glprogram.cxx
 #				_impl/dialogs_cocoa.mm
 #				_impl/dialogs_cocoa.h
 				)

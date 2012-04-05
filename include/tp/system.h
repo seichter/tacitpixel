@@ -38,10 +38,10 @@ class TP_API tpSystem : public tpReferenced {
 
 public:
 
-    enum {
-        kSysLittleEndian = 0x0,
-        kSysBigEndian
-    };
+	enum {
+		kSysLittleEndian = 0x0,
+		kSysBigEndian
+	};
 
 	static tpSystem* get();
 
@@ -63,9 +63,11 @@ public:
 
 	tpString getTime() const;
 
-    tpString getEnv(const tpString &name) const;
+	tpString getEnv(const tpString &name) const;
 
-    tpULong getPID(bool parent = false) const;
+	tpULong getPID(bool parent = false) const;
+
+	tpFloat getIdleTime() const;
 };
 
 TP_API tpString tpSlash();

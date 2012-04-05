@@ -23,8 +23,8 @@
  * SUCH DAMAGE.
  */
 
-#include <tp/light.h>
-#include <tp/log.h>
+#include "tp/light.h"
+#include "tp/log.h"
 
 
 tpArray<tpUInt> tpLight::msLightID = tpArray<tpUInt>();
@@ -34,12 +34,12 @@ tpLight::tpLight()
 	, mAmbientColor(tpVec4f(0.0f,0.0f,0.0f,1.0f))
 	, mDiffuseColor(tpVec4f(0.0f,0.0f,0.0f,1.0f))
 	, mSpecularColor(tpVec4f(0.0f,0.0f,0.0f,1.0f))
-	, mPositionH(tpVec4f(0.f,0.f,1.f,0.f))
 	, mExponent(0)
 	, mCutOff(128)
 	, mConstantAttenuation(1)
 	, mLinearAttenuation(0)
 	, mQuadraticAttenuation(0)
+	, mPositionH(tpVec4f(0.f,0.f,1.f,0.f))
 	, mId(tpLight::getNewId())
 {
 	if (mId == 0) {

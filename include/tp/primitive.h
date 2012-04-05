@@ -65,9 +65,9 @@ public:
 	tpPrimitiveAttribute& add(const tpVec4f& v);
 	tpPrimitiveAttribute& add(const tpVec3f& v);
 	tpPrimitiveAttribute& add( const tpVec2f& v );
-    tpPrimitiveAttribute& add( const tpFloat *v, tpSizeT size );
+	tpPrimitiveAttribute& add( const tpFloat *v, tpSizeT size );
 
-    const tpFloat *getDataOffset(tpSizeT elements) const;
+	const tpFloat *getDataOffset(tpSizeT elements) const;
 };
 
 
@@ -78,7 +78,7 @@ protected:
 	tpRefPtr<tpPrimitiveAttribute> mTexCoords;
 	tpRefPtr<tpPrimitiveAttribute> mColors;
 
-    tpArray<tpUInt16> mIndices;
+	tpArray<tpUInt16> mIndices;
 
 	typedef tpArray<tpRefPtr<tpPrimitiveAttribute> > tpRefPrimitiveAttributeArray;
 
@@ -140,17 +140,17 @@ public:
 
 	tpPrimitive& addVertexNormalTextureCoordinateColor( const tpVec3r& vertex,const tpVec3f& normal,const tpVec2f& texcoord,const tpVec4f& color );
 
-    void clearIndices() { mIndices.clear(); }
+	void clearIndices() { mIndices.clear(); }
 
-    void addIndex(tpUInt16 idx) { mIndices.add(idx); }
+	void addIndex(tpUInt16 idx) { mIndices.add(idx); }
 
-    template <typename T>
-    void copyIndices(T* idx, tpSizeT size)
-    {
-        for (tpSizeT i = 0; i < size; ++i) mIndices.add(idx[i]);
-    }
+	template <typename T>
+	void copyIndices(T* idx, tpSizeT size)
+	{
+		for (tpSizeT i = 0; i < size; ++i) mIndices.add(idx[i]);
+	}
 
-    const tpUInt16* getIndices() const { return mIndices.getData(); }
+	const tpUInt16* getIndices() const { return mIndices.getData(); }
 
 	void clear();
 
@@ -164,10 +164,10 @@ public:
 
 	void scale(const tpVec3f &vec);
 
-    void flipNormals();
-    void checkNormals() const;
+	void flipNormals();
+	void checkNormals() const;
 
-    void getAABB(tpVec3r &aabb_min, tpVec3r &aabb_max);
+	void getAABB(tpVec3r &aabb_min, tpVec3r &aabb_max);
 
 };
 

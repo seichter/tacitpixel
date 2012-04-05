@@ -3,9 +3,9 @@
 
 tpSoundStreamOgg::tpSoundStreamOgg()
 	: tpSoundStream()
+	, mStreamSection(0)
 	, vorbisInfo(0)
 	, vorbisComment(0)
-	, mStreamSection(0)
 {
 
 }
