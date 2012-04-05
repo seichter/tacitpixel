@@ -17,7 +17,8 @@
 #include <tp/mutex.h>
 #include <tp/scopelock.h>
 
-#include <tp/config.h>
+#include "tp/config.h"
+#include "tp/host.h"
 
 #if defined (TP_OS_IOS)
 	#include <OpenGLES/es1/gl.h>
@@ -659,7 +660,7 @@ public:
 	}
 };
 
-tpGLRendererTraits tpRendererGL1x::mRendererTraits;
+//tpGLRendererTraits tpRendererGL1x::mRenderer;
 
 TP_TYPE_REGISTER(tpRendererGL1x,tpRenderer,RendererGL1x);
 TP_MODULE_REGISTER(RendererGL1x,tpRendererGL1x)

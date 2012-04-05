@@ -30,8 +30,8 @@ tpMaterial::tpMaterial(const tpString& name)
 	: tpObject(name)
 	, m_ambientcolor(tpVec4r(0.8,0.8,0.8,1.0))
 	, m_diffusecolor(tpVec4r(1.0,1.0,1.0,1.0))
-	, m_specularcolor(tpVec4r(1.0,1.0,1.0,1.0))
 	, m_emissivecolor(tpVec4r(0.0,0.0,0.0,1.0))
+	, m_specularcolor(tpVec4r(1.0,1.0,1.0,1.0))
 	, m_shininess(0.f)
 {
 }

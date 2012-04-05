@@ -54,32 +54,4 @@
 #cmakedefine TP_USE_OPENGLES1
 #cmakedefine TP_USE_OPENAL
 
-#if defined(_WIN64)
-	#define TP_OS_WIN64
-#elif defined(_WIN32)
-	#define TP_OS_WIN32
-#elif defined(__APPLE__)
-	#include "TargetConditionals.h"
-	#if defined(TARGET_OS_IPHONE)
-		#define TP_OS_IOS
-	#elif defined(TARGET_IPHONE_SIMULATOR)
-		#define TP_OS_IOS
-	#elif defined(TARGET_OS_MAC)
-		#define TP_OS_OSX
-	#else
-		#define TP_OS_UNKNOWN
-	#endif
-#elif ANDROID
-    #define TP_OS_ANDROID
-#elif __HAIKU
-	#define TP_OS_HAIKU
-#elif __linux
-	#define TP_OS_LINUX
-#elif __unix // all unices not caught above
-	#define TP_OS_UNIX
-#elif __posix
-	#define TP_OS_POSIX
-#endif
-
-
 #endif

@@ -25,7 +25,8 @@
 
 #include <tp/thread.h>
 
-#include <tp/config.h>
+#include "tp/config.h"
+#include "tp/host.h"
 
 #if defined (TP_OS_IOS)
 	#define HAVE_PTHREAD_H 1
@@ -144,7 +145,6 @@ void
 tpThread::detach()
 {
 #if defined(HAVE_PTHREAD_H) && !defined(__MINGW32__)
-	void *result = 0;
 	pthread_detach(mThreadHandle->handle);
 #else
 #endif
