@@ -33,8 +33,22 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+	 
+	
 
+#if defined(ANDROID)
+	 
+	 #include <android/log.h>
+	 
+	 struct tpConsoleLog : tpLogCallback
+	 {
+	 	void operator()(const char* cstr)
+	 	{
+			__android_log_print(ANDROID_LOG_INFO, "libtacit", cstr);
+	 	}
+	 };
 
+#else
 struct tpConsoleLog : tpLogCallback
 {
 	void operator()(const char* cstr)
@@ -43,6 +57,7 @@ struct tpConsoleLog : tpLogCallback
 		::fflush(stdout);
 	}
 };
+#endif
 
 
 struct tpFileLog : tpLogCallback {
