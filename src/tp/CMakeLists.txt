@@ -393,6 +393,9 @@ if(HAVE_PTHREAD_H AND NOT ANDROID)
 		pthread)
 endif()
 
+if (ANDROID)
+	target_link_libraries(${tp_name} log)
+endif()
 
 if (WIN32)
 	target_link_libraries(${tp_name}
