@@ -28,3 +28,6 @@ testprg(016)
 testprg(017)
 testprg(018)
 testprg(019)
+
+# others
+testprg(perf)

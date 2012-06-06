@@ -228,6 +228,8 @@ class TP_API tpWindowTraits {
 	tpUInt renderbackend;
 	bool embedded;
 
+    tpUInt visualId;    //! required by EGL/X11
+
 public:
 
 	enum {
@@ -273,6 +275,9 @@ public:
 
 	bool isFullscreen() const;
 	tpWindowTraits& setFullscreen(bool val = true);
+
+    tpUInt getVisualId() const { return visualId; }
+    tpWindowTraits& setVisualId(tpUInt val = 0) { visualId = val; return *this; }
 
 };
 

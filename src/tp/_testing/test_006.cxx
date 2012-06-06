@@ -11,6 +11,7 @@
 #include <tp/egl.h>
 #include <tp/log.h>
 #include <tp/window.h>
+#include <tp/thread.h>
 
 
 int main(int argc, char* argv[])
@@ -34,6 +35,7 @@ int main(int argc, char* argv[])
 
 	while (surface->isValid()) {
 		surface->update();
+        tpThread::yield();
 	}
 
 	return 0;
