@@ -31,17 +31,27 @@ tpEGL* tpEGL::get( bool destroy /*= false*/ )
 	return mEGL.get();
 }
 
-bool tpRenderContextEGL::swapBuffers() {
+bool
+tpRenderContextEGL::swapBuffers()
+{
     return (tpEGL::a().SwapBuffers.f(display,surface) > 0);
 }
 
-tpUInt tpRenderContextEGL::getRendererTraits() const
+tpUInt
+tpRenderContextEGL::getRendererTraits() const
 {
     return (tpRenderer::kOpenGLES1);
 }
 
-bool tpRenderContextEGL::makeCurrent() {
+bool
+tpRenderContextEGL::makeCurrent() {
 	return (tpEGL::a().MakeCurrent.f(display,surface,surface,context) > 0);
+}
+
+tpUInt
+tpRenderContextEGL::getVisualId() const
+{
+    return 0x21;
 }
 
 bool tpRenderContextEGL::init(tpRenderTarget* target) {
@@ -54,6 +64,11 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
 	switch (target->getTargetType())
 	{
 		case tpRenderTarget::kWindow:
+
+            attributes.add(EGL_RED_SIZE).add(1);
+            attributes.add(EGL_GREEN_SIZE).add(1);
+            attributes.add(EGL_BLUE_SIZE).add(1);
+            attributes.add(EGL_DEPTH_SIZE).add(1);
 			attributes.add(EGL_SURFACE_TYPE).add(EGL_WINDOW_BIT);
 
 			break;
@@ -91,33 +106,41 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
 		);
 	}
 
-	tpEGL::a().BindAPI.f(EGL_OPENGL_BIT);
+    //tpEGL::a().BindAPI.f(EGL_OPENGL_BIT);
 
 	tpArray<EGLint> context_attributes;
-	EGLConfig config = 0L;
 
-	EGLint num_config = 1;
+    EGLConfig config = 0;
+    EGLint num_config = 1;
+
 	/* get an appropriate EGL frame buffer configuration */
-	if (!tpEGL::a().ChooseConfig.f(display, &attributes.front(), &config, num_config, &num_config))
+    if (!tpEGL::a().ChooseConfig.f(display, &attributes.front(), &config, num_config, &num_config))
 	{
 		tpLogError("%s - eglChooseConfig failed",__FUNCTION__);
 	} else
 	{
-		tpLogNotify("%s - eglChooseConfig returned %d configuration(s)",__FUNCTION__,num_config);
 
-		EGLint red_,green_,blue_,alpha_;
+        tpLogNotify("%s - eglChooseConfig returned %d configuration(s)",__FUNCTION__,num_config);
 
-		tpEGL::a().GetConfigAttrib.f(display,config,EGL_RED_SIZE,&red_);
-		tpEGL::a().GetConfigAttrib.f(display,config,EGL_GREEN_SIZE,&green_);
-		tpEGL::a().GetConfigAttrib.f(display,config,EGL_BLUE_SIZE,&blue_);
-		tpEGL::a().GetConfigAttrib.f(display,config,EGL_ALPHA_SIZE,&alpha_);
 
-		tpLogNotify("%s config has %d:%d:%d:%d format",__FUNCTION__,red_,green_,blue_,alpha_);
+        EGLint red_,green_,blue_,alpha_, vid_;
+
+        tpEGL::a().GetConfigAttrib.f(display,config,EGL_RED_SIZE,&red_);
+        tpEGL::a().GetConfigAttrib.f(display,config,EGL_GREEN_SIZE,&green_);
+        tpEGL::a().GetConfigAttrib.f(display,config,EGL_BLUE_SIZE,&blue_);
+        tpEGL::a().GetConfigAttrib.f(display,config,EGL_ALPHA_SIZE,&alpha_);
+        tpEGL::a().GetConfigAttrib.f(display,config,EGL_NATIVE_VISUAL_ID,&vid_);
+
+        tpLogNotify("%s config has %d:%d:%d:%d format (vid: 0x%x)",
+                    __FUNCTION__,red_,green_,blue_,alpha_,vid_);
+
+
 
 		//status = tpGL::eglGetConfigAttrib(display, config, attribute, value);
 	}
 
 
+    // here we need to set the native
 
 
 
@@ -125,6 +148,9 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
 //	context_attributes.add(EGL_CONFIG_ID).add(0);
 	context_attributes.add(EGL_CONTEXT_CLIENT_VERSION).add(2);
 	context_attributes.add(EGL_NONE).add(EGL_NONE);
+
+
+
 
 	/* create an EGL window surface */
 	/* This needs to be adapted for ES 1.x */
@@ -158,11 +184,12 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
 
 		makeCurrent();
 
-		tpInt w(0),h(0);
+        tpInt w(0),h(0), wb(0);
 		tpEGL::a().QuerySurface.f(display,surface,EGL_WIDTH,&w);
 		tpEGL::a().QuerySurface.f(display,surface,EGL_HEIGHT,&h);
+        tpEGL::a().GetConfigAttrib.f(display,config,EGL_SURFACE_TYPE,&wb);
 
-		tpLogMessage("%s - actual surface area %dx%d",__FUNCTION__,w,h);
+        tpLogMessage("%s - actual surface area %dx%d (%d)",__FUNCTION__,w,h,wb & EGL_WINDOW_BIT);
 
 	}
 

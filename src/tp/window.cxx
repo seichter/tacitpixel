@@ -167,9 +167,10 @@ tpRenderBuffer::create(const tpSize& size, const tpUInt pixelformat) {
 //////////////////////////////////////////////////////////////////////////
 
 tpWindowTraits::tpWindowTraits()
-	: title("GL Window"),
-	size(tpVec2i(320,240)),
-	position(tpVec2i(0,0))
+    :title("GL Window")
+    ,size(tpVec2i(320,240))
+    ,position(tpVec2i(0,0))
+    ,visualId(0)
 {
 }
 

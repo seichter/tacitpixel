@@ -29,6 +29,7 @@ public:
 	virtual bool swapBuffers() = 0;
 
     virtual tpUInt getRendererTraits() const = 0;
+    virtual tpUInt getVisualId() const { return 0; }
 
 	virtual tpString getString(const tpUInt& e);
 

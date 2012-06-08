@@ -13,7 +13,7 @@
 
 
 extern "C" {
-    JNIEXPORT void JNICALL Java_com_technotecture_TacitAndroid_Native_create(JNIEnv* env, jobject thiz);
+	JNIEXPORT void JNICALL Java_com_technotecture_TacitAndroid_Native_create(JNIEnv* env, jobject thiz);
 	JNIEXPORT void JNICALL Java_com_technotecture_TacitAndroid_Native_update(JNIEnv* env, jobject thiz);
 	JNIEXPORT void JNICALL Java_com_technotecture_TacitAndroid_Native_destroy(JNIEnv* env, jobject thiz);
 };
@@ -26,7 +26,7 @@ public:
 
 	tpWindowAndroid( tpWindowTraits *traits ) {
 		
-		android_createDisplaySurface();
+	//	android_createDisplaySurface();
 		
 	}
 

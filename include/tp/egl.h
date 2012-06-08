@@ -114,6 +114,7 @@ public:
 
     tpUInt getRendererTraits() const;
 
+    tpUInt getVisualId() const;
 };
 
 

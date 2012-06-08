@@ -88,11 +88,53 @@ tpWindowX11::doCreate( tpWindowTraits* traits ) {
         pos_y = traits->getPosition()(1);
 	}
 
+    XVisualInfo *visInfo(0), visTemplate;
 
-	win = XCreateWindow( dpy, root_window, pos_x, pos_y, width, height, 0, CopyFromParent, InputOutput, CopyFromParent, mask, &swa);
+    if (traits && traits->getVisualId())
+    {
+        visTemplate.visualid = 0x21;
+        int num_visuals = 0;
+        visInfo = XGetVisualInfo(dpy, VisualIDMask, &visTemplate, &num_visuals);
+    }
+
+
+
+
+
+//    tpLogMessage("Visuals: %d",num_visuals);
+
+//    for (int k = 0; k < num_visuals;++k) {
+//        tpLog::get().printf("vid: 0x%x",visInfo->visualid);
+//        visInfo++;
+//    }
+
+
+    if (visInfo)
+    {
+        win = XCreateWindow( dpy, root_window, pos_x, pos_y, width, height, 0, visInfo->depth,
+                             InputOutput, visInfo->visual, mask, &swa);
+
+    } else {
+        win = XCreateWindow( dpy, root_window, pos_x, pos_y, width, height, 0, CopyFromParent, InputOutput, CopyFromParent, mask, &swa);
+    }
 
     Atom wmDelete=XInternAtom(dpy, "WM_DELETE_WINDOW", True);
     XSetWMProtocols(dpy, win, &wmDelete, 1);
+
+    {
+        XSizeHints sizehints;
+        sizehints.x = pos_x;
+        sizehints.y = pos_y;
+        sizehints.width  = width;
+        sizehints.height = height;
+        sizehints.flags = USSize | USPosition;
+        XSetNormalHints(dpy, win, &sizehints);
+//        XSetStandardProperties(x_dpy, win, name, name,
+//                                None, (char **)NULL, 0, &sizehints);
+//
+    }
+
+
 
 	if (traits) setCaption(traits->getTitle());
 
