@@ -58,17 +58,22 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
 
 	tpArray<EGLint> attributes;
 
-	attributes.add(EGL_RENDERABLE_TYPE).add(EGL_OPENGL_ES2_BIT);
+//	attributes.add(EGL_RENDERABLE_TYPE).add(EGL_OPENGL_ES2_BIT);
 //	attributes.add(EGL_RENDERABLE_TYPE).add(EGL_OPENGL_BIT);
 
 	switch (target->getTargetType())
 	{
 		case tpRenderTarget::kWindow:
 
+            tpLogError("%s - rendertarget - Window",__FUNCTION__);
+
             attributes.add(EGL_RED_SIZE).add(1);
             attributes.add(EGL_GREEN_SIZE).add(1);
             attributes.add(EGL_BLUE_SIZE).add(1);
             attributes.add(EGL_DEPTH_SIZE).add(1);
+
+            attributes.add(EGL_NATIVE_VISUAL_ID).add(0x21);
+
 			attributes.add(EGL_SURFACE_TYPE).add(EGL_WINDOW_BIT);
 
 			break;
@@ -106,7 +111,6 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
 		);
 	}
 
-    //tpEGL::a().BindAPI.f(EGL_OPENGL_BIT);
 
 	tpArray<EGLint> context_attributes;
 
@@ -122,7 +126,6 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
 
         tpLogNotify("%s - eglChooseConfig returned %d configuration(s)",__FUNCTION__,num_config);
 
-
         EGLint red_,green_,blue_,alpha_, vid_;
 
         tpEGL::a().GetConfigAttrib.f(display,config,EGL_RED_SIZE,&red_);
@@ -134,23 +137,36 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
         tpLogNotify("%s config has %d:%d:%d:%d format (vid: 0x%x)",
                     __FUNCTION__,red_,green_,blue_,alpha_,vid_);
 
-
-
 		//status = tpGL::eglGetConfigAttrib(display, config, attribute, value);
 	}
 
 
     // here we need to set the native
 
-
-
-
 //	context_attributes.add(EGL_CONFIG_ID).add(0);
-	context_attributes.add(EGL_CONTEXT_CLIENT_VERSION).add(2);
-	context_attributes.add(EGL_NONE).add(EGL_NONE);
+//	context_attributes.add(EGL_CONTEXT_CLIENT_VERSION).add(2);
+//	context_attributes.add(EGL_NONE).add(EGL_NONE);
 
 
+	/* bind the API */
+    if(!tpEGL::a().BindAPI.f(EGL_OPENGL_API))
+    {
+        tpLogError("%s - eglBindAPI failed",__FUNCTION__);
+    }
 
+	/* create an EGL rendering context */
+	context = tpEGL::a().CreateContext.f(display, config, EGL_NO_CONTEXT,
+										context_attributes.getSize() ? (const EGLint*)context_attributes.getData() : 0L);
+	if (EGL_NO_CONTEXT == context)
+	{
+		tpLogError("%s - eglCreateContext failed (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
+
+	} else {
+
+		tpLogMessage("%s - eglCreateContext successful",__FUNCTION__);
+
+		makeCurrent();
+	}
 
 	/* create an EGL window surface */
 	/* This needs to be adapted for ES 1.x */
@@ -161,6 +177,15 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
 		if (EGL_NO_SURFACE == surface)
 		{
 			tpLogError("%s - eglCreateWindowSurface failed (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
+		} else {
+
+			tpInt w(0),h(0), wb(0);
+			tpEGL::a().QuerySurface.f(display,surface,EGL_WIDTH,&w);
+			tpEGL::a().QuerySurface.f(display,surface,EGL_HEIGHT,&h);
+			tpEGL::a().GetConfigAttrib.f(display,config,EGL_SURFACE_TYPE,&wb);
+
+        tpLogMessage("%s - actual surface area %dx%d (%d)",__FUNCTION__,w,h,wb & EGL_WINDOW_BIT);
+
 		}
 
 	} else {
@@ -172,26 +197,6 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
 		}
 	}
 
-	/* create an EGL rendering context */
-	context = tpEGL::a().CreateContext.f(display, config, EGL_NO_CONTEXT,(const EGLint*)context_attributes.getData());
-	if (EGL_NO_CONTEXT == context)
-	{
-		tpLogError("%s - eglCreateContext failed (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
-
-	} else {
-
-		tpLogMessage("%s - eglCreateContext successful",__FUNCTION__);
-
-		makeCurrent();
-
-        tpInt w(0),h(0), wb(0);
-		tpEGL::a().QuerySurface.f(display,surface,EGL_WIDTH,&w);
-		tpEGL::a().QuerySurface.f(display,surface,EGL_HEIGHT,&h);
-        tpEGL::a().GetConfigAttrib.f(display,config,EGL_SURFACE_TYPE,&wb);
-
-        tpLogMessage("%s - actual surface area %dx%d (%d)",__FUNCTION__,w,h,wb & EGL_WINDOW_BIT);
-
-	}
 
 
 //		EGLBoolean res = tpEGL::a().MakeCurrent.f(display,surface,surface,context);

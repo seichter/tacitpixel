@@ -97,6 +97,12 @@ typedef void* NativeGLContext;
 #define EGL_HEIGHT 0x3056
 #define EGL_WIDTH 0x3057
 
+/* APIs */
+#define EGL_OPENGL_ES_API		0x30A0
+#define EGL_OPENVG_API			0x30A1
+#define EGL_OPENGL_API			0x30A2
+
+
 
 
 class TP_API tpRenderContextEGL : public tpRenderContext {

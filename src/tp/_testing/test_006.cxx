@@ -24,7 +24,13 @@ int main(int argc, char* argv[])
 
 	tpEGL::get()->load(file);
 
-	tpRefPtr<tpWindow> surface = tpWindow::create();
+	// we need traits here
+	tpWindowTraits traits;
+	traits.setVisualId(0x21);
+
+
+
+	tpRefPtr<tpWindow> surface = tpWindow::create(&traits);
 
 	surface->setCaption("Tacit Pixel EGL Test");
 	surface->show(true);
