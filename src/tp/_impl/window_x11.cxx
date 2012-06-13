@@ -40,10 +40,10 @@ tpWindowX11::tpWindowX11( tpWindowTraits* traits )
 void
 tpWindowX11::doCreate( tpWindowTraits* traits ) {
 
-	XVisualInfo *vi(0L);
+	//XVisualInfo *vi(0L);
 	long screen(0L);
 
-	XSetWindowAttributes swa;
+	//XSetWindowAttributes swa;
 	// XWMHints       *wmHints;
 
     tpString s_display;
@@ -60,22 +60,8 @@ tpWindowX11::doCreate( tpWindowTraits* traits ) {
 	if (dpy == NULL) tpLogError("could not open display %s",s_display.c_str());
 
 	screen = XDefaultScreen( dpy );
-
 	Window root_window = RootWindow(dpy, screen);
-
 	int depth = DefaultDepth(dpy, screen);
-	vi = new XVisualInfo;
-	XMatchVisualInfo( dpy, screen, depth, TrueColor, vi);
-	if (!vi)
-	{
-		tpLogError("Error: Unable to acquire visual with %dbpp\n",depth);
-	}
-
-	Colormap colormap = XCreateColormap( dpy, root_window, vi->visual, AllocNone );
-	swa.colormap = colormap;
-    swa.event_mask = ExposureMask | StructureNotifyMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | KeyPressMask | KeyReleaseMask;
-	unsigned int mask = CWBackPixel | CWBorderPixel | CWEventMask | CWColormap;
-
 
 	int width(640),height(480);
 	int pos_x(0),pos_y(0);
@@ -88,34 +74,70 @@ tpWindowX11::doCreate( tpWindowTraits* traits ) {
         pos_y = traits->getPosition()(1);
 	}
 
-    XVisualInfo *visInfo(0), visTemplate;
+
+    // do some magic about the visual ID
 
     if (traits && traits->getVisualId())
     {
-        visTemplate.visualid = 0x21;
-        int num_visuals = 0;
+        tpLogMessage("%s choosing visual ID 0x%x",__FUNCTION__,traits->getVisualId());
+
+		XVisualInfo *visInfo(0), visTemplate;
+
+		int num_visuals = 0;
+
+		visTemplate.visualid = 0x21;
+
         visInfo = XGetVisualInfo(dpy, VisualIDMask, &visTemplate, &num_visuals);
-    }
 
+        tpLogMessage("%s visual #%d rgb:(%d,%d,%d) visualID:%d depth:%d ",__FUNCTION__
+					,num_visuals
+					,visInfo->red_mask
+					,visInfo->green_mask
+                     ,visInfo->blue_mask
+                     ,visInfo->visualid
+                     ,visInfo->depth
+                     );
 
+        XSetWindowAttributes attr;
 
+        attr.background_pixel = 0;
+        attr.border_pixel = 0;
+        attr.colormap = XCreateColormap( dpy, root_window, visInfo->visual, AllocNone );;
+        attr.event_mask = ExposureMask | StructureNotifyMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | KeyPressMask | KeyReleaseMask;
 
+        unsigned int mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask | CWOverrideRedirect;
 
-//    tpLogMessage("Visuals: %d",num_visuals);
-
-//    for (int k = 0; k < num_visuals;++k) {
-//        tpLog::get().printf("vid: 0x%x",visInfo->visualid);
-//        visInfo++;
-//    }
-
-
-    if (visInfo)
-    {
-        win = XCreateWindow( dpy, root_window, pos_x, pos_y, width, height, 0, visInfo->depth,
-                             InputOutput, visInfo->visual, mask, &swa);
+        win = XCreateWindow( dpy, root_window,
+                            pos_x, pos_y, width, height,
+                            0, visInfo->depth, InputOutput,
+                            visInfo->visual, mask, & attr);
 
     } else {
-        win = XCreateWindow( dpy, root_window, pos_x, pos_y, width, height, 0, CopyFromParent, InputOutput, CopyFromParent, mask, &swa);
+
+        // choose correct visual info
+
+		tpLogMessage("%s choosing visual from parent window",__FUNCTION__);
+
+		XSetWindowAttributes attr;
+
+        XVisualInfo* vi = new XVisualInfo;
+        XMatchVisualInfo( dpy, screen, depth, TrueColor, vi);
+
+        if (!vi)
+        {
+            tpLogError("Error: Unable to acquire visual with %dbpp\n",depth);
+        }
+
+        attr.colormap = XCreateColormap( dpy, root_window, vi->visual, AllocNone );
+        attr.event_mask = ExposureMask | StructureNotifyMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | KeyPressMask | KeyReleaseMask;
+        unsigned int mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask | CWOverrideRedirect;
+
+        win = XCreateWindow( dpy, root_window, pos_x, pos_y, width, height,
+							0, CopyFromParent, InputOutput, CopyFromParent,
+							mask, &attr);
+
+		// don't leak stuff
+		delete vi;
     }
 
     Atom wmDelete=XInternAtom(dpy, "WM_DELETE_WINDOW", True);
@@ -138,7 +160,7 @@ tpWindowX11::doCreate( tpWindowTraits* traits ) {
 
 	if (traits) setCaption(traits->getTitle());
 
-    delete vi;
+    //delete vi;
 
     XMapWindow(dpy, win);
     XFlush(dpy);
@@ -193,7 +215,7 @@ tpWindowX11::update()
 {
 
     //if (XEventsQueued(dpy,QueuedAlready)) {
-	
+
     while(XPending(dpy)) {
 
 		XEvent event;
