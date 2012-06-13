@@ -77,7 +77,7 @@ tpWindowX11::doCreate( tpWindowTraits* traits ) {
 
     // do some magic about the visual ID
 
-    if (traits && traits->getVisualId())
+    if (traits && traits->getVisualId() && 0)
     {
         tpLogMessage("%s choosing visual ID 0x%x",__FUNCTION__,traits->getVisualId());
 
@@ -121,19 +121,28 @@ tpWindowX11::doCreate( tpWindowTraits* traits ) {
 		XSetWindowAttributes attr;
 
         XVisualInfo* vi = new XVisualInfo;
-        XMatchVisualInfo( dpy, screen, depth, TrueColor, vi);
+        XMatchVisualInfo( dpy, screen, depth, DirectColor, vi);
 
         if (!vi)
         {
             tpLogError("Error: Unable to acquire visual with %dbpp\n",depth);
         }
 
+        tpLogMessage("%s visual ID 0x%x",__FUNCTION__,vi->visualid);
+
+        attr.background_pixel = 0;
+        attr.border_pixel = 0;
+
         attr.colormap = XCreateColormap( dpy, root_window, vi->visual, AllocNone );
         attr.event_mask = ExposureMask | StructureNotifyMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | KeyPressMask | KeyReleaseMask;
-        unsigned int mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask | CWOverrideRedirect;
+        unsigned int mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask; // | CWOverrideRedirect;
+
+        tpLogMessage("D: 0x%x RW: 0x%x X: 0x%x Y: 0x%x W: %d H: %d"
+                     "M: 0x%x",
+                     dpy,root_window, pos_x, pos_y, width, height,mask);
 
         win = XCreateWindow( dpy, root_window, pos_x, pos_y, width, height,
-							0, CopyFromParent, InputOutput, CopyFromParent,
+                            0, vi->depth, InputOutput, vi->visual,
 							mask, &attr);
 
 		// don't leak stuff

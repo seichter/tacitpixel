@@ -91,7 +91,8 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
 	attributes.add(EGL_NONE).add(EGL_NONE);
 
 	/* get an EGL display connection */
-	display = tpEGL::a().GetDisplay.f((NativeDisplayType)(target) ? target->getDisplay() : EGL_DEFAULT_DISPLAY);
+    display = tpEGL::a().GetDisplay.f((NativeDisplayType)(target)
+                                      ? target->getDisplay() : EGL_DEFAULT_DISPLAY);
 
 	EGLint glMajor(0),glMinor(0);
 

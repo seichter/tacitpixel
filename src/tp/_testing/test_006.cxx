@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 
 
 
-	tpRefPtr<tpWindow> surface = tpWindow::create(&traits);
+    tpRefPtr<tpWindow> surface = tpWindow::create(0);
 
 	surface->setCaption("Tacit Pixel EGL Test");
 	surface->show(true);
