@@ -91,6 +91,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/rtl.h
 	${tp_include_path}/tp/rtti.h
 	${tp_include_path}/tp/socket.h
+        ${tp_include_path}/tp/script.h
 	${tp_include_path}/tp/sort.h
 	${tp_include_path}/tp/sound.h
 	${tp_include_path}/tp/scopeptr.h
@@ -265,6 +266,7 @@ set(tp_srcs
 	referenced.cxx
 	rs232.cxx
 	rtl.cxx
+        script.cxx
 	socket.cxx
 	string.cxx
 	stringtokenizer.cxx
@@ -341,6 +343,13 @@ set(tp_srcs_sg
 	)
 
 
+
+list(APPEND tp_impl_srcs
+    _impl/script_lua.h
+    _impl/script_lua.cxx
+    )
+
+
 configure_file(config.h.in
 	${CMAKE_BINARY_DIR}/include/tp/config.h
 	@ONLY
@@ -371,7 +380,7 @@ set_property(TARGET ${tp_name} PROPERTY COMPILE_DEFINITIONS "TACIT_EXPORTS")
 
 target_link_libraries(${tp_name} ${tp_impl_libs} dlmalloc )
 
-target_link_libraries(${tp_name} jpeg png zlib ogg vorbis)
+target_link_libraries(${tp_name} jpeg png zlib ogg vorbis lua)
 
 if(APPLE)
 	target_link_libraries(${tp_name}

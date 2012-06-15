@@ -77,7 +77,7 @@ tpWindowX11::doCreate( tpWindowTraits* traits ) {
 
     // do some magic about the visual ID
 
-    if (traits && traits->getVisualId() && 0)
+    if (traits && traits->getVisualId())
     {
         tpLogMessage("%s choosing visual ID 0x%x",__FUNCTION__,traits->getVisualId());
 
@@ -85,18 +85,20 @@ tpWindowX11::doCreate( tpWindowTraits* traits ) {
 
 		int num_visuals = 0;
 
-		visTemplate.visualid = 0x21;
+        visTemplate.visualid = traits->getVisualId();
 
         visInfo = XGetVisualInfo(dpy, VisualIDMask, &visTemplate, &num_visuals);
 
-        tpLogMessage("%s visual #%d rgb:(%d,%d,%d) visualID:%d depth:%d ",__FUNCTION__
-					,num_visuals
-					,visInfo->red_mask
-					,visInfo->green_mask
-                     ,visInfo->blue_mask
-                     ,visInfo->visualid
-                     ,visInfo->depth
-                     );
+//        tpLogMessage("%s visual #%d rgb:(%d,%d,%d) visualID:%d depth:%d ",__FUNCTION__
+//					,num_visuals
+//					,visInfo->red_mask
+//					,visInfo->green_mask
+//                     ,visInfo->blue_mask
+//                     ,visInfo->visualid
+//                     ,visInfo->depth
+//                     );
+
+        tpLogMessage("%s %d visualid:0x%x",__FUNCTION__,__LINE__,visInfo->visualid);
 
         XSetWindowAttributes attr;
 
@@ -105,7 +107,7 @@ tpWindowX11::doCreate( tpWindowTraits* traits ) {
         attr.colormap = XCreateColormap( dpy, root_window, visInfo->visual, AllocNone );;
         attr.event_mask = ExposureMask | StructureNotifyMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | KeyPressMask | KeyReleaseMask;
 
-        unsigned int mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask | CWOverrideRedirect;
+        unsigned int mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask; //| CWOverrideRedirect;
 
         win = XCreateWindow( dpy, root_window,
                             pos_x, pos_y, width, height,
@@ -165,14 +167,11 @@ tpWindowX11::doCreate( tpWindowTraits* traits ) {
 //
     }
 
-
-
 	if (traits) setCaption(traits->getTitle());
 
     //delete vi;
 
-    XMapWindow(dpy, win);
-    XFlush(dpy);
+
 
 }
 
@@ -180,6 +179,10 @@ bool
 tpWindowX11::show(bool doShow)
 {
     if (doShow) {
+
+        XMapWindow(dpy, win);
+        XFlush(dpy);
+
         XRaiseWindow(dpy,win);
     } else {
         XLowerWindow(dpy,win);

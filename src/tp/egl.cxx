@@ -2,6 +2,8 @@
 #include "tp/log.h"
 #include "tp/renderer.h"
 
+#include "GL/gl.h"
+
 tpEGL::tpEGL()
 {
 	getFunctions()
@@ -34,7 +36,10 @@ tpEGL* tpEGL::get( bool destroy /*= false*/ )
 bool
 tpRenderContextEGL::swapBuffers()
 {
-    return (tpEGL::a().SwapBuffers.f(display,surface) > 0);
+    glClearColor(1.f,0,0,1);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    return (tpEGL::a().SwapBuffers.f(egl_display,egl_surface) > 0);
 }
 
 tpUInt
@@ -45,7 +50,7 @@ tpRenderContextEGL::getRendererTraits() const
 
 bool
 tpRenderContextEGL::makeCurrent() {
-	return (tpEGL::a().MakeCurrent.f(display,surface,surface,context) > 0);
+    return (tpEGL::a().MakeCurrent.f(egl_display,egl_surface,egl_surface,egl_context) > 0);
 }
 
 tpUInt
@@ -72,9 +77,11 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
             attributes.add(EGL_BLUE_SIZE).add(1);
             attributes.add(EGL_DEPTH_SIZE).add(1);
 
-            attributes.add(EGL_NATIVE_VISUAL_ID).add(0x21);
+//            attributes.add(EGL_NATIVE_VISUAL_ID).add(0x21);
 
-			attributes.add(EGL_SURFACE_TYPE).add(EGL_WINDOW_BIT);
+            attributes.add(EGL_NATIVE_RENDERABLE).add(EGL_TRUE);
+
+            attributes.add(EGL_SURFACE_TYPE).add(EGL_WINDOW_BIT);
 
 			break;
 		case tpRenderTarget::kPbuffer:
@@ -91,37 +98,38 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
 	attributes.add(EGL_NONE).add(EGL_NONE);
 
 	/* get an EGL display connection */
-    display = tpEGL::a().GetDisplay.f((NativeDisplayType)(target)
+    egl_display = tpEGL::a().GetDisplay.f((EGLNativeDisplayType)(target)
                                       ? target->getDisplay() : EGL_DEFAULT_DISPLAY);
 
 	EGLint glMajor(0),glMinor(0);
 
 	/* initialize the EGL display connection */
-	if (!tpEGL::a().Initialize.f(display, &glMajor, &glMinor))
+    if (!tpEGL::a().Initialize.f(egl_display, &glMajor, &glMinor))
 	{
 		tpLogError("%s - eglInitialize failed",__FUNCTION__);
 
 	} else {
 
-		tpLogNotify("tpEGL EGL %d.%d\n\tVendor: %s, Version: %s\n\tExtensions:%s\n\tClient APIs:%s"
+        tpLogNotify("tpEGL\n\tEGL API %d.%d\n\tEGL Vendor: %s\n\tEGL Version: %s\n\tEGL Extensions: %s\n\tEGL Client APIs: %s"
 			,glMajor,glMinor,
-			tpEGL::a().QueryString.f(display,EGL_VENDOR),
-			tpEGL::a().QueryString.f(display,EGL_VERSION),
-			tpEGL::a().QueryString.f(display,EGL_EXTENSIONS),
-			tpEGL::a().QueryString.f(display,EGL_CLIENT_APIS)
+            tpEGL::a().QueryString.f(egl_display,EGL_VENDOR),
+            tpEGL::a().QueryString.f(egl_display,EGL_VERSION),
+            tpEGL::a().QueryString.f(egl_display,EGL_EXTENSIONS),
+            tpEGL::a().QueryString.f(egl_display,EGL_CLIENT_APIS)
 		);
 	}
 
 
 	tpArray<EGLint> context_attributes;
 
-    EGLConfig config = 0;
+    EGLConfig egl_config = 0;
     EGLint num_config = 1;
 
 	/* get an appropriate EGL frame buffer configuration */
-    if (!tpEGL::a().ChooseConfig.f(display, &attributes.front(), &config, num_config, &num_config))
+    if (!tpEGL::a().ChooseConfig.f(egl_display, &attributes.front(), &egl_config, num_config, &num_config))
 	{
 		tpLogError("%s - eglChooseConfig failed",__FUNCTION__);
+
 	} else
 	{
 
@@ -129,11 +137,11 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
 
         EGLint red_,green_,blue_,alpha_, vid_;
 
-        tpEGL::a().GetConfigAttrib.f(display,config,EGL_RED_SIZE,&red_);
-        tpEGL::a().GetConfigAttrib.f(display,config,EGL_GREEN_SIZE,&green_);
-        tpEGL::a().GetConfigAttrib.f(display,config,EGL_BLUE_SIZE,&blue_);
-        tpEGL::a().GetConfigAttrib.f(display,config,EGL_ALPHA_SIZE,&alpha_);
-        tpEGL::a().GetConfigAttrib.f(display,config,EGL_NATIVE_VISUAL_ID,&vid_);
+        tpEGL::a().GetConfigAttrib.f(egl_display,egl_config,EGL_RED_SIZE,&red_);
+        tpEGL::a().GetConfigAttrib.f(egl_display,egl_config,EGL_GREEN_SIZE,&green_);
+        tpEGL::a().GetConfigAttrib.f(egl_display,egl_config,EGL_BLUE_SIZE,&blue_);
+        tpEGL::a().GetConfigAttrib.f(egl_display,egl_config,EGL_ALPHA_SIZE,&alpha_);
+        tpEGL::a().GetConfigAttrib.f(egl_display,egl_config,EGL_NATIVE_VISUAL_ID,&vid_);
 
         tpLogNotify("%s config has %d:%d:%d:%d format (vid: 0x%x)",
                     __FUNCTION__,red_,green_,blue_,alpha_,vid_);
@@ -156,9 +164,9 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
     }
 
 	/* create an EGL rendering context */
-	context = tpEGL::a().CreateContext.f(display, config, EGL_NO_CONTEXT,
+    egl_context = tpEGL::a().CreateContext.f(egl_display, egl_config, EGL_NO_CONTEXT,
 										context_attributes.getSize() ? (const EGLint*)context_attributes.getData() : 0L);
-	if (EGL_NO_CONTEXT == context)
+    if (EGL_NO_CONTEXT == egl_context)
 	{
 		tpLogError("%s - eglCreateContext failed (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
 
@@ -173,26 +181,38 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
 	/* This needs to be adapted for ES 1.x */
 	if (target->getTargetType() == tpRenderTarget::kWindow)
 	{
-		surface = tpEGL::a().CreateWindowSurface.f(display,config,target->getWindow(),NULL);
+        egl_surface = tpEGL::a().CreateWindowSurface.f(egl_display,
+                                                       egl_config,
+                                                       (EGLNativeWindowType)target->getWindow(),
+                                                       NULL);
 
-		if (EGL_NO_SURFACE == surface)
+        if (EGL_NO_SURFACE == egl_surface)
 		{
 			tpLogError("%s - eglCreateWindowSurface failed (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
 		} else {
 
-			tpInt w(0),h(0), wb(0);
-			tpEGL::a().QuerySurface.f(display,surface,EGL_WIDTH,&w);
-			tpEGL::a().QuerySurface.f(display,surface,EGL_HEIGHT,&h);
-			tpEGL::a().GetConfigAttrib.f(display,config,EGL_SURFACE_TYPE,&wb);
+            tpLogError("%s - eglCreateWindowSurface succeeded",__FUNCTION__,tpEGL::a().GetError.f());
 
-        tpLogMessage("%s - actual surface area %dx%d (%d)",__FUNCTION__,w,h,wb & EGL_WINDOW_BIT);
+
+            tpInt w(0),h(0), wb(0);
+            if (EGL_TRUE != tpEGL::a().QuerySurface.f(egl_display,egl_surface,EGL_VERTICAL_RESOLUTION,&w))
+            {
+
+                tpLogError("Can't query surface");
+            }
+
+            //			tpEGL::a().QuerySurface.f(display,surface,EGL_HEIGHT,&h);
+
+//			tpEGL::a().GetConfigAttrib.f(display,config,EGL_SURFACE_TYPE,&wb);
+
+//        tpLogMessage("%s - actual surface area %dx%d (%d)",__FUNCTION__,w,h,wb & EGL_WINDOW_BIT);
 
 		}
 
 	} else {
 
-		surface = tpEGL::a().CreatePbufferSurface.f(display,config,NULL);
-		if (surface == 0)
+        egl_surface = tpEGL::a().CreatePbufferSurface.f(egl_display,egl_config,NULL);
+        if (egl_surface == 0)
 		{
 			tpLogError("%s - eglCreatePbufferSurface failed (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
 		}

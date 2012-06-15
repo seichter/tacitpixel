@@ -20,10 +20,10 @@ typedef void *EGLContext;
 typedef void *EGLDisplay;
 typedef void *EGLSurface;
 
-typedef void* NativeDisplayType;
-typedef void* NativePixmapType;
-typedef void* NativeWindowType;
-typedef void* NativeGLContext;
+typedef void* EGLNativeDisplayType;
+typedef void* EGLNativePixmapType;
+typedef void* EGLNativeWindowType;
+typedef void* EGLNativeGLContext;
 
 
 /* EGL aliases */
@@ -94,8 +94,21 @@ typedef void* NativeGLContext;
 #define EGL_CLIENT_APIS			0x308D
 
 /* QuerySurface */
-#define EGL_HEIGHT 0x3056
-#define EGL_WIDTH 0x3057
+#define EGL_HEIGHT			0x3056
+#define EGL_WIDTH			0x3057
+#define EGL_LARGEST_PBUFFER		0x3058
+#define EGL_TEXTURE_FORMAT		0x3080
+#define EGL_TEXTURE_TARGET		0x3081
+#define EGL_MIPMAP_TEXTURE		0x3082
+#define EGL_MIPMAP_LEVEL		0x3083
+#define EGL_RENDER_BUFFER		0x3086
+#define EGL_VG_COLORSPACE		0x3087
+#define EGL_VG_ALPHA_FORMAT		0x3088
+#define EGL_HORIZONTAL_RESOLUTION	0x3090
+#define EGL_VERTICAL_RESOLUTION		0x3091
+#define EGL_PIXEL_ASPECT_RATIO		0x3092
+#define EGL_SWAP_BEHAVIOR		0x3093
+#define EGL_MULTISAMPLE_RESOLVE		0x3099
 
 /* APIs */
 #define EGL_OPENGL_ES_API		0x30A0
@@ -103,14 +116,12 @@ typedef void* NativeGLContext;
 #define EGL_OPENGL_API			0x30A2
 
 
-
-
 class TP_API tpRenderContextEGL : public tpRenderContext {
 public:
 
-	EGLDisplay display;
-	EGLSurface surface;
-	EGLContext context;
+    EGLDisplay egl_display;
+    EGLSurface egl_surface;
+    EGLContext egl_context;
 
 	bool init(tpRenderTarget *target);
 	void destroy();
@@ -146,11 +157,11 @@ public:
 	// signatures
 	typedef EGLint (__TP_CALL *eglGetErrorT)(void);
 	typedef EGLBoolean (__TP_CALL *eglInitializeT)(EGLDisplay dpy, EGLint *major, EGLint *minor);
-	typedef EGLDisplay (__TP_CALL * eglGetDisplayT)(NativeDisplayType native_display);
+    typedef EGLDisplay (__TP_CALL * eglGetDisplayT)(EGLNativeDisplayType native_display);
 	typedef EGLBoolean (__TP_CALL * eglGetConfigsT)(EGLDisplay dpy,EGLConfig* config, EGLint config_size, EGLint* num_config );
 	typedef EGLBoolean (__TP_CALL * eglChooseConfigT)(EGLDisplay display,EGLint const * attrib_list,EGLConfig * configs, EGLint config_size, EGLint * num_config);
 	typedef EGLContext (__TP_CALL * eglCreateContextT)(EGLDisplay display,EGLConfig config,EGLContext share_context,EGLint const * attrib_list);
-	typedef EGLSurface (__TP_CALL * eglCreateWindowSurfaceT)(EGLDisplay display,EGLConfig config,NativeWindowType native_window,EGLint const * attrib_list);
+    typedef EGLSurface (__TP_CALL * eglCreateWindowSurfaceT)(EGLDisplay display,EGLConfig config,EGLNativeWindowType native_window,EGLint const * attrib_list);
 	typedef EGLSurface (__TP_CALL * eglCreatePbufferSurfaceT)(EGLDisplay display,EGLConfig config,EGLint const * attrib_list);
 	typedef EGLBoolean (__TP_CALL * eglMakeCurrentT)(EGLDisplay display,EGLSurface draw,EGLSurface read,EGLContext context);
 	typedef EGLBoolean (__TP_CALL * eglSwapBuffersT)(EGLDisplay display,EGLSurface surface);

@@ -13,6 +13,8 @@
 #include <tp/window.h>
 #include <tp/thread.h>
 
+//#include <GL/gl.h>
+
 
 int main(int argc, char* argv[])
 {
@@ -28,9 +30,7 @@ int main(int argc, char* argv[])
 	tpWindowTraits traits;
 	traits.setVisualId(0x21);
 
-
-
-    tpRefPtr<tpWindow> surface = tpWindow::create(0);
+    tpRefPtr<tpWindow> surface = tpWindow::create(&traits);
 
 	surface->setCaption("Tacit Pixel EGL Test");
 	surface->show(true);
@@ -38,9 +38,17 @@ int main(int argc, char* argv[])
 	tpRenderContextEGL egl_context;
 
 	egl_context.init(surface.get());
+    egl_context.makeCurrent();
 
 	while (surface->isValid()) {
+
 		surface->update();
+
+        if(egl_context.makeCurrent()) {
+
+            egl_context.swapBuffers();
+        }
+
         tpThread::yield();
 	}
 

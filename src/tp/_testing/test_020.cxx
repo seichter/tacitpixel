@@ -2,11 +2,23 @@
 #include <tp/window.h>
 #include <tp/log.h>
 
+#include <tp/script.h>
+
+
 int main(int argc, char* argv[])
 {
-    tpRefPtr<tpRenderBuffer> buffer = tpRenderBuffer::create(tpSize(320,240),tpPixelFormat::kRGBA_8888);
+    tpString script;
 
-    tpLogNotify("render buffer %x",(tpULong)buffer.get());
+    script = "s = 'hello world'; print(s)";
+
+    tpRefPtr<tpScript> luas = tpScript::create(tpScript::kLua);
+
+    if (luas.isValid()) {
+
+        luas->init();
+
+        luas->run(script);
+    }
 
 
     return 0;
