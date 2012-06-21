@@ -80,13 +80,13 @@ tpNode* tpOBJ(const tpString& filename)
 					for (int v_idx = 0; v_idx < 3; v_idx++)
 					{
 						// vertex
-						cur_vertex(0) = model->vertices[3 * triangle->vindices[v_idx] + 0];
-						cur_vertex(1) = model->vertices[3 * triangle->vindices[v_idx] + 1];
+                        cur_vertex(0) = model->vertices[3 * triangle->vindices[v_idx] + 0];
+                        cur_vertex(1) = model->vertices[3 * triangle->vindices[v_idx] + 1];
 						cur_vertex(2) = model->vertices[3 * triangle->vindices[v_idx] + 2];
 
 						// normal
-						cur_normal(0) = model->normals[3 * triangle->nindices[v_idx] + 0];
-						cur_normal(1) = model->normals[3 * triangle->nindices[v_idx] + 1];
+                        cur_normal(0) = model->normals[3 * triangle->nindices[v_idx] + 0];
+                        cur_normal(1) = model->normals[3 * triangle->nindices[v_idx] + 1];
 						cur_normal(2) = model->normals[3 * triangle->nindices[v_idx] + 2];
 
 						// tcoord

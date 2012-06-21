@@ -206,14 +206,15 @@ tpNodeHandler_3DS::read(const tpString& name)
 
 			for (int i = 0; i < 3; ++i) {
 
+                // flip
                 tpVec3r nrm(normals3ds[ faceIdx * 3 + i][0] ,
-                            normals3ds[ faceIdx * 3 + i][1] ,
-                            normals3ds[ faceIdx * 3 + i][2] );
+                            normals3ds[ faceIdx * 3 + i][2] ,
+                            normals3ds[ faceIdx * 3 + i][1] );
 
 
                 tpVec3r vtx(mesh3ds->vertices[ face3ds->index[ i ] ][0],
-                            mesh3ds->vertices[ face3ds->index[ i ] ][1],
-                            mesh3ds->vertices[ face3ds->index[ i ] ][2]
+                            mesh3ds->vertices[ face3ds->index[ i ] ][2],
+                            mesh3ds->vertices[ face3ds->index[ i ] ][1]
                             );
 
                 if (mesh3ds->texcos)

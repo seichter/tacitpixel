@@ -4,6 +4,7 @@
 #if defined(_WIN32)
 
 #include <tp/rendercontext.h>
+#include <tp/renderer.h>
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -15,7 +16,7 @@ public:
 
 	tpRenderContextWGL();
 
-	virtual bool create( tpRenderTarget* target );
+    virtual bool init( tpRenderTarget* target );
 
 	virtual void destroy();
 
@@ -28,6 +29,8 @@ public:
 	virtual tpString getString( const tpUInt& e );
 	
 	void* getProcAddress(const char* name);
+
+    tpUInt getRendererTraits() const { return tpRenderer::kOpenGL1x; }
 
 protected:
 	HDC _dc;

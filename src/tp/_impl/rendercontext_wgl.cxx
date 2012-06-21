@@ -199,7 +199,7 @@ int chooseVisual(HDC hdc)
 
 
 bool
-tpRenderContextWGL::create(tpRenderTarget *target)
+tpRenderContextWGL::init(tpRenderTarget *target)
 {
 	HWND hwnd = reinterpret_cast<HWND>(target->getWindow());
 

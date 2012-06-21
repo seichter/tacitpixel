@@ -1,23 +1,128 @@
 #include "glprogram.h"
 
 #include "tp/host.h"
+#include "tp/rtl.h"
+
+#if defined(_WIN32)
+#	define __TP_CALL __stdcall
+#else
+#	define __TP_CALL
+#endif
+
+
 
 #if defined(TP_OS_OSX)
-	#include <OpenGL/OpenGL.h>
-	#include <OpenGL/gl3.h>
-	#include <OpenGL/gl3ext.h>
+    #include <OpenGL/OpenGL.h>
+    #include <OpenGL/gl3.h>
+    #include <OpenGL/gl3ext.h>
 #elif defined(TP_OS_LINUX)
     #define GL_GLEXT_PROTOTYPES
     #include <GL/gl.h>
     #include <GL/glext.h>
+#elif defined(TP_OS_WIN32)
+    #include <GL/gl.h>
+    #include <GL/glext.h>
 #endif
 
-//#define GL_COMPILE_STATUS 0x8B81
-//#define GL_FRAGMENT_SHADER 0x8B30
-//#define GL_VERTEX_SHADER 0x8B31
+#define GL_COMPILE_STATUS 0x8B81
+#define GL_FRAGMENT_SHADER 0x8B30
+#define GL_VERTEX_SHADER 0x8B31
 
-//#define GL_NUM_SHADER_BINARY_FORMATS 0x8DF9
-//#define GL_SHADER_BINARY_FORMATS 0x8DF8
+#define GL_NUM_SHADER_BINARY_FORMATS 0x8DF9
+#define GL_SHADER_BINARY_FORMATS 0x8DF8
+
+#define GL_INFO_LOG_LENGTH 0x8B84
+
+typedef  char GLchar;
+
+
+
+
+class TP_API tpGL2 : public tpRuntimeLoader {
+public:
+
+    typedef GLuint (__TP_CALL *CreateShaderT)(GLenum shaderType);
+    typedef void (__TP_CALL *DeleteShaderT)(GLenum shaderType);
+    typedef void (__TP_CALL *DeleteProgramT)(GLenum program);
+
+    typedef GLboolean (__TP_CALL *IsShaderT)(GLuint shaderHandle);
+    typedef GLboolean (__TP_CALL *IsProgramT)(GLuint shaderHandle);
+
+    typedef void (__TP_CALL *AttachShaderT)(GLuint program,GLuint shader);
+    typedef void (__TP_CALL *DetachShaderT)(GLuint program,GLuint shader);
+
+    typedef void (__TP_CALL *CompileShaderT)(GLuint shader);
+    typedef void (__TP_CALL *LinkProgramT)(GLuint program);
+
+
+    typedef void (__TP_CALL *UseProgramT)(GLuint shader);
+
+    typedef void (__TP_CALL *GetShaderivT)(GLuint shader, GLenum pname, GLint* params);
+    typedef void (__TP_CALL *GetProgramivT)(GLuint program, GLenum pname, GLint* params);
+
+
+    typedef void (__TP_CALL *GetShaderInfoLogT)(GLuint shader, GLsizei maxLen, GLsizei* len, GLchar* log);
+    typedef void (__TP_CALL *GetProgramInfoLogT)(GLuint program, GLsizei maxLen, GLsizei* len, GLchar* log);
+
+    typedef void (__TP_CALL *ShaderSourceT)(GLuint shader, GLsizei count, const GLchar** str, const GLint* len);
+
+    typedef GLint (__TP_CALL *GetAttribLocationT)(GLuint program, const GLchar* name);
+    typedef GLint (__TP_CALL *GetUniformLocationT)(GLuint program, const GLchar *name);
+
+    typedef void (__TP_CALL *BindAttribLocationT)(GLuint program, GLuint index, const GLchar* name);
+
+
+
+
+    tpFunctoidImpl<CreateShaderT> CreateShader;
+    tpFunctoidImpl<DeleteShaderT> DeleteShader;
+    tpFunctoidImpl<DeleteProgramT> DeleteProgram;
+
+    tpFunctoidImpl<IsShaderT> IsShader;
+    tpFunctoidImpl<IsProgramT> IsProgram;
+
+    tpFunctoidImpl<AttachShaderT> AttachShader;
+    tpFunctoidImpl<DetachShaderT> DetachShader;
+    tpFunctoidImpl<CompileShaderT> CompileShader;
+    tpFunctoidImpl<LinkProgramT> LinkProgram;
+
+    tpFunctoidImpl<UseProgramT> UseProgram;
+
+    tpFunctoidImpl<GetShaderivT> GetShaderiv;
+    tpFunctoidImpl<GetProgramivT> GetProgramiv;
+
+    tpFunctoidImpl<GetShaderInfoLogT> GetShaderInfoLog;
+    tpFunctoidImpl<GetProgramInfoLogT> GetProgramInfoLog;
+
+    tpFunctoidImpl<ShaderSourceT> ShaderSource;
+
+
+    tpFunctoidImpl<GetAttribLocationT> GetAttribLocation;
+    tpFunctoidImpl<GetUniformLocationT> GetUniformLocation;
+    tpFunctoidImpl<BindAttribLocationT> BindAttribLocation;
+
+
+
+    static tpGL2* get(bool destroy = false) {
+        static tpRefPtr<tpGL2> mGL2;
+        if (!mGL2.isValid()) mGL2 = new tpGL2;
+        if (destroy) mGL2 = 0L;
+        return mGL2.get();
+    }
+
+    static tpGL2& a() { return *get(); }
+};
+
+
+//#define USE_DIRECT_LINKING
+
+#if defined(USE_DIRECT_LINKING)
+    #define glCall(call,...) gl##call()
+#else
+    tpGL2 gl2;
+    #define glCall(call,...) gl##call()
+#endif
+
 
 
 tpGLProgram::tpGLProgram() : mVertexShader(0),
@@ -25,8 +130,8 @@ tpGLProgram::tpGLProgram() : mVertexShader(0),
 	mProgram(0),
 	mReady(false)
 {
-	mVertexShader = glCreateShader(GL_VERTEX_SHADER);
-	mFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    mVertexShader = gl2.a().CreateShader.f(GL_VERTEX_SHADER);
+    mFragmentShader = gl2.a().CreateShader.f(GL_FRAGMENT_SHADER);
 }
 
 
@@ -37,16 +142,16 @@ tpGLProgram::~tpGLProgram()
 
 tpVoid tpGLProgram::use() const
 {
-	if (mReady && glIsProgram(mProgram))
+    if (mReady && gl2.a().IsProgram.f(mProgram))
 	{
-		glUseProgram(mProgram);
-//		TP_REPORT_GLERROR()
+        gl2.a().UseProgram.f(mProgram);
+    }
 
-	}
 }
 
 tpVoid tpGLProgram::link()
 {
+#if defined(USE_DIRECT_LINKING)
 	if (!isSupported())
 	{
 		tpLogError("%s - missing GLSL support",__FUNCTION__);
@@ -63,6 +168,7 @@ tpVoid tpGLProgram::link()
 	mReady = true;
 
 	this->log(mProgram);
+#endif
 }
 
 void tpGLProgram::log( tpUInt obj )
@@ -75,12 +181,12 @@ void tpGLProgram::log( tpUInt obj )
 
 //	const tpUInt GL_INFO_LOG_LENGTH = 35716;
 	tpInt maxLen(0), infoLogLen(0);
-	if (glIsShader(obj))
+    if (gl2.a().IsShader.f(obj))
 	{
 
-		glGetShaderiv(obj,GL_INFO_LOG_LENGTH,&maxLen);
+        gl2.a().GetShaderiv.f(obj,GL_INFO_LOG_LENGTH,&maxLen);
 		GLchar* infoLog = new GLchar[maxLen];
-		glGetShaderInfoLog(obj, maxLen, &infoLogLen, infoLog);
+        gl2.a().GetShaderInfoLog.f(obj, maxLen, &infoLogLen, infoLog);
 
 		if (infoLogLen)
 		{
@@ -93,9 +199,9 @@ void tpGLProgram::log( tpUInt obj )
 
 	} else
 	{
-		glGetProgramiv(obj,GL_INFO_LOG_LENGTH,&maxLen);
+        gl2.a().GetProgramiv.f(obj,GL_INFO_LOG_LENGTH,&maxLen);
 		GLchar* infoLog = new GLchar[maxLen];
-		glGetProgramInfoLog(obj, maxLen, &infoLogLen, infoLog);
+        gl2.a().GetProgramInfoLog.f(obj, maxLen, &infoLogLen, infoLog);
 
 		if (infoLogLen)
 		{
@@ -117,38 +223,40 @@ tpVoid tpGLProgram::compile()
 	}
 
 	int success(0);
-	glCompileShader(mVertexShader);
-	glGetShaderiv(mVertexShader, GL_COMPILE_STATUS, &success);
-	if (success == GL_FALSE) log(mVertexShader); else tpLogNotify("%s - vertex shader compilation successful",__FUNCTION__);
+    gl2.a().CompileShader.f(mVertexShader);
+    gl2.a().GetShaderiv.f(mVertexShader, GL_COMPILE_STATUS, &success);
+    if (success == GL_FALSE) log(mVertexShader);
+    else tpLogNotify("%s - vertex shader compilation successful",__FUNCTION__);
 
 	success = 0;
-	glCompileShader(mFragmentShader);
-	glGetShaderiv(mFragmentShader, GL_COMPILE_STATUS, &success);
-	if (success == GL_FALSE) log(mFragmentShader); else tpLogNotify("%s - fragment shader compilation successful",__FUNCTION__);
+    gl2.a().CompileShader.f(mFragmentShader);
+    gl2.a().GetShaderiv.f(mFragmentShader, GL_COMPILE_STATUS, &success);
+    if (success == GL_FALSE) log(mFragmentShader);
+    else tpLogNotify("%s - fragment shader compilation successful",__FUNCTION__);
 }
 
 tpVoid tpGLProgram::destroy()
 {
-	glDeleteProgram(mProgram);
-	glDeleteShader(mVertexShader);
-	glDeleteShader(mFragmentShader);
+    gl2.a().DeleteProgram.f(mProgram);
+    gl2.a().DeleteShader.f(mVertexShader);
+    gl2.a().DeleteShader.f(mFragmentShader);
 
 	mReady = false;
 }
 
 tpInt tpGLProgram::getUniformLocation(const tpString& name)
 {
-	return glGetUniformLocation(getProgramObject(),name.c_str());
+    return gl2.a().GetUniformLocation.f(getProgramObject(),name.c_str());
 }
 
 tpInt tpGLProgram::getAttributeLocation( const tpChar* name )
 {
-	return glGetAttribLocation(getProgramObject(),name);
+    return gl2.a().GetAttribLocation.f(getProgramObject(),name);
 }
 
 tpVoid tpGLProgram::bindAttributeLocation( const tpString& name, tpUInt location )
 {
-	glBindAttribLocation(mProgram,location, (const GLchar*) name.c_str() );
+    gl2.a().BindAttribLocation.f(mProgram,location, (const GLchar*) name.c_str());
 }
 
 
@@ -157,7 +265,7 @@ void tpGLProgram::setVertexShaderSource( const tpString& val )
 	const GLchar* vs_src = (const GLchar*)val.c_str();
 	const tpInt valLen(val.getLength());
 	tpLogNotify("%s loading %d bytes into shader",__FUNCTION__,valLen);
-	glShaderSource(mVertexShader, 1, &vs_src, NULL);
+    gl2.a().ShaderSource.f(mVertexShader, 1, &vs_src, NULL);
 }
 
 
@@ -176,7 +284,7 @@ void tpGLProgram::setFragmentShaderSource( const tpString& val, bool needPrecisi
 
 	const GLchar* fs_src = (const GLchar*)shader.c_str();
 	const tpInt valLen(shader.getLength());
-	glShaderSource(mFragmentShader, 1, &fs_src, &valLen);
+    gl2.a().ShaderSource.f(mFragmentShader, 1, &fs_src, &valLen);
 
 }
 
@@ -298,8 +406,6 @@ void tpGLProgram::loadBinary( const tpString& file, tpUInt asobject )
 
 bool tpGLProgram::isSupported() const
 {
-	return (
-		0 != glCompileShader &&
-		0 != glShaderSource );
+    return ( gl2.a().CreateShader.isValid() && gl2.a().DeleteShader.isValid() );
 }
 

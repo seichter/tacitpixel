@@ -110,7 +110,7 @@ public:
 	GLenum getWrapMode(tpUInt mode) {
 		switch (mode) {
 		case tpTexture::kWrapModeClamp:
-			return GL_CLAMP_TO_EDGE;
+            return GL_CLAMP;
 		case tpTexture::kWrapModeRepeat:
 			return GL_REPEAT;
 		}

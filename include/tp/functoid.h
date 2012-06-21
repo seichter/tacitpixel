@@ -28,6 +28,8 @@ struct tpFunctoidImpl : tpFunctoid
 {
 	T f;
 
+    bool isValid() const { f != 0L; }
+
 	void assign(tpGetProcAddress& gpa, const tpString& name)
 	{
 		f = reinterpret_cast<T>(gpa(name.c_str()));

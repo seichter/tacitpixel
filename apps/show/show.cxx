@@ -79,7 +79,7 @@ public:
 				case 'Z':
 					pos -= tpVec3r::All(.5);
 					break;
-				default:
+                default:
 					break;
 			}
 
@@ -131,7 +131,7 @@ int main(int argc,char* argv[])
 
 	lt->addChild(l.get());
 
-	lt->setMatrix(tpMat44Op::translation<tpReal>(0,3,0));
+    lt->setMatrix(tpMat44Op::translation<tpReal>(3,3,3));
 
 	l->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
 	l->setDiffuseColor(tpVec4f(.8f,.8f,.8f,1.f));
@@ -141,13 +141,8 @@ int main(int argc,char* argv[])
 
 	tpRefPtr<tpViewer> viewer = new tpViewerShow;
 
-#if 1
-	viewer->getScene().getCamera()->setViewLookAt(tpVec3r(5,5,5),tpVec3r(0,0,0),tpVec3r(0,1,0));
-	viewer->getScene().getCamera()->setProjectionPerspective(45,1.3,.1,100);
-#else
-	viewer->getScene().getActiveCamera()->setViewLookAt(tpVec3r(0,0,1),tpVec3r(0,0,0),tpVec3r(0,1,0));
-	viewer->getScene().getActiveCamera()->setProjection(tpMat44r::Identity());
-#endif
+    viewer->getScene().getCamera()->setViewLookAt(tpVec3r(-5,5,-5),tpVec3r(0,0,0),tpVec3r(0,1,0));
+    viewer->getScene().getCamera()->setProjectionPerspective(45,1.3,.1,100);
 
 	viewer->getScene().getCamera()->setClearColor(tpVec4f(.3,.4,.5,1));
 	viewer->getScene().getCamera()->setClearFlags(tpCamera::kClearDepth | tpCamera::kClearColor);
@@ -155,7 +150,7 @@ int main(int argc,char* argv[])
 	viewer->getScene().getCamera()->addChild(root.get());
 
 	viewer->create();
-	viewer->run();
+    viewer->run();
 
-	return 0;
+    return 0;
 }
