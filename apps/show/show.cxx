@@ -34,6 +34,7 @@ public:
 					 e.getMousePosition()(0),e.getMousePosition()(1),
 					 e.getMouseKey(),e.getMouseState(),
 					 e.getKeyCode(),e.getKeyCode(),e.getKeyState());
+
 		tpCamera* camera = mScene->getCamera();
 
 		tpLog::get() << camera->getTranslation() << "\n";
@@ -79,7 +80,26 @@ public:
 				case 'Z':
 					pos -= tpVec3r::All(.5);
 					break;
-                default:
+
+                case 'a':
+                case 'A':
+                    pos(0) -= 1;
+                    break;
+                case 'd':
+                case 'D':
+                    pos(0) += 1;
+                    break;
+
+                case 'w':
+                case 'W':
+                    pos(2) -= 1;
+                    break;
+                case 's':
+                case 'S':
+                    pos(2) += 1;
+                    break;
+
+            default:
 					break;
 			}
 
@@ -131,11 +151,11 @@ int main(int argc,char* argv[])
 
 	lt->addChild(l.get());
 
-    lt->setMatrix(tpMat44Op::translation<tpReal>(3,3,3));
+    lt->setMatrix(tpMat44Op::translation<tpReal>(10,10,10));
 
 	l->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
 	l->setDiffuseColor(tpVec4f(.8f,.8f,.8f,1.f));
-	l->setPosition(tpVec4f(0.f,1.f,0.f,0.f));
+    l->setPosition(tpVec4f(0.f,1.f,0.f,0.f));
 
 	root->addChild(lt.get());
 

@@ -38,13 +38,9 @@ tpWindowX11::tpWindowX11( tpWindowTraits* traits )
 }
 
 void
-tpWindowX11::doCreate( tpWindowTraits* traits ) {
-
-	//XVisualInfo *vi(0L);
+tpWindowX11::doCreate( tpWindowTraits* traits )
+{
 	long screen(0L);
-
-	//XSetWindowAttributes swa;
-	// XWMHints       *wmHints;
 
     tpString s_display;
 
@@ -123,7 +119,7 @@ tpWindowX11::doCreate( tpWindowTraits* traits ) {
 		XSetWindowAttributes attr;
 
         XVisualInfo* vi = new XVisualInfo;
-        XMatchVisualInfo( dpy, screen, depth, DirectColor, vi);
+        XMatchVisualInfo( dpy, screen, depth, TrueColor, vi);
 
         if (!vi)
         {
@@ -139,9 +135,9 @@ tpWindowX11::doCreate( tpWindowTraits* traits ) {
         attr.event_mask = ExposureMask | StructureNotifyMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | KeyPressMask | KeyReleaseMask;
         unsigned int mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask; // | CWOverrideRedirect;
 
-        tpLogMessage("D: 0x%x RW: 0x%x X: 0x%x Y: 0x%x W: %d H: %d"
-                     "M: 0x%x",
-                     dpy,root_window, pos_x, pos_y, width, height,mask);
+//        tpLogMessage("D: 0x%x RW: 0x%x X: 0x%x Y: 0x%x W: %d H: %d"
+//                     "M: 0x%x",
+//                     dpy,root_window, pos_x, pos_y, width, height,mask);
 
         win = XCreateWindow( dpy, root_window, pos_x, pos_y, width, height,
                             0, vi->depth, InputOutput, vi->visual,

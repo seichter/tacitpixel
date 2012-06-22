@@ -33,9 +33,8 @@
 #include <tp/refptr.h>
 #include <tp/types.h>
 
-//class TP_API tpWidget {
-//    tpRefPtr<tpNode> mNode;
-//};
+
+// this part is still in drafting
 
 class TP_API tpUI {
 public:

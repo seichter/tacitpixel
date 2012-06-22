@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
 	"est laborum.";
 
 	tpNode* button = tpUI::Button("Cancel",tpRect(-50,-10,100,20));
-	tpNode* txtbox = tpUI::Text(loremIpsum,tpPoint(0,-20));
+    tpNode* txtbox = tpUI::Text(loremIpsum,tpPoint(0,150));
 
 	viewer->getScene().getCamera()->setClearColor(tpVec4f(.1,.2,.5,1.));
 
