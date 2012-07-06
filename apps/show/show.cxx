@@ -70,6 +70,7 @@ public:
 		{
 
 			tpVec3r pos = camera->getTranslation();
+            tpMat44r vmat = camera->getView();
 
 			switch (e.getKeyCode()) {
 				case 'x':
@@ -81,6 +82,13 @@ public:
 					pos -= tpVec3r::All(.5);
 					break;
 
+            case 'g':
+            case 'G':
+                vmat.rotate(tpVec3r(0,0,1),5);
+                camera->setView(vmat);
+                e.setHandled(true);
+                return;
+                        break;
                 case 'a':
                 case 'A':
                     pos(0) -= 1;
@@ -135,15 +143,23 @@ int main(int argc,char* argv[])
 	if (args.get("--plugins",plugins)) {}
 	if (args.get("--file",file)) {}
 
+    tpRefNode root = new tpNode;
 
-	tpRefNode root = (file == "axis")
+    tpRefNode scene = (file == "axis")
 			? tpPrimitiveFactory::create(tpPrimitiveFactory::kAxis)
 			:  tpNode::read(file);
 
-	if (!root.isValid()) {
+    if (!scene.isValid()) {
 		tpLogError("Can't load file");
 		return -1;
 	}
+
+    tpRefPtr<tpTransform> st = new tpTransform();
+    st->setMatrix(tpMat44r::Identity());
+    st->setMatrix(tpMat44r::Rotation(tpVec3r(1,0,0),-90) *       tpMat44r::Rotation(tpVec3r(0,1,0),90));
+
+    st->addChild(scene.get());
+    root->addChild(st.get());
 
 
 	tpRefPtr<tpTransform> lt = new tpTransform();
@@ -161,13 +177,13 @@ int main(int argc,char* argv[])
 
 	tpRefPtr<tpViewer> viewer = new tpViewerShow;
 
-    viewer->getScene().getCamera()->setViewLookAt(tpVec3r(-5,5,-5),tpVec3r(0,0,0),tpVec3r(0,1,0));
+    viewer->getScene().getCamera()->setViewLookAt(tpVec3r(5,5,5),tpVec3r(0,0,0),tpVec3r(0,1,0));
     viewer->getScene().getCamera()->setProjectionPerspective(45,1.3,.1,100);
 
 	viewer->getScene().getCamera()->setClearColor(tpVec4f(.3,.4,.5,1));
 	viewer->getScene().getCamera()->setClearFlags(tpCamera::kClearDepth | tpCamera::kClearColor);
 
-	viewer->getScene().getCamera()->addChild(root.get());
+    viewer->getScene().getCamera()->addChild(root.get());
 
 	viewer->create();
     viewer->run();

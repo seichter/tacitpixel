@@ -30,6 +30,7 @@ tpScript::tpScript(const tpScript &s)
 
 tpScript &tpScript::operator =(const tpScript &s)
 {
+	return (*this);
 }
 
 

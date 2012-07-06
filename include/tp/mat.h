@@ -44,7 +44,8 @@ public:
 	//! assignment constructor 
     tpMatRef(T* ptr = 0) : mStorage(ptr) {}
 
-	inline tpMatRef& operator = (const tpMatRef& other) {
+    inline
+    tpMatRef& operator = (const tpMatRef& other) {
 		if (this != &other)
 			for (tpUInt r = 0; r < R;++r)
 				for (tpUInt c = 0; c < C;++c)
@@ -124,6 +125,13 @@ protected:
 };
 
 
+template <tpUInt R, tpUInt C, typename T>
+tpMatRef<R,C,T>
+operator * (const tpMatRef<R,C,T>& M, const T& s)
+{
+    tpMatRef<R,C,T> res(M); res.mul(s);
+    return res;
+}
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -136,6 +144,18 @@ public:
     tpMat() : tpMatRef<R,C,T>(&m[0]) {}
 
     tpMat(const tpMat& mtc) : tpMatRef<R,C,T>(&m[0]) { *this = mtc; }
+
+    tpMat(const tpMatRef<R,C,T>& mtr) : tpMatRef<R,C,T>(mtr) {}
+
+
+    inline
+    tpMat& operator = (const tpMat& other) {
+        if (this != &other)
+            for (tpUInt r = 0; r < R;++r)
+                for (tpUInt c = 0; c < C;++c)
+                    (*this)(r,c) = other(r,c);
+        return *this;
+    }
 
 	inline const tpMat operator - (const tpMat& r) const {
 		return tpMat(*this)-=r;
@@ -180,6 +200,10 @@ public:
 	void getMinor(tpMat<R-1,C-1,T>& res, tpUInt r0, tpUInt c0) const;
 
 	T getDeterminant() const;
+
+    T getSquareNorm() const;
+
+    T getNorm() const;
 
 	//tpMat<R,C,T>& operator = (const tpMat<R,C,T>& rhs);
 
@@ -347,6 +371,24 @@ T tpMat<R,C,T>::getDeterminant() const
 	return res;
 }
 
+template <tpUInt R, tpUInt C,typename T> inline
+T tpMat<R,C,T>::getSquareNorm() const
+{
+    T res(0);
+
+    for (tpUInt r = 0; r < R; ++r)
+        for (tpUInt c = 0; c < C; ++c)
+            res += (*this)(r,c);
+    return res;
+}
+
+
+template <tpUInt R, tpUInt C,typename T> inline
+T tpMat<R,C,T>::getNorm() const
+{
+    return sqrt(this->getSquareNorm());
+}
+
 /////////////////////////////////////////////////////////////////////////////
 
 // explicit specializations
@@ -422,45 +464,42 @@ public:
 		return *this;
 	}
 
-	//tpMat<4,4,T>&
-	//setRotation(const tpVec3<T>& vec, const T& rotation)
-	//{
-	//	this->identity();
+    inline static
+    tpMat<4,4,T>
+    Rotation(const tpMat<3,1,T>& vec, const T& rotation)
+    {
+        tpMat44<T> R = tpMat44<T>::Identity();
 
-	//	if (vec.getLength() < T(.000001f)) return *this;
+        if (vec.getNorm() < T(.000001)) return R;
 
-	//	T _radiant = tpDeg2Rad(rotation);
+        T _radiant = tpDeg2Rad(rotation);
 
-	//	T _fCos = (T) cos (_radiant);
+        T _fCos = (T) cos (_radiant);
 
-	//	tpVec<T,3> _vCos = vec * (1 - _fCos);
-	//	tpVec<T,3> _vSin = vec * (T)sin(_radiant);
+        tpMat<3,1,T> _vCos(vec * (1 - _fCos));
+        tpMat<3,1,T> _vSin(vec * (T)sin(_radiant));
 
-	//	this->m[0]= (T) ((vec[0] * _vCos[0]) + _fCos);
-	//	this->m[4]= (T) ((vec[0] * _vCos[1]) - _vSin[2]);
-	//	this->m[8]= (T) ((vec[0] * _vCos[2]) + _vSin[1]);
+        R.at(0) = (T) ((vec(0,0) * _vCos(0,0)) + _fCos);
+        R.at(4) = (T) ((vec(0,0) * _vCos(1,0)) - _vSin(2,0));
+        R.at(8) = (T) ((vec(0,0) * _vCos(2,0)) + _vSin(1,0));
 
-	//	this->m[1]= (T) ((vec[1] * _vCos[0]) + _vSin[2]);
-	//	this->m[5]= (T) ((vec[1] * _vCos[1]) + _fCos);
-	//	this->m[9]= (T) ((vec[1] * _vCos[2]) - _vSin[0]);
+        R.at(1) = (T) ((vec(1,0) * _vCos(0,0)) + _vSin(2,0));
+        R.at(5) = (T) ((vec(1,0) * _vCos(1,0)) + _fCos);
+        R.at(9) = (T) ((vec(1,0) * _vCos(2,0)) - _vSin(0,0));
 
-	//	this->m[2]= (T)  ((vec[2] * _vCos[0]) - _vSin[1]);
-	//	this->m[6]= (T)  ((vec[2] * _vCos[1]) + _vSin[0]);
-	//	this->m[10]= (T) ((vec[2] * _vCos[2]) + _fCos);
+        R.at(2) = (T)  ((vec(2,0) * _vCos(0,0)) - _vSin(1,0));
+        R.at(6) = (T)  ((vec(2,0) * _vCos(1,0)) + _vSin(0,0));
+        R.at(10)= (T)  ((vec(2,0) * _vCos(2,0)) + _fCos);
 
-	//	this->m[3] = this->m[7] = this->m[11] = T(0);
+        return R;
+    }
 
-	//	this->m[15] = T(1);
-
-	//	return *this;
-	//}
-
-	//tpMat<4,4,T>&
-	//rotate(const tpVec3<T>& vec, const T& rotation)
-	//{
-	//	tpMat<4,4,T> rot; rot.setRotation(vec,rotation); *this *= rot;
-	//	return *this;
-	//}
+    tpMat<4,4,T>&
+    rotate(const tpMat<3,1,T>& vec, const T& rotation)
+    {
+        tpMat44<T> rot = tpMat44<T>::Rotation(vec,rotation); *this *= rot;
+        return *this;
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////
