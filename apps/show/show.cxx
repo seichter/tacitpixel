@@ -156,7 +156,7 @@ int main(int argc,char* argv[])
 
     tpRefPtr<tpTransform> st = new tpTransform();
     st->setMatrix(tpMat44r::Identity());
-    st->setMatrix(tpMat44r::Rotation(tpVec3r(1,0,0),-90) *       tpMat44r::Rotation(tpVec3r(0,1,0),90));
+    st->setMatrix(tpMat44r::Rotation(tpVec3r(1,0,0),-90) *       tpMat44r::Rotation(tpVec3r(0,1,0),-90));
 
     st->addChild(scene.get());
     root->addChild(st.get());
@@ -177,7 +177,7 @@ int main(int argc,char* argv[])
 
 	tpRefPtr<tpViewer> viewer = new tpViewerShow;
 
-    viewer->getScene().getCamera()->setViewLookAt(tpVec3r(5,5,5),tpVec3r(0,0,0),tpVec3r(0,1,0));
+    viewer->getScene().getCamera()->setViewLookAt(tpVec3r(5,1,5),tpVec3r(0,0,0),tpVec3r(0,1,0));
     viewer->getScene().getCamera()->setProjectionPerspective(45,1.3,.1,100);
 
 	viewer->getScene().getCamera()->setClearColor(tpVec4f(.3,.4,.5,1));
