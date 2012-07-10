@@ -18,9 +18,9 @@ protected:
 public:
 
 	enum {
-		LOAD_AS_PROGRAM	= 0x0,
-		LOAD_AS_VERTEX_SHADER,
-		LOAD_AS_FRAGMENT_SHADER
+		kLoadProgram	= 0x0,
+		kLoadVertexShader,
+		kLoadFragmentShader
 	};
 
 	void setVertexShaderSource(const tpString& val);

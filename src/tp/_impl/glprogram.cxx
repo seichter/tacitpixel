@@ -365,10 +365,10 @@ void tpGLProgram::loadSource (const tpString& file, tpUInt asobject )
 
 		switch (asobject)
 		{
-		case LOAD_AS_VERTEX_SHADER:
+		case kLoadVertexShader:
 			setVertexShaderSource(blob2string);
 			break;
-		case LOAD_AS_FRAGMENT_SHADER:
+		case kLoadFragmentShader:
 			setFragmentShaderSource(blob2string,true);
 			break;
 		default:

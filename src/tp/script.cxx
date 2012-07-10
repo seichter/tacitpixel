@@ -7,13 +7,13 @@
 
 tpScript *tpScript::create(tpUInt scriptType)
 {
-    switch (scriptType) {
-    case tpScript::kLua :
-        return new tpScriptLua();
-        break;
+	switch (scriptType) {
+	case tpScript::kLua :
+		return new tpScriptLua();
+		break;
 
-    }
-    return 0L;
+	}
+	return 0L;
 }
 
 tpScript::tpScript()
@@ -30,6 +30,7 @@ tpScript::tpScript(const tpScript &s)
 
 tpScript &tpScript::operator =(const tpScript &s)
 {
+	return *this;
 }
 
 
