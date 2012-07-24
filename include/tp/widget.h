@@ -23,31 +23,31 @@
  * SUCH DAMAGE.
  */
 
-#ifndef TP_UI_H
-#define TP_UI_H
+#ifndef TP_WIDGET_H
+#define TP_WIDGET_H
 
-#include <tp/transform.h>
-#include <tp/node.h>
-#include <tp/primitive.h>
-#include <tp/font.h>
+
+#include <tp/referenced.h>
+#include <tp/string.h>
 #include <tp/refptr.h>
-#include <tp/types.h>
 
+// this part is a just a draft
 
-class TP_API tpUI {
+class TP_API tpWidget : public tpReferenced {
 public:
 
-    static tpNode* Button(const tpString &label, tpRect area, const tpImage *icon = 0);
+    tpWidget();
+    tpWidget(tpWidget* parent, const tpString& name, tpUInt id);
 
-    static bool setFont(const tpString& fontname);
-
-    static tpNode *Text(const tpString &str, tpPoint p);
+    void add(tpWidget* nested);
+    void remove(tpWidget* nested);
 
 protected:
 
-    static tpRefPtr<tpFont> mFont;
+    tpUInt mId;
+    tpString mName;
+    tpArray<tpRefPtr<tpWidget> > mNested;
 
 };
-
 
 #endif
