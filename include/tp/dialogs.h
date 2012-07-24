@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2011 Hartmut Seichter
+ * Copyright (C) 1999-2012 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,7 +22,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-
 #ifndef TP_DIALOGS_H
 #define TP_DIALOGS_H
 
@@ -49,8 +48,8 @@ struct TP_API tpDialogs {
 		kButtonsYesNoCancel		= (1 << 7)
 	};
 
-	static tpUInt showMessage(const tpString& caption, 
-		const tpString& message, 
+	static tpUInt showMessage(const tpString& caption,
+		const tpString& message,
 		tpUInt flags);
 
 	static tpString fileSelector(const tpString& caption,

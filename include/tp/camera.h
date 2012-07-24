@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2011 Hartmut Seichter
+ * Copyright (C) 1999-2012 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,8 +22,8 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#ifndef TP_CAMERA_H
-#define TP_CAMERA_H 1
+#ifndef _TP_CAMERA_H_
+#define _TP_CAMERA_H_ 1
 
 
 #include <tp/node.h>

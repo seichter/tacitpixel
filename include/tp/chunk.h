@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2011 Hartmut Seichter
+ * Copyright (C) 1999-2012 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,9 +22,8 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-
-#ifndef TP_CHUNK_H
-#define TP_CHUNK_H
+#ifndef _TP_CHUNK_H
+#define _TP_CHUNK_H
 
 
 #include <tp/types.h>
@@ -39,7 +38,7 @@
 class TP_API tpChunk {
 
 	//! Copy c'tor.
-    tpChunk(const tpChunk&) {}
+	tpChunk(const tpChunk&) {}
 
 	//! assignment
 	tpChunk& operator = (const tpChunk& rhs) { return *this; }

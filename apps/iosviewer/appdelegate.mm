@@ -71,14 +71,14 @@ extern "C" void tpModule_RendererGL1x();
 		tpLogError("Could not get EAGL context");
 	}
 	
-	renderer = tpRenderer::create();
+	renderer = tpRenderer::create(tpRenderer::kOpenGLES1);
 		
 	tpLogMessage("Resource %s",tpSystem::get()->getResourcePath().c_str());
 	tpLogMessage("Executable %s",tpSystem::get()->getExecutablePath().c_str());
 	
 	scene = new tpScene;
 	
-	tpRefPtr<tpCamera> camera = scene->getActiveCamera();
+	tpRefPtr<tpCamera> camera = scene->getCamera();
 	camera->setName("Perspective");
 	
 	camera->setClearFlags(tpCamera::kClearColor | tpCamera::kClearDepth);
@@ -125,7 +125,9 @@ extern "C" void tpModule_RendererGL1x();
 
 	if (ctx->makeCurrent()) {
 		
-		(*renderer)(scene.get());
+		//(*renderer)(scene.get());
+		
+		renderer->render(scene.get());
 		
 		if (!ctx->swapBuffers())
 		{

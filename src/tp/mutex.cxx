@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2011 Hartmut Seichter
+ * Copyright (C) 1999-2012 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +25,12 @@
 
 #include <tp/thread.h>
 #include <tp/mutex.h>
+#include <tp/host.h>
 #include <tp/config.h>
 
-//#if defined(TP_OS_IOS)
-//	#define HAVE_PTHREAD_H 1
-//#endif
+#if defined(TP_OS_IOS)
+	#define HAVE_PTHREAD_H 1
+#endif
 
 
 #if defined(HAVE_PTHREAD_H)

@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 1999-2011 Hartmut Seichter
+/*
+ * Copyright (C) 1999-2012 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@
 
 /*!
  * \class tpFile
- * \brief file based io 
+ * \brief file based io
  */
 class TP_API tpFile : public tpIO {
 public:
@@ -47,7 +47,7 @@ public:
 
 	/**
 	 * Open a file in the required mode
-	 * 
+	 *
 	 * \param uri (const tpString &) uri refers to the filename
 	 * \param mode (const tpString &) mode string as define in C
 	 * \return (bool) true if the file could be opened in the required mode
@@ -56,20 +56,20 @@ public:
 
 	/**
 	 * Closing the file
-	 * 
+	 *
 	 * \return (bool) true if the file could be closes successfully
 	 */
 	virtual bool close();
 
 	/**
 	 * Flush all buffers
-	 * 
+	 *
 	 */
 	virtual void sync();
 
 	/**
 	 * Read from the file into a buffer with a predefined size
-	 * 
+	 *
 	 * \param buffer (char *) buffer to read into
 	 * \param buffer_size (tpSizeT) size of the buffer provided
 	 * \return (tpFile&) return *this for chaining
@@ -78,7 +78,7 @@ public:
 
 	/**
 	 * Write the bytes in the provided buffer into the file
-	 * 
+	 *
 	 * \param buffer (const char *) buffer to write from
 	 * \param buffer_size (tpSizeT) size of buffer provides / bytes to be written
 	 * \return (tpFile&) return *this for chaining
@@ -87,23 +87,23 @@ public:
 
 	/**
 	 * Seek implementation. Moves the input pointer in the file
-	 * 
-	 * \param pos (tpSizeT) position 
+	 *
+	 * \param pos (tpSizeT) position
 	 * \param rel (tpUByte) offset to where to seek from
-	 * \return (tpFile&) returns *this 
+	 * \return (tpFile&) returns *this
 	 */
 	tpFile& seek(tpSizeT pos,tpUByte rel = kSeekSet);
 
 	/**
 	 * Get the current read/write pointer position
-	 * 
+	 *
 	 * \return (tpSizeT) value of the pointer position
 	 */
 	tpSizeT tell() const;
 
 	/**
 	 * Return the bytecount of the last read/write operation
-	 * 
+	 *
 	 * \return (tpSizeT) value of last read write operation
 	 */
 	tpSizeT getCount() const { return m_gcount; }
@@ -117,7 +117,7 @@ public:
 
 	void setHandle(void* handle) { m_handle = handle; }
 	const void* getHandle() const { return m_handle; }
-    void* getHandle() { return m_handle; }
+	void* getHandle() { return m_handle; }
 
 protected:
 

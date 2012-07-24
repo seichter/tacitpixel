@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2011 Hartmut Seichter
+ * Copyright (C) 1999-2012 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,7 +83,7 @@ struct TP_API tpEventProxy {
 	virtual void call(tpEventHandler*, tpEvent&) = 0;
 	virtual bool corresponds(tpEvent& e) const = 0;
 
-    virtual ~tpEventProxy() {}
+	virtual ~tpEventProxy() {}
 };
 
 template <typename EventType>
@@ -147,9 +147,9 @@ public:
 
 	bool process(tpEvent &e);
 
-    void removeAll();
+	void removeAll();
 
-    ~tpEventHandler();
+	~tpEventHandler();
 };
 
 

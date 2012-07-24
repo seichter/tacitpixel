@@ -45,6 +45,9 @@ public:
 	virtual bool swapBuffers();
 	virtual void destroy();
 
+	tpUInt getRendererTraits() const;
+
+
 //	tpString getString(const tpUInt &e);
 	
 protected:

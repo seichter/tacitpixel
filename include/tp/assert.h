@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2011 Hartmut Seichter
+ * Copyright (C) 1999-2012 Hartmut Seichter
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,10 +30,10 @@ struct tpStaticAssert {};
 
 template <>
 struct tpStaticAssert<true> {
-    static void isValid() {}
+	static void isValid() {}
 };
 
 #define TP_STATIC_ASSERT(cond) \
-    tpStaticAssert<(cond)>::isValid();
+	tpStaticAssert<(cond)>::isValid();
 
 #endif

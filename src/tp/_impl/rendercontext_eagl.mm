@@ -13,6 +13,7 @@
 #include "tp/rendertarget.h"
 #include "tp/module.h"
 #include "tp/log.h"
+#include "tp/renderer.h"
 
 
 @interface EAGLView : UIView {
@@ -151,6 +152,12 @@ tpRenderContextEAGL::destroy()
 {
 	[eaglview destroy];
 	[eaglview release];
+}
+
+
+tpUInt tpRenderContextEAGL::getRendererTraits() const
+{
+	return tpRenderer::kOpenGLES1;
 }
 
 
