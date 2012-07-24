@@ -5,7 +5,6 @@
 #include "rapidxml/rapidxml.hpp"
 
 #include <tp/log.h>
-
 #include <tp/refptr.h>
 
 void rapidxml::parse_error_handler(const char *what, void *where)
@@ -16,6 +15,10 @@ void rapidxml::parse_error_handler(const char *what, void *where)
 
 class tpXML;
 
+
+/*
+ * This thing is utterly and completely not threadsafe!
+ */
 void rapidxml_dispatch(tpXML& xml,rapidxml::xml_node<>* node)
 {
 	//tpLogNotify("Node %s '%s'",node->name(),node->value());

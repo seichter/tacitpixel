@@ -109,6 +109,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/vec.h
 	${tp_include_path}/tp/version.h
 	${tp_include_path}/tp/viewer.h
+        ${tp_include_path}/tp/widget.h
 	${tp_include_path}/tp/xml.h
 	)
 
@@ -275,6 +276,7 @@ set(tp_srcs
 	timer.cxx
 	version.cxx
 	viewer.cxx
+        widget.cxx
 	xml.cxx
 	)
 
