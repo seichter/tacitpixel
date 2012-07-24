@@ -33,7 +33,8 @@
 #include <tp/imagehandler.h>
 
 tpImage::tpImage()
-	: mWidth(0)
+    : tpReferenced()
+    , mWidth(0)
 	, mHeight(0)
 	, mPixelFormat(0)
 	, mChangeCount(0)

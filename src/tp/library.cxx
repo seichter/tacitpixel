@@ -35,10 +35,16 @@
 #	include <dlfcn.h>
 #endif
 
-tpLibrary::tpLibrary() : m_handle(0) {
+tpLibrary::tpLibrary()
+    : tpReferenced()
+    , m_handle(0)
+{
 }
 
-tpLibrary::tpLibrary(const tpLibrary& lib) : m_handle(lib.m_handle) {
+tpLibrary::tpLibrary(const tpLibrary& lib)
+    : tpReferenced()
+    , m_handle(lib.m_handle)
+{
 }
 
 tpLibrary::~tpLibrary() 
@@ -47,7 +53,8 @@ tpLibrary::~tpLibrary()
 }
 
 void*
-tpLibrary::getHandle() const {
+tpLibrary::getHandle() const
+{
 	return m_handle;
 }
 

@@ -3,7 +3,6 @@
 tpImageHandler::tpImageHandler()
 	: tpReferenced()
 {
-
 }
 
 tpImageHandler::~tpImageHandler()

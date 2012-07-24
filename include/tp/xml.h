@@ -39,7 +39,11 @@ struct TP_API tpXMLNodeCallback {
 	virtual void operator()(const tpXML& xml) = 0;
 };
 
-
+/**
+ * @brief The tpXML class wraps around RapidXML to provide a
+ * minimal XML parsing capability. Please note that tpXML is not
+ * threadsafe.
+ */
 class TP_API tpXML : public tpReferenced {
 	tpString mDoc;
 public:
