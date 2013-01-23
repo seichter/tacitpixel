@@ -2,12 +2,17 @@
 #define __CONFIG_TYPES_H__
 
 /* these are filled in by configure */
-#cmakedefine HAVE_INTTYPES_H
-#cmakedefine HAVE_STDINT_H
-#cmakedefine HAVE_SYS_TYPES
+#cmakedefine HAVE_INTTYPES_H 1
+#cmakedefine HAVE_STDINT_H 1
+#cmakedefine HAVE_SYS_TYPES_H 1
 
 #if defined(HAVE_INTTYPES_H)
 #  include <inttypes.h>
+typedef int16_t ogg_int16_t;
+typedef uint16_t ogg_uint16_t;
+typedef int32_t ogg_int32_t;
+typedef int32_t ogg_uint32_t;
+typedef int64_t ogg_int64_t;
 #elif defined(HAVE_STDINT_H)
 #  include <stdint.h>
 typedef int16_t ogg_int16_t;
@@ -15,8 +20,13 @@ typedef uint16_t ogg_uint16_t;
 typedef int32_t ogg_int32_t;
 typedef int32_t ogg_uint32_t;
 typedef int64_t ogg_int64_t;
-#elif defined(HAVE_SYS_TYPES)
+#elif defined(HAVE_SYS_TYPES_H)
 #  include <sys/types.h>
+typedef int16_t ogg_int16_t;
+typedef uint16_t ogg_uint16_t;
+typedef int32_t ogg_int32_t;
+typedef int32_t ogg_uint32_t;
+typedef int64_t ogg_int64_t;
 #elif defined(_WIN32)
 
 #endif
