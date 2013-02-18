@@ -215,9 +215,9 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
 			tpLogError("%s - eglCreateWindowSurface failed (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
 		} else {
 
-			tpLogError("%s - eglCreateWindowSurface succeeded",__FUNCTION__,tpEGL::a().GetError.f());
+			tpLogMessage("%s - eglCreateWindowSurface succeeded",__FUNCTION__,tpEGL::a().GetError.f());
 
-
+/*
 			tpInt w(0),h(0), wb(0);
 			if (EGL_TRUE != tpEGL::a().QuerySurface.f(egl_display,egl_surface,EGL_VERTICAL_RESOLUTION,&w))
 			{
@@ -225,11 +225,12 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
 				tpLogError("Can't query surface");
 			}
 
-			//			tpEGL::a().QuerySurface.f(display,surface,EGL_HEIGHT,&h);
+			tpEGL::a().QuerySurface.f(egl_display,egl_surface,EGL_HEIGHT,&h);
 
 //			tpEGL::a().GetConfigAttrib.f(display,config,EGL_SURFACE_TYPE,&wb);
 
-//        tpLogMessage("%s - actual surface area %dx%d (%d)",__FUNCTION__,w,h,wb & EGL_WINDOW_BIT);
+		       tpLogMessage("%s - actual surface area %dx%d (%d)",__FUNCTION__,w,h,wb & EGL_WINDOW_BIT);
+*/
 
 		}
 
@@ -248,8 +249,8 @@ bool tpRenderContextEGL::init(tpRenderTarget* target) {
 //		tpLogMessage("%s - eglMakeCurrent for attaching %d",__FUNCTION__,res);
 
 //		tpInt w(0),h(0);
-//		tpEGL::a().QuerySurface.f(display,surface,EGL_WIDTH,&w);
-//		tpEGL::a().QuerySurface.f(display,surface,EGL_HEIGHT,&h);
+//		tpEGL::a().QuerySurface.f(egl_display,egl_surface,EGL_WIDTH,&w);
+//		tpEGL::a().QuerySurface.f(egl_display,egl_surface,EGL_HEIGHT,&h);
 
 //		tpLogMessage("%s - actual surface area %dx%d",__FUNCTION__,w,h);
 

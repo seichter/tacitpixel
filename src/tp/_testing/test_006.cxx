@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 
 	// we need traits here
 	tpWindowTraits traits;
-	traits.setVisualId(0x21);
+//	traits.setVisualId(0x21);
 
     tpRefPtr<tpWindow> surface = tpWindow::create(&traits);
 
