@@ -87,7 +87,8 @@ bool
 tpRenderContextEGL::init(tpRenderTarget* target)
 {
 	/* get an EGL display connection */
-	egl_display = tpEGL::a().GetDisplay.f((EGLNativeDisplayType)(target)
+    egl_display =
+            tpEGL::a().GetDisplay.f((EGLNativeDisplayType)(target)
 									  ? target->getDisplay() : EGL_DEFAULT_DISPLAY);
 
 	EGLint glMajor(0),glMinor(0);
@@ -153,7 +154,7 @@ tpRenderContextEGL::init(tpRenderTarget* target)
 	EGLint num_config = 1;
 
 	/* get an appropriate EGL frame buffer configuration */
-	if (!tpEGL::a().ChooseConfig.f(egl_display, &attributes.front(), &egl_config, num_config, &num_config))
+    if (!tpEGL::a().ChooseConfig.f(egl_display, &attributes.front(), &egl_config, 1, &num_config))
 	{
 		tpLogError("%s - eglChooseConfig failed",__FUNCTION__);
 
@@ -176,7 +177,6 @@ tpRenderContextEGL::init(tpRenderTarget* target)
 		//status = tpGL::eglGetConfigAttrib(display, config, attribute, value);
 	}
 
-
     /* bind the API */
     if(!tpEGL::a().BindAPI.f(EGL_OPENGL_API))
     {
@@ -195,13 +195,15 @@ tpRenderContextEGL::init(tpRenderTarget* target)
 	/* create an EGL rendering context */
 	egl_context = tpEGL::a().CreateContext.f(egl_display, egl_config, EGL_NO_CONTEXT,
 										context_attributes.getSize() ? (const EGLint*)context_attributes.getData() : 0L);
-	if (EGL_NO_CONTEXT == egl_context)
-	{
+
+
+
+    if (EGL_NO_CONTEXT == egl_context) {
 		tpLogError("%s - eglCreateContext failed (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
 
 	} else {
 
-		tpLogMessage("%s - eglCreateContext successful",__FUNCTION__);
+        tpLogMessage("%s - eglCreateContext succeeded (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
 	}
 
 	/* create an EGL window surface */
@@ -214,10 +216,14 @@ tpRenderContextEGL::init(tpRenderTarget* target)
 													   NULL);
         if (egl_surface)
         {
-            if (!this->makeCurrent())
-                tpLogError("Can't set context current");
+            tpLogMessage("%s - eglCreateWindowSurface succeeded 0x%x",__FUNCTION__,tpEGL::a().GetError.f());
 
-            tpLogMessage("%s - eglCreateWindowSurface succeeded",__FUNCTION__);
+
+            if(EGL_FALSE == tpEGL::a().MakeCurrent.f(egl_display,egl_surface,egl_surface,egl_context))
+            {
+                tpLogMessage("%s - eglMakeCurrent failed 0x%x",__FUNCTION__,tpEGL::a().GetError.f());
+            }
+
 			tpInt w(0),h(0), wb(0);
             if (tpEGL::a().QuerySurface.f(egl_display,egl_surface,EGL_HEIGHT,&h)) {
                 tpLogError("Surface: %d",h);
