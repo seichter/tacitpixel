@@ -141,6 +141,25 @@ typedef void* EGLNativeGLContext;
 #define EGL_OPENGL_API			0x30A2
 
 
+/* Error codes */
+
+#define EGL_SUCCESS             0x3000
+//#define EGL_NOT_INITIALIZED					= 0x3001
+//#define EGL_BAD_ACCESS					= 0x3002
+//#define EGL_BAD_ALLOC					= 0x3003
+//#define EGL_BAD_ATTRIBUTE					= 0x3004
+//#define EGL_BAD_CONFIG					= 0x3005
+//#define EGL_BAD_CONTEXT					= 0x3006
+//#define EGL_BAD_CURRENT_SURFACE				= 0x3007
+//#define EGL_BAD_DISPLAY					= 0x3008
+//#define EGL_BAD_MATCH					= 0x3009
+//#define EGL_BAD_NATIVE_PIXMAP				= 0x300A
+//#define EGL_BAD_NATIVE_WINDOW				= 0x300B
+//#define EGL_BAD_PARAMETER					= 0x300C
+//#define EGL_BAD_SURFACE					= 0x300D
+//#define EGL_CONTEXT_LOST					= 0x300E
+
+
 class TP_API tpRenderContextEGL : public tpRenderContext {
 public:
 
@@ -190,8 +209,8 @@ public:
 	typedef EGLSurface (__TP_CALL * eglCreatePbufferSurfaceT)(EGLDisplay display,EGLConfig config,EGLint const * attrib_list);
 	typedef EGLBoolean (__TP_CALL * eglMakeCurrentT)(EGLDisplay display,EGLSurface draw,EGLSurface read,EGLContext context);
 	typedef EGLBoolean (__TP_CALL * eglSwapBuffersT)(EGLDisplay display,EGLSurface surface);
-	typedef EGLBoolean (__TP_CALL * eglQuerySurfaceT)(const EGLDisplay display, EGLSurface surface, EGLint attribute, EGLint * value);
-	typedef EGLBoolean (__TP_CALL * eglQueryContextT)(EGLDisplay display, EGLContext surface, EGLint attribute, EGLint * value);
+    typedef EGLBoolean (__TP_CALL * eglQuerySurfaceT)(EGLDisplay display, EGLSurface surface, EGLint attribute, EGLint * value);
+    typedef EGLBoolean (__TP_CALL * eglQueryContextT)(EGLDisplay display, EGLContext context, EGLint attribute, EGLint * value);
 	typedef EGLBoolean (__TP_CALL * eglGetConfigAttribT)(EGLDisplay,EGLConfig,EGLint,EGLint * value);
 	typedef EGLBoolean (__TP_CALL * eglBindAPIT)(EGLenum api);
 	typedef const char* (__TP_CALL * eglQueryStringT)(EGLDisplay dpy,int);
