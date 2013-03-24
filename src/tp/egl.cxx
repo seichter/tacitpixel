@@ -178,7 +178,7 @@ tpRenderContextEGL::init(tpRenderTarget* target)
 	}
 
     /* bind the API */
-    if(!tpEGL::a().BindAPI.f(EGL_OPENGL_API))
+    if(!tpEGL::a().BindAPI.f(EGL_OPENGL_ES_API))
     {
         tpLogError("%s - eglBindAPI failed",__FUNCTION__);
     }
@@ -188,23 +188,9 @@ tpRenderContextEGL::init(tpRenderTarget* target)
 	// here we need to set the native
 
 //	context_attributes.add(EGL_CONFIG_ID).add(0);
-//	context_attributes.add(EGL_CONTEXT_CLIENT_VERSION).add(2);
+	context_attributes.add(EGL_CONTEXT_CLIENT_VERSION).add(2);
     context_attributes.add(EGL_NONE).add(EGL_NONE);
 
-
-	/* create an EGL rendering context */
-	egl_context = tpEGL::a().CreateContext.f(egl_display, egl_config, EGL_NO_CONTEXT,
-										context_attributes.getSize() ? (const EGLint*)context_attributes.getData() : 0L);
-
-
-
-    if (EGL_NO_CONTEXT == egl_context) {
-		tpLogError("%s - eglCreateContext failed (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
-
-	} else {
-
-        tpLogMessage("%s - eglCreateContext succeeded (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
-	}
 
 	/* create an EGL window surface */
 	/* This needs to be adapted for ES 1.x */
@@ -218,11 +204,7 @@ tpRenderContextEGL::init(tpRenderTarget* target)
         {
             tpLogMessage("%s - eglCreateWindowSurface succeeded 0x%x",__FUNCTION__,tpEGL::a().GetError.f());
 
-            if(EGL_FALSE == tpEGL::a().MakeCurrent.f(egl_display,egl_surface,egl_surface,egl_context))
-            {
-                tpLogMessage("%s - eglMakeCurrent failed 0x%x",__FUNCTION__,tpEGL::a().GetError.f());
-            }
-
+ 
 /*
 			tpInt w(0),h(0), wb(0);
             if (tpEGL::a().QuerySurface.f(egl_display,egl_surface,EGL_HEIGHT,&h)) {
@@ -237,6 +219,30 @@ tpRenderContextEGL::init(tpRenderTarget* target)
 
 		       tpLogMessage("%s - actual surface area %dx%d (%d)",__FUNCTION__,w,h,wb & EGL_WINDOW_BIT);
 */
+
+
+			/* create an EGL rendering context */
+			egl_context = tpEGL::a().CreateContext.f(egl_display, egl_config, EGL_NO_CONTEXT,
+												context_attributes.getSize() ? (const EGLint*)context_attributes.getData() : 0L);
+
+
+
+
+			if (EGL_NO_CONTEXT == egl_context) {
+				tpLogError("%s - eglCreateContext failed (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
+
+			} else {
+
+				tpLogMessage("%s - eglCreateContext succeeded (0x%x)",__FUNCTION__,tpEGL::a().GetError.f());
+	           if(EGL_FALSE == tpEGL::a().MakeCurrent.f(egl_display,egl_surface,egl_surface,egl_context))
+	            {
+	                tpLogMessage("%s - eglMakeCurrent failed 0x%x",__FUNCTION__,tpEGL::a().GetError.f());
+	            }
+
+
+			}
+
+
 
 		}
 
@@ -254,11 +260,11 @@ tpRenderContextEGL::init(tpRenderTarget* target)
 //		EGLBoolean res = tpEGL::a().MakeCurrent.f(display,surface,surface,context);
 //		tpLogMessage("%s - eglMakeCurrent for attaching %d",__FUNCTION__,res);
 
-//		tpInt w(0),h(0);
-//		tpEGL::a().QuerySurface.f(egl_display,egl_surface,EGL_WIDTH,&w);
-//		tpEGL::a().QuerySurface.f(egl_display,egl_surface,EGL_HEIGHT,&h);
+		tpInt w(0),h(0);
+		tpEGL::a().QuerySurface.f(egl_display,egl_surface,EGL_WIDTH,&w);
+		tpEGL::a().QuerySurface.f(egl_display,egl_surface,EGL_HEIGHT,&h);
 
-//		tpLogMessage("%s - actual surface area %dx%d",__FUNCTION__,w,h);
+		tpLogMessage("%s - actual surface area %dx%d",__FUNCTION__,w,h);
 
 //		return true;
 
