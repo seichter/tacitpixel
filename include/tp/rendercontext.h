@@ -8,6 +8,7 @@
 
 class tpRenderTarget;
 
+
 class TP_API tpRenderContext : public tpReferenced  {
 public:
 

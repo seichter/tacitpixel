@@ -27,8 +27,7 @@ int main(int argc, char* argv[])
 	tpEGL::get()->load(file);
 
 	// we need traits here
-	tpWindowTraits traits;
-//	traits.setVisualId(0x21);
+    tpWindowTraits traits;
 
     tpRefPtr<tpWindow> surface = tpWindow::create(&traits);
 
