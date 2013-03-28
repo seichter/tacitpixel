@@ -7,6 +7,14 @@
 #include <tp/string.h>
 
 class tpRenderTarget;
+class tpRenderContext;
+
+struct TP_API tpRenderContextCallback {
+
+    virtual tpUShort chooseContextAPI(const tpRenderContext& context,
+                                      const tpArray<tpUShort>& mRenderAPIs) = 0;
+
+};
 
 
 class TP_API tpRenderContext : public tpReferenced  {
@@ -19,6 +27,18 @@ public:
 		kWaitGL,
 		kWaitUI
 	};
+
+    enum {
+        kRenderAPI_OpenGL1,
+        kRenderAPI_OpenGL2,
+        kRenderAPI_OpenGL3,
+        kRenderAPI_OpenGL4,
+        kRenderAPI_OpenGL_ES1,
+        kRenderAPI_OpenGL_ES2,
+        kRenderAPI_OpenGL_ES3,
+        kRenderAPI_User = 0xFF
+    };
+
 
 	tpRenderContext();
 
@@ -60,6 +80,7 @@ protected:
 	tpString mRenderer;
 
 	tpString mName;
+
 
 
 	virtual ~tpRenderContext();
