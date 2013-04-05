@@ -271,11 +271,11 @@ struct mallinfo {
   inlining are defined as macros, so these aren't used for them.
 */
 
-#ifndef FORCEINLINE
+#ifndef DL_FORCEINLINE
   #if defined(__GNUC__)
-#define FORCEINLINE __inline __attribute__ ((always_inline))
+#define DL_FORCEINLINE __inline __attribute__ ((always_inline))
   #elif defined(_MSC_VER)
-    #define FORCEINLINE __forceinline
+    #define DL_FORCEINLINE __DL_FORCEINLINE
   #endif
 #endif
 #ifndef NOINLINE
@@ -290,12 +290,12 @@ struct mallinfo {
 
 #ifdef __cplusplus
 extern "C" {
-#ifndef FORCEINLINE
- #define FORCEINLINE inline
+#ifndef DL_FORCEINLINE
+ #define DL_FORCEINLINE inline
 #endif
 #endif /* __cplusplus */
-#ifndef FORCEINLINE
- #define FORCEINLINE
+#ifndef DL_FORCEINLINE
+ #define DL_FORCEINLINE
 #endif
 
 #if !ONLY_MSPACES

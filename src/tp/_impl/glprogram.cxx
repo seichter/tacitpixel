@@ -21,7 +21,7 @@
     #include <GL/glext.h>
 #elif defined(TP_OS_WIN32)
     #include <GL/gl.h>
-    #include <GL/glext.h>
+//    #include <GL/glext.h>
 #endif
 
 #define GL_COMPILE_STATUS 0x8B81

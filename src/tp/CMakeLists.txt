@@ -396,7 +396,7 @@ if (HAVE_DLFCN_H)
 	target_link_libraries(${tp_name} dl)
 endif()
 
-if (HAVE_CLOCK_GETTIME)
+if (HAVE_CLOCK_GETTIME AND UNIX)
 	target_link_libraries(${tp_name} rt)
 endif()
 
