@@ -71,7 +71,7 @@ public:
 
 	void getExtensions(tpStringArray& e) const;
 
-	virtual void* getProcAddress(const char* name);
+    virtual void* getProcAddress(const char*);
 
 
 	/**

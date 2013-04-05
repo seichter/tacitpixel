@@ -51,7 +51,7 @@ tpRenderContext::getExtensions(tpStringArray& extensions) const
 }
 
 void*
-tpRenderContext::getProcAddress(const char* name)
+tpRenderContext::getProcAddress(const char* /*name*/)
 {
 	return 0L;
 }
