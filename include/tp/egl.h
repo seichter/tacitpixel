@@ -160,39 +160,6 @@ typedef void* EGLNativeGLContext;
 //#define EGL_CONTEXT_LOST					= 0x300E
 
 
-class TP_API tpRenderContextEGL : public tpRenderContext {
-public:
-
-	EGLDisplay egl_display;
-	EGLSurface egl_surface;
-	EGLContext egl_context;
-
-	bool init(tpRenderTarget *target);
-	void destroy();
-
-	bool makeCurrent();
-	bool swapBuffers();
-
-	tpUInt getRendererTraits() const;
-
-	tpUInt getVisualId() const;
-};
-
-
-class TP_API tpRenderTargetEGLPbuffer : public tpRenderTarget {
-protected:
-	tpVec2i mSize;
-public:
-	tpRenderTargetEGLPbuffer(int width, int height)
-		: tpRenderTarget()
-		, mSize(tpVec2i(width,height))
-	{
-	}
-
-	tpInt getWidth() const { return mSize(0); }
-	tpInt getHeight() const { return mSize(1); }
-
-};
 
 
 class TP_API tpEGL : public tpRuntimeLoader {

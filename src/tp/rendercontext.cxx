@@ -68,33 +68,24 @@ tpRenderContext*
 tpRenderContext::create(const tpString& cfg)
 {
 	
-	tpRenderContext* rendercontext = 0;
+    tpRenderContextFactory* factory(0);
 
-	tpModuleList modules = tpModuleManager::get()->getModules();
+    const tpModuleList& modules = tpModuleManager::get()->getModules();
 
-	tpLogNotify("Found %d modules",modules.getSize());
+    for (tpModuleList::const_iterator iter = modules.begin();
+         iter != modules.end();
+         ++iter)
+    {
+        if ((*iter)->getType()->isOfType(tpRenderContextFactory::getTypeInfo()))
+        {
+            factory = static_cast<tpRenderContextFactory*>(iter->get());
+            return factory->create( cfg );
+        }
+    }
 
-	for (tpUInt i = 0; i < modules.getSize(); i++)
-	{
-		tpRefPtr<tpReferenced> item = modules[i];
-
-		if (item->getType()->isOfType(tpRenderContext::getTypeInfo()))
-		{
-			rendercontext = static_cast<tpRenderContext*>(item.get());
-			
-			tpLogNotify("Found %s",rendercontext->getName().c_str());
-			
-			if (cfg.isEmpty()) {
-				return rendercontext;
-			} else if (rendercontext->getName().contains(cfg))
-			{
-				return rendercontext;
-			}
-		}
-	}
-
-	return rendercontext;
+    return 0L;
 }
 
 
+TP_TYPE_REGISTER(tpRenderContextFactory,tpReferenced,RenderContextFactory);
 TP_TYPE_REGISTER(tpRenderContext,tpReferenced,RenderContext);

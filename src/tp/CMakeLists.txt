@@ -233,6 +233,12 @@ if(WIN32)
 endif()
 
 
+list(APPEND tp_impl_srcs
+	_impl/rendercontext_egl.cxx
+	_impl/rendercontext_egl.h
+	)
+
+
 #find_package(GTK)
 #if(GTK_FOUND)
 #	list(APPEND tp_impl_srcs

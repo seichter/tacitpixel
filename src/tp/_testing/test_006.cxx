@@ -34,18 +34,18 @@ int main(int argc, char* argv[])
 	surface->setCaption("Tacit Pixel EGL Test");
 	surface->show(true);
 
-	tpRenderContextEGL egl_context;
+    tpRefPtr<tpRenderContext> render_context = tpRenderContext::create("EGL");
 
-	egl_context.init(surface.get());
-    egl_context.makeCurrent();
+    render_context->bind(surface.get());
+    render_context->makeCurrent();
 
 	while (surface->isValid()) {
 
 		surface->update();
 
-        if(egl_context.makeCurrent()) {
+        if(render_context->makeCurrent()) {
 
-            egl_context.swapBuffers();
+            render_context->swapBuffers();
         }
 
         tpThread::yield();

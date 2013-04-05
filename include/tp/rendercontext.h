@@ -17,6 +17,15 @@ struct TP_API tpRenderContextCallback {
 };
 
 
+class TP_API tpRenderContextFactory : public tpReferenced {
+protected:
+    friend class tpRenderContext;
+public:
+    TP_TYPE_DECLARE
+    virtual tpRenderContext* create( const tpString& settings ) = 0;
+};
+
+
 class TP_API tpRenderContext : public tpReferenced  {
 public:
 
@@ -42,7 +51,7 @@ public:
 
 	tpRenderContext();
 
-	virtual bool init(tpRenderTarget* target) = 0;
+    virtual bool bind(tpRenderTarget* target) = 0;
 	virtual void destroy() = 0;
 
 	virtual void wait(tpUInt e = kWaitNone) {}

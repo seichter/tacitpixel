@@ -124,7 +124,7 @@ void
 tpRenderTarget::setContext(tpRenderContext* context)
 {
 	mContext = context;
-	if (mContext.isValid()) mContext->init(this);
+    if (mContext.isValid()) mContext->bind(this);
 }
 
 tpRenderContext*

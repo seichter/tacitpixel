@@ -25,7 +25,7 @@ public:
 
     tpRenderContextGLX();
 
-    bool init(tpRenderTarget *target);
+    bool bind(tpRenderTarget *target);
 
     void wait(tpUInt e);
 	bool makeCurrent();
