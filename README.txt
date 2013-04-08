@@ -31,3 +31,12 @@ purely from the viewpoint of being small (work on embedded systems), fast and fl
 * dlmalloc	2.8.5	public domain, 2011 Doug Lea
 * stb_truetype	0.5 	public domain, 2009 Sean Barrett / RAD Game Tools
 * rapidxml 	1.13 	copyright (C) 2006, 2009 Marcin Kalicinski (Boost/MIT)
+
+
+ToDo
+----
+
++ migrate to libarchive (New BSD) for handling compressed files
+- remove zlib, minizip etc.
+
+ 
