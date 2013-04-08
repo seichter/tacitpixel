@@ -757,20 +757,20 @@ static int dev_zero_fd = -1; /* Cached file descriptor for /dev/zero. */
 #else /* WIN32 */
 
 /* Win32 MMAP via VirtualAlloc */
-static FORCEINLINE void* win32mmap(size_t size) {
+static DL_FORCEINLINE void* win32mmap(size_t size) {
   void* ptr = VirtualAlloc(0, size, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
   return (ptr != 0)? ptr: MFAIL;
 }
 
 /* For direct MMAP, use MEM_TOP_DOWN to minimize interference */
-static FORCEINLINE void* win32direct_mmap(size_t size) {
+static DL_FORCEINLINE void* win32direct_mmap(size_t size) {
   void* ptr = VirtualAlloc(0, size, MEM_RESERVE|MEM_COMMIT|MEM_TOP_DOWN,
                            PAGE_READWRITE);
   return (ptr != 0)? ptr: MFAIL;
 }
 
 /* This function supports releasing coalesed segments */
-static FORCEINLINE int win32munmap(void* ptr, size_t size) {
+static DL_FORCEINLINE int win32munmap(void* ptr, size_t size) {
   MEMORY_BASIC_INFORMATION minfo;
   char* cptr = (char*)ptr;
   while (size) {
@@ -923,7 +923,7 @@ static FORCEINLINE int win32munmap(void* ptr, size_t size) {
 
 #elif (defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__)))
 /* Custom spin locks for older gcc on x86 */
-static FORCEINLINE int x86_cas_lock(int *sl) {
+static DL_FORCEINLINE int x86_cas_lock(int *sl) {
   int ret;
   int val = 1;
   int cmp = 0;
@@ -934,7 +934,7 @@ static FORCEINLINE int x86_cas_lock(int *sl) {
   return ret;
 }
 
-static FORCEINLINE void x86_clear_lock(int* sl) {
+static DL_FORCEINLINE void x86_clear_lock(int* sl) {
   assert(*sl != 0);
   int prev = 0;
   int ret;
@@ -1012,14 +1012,14 @@ struct malloc_recursive_lock {
 #define MLOCK_T  struct malloc_recursive_lock
 static MLOCK_T malloc_global_mutex = { 0, 0, (THREAD_ID_T)0};
 
-static FORCEINLINE void recursive_release_lock(MLOCK_T *lk) {
+static DL_FORCEINLINE void recursive_release_lock(MLOCK_T *lk) {
   assert(lk->sl != 0);
   if (--lk->c == 0) {
     CLEAR_LOCK(&lk->sl);
   }
 }
 
-static FORCEINLINE int recursive_acquire_lock(MLOCK_T *lk) {
+static DL_FORCEINLINE int recursive_acquire_lock(MLOCK_T *lk) {
   THREAD_ID_T mythreadid = CURRENT_THREAD;
   int spins = 0;
   for (;;) {
@@ -1040,7 +1040,7 @@ static FORCEINLINE int recursive_acquire_lock(MLOCK_T *lk) {
   }
 }
 
-static FORCEINLINE int recursive_try_lock(MLOCK_T *lk) {
+static DL_FORCEINLINE int recursive_try_lock(MLOCK_T *lk) {
   THREAD_ID_T mythreadid = CURRENT_THREAD;
   if (*((volatile int *)(&lk->sl)) == 0) {
     if (!CAS_LOCK(&lk->sl)) {

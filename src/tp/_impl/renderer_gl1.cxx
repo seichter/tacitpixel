@@ -109,9 +109,14 @@ public:
 
 	GLenum getWrapMode(tpUInt mode) {
 		switch (mode) {
-		case tpTexture::kWrapModeClamp:
+#if defined(WIN32)
+        case tpTexture::kWrapModeClamp:
+            return GL_CLAMP;
+#else
+        case tpTexture::kWrapModeClamp:
             return GL_CLAMP_TO_EDGE;
-		case tpTexture::kWrapModeRepeat:
+#endif
+        case tpTexture::kWrapModeRepeat:
 			return GL_REPEAT;
 		}
 		return 0;
@@ -182,6 +187,17 @@ public:
 	}
 
 	void update(tpTexture &texture) {
+
+        if ((texture.getImage() == 0) ||
+                (!texture.getImage()->isValid()))
+        {
+
+            tpLogError("%s empty texture %s",
+                       __FUNCTION__,
+                       texture.getName().c_str());
+            return;
+
+        }
 
 		if (texture.getImage()->getChangeCount() != mChangeCount) {
 

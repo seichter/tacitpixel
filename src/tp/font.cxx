@@ -71,7 +71,7 @@ public:
 			ffile.read((char*)&buffer[0],buffer.getSize());
 
 			stbtt_BakeFontBitmap( &buffer[0],
-                                  0, 32,
+                                  0, 12,
                     (tpUChar*)mImage->getData(),
                     mImage->getWidth(),
                     mImage->getHeight(),
