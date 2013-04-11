@@ -26,13 +26,13 @@
 #ifndef TP_SCRIPT_H
 #define TP_SCRIPT_H
 
-#include <tp/referenced.h>
+#include <tp/object.h>
 #include <tp/string.h>
 
 /**
  * A simple wrapper for network sockets
  */
-class TP_API tpScript : public tpReferenced {
+class TP_API tpScript : public tpObject {
 public:
 
     enum {
@@ -41,7 +41,6 @@ public:
 
     static tpScript* create(tpUInt scriptType);
 
-    virtual tpUInt init() = 0;
     virtual tpUInt run(const tpString& script) = 0;
 
 protected:

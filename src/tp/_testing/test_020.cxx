@@ -15,8 +15,6 @@ int main(int argc, char* argv[])
 
     if (luas.isValid()) {
 
-        luas->init();
-
         luas->run(script);
     }
 

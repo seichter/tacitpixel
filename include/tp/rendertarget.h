@@ -27,10 +27,10 @@
 #define TP_RENDERTARGET_H
 
 #include <tp/refptr.h>
-#include <tp/referenced.h>
+#include <tp/object.h>
 #include <tp/rendercontext.h>
 
-class TP_API tpRenderTarget : public tpReferenced {
+class TP_API tpRenderTarget : public tpObject {
 public:
 
     TP_TYPE_DECLARE

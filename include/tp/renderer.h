@@ -33,8 +33,6 @@
 
 class tpScene;
 
-typedef tpArray<tpRefPtr<tpCamera> > tpRefCameraArray;
-
 
 class TP_API tpRenderer : public tpReferenced {
 public:

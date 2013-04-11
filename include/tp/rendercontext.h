@@ -2,19 +2,12 @@
 #define TPRENDERCONTEXT_H
 
 #include <tp/globals.h>
-#include <tp/referenced.h>
+#include <tp/object.h>
 #include <tp/rtti.h>
 #include <tp/string.h>
 
 class tpRenderTarget;
 class tpRenderContext;
-
-struct TP_API tpRenderContextCallback {
-
-    virtual tpUShort chooseContextAPI(const tpRenderContext& context,
-                                      const tpArray<tpUShort>& mRenderAPIs) = 0;
-
-};
 
 
 class TP_API tpRenderContextFactory : public tpReferenced {
@@ -26,7 +19,7 @@ public:
 };
 
 
-class TP_API tpRenderContext : public tpReferenced  {
+class TP_API tpRenderContext : public tpObject  {
 public:
 
 	TP_TYPE_DECLARE
@@ -38,14 +31,15 @@ public:
 	};
 
     enum {
-        kRenderAPI_OpenGL1,
-        kRenderAPI_OpenGL2,
-        kRenderAPI_OpenGL3,
-        kRenderAPI_OpenGL4,
-        kRenderAPI_OpenGL_ES1,
-        kRenderAPI_OpenGL_ES2,
-        kRenderAPI_OpenGL_ES3,
-        kRenderAPI_User = 0xFF
+        kDefault,
+        kOpenGL1,
+        kOpenGL2,
+        kOpenGL3,
+        kOpenGL4,
+        kOpenGLES1,
+        kOpenGLES2,
+        kOpenGLES3,
+        kUnknown = 0xFF
     };
 
 
@@ -55,8 +49,8 @@ public:
 	virtual void destroy() = 0;
 
 	virtual void wait(tpUInt e = kWaitNone) {}
-	virtual bool makeCurrent() = 0;
-	virtual bool swapBuffers() = 0;
+    virtual bool makeCurrent() = 0;
+    virtual bool swapBuffers() = 0;
 
     virtual tpUInt getRendererTraits() const = 0;
     virtual tpUInt getVisualId() const { return 0; }
@@ -89,6 +83,8 @@ protected:
 	tpString mRenderer;
 
 	tpString mName;
+
+
 
 
 

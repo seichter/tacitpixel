@@ -291,7 +291,7 @@ tpWindowX11::update()
 		}
 
         if (submit) {
-            if (!this->getEventHandler().process(e))
+            if (!this->process(e))
             {
                 //XPutBackEvent(dpy,&event);
             }

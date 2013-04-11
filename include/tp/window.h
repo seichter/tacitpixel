@@ -182,7 +182,7 @@ public:
 
 	void setDone(bool done = true) { mDone = done; }
 
-	tpEventHandler& getEventHandler() { return mEventHandler; }
+//	tpEventHandler& getEventHandler() { return mEventHandler; }
 
 
 	virtual void setClientAreaSize(tpUInt w, tpUInt h);
@@ -194,7 +194,7 @@ protected:
 	tpWindow();
 	tpWindow( tpWindowTraits* traits );
 
-	tpEventHandler mEventHandler;
+//	tpEventHandler mEventHandler;
 
 	bool mDone;
 

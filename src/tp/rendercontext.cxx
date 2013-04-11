@@ -29,7 +29,7 @@
 #include "tp/module.h"
 
 tpRenderContext::tpRenderContext()
-	: tpReferenced()
+    : tpObject()
 {
 }
 
@@ -87,5 +87,5 @@ tpRenderContext::create(const tpString& cfg)
 }
 
 
-TP_TYPE_REGISTER(tpRenderContextFactory,tpReferenced,RenderContextFactory);
+TP_TYPE_REGISTER(tpRenderContextFactory,tpObject,RenderContextFactory);
 TP_TYPE_REGISTER(tpRenderContext,tpReferenced,RenderContext);

@@ -56,9 +56,10 @@ enum tpCopyMode
 #include <tp/string.h>
 #include <tp/scopeptr.h>
 #include <tp/field.h>
+#include <tp/event.h>
 
 
-class TP_API tpObject : public tpReferenced {
+class TP_API tpObject : public tpReferenced, public tpEventHandler {
 public:
 
     TP_TYPE_DECLARE
@@ -78,23 +79,23 @@ public:
 	virtual tpObject* clone(const tpUByte& copymode) const;
 
 	//! set the name
-	void setName(const tpString& name) { m_name = name; }
+    void setName(const tpString& name) { mName = name; }
 
 	//! return the name
-	const tpString& getName() const { return m_name; }
+    const tpString& getName() const { return mName; }
 
 	//! field system get a copy
-	tpFields getFields() { return m_fields; }
+    tpFields getFields() { return mFields; }
 
 	//! const ret field system
-	const tpFields& getFields() const { return m_fields; }
+    const tpFields& getFields() const { return mFields; }
 
 protected:
 
 	virtual ~tpObject();
 
-	tpString m_name;
-	tpFields m_fields;
+    tpString mName;
+    tpFields mFields;
 
 };
 

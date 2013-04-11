@@ -115,7 +115,7 @@ tpVec2i tpWindow::getPosition() const
 
 
 tpRenderTarget::tpRenderTarget()
-	: tpReferenced()
+    : tpObject()
 	, mContext(0)
 {
 }
@@ -257,7 +257,7 @@ tpWindowTraits& tpWindowTraits::setFullscreen( bool val /*= true*/ )
 
 TP_TYPE_REGISTER(tpWindowFactory,tpReferenced,RenderSurfaceFactory);
 TP_TYPE_REGISTER(tpRenderBufferFactory,tpReferenced,RenderBufferFactory);
-TP_TYPE_REGISTER(tpRenderTarget,tpReferenced,RenderTarget);
+TP_TYPE_REGISTER(tpRenderTarget,tpObject,RenderTarget);
 TP_TYPE_REGISTER(tpWindow,tpRenderTarget,RenderSurface);
 TP_TYPE_REGISTER(tpRenderBuffer,tpRenderTarget,RenderBuffer);
 

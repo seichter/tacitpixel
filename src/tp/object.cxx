@@ -29,16 +29,17 @@
 
 tpObject::tpObject(const tpString& name)
 	: tpReferenced()
-	, m_name(name)
+    , tpEventHandler()
+    , mName(name)
 {
-	m_fields.add(new tpRefField<tpString>(m_name,"name"));
+    mFields.add(new tpRefField<tpString>(mName,"name"));
 }
 
 tpObject::tpObject(const tpObject& obj)
 	: tpReferenced()
 {
-	m_fields.add(new tpRefField<tpString>(m_name,"name"));
-	m_name = obj.m_name;
+    mFields.add(new tpRefField<tpString>(mName,"name"));
+    mName = obj.mName;
 }
 
 tpObject::~tpObject()
@@ -48,7 +49,7 @@ tpObject::~tpObject()
 tpObject* 
 tpObject::clone(const tpUByte& clonemode) const
 {
-	tpObject* ret = new tpObject(m_name + "_copy");
+    tpObject* ret = new tpObject(mName + "_copy");
 	return ret;
 }
 

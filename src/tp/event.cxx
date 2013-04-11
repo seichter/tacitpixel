@@ -72,7 +72,7 @@ tpEventHandler::process(tpEvent& e)
     return e.getHandled();
 }
 
-void tpEventHandler::removeAll()
+void tpEventHandler::flush()
 {
     for (tpEventProxyArray::iterator it = mHandlers.begin();
          it != mHandlers.end();
@@ -86,7 +86,7 @@ void tpEventHandler::removeAll()
 
 tpEventHandler::~tpEventHandler()
 {
-    removeAll();
+    flush();
 }
 
 

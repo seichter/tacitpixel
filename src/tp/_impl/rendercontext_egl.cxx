@@ -6,6 +6,12 @@
 #include "tp/stringtokenizer.h"
 
 
+tpRenderContextEGL::tpRenderContextEGL()
+    : tpRenderContext()
+{
+}
+
+
 bool
 tpRenderContextEGL::swapBuffers()
 {
@@ -29,7 +35,7 @@ tpRenderContextEGL::makeCurrent() {
 tpUInt
 tpRenderContextEGL::getVisualId() const
 {
-	return 0x21;
+    return mVisualId;
 }
 
 bool
@@ -70,24 +76,28 @@ tpRenderContextEGL::bind(tpRenderTarget* target)
 			tpString tk = tkz.next();
 
 			if (tk == "OpenGL_ES") {
-				glAPIs.add(tpRenderContext::kRenderAPI_OpenGL_ES1);
+                glAPIs.add(tpRenderContext::kOpenGLES1);
 			} else if (tk == "OpenGL_ES2") {
-				glAPIs.add(tpRenderContext::kRenderAPI_OpenGL_ES2);
+                glAPIs.add(tpRenderContext::kOpenGLES2);
 			} else if (tk == "OpenGL_ES3") {
-				glAPIs.add(tpRenderContext::kRenderAPI_OpenGL_ES3);
+                glAPIs.add(tpRenderContext::kOpenGLES3);
 			} else if (tk == "OpenGL") {
-				glAPIs.add(tpRenderContext::kRenderAPI_OpenGL1);
+                glAPIs.add(tpRenderContext::kOpenGL1);
 			};
-		}
 
+        }
 	}
 
 
+    // now we can give back the choice
 
-	tpArray<EGLint> attributes;
+
 
 //	attributes.add(EGL_RENDERABLE_TYPE).add(EGL_OPENGL_ES2_BIT);
 //	attributes.add(EGL_RENDERABLE_TYPE).add(EGL_OPENGL_BIT);
+
+
+    tpArray<tpInt> attributes;
 
 	switch (target->getTargetType())
 	{
@@ -147,8 +157,8 @@ tpRenderContextEGL::bind(tpRenderTarget* target)
 		tpLogNotify("%s config has %d:%d:%d:%d format (vid: 0x%x)",
 					__FUNCTION__,red_,green_,blue_,alpha_,vid_);
 
-		//status = tpGL::eglGetConfigAttrib(display, config, attribute, value);
-	}
+        mVisualId = vid_;
+    }
 
 	/* bind the API */
 	if(!tpEGL::a().BindAPI.f(EGL_OPENGL_ES_API))

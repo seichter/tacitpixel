@@ -60,7 +60,7 @@ tpViewer::create(const tpString& title/* = "tpViewer"*/,
 	if (!mRenderer.isValid() || !mSurface.isValid() || !mSurface->hasContext()) return false;
 
 	// now also bind the event handler
-	mSurface->getEventHandler().attach<tpWindowEvent,tpViewer>(this,&tpViewer::_dispatch);
+    mSurface->attach<tpWindowEvent,tpViewer>(this,&tpViewer::_dispatch);
 
 
 	tpVec2i s = mSurface->getClientAreaSize();

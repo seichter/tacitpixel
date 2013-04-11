@@ -147,7 +147,7 @@ public:
 
 	bool process(tpEvent &e);
 
-	void removeAll();
+    void flush();
 
 	~tpEventHandler();
 };

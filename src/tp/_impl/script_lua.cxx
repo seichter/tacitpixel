@@ -28,21 +28,15 @@
 tpScriptLua::tpScriptLua()
 	: state(luaL_newstate())
 {
-}
-
-tpUInt tpScriptLua::init()
-{
-	luaopen_base(state);
-	luaopen_bit32(state);
-	luaopen_coroutine(state);
-	luaopen_debug(state);
-	luaopen_io(state);
-	luaopen_package(state);
-	luaopen_string(state);
-	luaopen_table(state);
-	luaopen_math(state);
-
-	return 0;
+    luaopen_base(state);
+    luaopen_bit32(state);
+    luaopen_coroutine(state);
+    luaopen_debug(state);
+    luaopen_io(state);
+    luaopen_package(state);
+    luaopen_string(state);
+    luaopen_table(state);
+    luaopen_math(state);
 }
 
 tpUInt tpScriptLua::run(const tpString &script)
