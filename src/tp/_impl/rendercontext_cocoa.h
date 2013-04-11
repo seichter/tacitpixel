@@ -22,7 +22,7 @@ public:
 
 	tpRenderContextCocoa();
 
-	virtual bool init(tpRenderTarget *target);
+	virtual bool bind(tpRenderTarget *target);
 	virtual bool makeCurrent();
 	virtual bool swapBuffers();
 	virtual void destroy();

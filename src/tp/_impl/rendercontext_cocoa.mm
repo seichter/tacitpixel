@@ -3,6 +3,7 @@
 #import "tp/window.h"
 #import "tp/module.h"
 #import "tp/renderer.h"
+#import "tp/version.h"
 
 #import <OpenGL/gl.h>
 
@@ -13,7 +14,7 @@ tpRenderContextCocoa::tpRenderContextCocoa()
 	mName = "Cocoa/CGL";
 }
 
-bool tpRenderContextCocoa::init(tpRenderTarget *target)
+bool tpRenderContextCocoa::bind(tpRenderTarget *target)
 {
 	NSOpenGLPixelFormatAttribute window_attribs[] =
 	{
@@ -118,5 +119,26 @@ tpUInt tpRenderContextCocoa::getRendererTraits() const
 	return (tpRenderer::kOpenGL1x);
 }
 
+
+
+class tpRenderContextFactoryCocoa: public tpRenderContextFactory {
+
+	TP_TYPE_DECLARE
+
+public:
+
+	tpRenderContextFactoryCocoa() : tpRenderContextFactory()
+	{
+		tpLogNotify("%s Cocoa Render Context",tpGetVersionString());
+	}
+
+	tpRenderContext* create(const tpString& settings)
+	{
+		return new tpRenderContextCocoa();
+	}
+};
+
+
 TP_TYPE_REGISTER(tpRenderContextCocoa,tpRenderContext,RenderContextCocoa);
+TP_TYPE_REGISTER(tpRenderContextFactoryCocoa,tpRenderContextFactory,RenderContextFactoryCocoa);
 TP_MODULE_REGISTER(RenderContextCocoa,tpRenderContextCocoa)
