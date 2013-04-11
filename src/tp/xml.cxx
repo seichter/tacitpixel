@@ -76,7 +76,7 @@ void rapidxml_dispatch(tpXML& xml,rapidxml::xml_node<>* node)
 }
 
 tpXML::tpXML()
-	: tpReferenced()
+	: tpObject()
 	, mCallback(0)
 {
 }

@@ -37,7 +37,6 @@ int main(int argc, char* argv[])
     tpRefPtr<tpRenderContext> render_context = tpRenderContext::create("EGL");
 
     render_context->bind(surface.get());
-    render_context->makeCurrent();
 
 	while (surface->isValid()) {
 

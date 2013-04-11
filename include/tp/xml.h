@@ -26,7 +26,7 @@
 #ifndef TPXML_H
 #define TPXML_H
 
-#include <tp/referenced.h>
+#include <tp/object.h>
 #include <tp/string.h>
 #include <tp/map.h>
 #include <tp/stack.h>
@@ -44,7 +44,7 @@ struct TP_API tpXMLNodeCallback {
  * minimal XML parsing capability. Please note that tpXML is not
  * threadsafe.
  */
-class TP_API tpXML : public tpReferenced {
+class TP_API tpXML : public tpObject {
 	tpString mDoc;
 public:
 
