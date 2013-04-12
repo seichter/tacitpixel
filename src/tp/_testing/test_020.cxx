@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
 {
     tpString script;
 
-    script = "s = 'hello world'; print(s)";
+    script = "s = 'hello world'; print(s); io.stdout:write(tostring(math.pi));";
 
     tpRefPtr<tpScript> luas = tpScript::create(tpScript::kLua);
 

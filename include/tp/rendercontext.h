@@ -43,7 +43,10 @@ public:
     };
 
 
-	tpRenderContext();
+    /**
+      * request a module that implements a render context
+      */
+    static tpRenderContext* create(const tpString& configuration = tpString());
 
     virtual bool bind(tpRenderTarget* target) = 0;
 	virtual void destroy() = 0;
@@ -68,12 +71,11 @@ public:
     virtual void* getProcAddress(const char*);
 
 
-	/**
-	  * request a module that implements a render context
-	  */
-	static tpRenderContext* create(const tpString& configuration = tpString());
+
 
 protected:
+
+    tpRenderContext();
 
 	void reportToConsole();
 

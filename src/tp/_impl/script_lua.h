@@ -26,7 +26,11 @@
 #include "tp/script.h"
 
 
-#include "luawrapper/luawrapper.h"
+extern "C"
+{
+#include "lua/src/lua.hpp"
+//#include "lua/src/lualib.h"
+}
 
 class tpScriptLua : public tpScript {
 public:

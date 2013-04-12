@@ -7,6 +7,7 @@ add_subdirectory(libvorbis)
 add_subdirectory(libogg)
 add_subdirectory(minizip)
 add_subdirectory(lua)
+add_subdirectory(luawrapper)
 
 option(TP_USE_PORTAUDIO "Use portaudio for sound output" OFF)
 if (TP_USE_PORTAUDIO)

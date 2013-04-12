@@ -41,6 +41,9 @@ check_symbol_exists(pthread_yield pthread.h HAVE_PTHREAD_YIELD)
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
 
+find_package(SWIG)
+
+
 set(tp_impl_srcs)
 set(tp_impl_libs)
 
@@ -82,7 +85,7 @@ set(tp_hdrs
 	${tp_include_path}/tp/matop.h
 	${tp_include_path}/tp/module.h
 	${tp_include_path}/tp/mutex.h
-#	${tp_include_path}/tp/opengl.h
+	${tp_include_path}/tp/opengl.h
 	${tp_include_path}/tp/pixelformat.h
 	${tp_include_path}/tp/pair.h
 	${tp_include_path}/tp/quat.h
@@ -270,7 +273,7 @@ set(tp_srcs
 	library.cxx
 	module.cxx
 	mutex.cxx
-#	opengl.cxx
+	opengl.cxx
 	referenced.cxx
 	rs232.cxx
 	rtl.cxx
@@ -355,8 +358,13 @@ set(tp_srcs_sg
 
 list(APPEND tp_impl_srcs
     _impl/script_lua.h
-    _impl/script_lua.cxx
+	_impl/script_lua.cxx
     )
+
+
+
+
+
 
 
 configure_file(config.h.in
@@ -420,6 +428,24 @@ if (WIN32)
 		wsock32
 		)
 endif()
+
+
+
+
+
+
+#if(SWIG_FOUND)
+#	include(${SWIG_USE_FILE})
+#	set(SWIG_INTERFACES
+#		_impl/_lua/window.i
+#		)
+
+#	SWIG_ADD_MODULE(luatp lua ${SWIG_INTERFACES})
+#	SWIG_LINK_LIBRARIES(luatp ${tp_name})
+
+#endif()
+
+
 
 add_subdirectory(_modules)
 add_subdirectory(_testing)

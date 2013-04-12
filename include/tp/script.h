@@ -30,7 +30,7 @@
 #include <tp/string.h>
 
 /**
- * A simple wrapper for network sockets
+ * A simple wrapper for scripts
  */
 class TP_API tpScript : public tpObject {
 public:
