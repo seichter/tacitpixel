@@ -29,7 +29,7 @@
 
 #include <zlib/zlib.h>
 
-#include <cassert>
+#include "assert.h"
 
 struct tpGZipIOHandle {
 

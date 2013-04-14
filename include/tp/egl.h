@@ -166,22 +166,22 @@ class TP_API tpEGL : public tpRuntimeLoader {
 public:
 
 	// signatures
-	typedef EGLint (__TP_CALL *eglGetErrorT)(void);
-	typedef EGLBoolean (__TP_CALL *eglInitializeT)(EGLDisplay dpy, EGLint *major, EGLint *minor);
-	typedef EGLDisplay (__TP_CALL * eglGetDisplayT)(EGLNativeDisplayType native_display);
-	typedef EGLBoolean (__TP_CALL * eglGetConfigsT)(EGLDisplay dpy,EGLConfig* config, EGLint config_size, EGLint* num_config );
-	typedef EGLBoolean (__TP_CALL * eglChooseConfigT)(EGLDisplay display,EGLint const * attrib_list,EGLConfig * configs, EGLint config_size, EGLint * num_config);
-	typedef EGLContext (__TP_CALL * eglCreateContextT)(EGLDisplay display,EGLConfig config,EGLContext share_context,EGLint const * attrib_list);
-	typedef EGLSurface (__TP_CALL * eglCreateWindowSurfaceT)(EGLDisplay display,EGLConfig config,EGLNativeWindowType native_window,EGLint const * attrib_list);
-	typedef EGLSurface (__TP_CALL * eglCreatePbufferSurfaceT)(EGLDisplay display,EGLConfig config,EGLint const * attrib_list);
-	typedef EGLBoolean (__TP_CALL * eglMakeCurrentT)(EGLDisplay display,EGLSurface draw,EGLSurface read,EGLContext context);
-	typedef EGLBoolean (__TP_CALL * eglSwapBuffersT)(EGLDisplay display,EGLSurface surface);
-    typedef EGLBoolean (__TP_CALL * eglQuerySurfaceT)(EGLDisplay display, EGLSurface surface, EGLint attribute, EGLint * value);
-    typedef EGLBoolean (__TP_CALL * eglQueryContextT)(EGLDisplay display, EGLContext context, EGLint attribute, EGLint * value);
-	typedef EGLBoolean (__TP_CALL * eglGetConfigAttribT)(EGLDisplay,EGLConfig,EGLint,EGLint * value);
-	typedef EGLBoolean (__TP_CALL * eglBindAPIT)(EGLenum api);
-	typedef const char* (__TP_CALL * eglQueryStringT)(EGLDisplay dpy,int);
-	typedef void* (__TP_CALL * eglGetProcAddress)(const char*);
+	typedef EGLint (__TP_CALL     *  eglGetErrorT)(void);
+	typedef EGLBoolean (__TP_CALL *  eglInitializeT)(EGLDisplay dpy, EGLint *major, EGLint *minor);
+	typedef EGLDisplay (__TP_CALL *  eglGetDisplayT)(EGLNativeDisplayType native_display);
+	typedef EGLBoolean (__TP_CALL *  eglGetConfigsT)(EGLDisplay dpy,EGLConfig* config, EGLint config_size, EGLint* num_config );
+	typedef EGLBoolean (__TP_CALL *  eglChooseConfigT)(EGLDisplay display,EGLint const * attrib_list,EGLConfig * configs, EGLint config_size, EGLint * num_config);
+	typedef EGLContext (__TP_CALL *  eglCreateContextT)(EGLDisplay display,EGLConfig config,EGLContext share_context,EGLint const * attrib_list);
+	typedef EGLSurface (__TP_CALL *  eglCreateWindowSurfaceT)(EGLDisplay display,EGLConfig config,EGLNativeWindowType native_window,EGLint const * attrib_list);
+	typedef EGLSurface (__TP_CALL *  eglCreatePbufferSurfaceT)(EGLDisplay display,EGLConfig config,EGLint const * attrib_list);
+	typedef EGLBoolean (__TP_CALL *  eglMakeCurrentT)(EGLDisplay display,EGLSurface draw,EGLSurface read,EGLContext context);
+	typedef EGLBoolean (__TP_CALL *  eglSwapBuffersT)(EGLDisplay display,EGLSurface surface);
+	typedef EGLBoolean (__TP_CALL *  eglQuerySurfaceT)(EGLDisplay display, EGLSurface surface, EGLint attribute, EGLint * value);
+	typedef EGLBoolean (__TP_CALL *  eglQueryContextT)(EGLDisplay display, EGLContext context, EGLint attribute, EGLint * value);
+	typedef EGLBoolean (__TP_CALL *  eglGetConfigAttribT)(EGLDisplay,EGLConfig,EGLint,EGLint * value);
+	typedef EGLBoolean (__TP_CALL *  eglBindAPIT)(EGLenum api);
+	typedef const char* (__TP_CALL*  eglQueryStringT)(EGLDisplay dpy,int);
+	typedef void* (__TP_CALL      *  eglGetProcAddress)(const char*);
 
 	// functoids
 	tpFunctoidImpl<eglGetErrorT> GetError;

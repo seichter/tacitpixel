@@ -70,7 +70,7 @@ public:
 		{
 
 			tpVec3r pos = camera->getTranslation();
-            tpMat44r vmat = camera->getView();
+			tpMat44r vmat = camera->getView();
 
 			switch (e.getKeyCode()) {
 				case 'x':
@@ -82,32 +82,32 @@ public:
 					pos -= tpVec3r::All(.5);
 					break;
 
-            case 'g':
-            case 'G':
-                vmat.rotate(tpVec3r(0,0,1),5);
-                camera->setView(vmat);
-                e.setHandled(true);
-                return;
-                        break;
-                case 'a':
-                case 'A':
-                    pos(0) -= 1;
-                    break;
-                case 'd':
-                case 'D':
-                    pos(0) += 1;
-                    break;
+			case 'g':
+			case 'G':
+				vmat.rotate(tpVec3r(0,0,1),5);
+				camera->setView(vmat);
+				e.setHandled(true);
+				return;
+						break;
+				case 'a':
+				case 'A':
+					pos(0) -= 1;
+					break;
+				case 'd':
+				case 'D':
+					pos(0) += 1;
+					break;
 
-                case 'w':
-                case 'W':
-                    pos(2) -= 1;
-                    break;
-                case 's':
-                case 'S':
-                    pos(2) += 1;
-                    break;
+				case 'w':
+				case 'W':
+					pos(2) -= 1;
+					break;
+				case 's':
+				case 'S':
+					pos(2) += 1;
+					break;
 
-            default:
+			default:
 					break;
 			}
 
@@ -143,23 +143,26 @@ int main(int argc,char* argv[])
 	if (args.get("--plugins",plugins)) {}
 	if (args.get("--file",file)) {}
 
-    tpRefNode root = new tpNode;
+	tpRefNode root = new tpNode;
 
-    tpRefNode scene = (file == "axis")
+	tpRefNode scene = (file == "axis")
 			? tpPrimitiveFactory::create(tpPrimitiveFactory::kAxis)
 			:  tpNode::read(file);
 
-    if (!scene.isValid()) {
+	if (!scene.isValid() && !(file == "empty")) {
 		tpLogError("Can't load file");
 		return -1;
 	}
 
-    tpRefPtr<tpTransform> st = new tpTransform();
-    st->setMatrix(tpMat44r::Identity());
-    st->setMatrix(tpMat44r::Rotation(tpVec3r(1,0,0),-90) *       tpMat44r::Rotation(tpVec3r(0,1,0),-90));
+	if (!scene.isValid())
+		scene = new tpNode();
 
-    st->addChild(scene.get());
-    root->addChild(st.get());
+	tpRefPtr<tpTransform> st = new tpTransform();
+	st->setMatrix(tpMat44r::Identity());
+	st->setMatrix(tpMat44r::Rotation(tpVec3r(1,0,0),-90) *       tpMat44r::Rotation(tpVec3r(0,1,0),-90));
+
+	st->addChild(scene.get());
+	root->addChild(st.get());
 
 
 	tpRefPtr<tpTransform> lt = new tpTransform();
@@ -167,26 +170,26 @@ int main(int argc,char* argv[])
 
 	lt->addChild(l.get());
 
-    lt->setMatrix(tpMat44Op::translation<tpReal>(10,10,10));
+	lt->setMatrix(tpMat44Op::translation<tpReal>(10,10,10));
 
 	l->setAmbientColor(tpVec4f(0.1f,0.1f,0.1f,1.f));
 	l->setDiffuseColor(tpVec4f(.8f,.8f,.8f,1.f));
-    l->setPosition(tpVec4f(0.f,1.f,0.f,0.f));
+	l->setPosition(tpVec4f(0.f,1.f,0.f,0.f));
 
 	root->addChild(lt.get());
 
 	tpRefPtr<tpViewer> viewer = new tpViewerShow;
 
-    viewer->getScene().getCamera()->setViewLookAt(tpVec3r(5,1,5),tpVec3r(0,0,0),tpVec3r(0,1,0));
-    viewer->getScene().getCamera()->setProjectionPerspective(45,1.3,.1,100);
+	viewer->getScene().getCamera()->setViewLookAt(tpVec3r(5,1,5),tpVec3r(0,0,0),tpVec3r(0,1,0));
+	viewer->getScene().getCamera()->setProjectionPerspective(45,1.3,.1,100);
 
 	viewer->getScene().getCamera()->setClearColor(tpVec4f(.3,.4,.5,1));
 	viewer->getScene().getCamera()->setClearFlags(tpCamera::kClearDepth | tpCamera::kClearColor);
 
-    viewer->getScene().getCamera()->addChild(root.get());
+	viewer->getScene().getCamera()->addChild(root.get());
 
 	viewer->create();
-    viewer->run();
+	viewer->run();
 
-    return 0;
+	return 0;
 }

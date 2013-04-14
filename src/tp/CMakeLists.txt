@@ -6,6 +6,7 @@ set(tp_name tacit)
 
 set(tp_include_path ${CMAKE_CURRENT_SOURCE_DIR}/../../include)
 
+
 include_directories(${tp_include_path}
 	_thirdparty
 	_thirdparty/libogg/include
@@ -30,6 +31,11 @@ CHECK_INCLUDE_FILES("dlfcn.h" HAVE_DLFCN_H)
 CHECK_INCLUDE_FILES("time.h" HAVE_TIME_H)
 CHECK_INCLUDE_FILES("sys/time.h" HAVE_SYS_TIME_H)
 CHECK_INCLUDE_FILES("stdio.h" HAVE_STDIO_H)
+# STL stuff
+CHECK_INCLUDE_FILES("new" HAVE_STL_NEW)
+CHECK_INCLUDE_FILES("cstdlib" HAVE_STL_CSTDLIB)
+CHECK_INCLUDE_FILES("cassert" HAVE_STL_CSTDLIB)
+
 
 include(CheckSymbolExists)
 check_symbol_exists(clock_gettime sys/time.h HAVE_CLOCK_GETTIME)
@@ -356,15 +362,11 @@ set(tp_srcs_sg
 
 
 
+
 list(APPEND tp_impl_srcs
     _impl/script_lua.h
 	_impl/script_lua.cxx
     )
-
-
-
-
-
 
 
 configure_file(config.h.in
@@ -395,7 +397,7 @@ add_library(${tp_name} ${TACIT_LIB_TYPE}
 
 set_property(TARGET ${tp_name} PROPERTY COMPILE_DEFINITIONS "TACIT_EXPORTS")
 
-target_link_libraries(${tp_name} ${tp_impl_libs} dlmalloc )
+target_link_libraries(${tp_name} ${tp_impl_libs} )
 
 target_link_libraries(${tp_name} jpeg png zlib ogg vorbis lua)
 

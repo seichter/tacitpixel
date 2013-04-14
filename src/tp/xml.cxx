@@ -26,6 +26,16 @@
 #include <tp/xml.h>
 
 #define RAPIDXML_NO_EXCEPTIONS 1
+// #define RAPIDXML_NO_STDLIB 1
+// 
+// #include "assert.h"
+// 
+// namespace std
+// {
+//     typedef unsigned long size_t;
+// 	
+// 	
+// }
 
 #include "rapidxml/rapidxml.hpp"
 

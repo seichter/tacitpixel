@@ -546,6 +546,9 @@
 */
 
 
+		 /* needed for the bloody Android NDK */
+#define getlocaledecpoint() ('.') 
+
 
 #endif
 

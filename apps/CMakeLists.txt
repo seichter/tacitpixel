@@ -1,5 +1,7 @@
-add_subdirectory(show)
-add_subdirectory(glut)
+if(NOT ANDROID AND NOT IOS)
+	add_subdirectory(show)
+	add_subdirectory(glut)
+endif()
 
 if(IOS)
 	add_subdirectory(iosviewer)

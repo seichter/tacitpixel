@@ -23,42 +23,66 @@
  * SUCH DAMAGE.
  */
 
-
-#define USE_DL_PREFIX
-
-#include <dlmalloc/malloc_.h>
-
 #include <tp/allocator.h>
+
+
+#if defined(USE_DLMALLOC)
+#define USE_DL_PREFIX
+#include <dlmalloc/malloc_.h>
+#else
+#include <memory.h>
+#endif
 
 
 /*static*/ void* 
 tpAllocator::malloc(tpSizeT size) 
 {
+#if defined(USE_DLMALLOC)
 	return dlmalloc(size);
+#else
+	
+#endif
 }
 
 /*static*/ void 
 tpAllocator::free(void* ptr) 
 {
-	return dlfree(ptr);
+#if defined(USE_DLMALLOC)
+	dlfree(ptr);
+#else
+	
+#endif
 }
 
 /*static*/ void* 
 tpAllocator::memalign( tpSizeT size,tpSizeT alignment/* = 16*/)
 {
+#if defined(USE_DLMALLOC)
 	return dlmemalign(alignment,size);
+#else
+	return 0;
+#endif
 }
 
 /*static*/ void*
 tpAllocator::calloc(tpSizeT elem, tpSizeT elem_size)
 {
+#if defined(USE_DLMALLOC)
 	return dlcalloc(elem,elem_size);
+#else 
+	return 0;
+#endif
 }
 
 /*static*/ void*
 tpAllocator::realloc(void* p, tpSizeT n)
 {
+#if defined(USE_DLMALLOC)
 	return dlrealloc(p,n);
+#else
+	return realloc(p,n);
+#endif
+		
 }
 
 

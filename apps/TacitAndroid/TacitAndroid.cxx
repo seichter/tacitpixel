@@ -1,106 +1,71 @@
-#include <jni.h>
 
-#include <tp/viewer.h>
-#include <tp/logutils.h>
+#include <tp/window.h>
 
-#include <android/log.h>
-// #include <EGL/egl.h>
-
-//NativeWindowType displayWindow;
-
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "tacit-jni", __VA_ARGS__))
-#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "tacit-jni", __VA_ARGS__))
+#include <android_native_app_glue.h>
 
 
-extern "C" {
-	JNIEXPORT void JNICALL Java_com_technotecture_TacitAndroid_Native_create(JNIEnv* env, jobject thiz);
-	JNIEXPORT void JNICALL Java_com_technotecture_TacitAndroid_Native_update(JNIEnv* env, jobject thiz);
-	JNIEXPORT void JNICALL Java_com_technotecture_TacitAndroid_Native_destroy(JNIEnv* env, jobject thiz);
+struct TacitAndroidApp {
+    struct android_app* app;
+	
+	
 };
 
+static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
+    struct TacitAndroidApp* engine = (struct TacitAndroidApp*)app->userData;
+}
 
-class tpWindowAndroid : public tpWindow {
-public:
 
-	TP_TYPE_DECLARE
+static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) {
+    struct engine* engine = (struct engine*)app->userData;
+    if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
+        // engine->animating = 1;
+        // engine->state.x = AMotionEvent_getX(event, 0);
+        // engine->state.y = AMotionEvent_getY(event, 0);
+        return 1;
+    }
+    return 0;
+}
 
-	tpWindowAndroid( tpWindowTraits *traits ) {
-		
-	//	android_createDisplaySurface();
-		
+
+void android_main(struct android_app* state) {
+
+    struct TacitAndroidApp TacitAndroidApp;
+
+    // Make sure glue isn't stripped.
+    app_dummy();
+
+    memset(&TacitAndroidApp, 0, sizeof(TacitAndroidApp));
+    state->userData = &TacitAndroidApp;
+    state->onAppCmd = engine_handle_cmd;
+    state->onInputEvent = engine_handle_input;
+	
+	
+	
+    while (1) {
+        // Read all pending events.
+        int ident;
+        int events;
+        struct android_poll_source* source;
+
+        // If not animating, we will block forever waiting for events.
+        // If animating, we loop until all events are read, then continue
+        // to draw the next frame of animation.
+		bool animating = true;
+        while ((ident=ALooper_pollAll(animating ? 0 : -1, NULL, &events,
+                (void**)&source)) >= 0) {
+
+            // Process this event.
+            if (source != NULL) {
+                source->process(state, source);
+            }
+			
+            // Check if we are exiting.
+            if (state->destroyRequested != 0) {
+                // engine_term_display(&engine);
+                return;
+            }
+			
+		}
 	}
-
-	virtual bool show(bool doShow) { return true; }
-
-	virtual void destroy() {}
-
-	virtual void update() {}
-
-	// virtual tpVec2i getSize() const {}
-	// virtual void setSize(tpInt w, tpInt h) {}
-
-
-	// virtual tpVec2i getClientAreaSize() const;
-	// virtual void setClientAreaSize(tpUInt w, tpUInt h);
-
-
-	// void setCaption(const tpString& caption);
-
-	// tpRawPtr getWindow() { return window; }
-
-	// void setContext(tpRenderContext *context);
-
-
-protected:
-
-	// NSWindow *window;
-	// NSObject *delegate;
-
-	virtual ~tpWindowAndroid();
 	
-	//android_createDisplaySurface();
-
-};
-
-struct AndroidViewer {
-	
-	tpRefPtr<tpViewer> viewer;
-	
-	AndroidViewer()
-	{
-		
-		LOGI("Working?");
-		
-		viewer = new tpViewer();
-		tpLogNotify("constructor called");
-	}
-
-};
-
-JNIEXPORT void JNICALL
-Java_com_technotecture_TacitAndroid_Native_create(JNIEnv* env, jobject thiz)
-{
-	AndroidViewer* av = new AndroidViewer;
-	jclass cls = env->GetObjectClass(thiz);
-	jfieldID fid = env->GetFieldID(cls, "handle", "J");
-	env->SetLongField(thiz, fid, (long)av);
 }
-
-JNIEXPORT void JNICALL
-Java_com_technotecture_TacitAndroid_Native_update(JNIEnv* env, jobject thiz)
-{
-	jclass cls = env->GetObjectClass(thiz);
-	jfieldID fid = env->GetFieldID(cls, "handle", "J");
-	AndroidViewer* av(reinterpret_cast<AndroidViewer*>(env->GetLongField(thiz, fid)));
-}
-
-JNIEXPORT void JNICALL
-Java_com_technotecture_TacitAndroid_Native_destroy(JNIEnv* env, jobject thiz)
-{
-	jclass cls = env->GetObjectClass(thiz);
-	jfieldID fid = env->GetFieldID(cls, "handle", "J");
-	AndroidViewer* av(reinterpret_cast<AndroidViewer*>(env->GetLongField(thiz, fid)));
-	
-	if (av) delete av;
-}
-

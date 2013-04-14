@@ -26,11 +26,16 @@ if(NOT MINGW AND CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
 	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 endif()
 
-
-# shut up the compiler
+# Visual Studio
 if(MSVC)
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
+
+# Android NDK
+if(ANDROID)
+	# add_definitions(-fno-rtti -fno-exceptions)
+endif()
+
 
 # traverse down
 add_subdirectory(src)

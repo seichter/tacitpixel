@@ -94,7 +94,7 @@
 	tpWindowEvent e(rendersurface);
 	e.setId(tpWindowEvent::kWindowSize);
 	e.setRenderSurface(rendersurface);
-	rendersurface->getEventHandler().process(e);
+	rendersurface->process(e);
 }
 
 - (BOOL)acceptsFirstResponder
@@ -306,7 +306,7 @@ tpWindowCocoa::update()
 
 		if (submit) {
 			// we only peek into the events - put it back into the queue
-			if(!this->getEventHandler().process(e) || requeue)
+			if(!this->process(e) || requeue)
 			{
 				[NSApp sendEvent:event];
 			}

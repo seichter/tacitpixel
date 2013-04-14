@@ -38,15 +38,16 @@
 
 #if defined(ANDROID)
 	 
-	 #include <android/log.h>
-	 
-	 struct tpConsoleLog : tpLogCallback
-	 {
-	 	void operator()(const char* cstr)
-	 	{
-			__android_log_print(ANDROID_LOG_INFO, "libtacit", cstr);
-	 	}
-	 };
+#include <android/log.h>
+
+
+struct tpConsoleLog : tpLogCallback
+{	
+	void operator()(const char* cstr)
+	{
+		__android_log_print(ANDROID_LOG_INFO, "libtacit", "%s", cstr);
+	}
+};
 
 #else
 struct tpConsoleLog : tpLogCallback
@@ -94,9 +95,9 @@ void tpSetGlobalNotifyLevel(tpUInt level)
 	#else
 	#define tpVSNPRINTF _vsnprintf
 	#endif
-#elif defined(ANDROID)
-	#define tpVSNPRINTF snprintf
-#elif defined(__unix) || defined(__APPLE__) || defined(__BEOS__) || defined(__HAIKU__)
+// #elif defined(ANDROID)
+// 	#define tpVSNPRINTF snprintf
+#elif defined(__unix) || defined(__APPLE__) || defined(__BEOS__) || defined(__HAIKU__) || defined(ANDROID)
 	#define tpVSNPRINTF vsnprintf
 #elif defined(__SYMBIAN32__)
 	#define tpVSNPRINTF snprintf
